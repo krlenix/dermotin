@@ -33,19 +33,13 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   const changeImage = (newIndex: number, direction: 'left' | 'right' | 'fade' = 'fade') => {
     if (isTransitioning || newIndex === selectedImage) return;
     
-    setTransitionDirection(direction);
     setIsTransitioning(true);
+    setSelectedImage(newIndex);
     
-    // Start exit animation
+    // End transition after animation completes
     setTimeout(() => {
-      setSelectedImage(newIndex);
-      setImageKey(prev => prev + 1); // Force re-render
-      
-      // End transition after entrance animation
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 200); // Quicker entrance duration
-    }, 150); // Quicker exit duration
+      setIsTransitioning(false);
+    }, 400);
   };
   
   const handlePrevious = () => {
@@ -96,22 +90,9 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
     isDragging.current = false;
   };
 
-  // Get animation classes based on transition state
-  const getImageAnimationClasses = () => {
-    if (!isTransitioning) {
-      return 'opacity-100 scale-100 translate-y-0';
-    }
-    
-    switch (transitionDirection) {
-      case 'left':
-        return 'opacity-0 scale-105 -translate-y-4';
-      case 'right':
-        return 'opacity-0 scale-105 translate-y-4';
-      case 'fade':
-        return 'opacity-0 scale-95 translate-y-0';
-      default:
-        return 'opacity-0 scale-95 translate-y-0';
-    }
+  // Calculate transform position for sliding carousel
+  const getCarouselTransform = () => {
+    return `translateX(-${selectedImage * 100}%)`;
   };
 
   return (
@@ -124,15 +105,12 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
             <button
               key={index}
               onClick={() => handleThumbnailClick(index)}
-              disabled={isTransitioning}
               className={cn(
                 "relative aspect-square overflow-hidden rounded-lg border-2 transition-all duration-300 hover:scale-105",
                 "bg-white shadow-sm hover:shadow-md group/thumb",
-                "disabled:cursor-not-allowed disabled:opacity-50",
                 selectedImage === index
                   ? "border-brand-orange shadow-lg ring-2 ring-brand-orange/30 scale-105"
-                  : "border-gray-200 hover:border-brand-orange/50",
-                isTransitioning ? "pointer-events-none" : ""
+                  : "border-gray-200 hover:border-brand-orange/50"
               )}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
@@ -169,51 +147,42 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Main Image with Enhanced Transitions */}
-            <div className="relative w-full h-full">
+            {/* True Sliding Carousel */}
+            <div className="relative w-full h-full overflow-hidden">
               <div 
-                key={imageKey}
-                className={cn(
-                  "absolute inset-0 transition-all duration-300 ease-out transform",
-                  getImageAnimationClasses()
-                )}
-
+                className="flex transition-transform duration-400 ease-out h-full"
+                style={{ transform: getCarouselTransform() }}
               >
-                <Image
-                  src={allImages[selectedImage]}
-                  alt={`${productName} - Image ${selectedImage + 1}`}
-                  fill
-                  className={cn(
-                    "object-cover transition-all duration-500 ease-out",
-                    isZoomed ? "scale-150" : "scale-100",
-                    "hover:scale-105"
-                  )}
-                  priority={selectedImage === 0}
-                  sizes="50vw"
-                />
+                {allImages.map((image, index) => (
+                  <div key={index} className="w-full h-full flex-shrink-0 relative">
+                    <Image
+                      src={image}
+                      alt={`${productName} - Image ${index + 1}`}
+                      fill
+                      className={cn(
+                        "object-cover",
+                        isZoomed && selectedImage === index ? "scale-150" : "scale-100",
+                        selectedImage === index ? "hover:scale-105" : ""
+                      )}
+                      priority={index === 0}
+                      sizes="50vw"
+                    />
+                  </div>
+                ))}
               </div>
-
             </div>
 
             {/* Navigation arrows */}
             <button
               onClick={handlePrevious}
-              disabled={isTransitioning}
-              className={cn(
-                "absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110",
-                "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-              )}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             
             <button
               onClick={handleNext}
-              disabled={isTransitioning}
-              className={cn(
-                "absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110",
-                "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-              )}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -221,11 +190,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
             {/* Zoom button */}
             <button
               onClick={() => setIsZoomed(!isZoomed)}
-              disabled={isTransitioning}
-              className={cn(
-                "absolute top-4 left-4 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110",
-                "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-              )}
+              className="absolute top-4 left-4 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
             >
               <ZoomIn className="h-5 w-5" />
             </button>
@@ -262,51 +227,42 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Main Image with Enhanced Transitions */}
-            <div className="relative w-full h-full">
+            {/* True Sliding Carousel - Mobile */}
+            <div className="relative w-full h-full overflow-hidden">
               <div 
-                key={imageKey}
-                className={cn(
-                  "absolute inset-0 transition-all duration-300 ease-out transform",
-                  getImageAnimationClasses()
-                )}
-
+                className="flex transition-transform duration-400 ease-out h-full"
+                style={{ transform: getCarouselTransform() }}
               >
-                <Image
-                  src={allImages[selectedImage]}
-                  alt={`${productName} - Image ${selectedImage + 1}`}
-                  fill
-                  className={cn(
-                    "object-cover transition-all duration-500 ease-out",
-                    isZoomed ? "scale-150" : "scale-100",
-                    "hover:scale-105"
-                  )}
-                  priority={selectedImage === 0}
-                  sizes="100vw"
-                />
+                {allImages.map((image, index) => (
+                  <div key={index} className="w-full h-full flex-shrink-0 relative">
+                    <Image
+                      src={image}
+                      alt={`${productName} - Image ${index + 1}`}
+                      fill
+                      className={cn(
+                        "object-cover",
+                        isZoomed && selectedImage === index ? "scale-150" : "scale-100",
+                        selectedImage === index ? "hover:scale-105" : ""
+                      )}
+                      priority={index === 0}
+                      sizes="100vw"
+                    />
+                  </div>
+                ))}
               </div>
-
             </div>
 
             {/* Navigation arrows - Mobile */}
             <button
               onClick={handlePrevious}
-              disabled={isTransitioning}
-              className={cn(
-                "absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110",
-                "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-              )}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             
             <button
               onClick={handleNext}
-              disabled={isTransitioning}
-              className={cn(
-                "absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110",
-                "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-              )}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -314,11 +270,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
             {/* Zoom button - Mobile */}
             <button
               onClick={() => setIsZoomed(!isZoomed)}
-              disabled={isTransitioning}
-              className={cn(
-                "absolute top-2 left-2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110",
-                "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-              )}
+              className="absolute top-2 left-2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110"
             >
               <ZoomIn className="h-4 w-4" />
             </button>
@@ -350,15 +302,12 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
             <button
               key={index}
               onClick={() => handleThumbnailClick(index)}
-              disabled={isTransitioning}
               className={cn(
                 "relative flex-shrink-0 w-16 h-16 overflow-hidden rounded-lg border-2 transition-all duration-300 group/thumb-mobile",
                 "bg-white shadow-sm hover:shadow-md hover:scale-105",
-                "disabled:cursor-not-allowed disabled:opacity-50",
                 selectedImage === index
                   ? "border-brand-orange shadow-lg ring-2 ring-brand-orange/30 scale-105"
-                  : "border-gray-200 hover:border-brand-orange/50",
-                isTransitioning ? "pointer-events-none" : ""
+                  : "border-gray-200 hover:border-brand-orange/50"
               )}
             >
               <Image
@@ -389,14 +338,11 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
             <button
               key={index}
               onClick={() => handleThumbnailClick(index)}
-              disabled={isTransitioning}
               className={cn(
                 "w-2 h-2 rounded-full transition-all duration-300 hover:scale-150",
-                "disabled:cursor-not-allowed disabled:opacity-50",
                 selectedImage === index
                   ? "bg-brand-orange scale-125 shadow-lg shadow-brand-orange/50"
-                  : "bg-gray-300 hover:bg-brand-orange/50",
-                isTransitioning ? "pointer-events-none opacity-50" : ""
+                  : "bg-gray-300 hover:bg-brand-orange/50"
               )}
             />
           ))}
