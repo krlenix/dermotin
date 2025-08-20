@@ -146,6 +146,7 @@ export function UpsellCrossSell({ mainProductId, onAddToBundle, className }: Ups
                     </div>
 
                     <Button
+                      type="button"
                       onClick={() => handleAddItem(product.id, price)}
                       variant={isSelected ? "default" : "outline"}
                       size="sm"

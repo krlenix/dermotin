@@ -15,7 +15,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { UpsellCrossSell } from '@/components/features/UpsellCrossSell';
 import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
 import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials';
-import { PurchaseNotifications } from '@/components/features/PurchaseNotifications';
+// import { PurchaseNotifications } from '@/components/features/PurchaseNotifications';
 import { RotatingReview } from '@/components/features/RotatingReview';
 import { ComparisonTable } from '@/components/features/ComparisonTable';
 import { MarqueeText } from '@/components/ui/marquee-text';
@@ -711,8 +711,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         </div>
       </footer>
 
-      {/* Purchase Notifications */}
-      <PurchaseNotifications />
+      {/* Purchase Notifications - Removed */}
+      {/* <PurchaseNotifications /> */}
 
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />

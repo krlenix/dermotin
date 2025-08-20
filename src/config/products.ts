@@ -414,7 +414,7 @@ export const PRODUCTS: Record<string, Product> = {
     shortDescription: 'Dubinska hidratacija i zaštita stopala - DEMO proizvod',
     category: 'skincare',
     images: {
-      main: 'https://picsum.photos/id/431/400/400',
+      main: '/images/products/fungel/fungel-box-and-product-mockup.png',
       gallery: [
         'https://picsum.photos/id/431/400/400'
       ],
@@ -466,7 +466,7 @@ export const PRODUCTS: Record<string, Product> = {
     shortDescription: 'Anti-age serum sa vitamin C i E - DEMO proizvod',
     category: 'skincare',
     images: {
-      main: 'https://picsum.photos/id/234/400/400',
+      main: '/images/products/fungel/fungel-box-and-product-mockup.png',
       gallery: [
         'https://picsum.photos/id/234/400/400'
       ],
@@ -518,7 +518,7 @@ export const PRODUCTS: Record<string, Product> = {
     shortDescription: 'Nežna hidratacija za celo telo - DEMO proizvod',
     category: 'skincare',
     images: {
-      main: 'https://picsum.photos/id/152/400/400',
+      main: '/images/products/fungel/fungel-box-and-product-mockup.png',
       gallery: [
         'https://picsum.photos/id/152/400/400'
       ],

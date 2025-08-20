@@ -175,13 +175,7 @@ export default function HomePage() {
                 </Button>
               </div>
               
-              {/* Trust Indicators - Staggered animation */}
-              <div className="flex items-center gap-6 pt-4 text-sm text-gray-500 animate-fadeInUp" style={{animationDelay: '0.6s'}}>
-                <span>✓ 100% prirodni proizvodi</span>
-                <span>✓ Dermatološki testirani</span>
-                <span>✓ Bez parabena i sulfata</span>
-              </div>
-            </div>
+                          </div>
             
             {/* Right Image - Fade in from right with floating effect */}
             <div className="relative lg:h-[600px] animate-fadeInRight">
@@ -337,6 +331,13 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        
+        {/* Testimonials Section */}
+        <section className="py-20 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <AdvancedTestimonials countryCode={locale} />
+          </div>
+        </section>
 
         {/* Why Natural Section - Inspired by Reference */}
         <section className="py-20">
@@ -399,21 +400,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Šta su drugi rekli o nama
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Ovaj broj kupaca je rekao da preporučuje naš proizvod - to više od 3.000 kupaca samo ovog meseca.
-              </p>
-            </div>
-            
-            <AdvancedTestimonials countryCode={locale} />
-          </div>
-        </section>
+
       </main>
 
       {/* Footer */}
