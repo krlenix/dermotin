@@ -55,6 +55,31 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
 
+  // Apply global overflow fix and prevent layout shifts
+  useEffect(() => {
+    document.body.style.overflowX = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
+    document.body.style.maxWidth = '100vw';
+    document.documentElement.style.maxWidth = '100vw';
+    
+    // Prevent any horizontal scroll during animations
+    document.body.style.position = 'relative';
+    
+    // Mark page as loaded after a short delay to prevent animation layout shifts
+    const timer = setTimeout(() => {
+      setPageLoaded(true);
+    }, 100);
+    
+    return () => {
+      document.body.style.overflowX = '';
+      document.documentElement.style.overflowX = '';
+      document.body.style.maxWidth = '';
+      document.documentElement.style.maxWidth = '';
+      document.body.style.position = '';
+      clearTimeout(timer);
+    };
+  }, []);
+
   // CTA Button text - configurable variable
   const ctaButtonText = t('common.order_now'); // "Naruči odmah" - can be changed to other translations
 
@@ -212,31 +237,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </div>
     );
   }
-
-  // Apply global overflow fix and prevent layout shifts
-  useEffect(() => {
-    document.body.style.overflowX = 'hidden';
-    document.documentElement.style.overflowX = 'hidden';
-    document.body.style.maxWidth = '100vw';
-    document.documentElement.style.maxWidth = '100vw';
-    
-    // Prevent any horizontal scroll during animations
-    document.body.style.position = 'relative';
-    
-    // Mark page as loaded after a short delay to prevent animation layout shifts
-    const timer = setTimeout(() => {
-      setPageLoaded(true);
-    }, 100);
-    
-    return () => {
-      document.body.style.overflowX = '';
-      document.documentElement.style.overflowX = '';
-      document.body.style.maxWidth = '';
-      document.documentElement.style.maxWidth = '';
-      document.body.style.position = '';
-      clearTimeout(timer);
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative overflow-x-hidden w-full" style={{maxWidth: '100vw'}}>
