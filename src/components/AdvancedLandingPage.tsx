@@ -52,6 +52,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
 
   // CTA Button text - configurable variable
   const ctaButtonText = t('common.order_now'); // "Naruči odmah" - can be changed to other translations
@@ -60,9 +62,13 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const scrollToCheckout = () => {
     const deliverySection = document.getElementById('delivery-form');
     if (deliverySection) {
-      deliverySection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+      // Calculate offset to show the entire form (scroll a bit above)
+      const elementTop = deliverySection.getBoundingClientRect().top;
+      const offsetPosition = elementTop + window.pageYOffset - 80; // 80px offset for better visibility
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
       });
     }
   };
@@ -164,6 +170,30 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     return () => clearInterval(interval);
   }, []);
 
+  // Track delivery form visibility for hiding floating button
+  useEffect(() => {
+    const deliverySection = document.getElementById('delivery-form');
+    if (!deliverySection) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsDeliveryFormVisible(entry.isIntersecting);
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.3 // Form is considered visible when 30% is in view
+      }
+    );
+
+    observer.observe(deliverySection);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   if (orderSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
@@ -183,8 +213,33 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     );
   }
 
+  // Apply global overflow fix and prevent layout shifts
+  useEffect(() => {
+    document.body.style.overflowX = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
+    document.body.style.maxWidth = '100vw';
+    document.documentElement.style.maxWidth = '100vw';
+    
+    // Prevent any horizontal scroll during animations
+    document.body.style.position = 'relative';
+    
+    // Mark page as loaded after a short delay to prevent animation layout shifts
+    const timer = setTimeout(() => {
+      setPageLoaded(true);
+    }, 100);
+    
+    return () => {
+      document.body.style.overflowX = '';
+      document.documentElement.style.overflowX = '';
+      document.body.style.maxWidth = '';
+      document.documentElement.style.maxWidth = '';
+      document.body.style.position = '';
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative overflow-x-hidden w-full" style={{maxWidth: '100vw'}}>
       {/* Top Bar Marquee - HIDDEN */}
       {/* <div className="fixed top-0 left-0 right-0 z-50">
         <MarqueeText 
@@ -199,9 +254,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       
       {/* Decorative background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-brand-orange/3 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-brand-green/3 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 right-1/4 w-64 h-64 bg-brand-orange/2 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -right-20 w-80 h-80 bg-brand-orange/3 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 -left-20 w-96 h-96 bg-brand-green/3 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 right-10 w-64 h-64 bg-brand-orange/2 rounded-full blur-3xl"></div>
       </div>
       {/* Fixed Header */}
       <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-sm border-b z-40">
@@ -350,7 +405,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="pt-24 md:pt-24 pb-8 md:pb-12 relative overflow-hidden">
+      <section id="hero" className="pt-24 md:pt-24 pb-8 md:pb-12 relative overflow-hidden w-full">
         {/* Clean minimal background */}
         <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
         <div className="container mx-auto px-4 relative">
@@ -437,7 +492,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </section>
 
       {/* Smooth Gradient Divider */}
-      <div className="relative h-32 md:h-20">
+      <div className="relative h-32 md:h-20 w-full overflow-hidden">
         {/* Gradient fade overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50/30 to-white"></div>
         
@@ -486,9 +541,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </div>
 
       {/* Bundle Selection & Checkout */}
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-white w-full overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto w-full">
             <div id="order" className="grid lg:grid-cols-2 gap-8">
               {/* Bundle Selection */}
               <div className="lg:sticky lg:top-12 lg:self-start">
@@ -524,7 +579,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       <ComparisonTable countryConfig={countryConfig} />
 
       {/* CTA After Comparison */}
-      <section className="py-8 bg-gradient-to-r from-orange-50 to-orange-100">
+      <section className="py-8 bg-gradient-to-r from-orange-50 to-orange-100 w-full overflow-hidden">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold mb-4 text-gray-900">
             {t('cta.ready_to_order') || "Spremni za naručivanje?"}
@@ -542,7 +597,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </section>
 
       {/* CTA After Testimonials */}
-      <section className="py-10 bg-white border-t border-b border-gray-200">
+      <section className="py-10 bg-white border-t border-b border-gray-200 w-full overflow-hidden">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold mb-4 text-gray-900">
             {t('cta.after_testimonials') || "Pridružite se zadovoljnim kupcima!"}
@@ -555,9 +610,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </section>
 
       {/* Product Details */}
-      <section id="benefits" className="py-12">
+      <section id="benefits" className="py-12 w-full overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto w-full">
             <h2 className="text-3xl font-bold text-center mb-12">{t('sections.detailed_information')}</h2>
             
             {/* Enhanced Product Details Accordion */}
@@ -592,30 +647,30 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </section>
 
       {/* Divider Shape */}
-      <div className="relative">
+      <div className="relative w-full overflow-hidden">
         <svg className="w-full h-16 text-gray-50 rotate-180" viewBox="0 0 1200 120" preserveAspectRatio="none">
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="currentColor"></path>
         </svg>
       </div>
 
       {/* Final CTA Before Footer */}
-      <section className="relative py-16 bg-gradient-to-br from-gray-50 to-green-50 overflow-hidden">
+      <section className="relative py-16 bg-gradient-to-br from-gray-50 to-green-50 overflow-hidden w-full">
         {/* Floating liquid bubbles */}
-        <div className="absolute inset-0">
-          {/* Large slow bubbles */}
-          <div className="absolute top-20 left-1/4 w-32 h-32 bg-brand-green/20 rounded-full blur-xl animate-bounce" style={{animationDuration: '6s', animationDelay: '0s'}}></div>
-          <div className="absolute top-40 right-1/3 w-24 h-24 bg-brand-green/15 rounded-full blur-lg animate-bounce" style={{animationDuration: '8s', animationDelay: '2s'}}></div>
-          <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-brand-green/10 rounded-full blur-2xl animate-bounce" style={{animationDuration: '10s', animationDelay: '1s'}}></div>
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Large slow bubbles - positioned safely within viewport */}
+          <div className={`absolute top-20 left-16 w-32 h-32 bg-brand-green/20 rounded-full blur-xl transition-all duration-1000 ${pageLoaded ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '6s', animationDelay: '0s', maxWidth: 'calc(100vw - 200px)'}}></div>
+          <div className={`absolute top-40 right-16 w-24 h-24 bg-brand-green/15 rounded-full blur-lg transition-all duration-1000 ${pageLoaded ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '8s', animationDelay: '2s', maxWidth: 'calc(100vw - 150px)'}}></div>
+          <div className={`absolute bottom-32 left-20 w-40 h-40 bg-brand-green/10 rounded-full blur-2xl transition-all duration-1000 ${pageLoaded ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '10s', animationDelay: '1s', maxWidth: 'calc(100vw - 220px)'}}></div>
           
-          {/* Medium bubbles */}
-          <div className="absolute top-32 right-1/4 w-20 h-20 bg-brand-green/25 rounded-full blur-lg animate-pulse" style={{animationDuration: '4s', animationDelay: '0s'}}></div>
-          <div className="absolute bottom-40 right-1/5 w-16 h-16 bg-brand-green/20 rounded-full blur-md animate-pulse" style={{animationDuration: '5s', animationDelay: '3s'}}></div>
-          <div className="absolute top-1/2 left-1/5 w-28 h-28 bg-brand-green/15 rounded-full blur-xl animate-pulse" style={{animationDuration: '7s', animationDelay: '1.5s'}}></div>
+          {/* Medium bubbles - positioned safely within viewport */}
+          <div className={`absolute top-32 right-20 w-20 h-20 bg-brand-green/25 rounded-full blur-lg transition-all duration-1000 ${pageLoaded ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '4s', animationDelay: '0s', maxWidth: 'calc(100vw - 120px)'}}></div>
+          <div className={`absolute bottom-40 right-12 w-16 h-16 bg-brand-green/20 rounded-full blur-md transition-all duration-1000 ${pageLoaded ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '5s', animationDelay: '3s', maxWidth: 'calc(100vw - 80px)'}}></div>
+          <div className={`absolute top-1/2 left-12 w-28 h-28 bg-brand-green/15 rounded-full blur-xl transition-all duration-1000 ${pageLoaded ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '7s', animationDelay: '1.5s', maxWidth: 'calc(100vw - 140px)'}}></div>
           
-          {/* Small fast bubbles */}
-          <div className="absolute top-16 left-1/2 w-12 h-12 bg-brand-green/30 rounded-full blur-sm animate-ping" style={{animationDuration: '3s', animationDelay: '0s'}}></div>
-          <div className="absolute bottom-24 left-2/3 w-8 h-8 bg-brand-green/35 rounded-full blur-sm animate-ping" style={{animationDuration: '2s', animationDelay: '1s'}}></div>
-          <div className="absolute top-2/3 right-1/6 w-10 h-10 bg-brand-green/25 rounded-full blur-sm animate-ping" style={{animationDuration: '2.5s', animationDelay: '2s'}}></div>
+          {/* Small fast bubbles - positioned safely within viewport */}
+          <div className={`absolute top-16 left-1/2 w-12 h-12 bg-brand-green/30 rounded-full blur-sm transition-all duration-1000 ${pageLoaded ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '3s', animationDelay: '0s', transform: 'translateX(-50%)', maxWidth: '48px'}}></div>
+          <div className={`absolute bottom-24 right-24 w-8 h-8 bg-brand-green/35 rounded-full blur-sm transition-all duration-1000 ${pageLoaded ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2s', animationDelay: '1s', maxWidth: '32px'}}></div>
+          <div className={`absolute top-2/3 right-16 w-10 h-10 bg-brand-green/25 rounded-full blur-sm transition-all duration-1000 ${pageLoaded ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2.5s', animationDelay: '2s', maxWidth: '40px'}}></div>
         </div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -629,7 +684,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         </div>
 
         {/* Bottom wave shape */}
-        <div className="absolute bottom-0 left-0 w-full">
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden">
           <svg className="w-full h-20 text-green-50" viewBox="0 0 1200 120" preserveAspectRatio="none">
             <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" fill="currentColor"></path>
           </svg>
@@ -637,7 +692,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12">
+      <footer className="bg-gray-800 text-white py-12 w-full overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
@@ -717,22 +772,24 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />
 
-      {/* Floating Mobile CTA */}
-      <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
-        <div className="bg-white rounded-lg shadow-2xl border border-gray-200 p-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {product.name}
-              </p>
-              <p className="text-xs text-gray-500">
-                {t('cta.mobile_floating') || "Naručite sada!"}
-              </p>
+      {/* Floating Mobile CTA - Hidden when delivery form is visible */}
+      {!isDeliveryFormVisible && (
+        <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
+          <div className="bg-white rounded-lg shadow-2xl border border-gray-200 p-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {product.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {t('cta.mobile_floating') || "Naručite sada!"}
+                </p>
+              </div>
+              <CTAButton size="sm" className="py-2 px-4 text-sm flex-shrink-0" showPulse={true} />
             </div>
-            <CTAButton size="sm" className="py-2 px-4 text-sm flex-shrink-0" showPulse={true} />
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

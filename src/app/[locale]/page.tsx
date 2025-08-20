@@ -279,59 +279,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Before/After Section - Animated */}
-        <section className="py-20 bg-gradient-to-r from-brand-green/10 to-brand-orange/10">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 animate-on-scroll-left">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                  Pogledajte rezultate pre i posle
-                </h2>
-                <p className="text-lg text-gray-600 leading-relaxed">
-                  Naši klijenti dele svoje neverovatne transformacije nakon korišćenja DERMOTIN proizvoda. 
-                  Prirodni sastojci donose vidljive rezultate već posle nekoliko nedelja redovne upotrebe.
-                </p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.1s'}}>
-                    <CheckCircle className="h-5 w-5 text-brand-green" />
-                    <span className="text-gray-700">Vidljivi rezultati za 2-3 nedelje</span>
-                  </div>
-                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
-                    <CheckCircle className="h-5 w-5 text-brand-green" />
-                    <span className="text-gray-700">Sigurni za sve tipove kože</span>
-                  </div>
-                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
-                    <CheckCircle className="h-5 w-5 text-brand-green" />
-                    <span className="text-gray-700">Bez neželjenih efekata</span>
-                  </div>
-                </div>
-                
-                <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-3 rounded-lg hover:scale-105 transition-all duration-300 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
-                  SAZNAJTE VIŠE
-                </Button>
-              </div>
-              
-              <div className="relative animate-on-scroll-right">
-                <div className="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden group">
-                  <Image
-                    src="https://dermotin.shop/wp-content/uploads/2024/10/c2-vid-blg-2-opt.jpg"
-                    alt="Pre i posle rezultati"
-                    width={600}
-                    height={400}
-                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors duration-300">
-                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform duration-300 cursor-pointer">
-                      <Play className="w-8 h-8 text-white" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
         {/* Testimonials Section */}
         <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">

@@ -87,7 +87,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
               disabled={isTransitioning}
               className={cn(
                 "relative aspect-square overflow-hidden rounded-lg border-2 transition-all duration-300 hover:scale-105",
-                "bg-white shadow-sm hover:shadow-md animate-slide-in-left group/thumb",
+                "bg-white shadow-sm hover:shadow-md group/thumb",
                 "disabled:cursor-not-allowed disabled:opacity-50",
                 selectedImage === index
                   ? "border-brand-orange shadow-lg ring-2 ring-brand-orange/30 scale-105"
@@ -294,7 +294,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
         </div>
 
         {/* Thumbnails - Below main image on mobile */}
-        <div className="flex gap-2 overflow-x-auto pb-2 justify-center px-4 pt-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 justify-start px-4 pt-2" style={{maxWidth: '100vw'}}>
           {allImages.map((image, index) => (
             <button
               key={index}

@@ -61,7 +61,7 @@ export function ComparisonTable({ countryConfig, className }: ComparisonTablePro
           </div>
 
           <Card className="overflow-hidden shadow-lg py-0 gap-0">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" style={{maxWidth: '100%'}}>
               <table className="w-full">
                 {/* Header */}
                 <thead>
