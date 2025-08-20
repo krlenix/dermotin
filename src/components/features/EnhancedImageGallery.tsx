@@ -207,9 +207,9 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
       </div>
 
       {/* Mobile Layout: Thumbnails below main image */}
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-6">
         {/* Main Image Display - Mobile */}
-        <div className="relative">
+        <div className="relative mt-0">
           <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group">
             {/* Main Image with Enhanced Transitions */}
             <div className="relative w-full h-full">
@@ -294,7 +294,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
         </div>
 
         {/* Thumbnails - Below main image on mobile */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 justify-center px-4 pt-2">
           {allImages.map((image, index) => (
             <button
               key={index}

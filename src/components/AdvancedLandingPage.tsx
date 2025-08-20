@@ -81,6 +81,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const handleOrderSubmit = async (orderData: Record<string, unknown>) => {
     console.log('Order submitted:', orderData);
     console.log('Bundle items:', bundleItems);
+    setOrderSuccess(true);
     
     try {
       // Prepare order data for API
@@ -104,7 +105,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       };
 
       // Submit order via API
-      console.log('Submitting order to API:', apiOrderData);
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
@@ -112,9 +112,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         },
         body: JSON.stringify(apiOrderData),
       });
-      
-      console.log('API response status:', response.status);
-      console.log('API response headers:', response.headers);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -131,15 +128,19 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         
         sessionStorage.setItem('completedOrder', JSON.stringify(orderForThankYou));
         
-        // Redirect to thank you page immediately
-        window.location.href = `/rs/thank-you`;
+        // Redirect to thank you page
+        setTimeout(() => {
+          window.location.href = `/rs/thank-you`;
+        }, 2000);
       } else {
         console.error('Order submission failed:', result.error);
+        setOrderSuccess(false);
         alert('Došlo je do greške pri obradi porudžbine. Molimo pokušajte ponovo.');
       }
     } catch (error) {
       console.error('Order submission error:', error);
-      alert('Došlo je do greške pri slanju porudžbine. Molimo proverite internetsku vezu i pokušajte ponovo.');
+      setOrderSuccess(false);
+      // Show error message to user
     }
   };
 
@@ -349,7 +350,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="pt-32 md:pt-24 pb-8 md:pb-12 relative overflow-hidden">
+      <section id="hero" className="pt-24 md:pt-24 pb-8 md:pb-12 relative overflow-hidden">
         {/* Clean minimal background */}
         <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
         <div className="container mx-auto px-4 relative">
@@ -392,7 +393,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               {/* Key Benefits */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {product.benefits.slice(0, 4).map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2 p-3 bg-white/50 rounded-lg">
+                  <div key={index} className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                     <span className="text-sm font-medium">{benefit}</span>
                   </div>

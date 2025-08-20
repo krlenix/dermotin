@@ -92,7 +92,7 @@ export function ThankYouPage({ countryConfig }: ThankYouPageProps) {
       </header>
 
       {/* Hero Section - Similar to AdvancedLandingPage structure */}
-      <section className="pt-32 md:pt-24 pb-8 md:pb-12 relative overflow-hidden bg-gradient-to-br from-green-50 to-white">
+      <section className="pt-24 md:pt-24 pb-8 md:pb-12 relative overflow-hidden bg-gradient-to-br from-green-50 to-white">
         {/* Background decoration */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-1/4 w-32 h-32 bg-green-200/30 rounded-full blur-xl animate-pulse"></div>

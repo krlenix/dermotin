@@ -159,13 +159,13 @@ export function LandingPage({ product, countryConfig }: LandingPageProps) {
                 {t('common.add_to_cart')} - {formatPrice(totalPrice)}
               </Button>
               
-              <div className="flex items-center justify-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center justify-center gap-4 text-sm text-gray-600 bg-brand-green/10 rounded-lg py-3 px-4">
                 <div className="flex items-center gap-1">
-                  <Truck className="h-4 w-4" />
+                  <Truck className="h-4 w-4 text-brand-green" />
                   <span>{t('common.free_shipping')}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Shield className="h-4 w-4" />
+                  <Shield className="h-4 w-4 text-brand-green" />
                   <span>{t('social_proof.money_back_guarantee')}</span>
                 </div>
               </div>
@@ -184,12 +184,12 @@ export function LandingPage({ product, countryConfig }: LandingPageProps) {
           <h2 className="text-2xl font-bold text-center mb-8">{t('product.benefits')}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {product.benefits.map((benefit, index) => (
-              <Card key={index} className="text-center p-6">
+              <div key={index} className="text-center p-4 border rounded-lg bg-green-50 border-green-200">
                 <div className="w-12 h-12 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Star className="h-6 w-6 text-brand-orange" />
                 </div>
                 <p className="text-sm font-medium">{benefit}</p>
-              </Card>
+              </div>
             ))}
           </div>
         </div>
