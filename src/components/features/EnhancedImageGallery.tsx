@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
@@ -20,6 +20,12 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState<'left' | 'right' | 'fade'>('fade');
   const [imageKey, setImageKey] = useState(0); // Force re-render for transitions
+  
+  // Touch/swipe functionality refs and state
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+  const isDragging = useRef<boolean>(false);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
   
   // Combine main image with gallery for full collection
   const allImages = [images.main, ...images.gallery];
@@ -54,6 +60,40 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   
   const handleThumbnailClick = (index: number) => {
     changeImage(index, 'fade');
+  };
+
+  // Touch event handlers for swipe functionality
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    isDragging.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStartX.current) return;
+    touchEndX.current = e.touches[0].clientX;
+    isDragging.current = true;
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging.current) return;
+    
+    const diffX = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50; // Minimum distance for a swipe
+    
+    if (Math.abs(diffX) > minSwipeDistance) {
+      if (diffX > 0) {
+        // Swipe left - go to next image
+        handleNext();
+      } else {
+        // Swipe right - go to previous image
+        handlePrevious();
+      }
+    }
+    
+    // Reset touch values
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+    isDragging.current = false;
   };
 
   // Get animation classes based on transition state
@@ -122,7 +162,13 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
 
         {/* Main Image Display - Desktop */}
         <div className="flex-1 relative">
-          <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group">
+          <div 
+            ref={imageContainerRef}
+            className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Main Image with Enhanced Transitions */}
             <div className="relative w-full h-full">
               <div 
@@ -210,7 +256,12 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
       <div className="md:hidden space-y-6">
         {/* Main Image Display - Mobile */}
         <div className="relative mt-0">
-          <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group">
+          <div 
+            className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Main Image with Enhanced Transitions */}
             <div className="relative w-full h-full">
               <div 

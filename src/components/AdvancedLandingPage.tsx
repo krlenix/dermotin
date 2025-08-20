@@ -492,7 +492,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </section>
 
       {/* Smooth Gradient Divider */}
-      <div className="relative h-32 md:h-20 w-full overflow-hidden">
+      <div className="relative h-20 md:h-20 w-full overflow-hidden">
         {/* Gradient fade overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50/30 to-white"></div>
         
@@ -541,7 +541,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </div>
 
       {/* Bundle Selection & Checkout */}
-      <section className="py-12 bg-white w-full overflow-hidden">
+      <section className="py-6 md:py-12 bg-white w-full overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto w-full">
             <div id="order" className="grid lg:grid-cols-2 gap-8">
