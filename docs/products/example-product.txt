@@ -1,0 +1,51 @@
+Product Name: Example Product
+Category: Skincare
+Price: 2990 RSD
+Discount Price: 1990 RSD
+
+Short Description:
+Natural cream for healthy skin
+
+Full Description:
+This is an example product file. You can write product information in any format you like - I'll read it and understand what the product is about.
+
+Benefits:
+- Benefit 1
+- Benefit 2  
+- Benefit 3
+
+Ingredients:
+- Natural ingredient 1
+- Natural ingredient 2
+- Essential oils
+
+Usage:
+Apply to clean skin twice daily
+
+Warnings:
+For external use only
+Avoid contact with eyes
+
+Marketing Headlines:
+"Transform Your Skin Naturally"
+"The Natural Solution You've Been Looking For"
+
+Target Audience:
+People with skin concerns looking for natural solutions
+
+Problem it Solves:
+Helps with dry, irritated skin
+
+FAQ:
+Q: How long does it take to see results?
+A: Most people see improvement within 7-14 days
+
+Q: Is it safe for sensitive skin?
+A: Yes, our formula is gentle and natural
+
+Customer Reviews:
+"Amazing results!" - Marija from Belgrade
+"Finally found something that works" - Stefan from Novi Sad
+
+SEO Keywords:
+natural skincare, cream, Serbian cosmetics

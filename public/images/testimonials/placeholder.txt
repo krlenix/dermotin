@@ -1,0 +1,15 @@
+Placeholder for customer testimonial images.
+
+Expected images:
+- marija.jpg (Customer photo)
+- stefan.jpg (Customer photo)
+- petar.jpg (Customer photo)
+- milica-before.jpg (Before treatment)
+- milica-after.jpg (After treatment)
+- aleksandar.jpg (Customer photo)
+- emir.jpg (Customer photo)
+- jovana.jpg (Customer photo)
+- maria.jpg (Customer photo)
+
+These images will show real customer photos and before/after results.
+The component gracefully handles missing images with fallback avatars.

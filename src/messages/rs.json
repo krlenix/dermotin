@@ -1,0 +1,352 @@
+{
+  "_readme": "This is the Serbian (RS) translation file. When adding new languages, copy this structure and translate all values.",
+  "_structure": "All translation keys should remain the same across all language files - only translate the values",
+  "common": {
+    "add_to_cart": "Dodaj u korpu",
+    "buy_now": "Kupi odmah",
+    "price": "Cena",
+    "currency": "din",
+    "free_shipping": "Besplatna dostava",
+    "limited_offer": "Ograničena ponuda",
+    "order_now": "Naruči odmah po akcijskoj ceni",
+    "loading": "Učitavanje...",
+    "error": "Greška",
+    "success": "Uspešno",
+    "contact": "Kontakt",
+    "about": "O nama",
+    "terms": "Uslovi korišćenja",
+    "privacy": "Privatnost",
+    "shipping": "Dostava",
+    "returns": "Povraćaj"
+  },
+  "homepage": {
+    "title": "DERMOTIN - Prirodni proizvodi za zdravu kožu",
+    "subtitle": "Otkrijte našu ekskluzivnu kolekciju dermatoloških proizvoda",
+    "featured_products": "Izdvojeni proizvodi",
+    "view_product": "Pogledaj proizvod"
+  },
+  "product": {
+    "benefits": "Prednosti",
+    "ingredients": "Sastojci",
+    "usage": "Način korišćenja",
+    "warnings": "Upozorenja",
+    "variants": "Varijante",
+    "description": "Opis",
+    "reviews": "Recenzije",
+    "shipping_info": "Informacije o dostavi",
+    "delivery_info": "Informacije o dostavi",
+    "guarantee": "Garancija",
+    "in_stock": "Na stanju",
+    "limited_stock": "Ograničeno na stanju: {count} komada",
+    "hurry_up": "Požurite! Ponuda važi još {time}",
+    "recent_purchases": "{count} ljudi je kupilo ovaj proizvod u {timeframe}",
+    "add_to_cart_success": "Proizvod je dodat u korpu",
+    "natural_formula": "100% Prirodna formula",
+    "natural_description": "Svi sastojci su prirodnog porekla i pažljivo odabrani za maksimalnu efikasnost i bezbednost.",
+    "usage_step_1": "Očistite i osušite kožu pre nanošenja",
+    "usage_step_2": "Nanesite tanak sloj proizvoda na pogođeno mesto",
+    "usage_step_3": "Koristite 2-3 puta dnevno ili prema potrebi",
+    "consult_doctor": "Pre upotrebe se posavetujte sa lekarom ako imate ozbiljne zdravstvene probleme.",
+    "important_warnings": "VAŽNA UPOZORENJA",
+    "read_carefully": "Molimo vas da pažljivo pročitate sledeća upozorenja pre upotrebe proizvoda.",
+    "medical_advice": "Medicinski savet"
+  },
+  "urgency": {
+    "limited_time": "Ograničeno vreme",
+    "limited_stock": "Ograničeno na stanju",
+    "hurry": "Požurite!",
+    "last_items": "Poslednji komadi",
+    "expires_in": "Ističe za",
+    "people_watching": "{count} ljudi trenutno gleda ovaj proizvod",
+    "recent_sale": "Upravo prodato u {city}",
+    "discount_ends": "Popust se završava za",
+    "action_expires": "AKCIJA TRAJE JOŠ",
+    "hours": "SATI",
+    "minutes": "MIN",
+    "seconds": "SEK",
+    "dont_miss": "⚡ Ne propustite - vreme je ograničeno!"
+  },
+  "social_proof": {
+    "verified_reviews": "Verifikovane recenzije",
+    "happy_customers": "Zadovoljni kupci",
+    "money_back_guarantee": "Garancija povraćaja novca",
+    "trusted_by": "Povereno od strane",
+    "customer_rating": "Ocena kupaca",
+    "based_on_reviews": "Na osnovu {count} recenzija",
+    "recent_purchases": "{count} ljudi je kupilo ovaj proizvod u {timeframe}"
+  },
+  "forms": {
+    "name": "Ime",
+    "surname": "Prezime",
+    "email": "Email",
+    "phone": "Telefon",
+    "address": "Adresa",
+    "city": "Mesto",
+    "postal_code": "Poštanski broj",
+    "country": "Zemlja",
+    "required_field": "Obavezno polje",
+    "invalid_email": "Neispravna email adresa",
+    "invalid_phone": "Neispravan broj telefona"
+  },
+  "checkout": {
+    "title": "Završi kupovinu",
+    "billing_info": "Podaci za naplatu",
+    "shipping_info": "Podaci za dostavu",
+    "payment_method": "Način plaćanja",
+    "order_summary": "Pregled porudžbine",
+    "total": "Ukupno",
+    "place_order": "Završi porudžbinu",
+    "processing": "Obrađuje se...",
+    "cod": "Plaćanje pouzećem",
+    "card": "Kreditna kartica",
+    "bank_transfer": "Bankovni prevod"
+  },
+  "delivery": {
+    "courier_title": "Dostava putem",
+    "delivery_by": "Dostavljaće",
+    "delivery_time": "Vreme dostave",
+    "reliable_delivery": "Brza i pouzdana dostava direktno na vašu adresu"
+  },
+  "navigation": {
+    "home": "Početna",
+    "product": "Proizvod", 
+    "benefits": "Prednosti",
+    "testimonials": "Recenzije",
+    "faq": "Pitanja",
+    "order": "Poruči"
+  },
+  "sections": {
+    "based_on_reviews": "Na osnovu 234 recenzija",
+    "detailed_information": "Detaljne informacije",
+    "natural_badge": "100% Prirodno",
+    "customer_testimonials": "Šta kažu naši korisnici",
+    "guarantee_satisfaction": "Garancija: 100% zadovoljstvo"
+  },
+  "testimonials_section": {
+    "section_title": "Šta kažu naši korisnici",
+    "satisfied_customers": "Više od 20.000 zadovoljnih kupaca",
+    "showing_few": "Prikazujemo vam samo neke od njih:",
+    "one_of_many": "(samo neki od mnogih)"
+  },
+  "testimonials": {
+    "section_title": "Šta kažu naši kupci",
+    "social_media_subtitle": "Pročitajte iskustva naših zadovoljnih kupaca koji dele svoja mišljenja o našim proizvodima"
+  },
+  "footer": {
+    "brand_description": "U Dermotinu verujemo da je priroda najbolji saveznik vaše kože. Naši proizvodi su pažljivo formulisani koristeći isključivo najkvalitetnije prirodne sastojke kako bi vaša koža bila zdrava, blistava i negovana na prirodan način.",
+    "company_info": "Informacije o kompaniji",
+    "customer_service": "Korisnička podrška",
+    "follow_us": "Pratite nas",
+    "newsletter": "Newsletter",
+    "newsletter_description": "Prijavite se za naše obaveštenja i ekskluzivne ponude",
+    "subscribe": "Prijavite se",
+    "all_rights_reserved": "Sva prava zadržana"
+  },
+  "gdpr": {
+    "cookie_notice": "Ova stranica koristi kolačiće da bi poboljšala vaše iskustvo.",
+    "accept_all": "Prihvati sve",
+    "accept_necessary": "Samo neophodni",
+    "cookie_settings": "Podešavanja kolačića",
+    "privacy_policy": "Politika privatnosti"
+  },
+  "success": {
+    "order_placed": "Uspešno naručeno!",
+    "order_confirmation": "Vaša porudžbina je uspešno poslata. Kontaktiraćemo Vas u najkraćem roku.",
+    "delivery_time": "Očekivano vreme dostave: 1-3 radna dana"
+  },
+  "bundles": {
+    "choose_option": "Izaberite opciju:",
+    "save_amount": "UŠTEDI -{amount}rsd",
+    "biggest_savings": "NAJVEĆA UŠTEDA",
+    "best_offer": "LJUDI NAJČEŠĆE KUPUJU",
+    "free_shipping": "✓ Besplatna dostava",
+    "shipping_cost": "+ dostava 280rsd",
+    "per_item": "/ kom",
+    "selected": "Izabrano"
+  },
+
+  "comparison": {
+    "why_dermotin": "Zašto baš DERMOTIN?",
+    "compare_competition": "Uporedite nas sa konkurencijom i vidite razliku",
+    "features": "Karakteristike",
+    "others": "Ostali",
+    "clear_choice": "Jasno je zašto je DERMOTIN pravi izbor!",
+    "natural_reliable": "Prirodan, efikasan i pouzdan proizvod napravljen u Srbiji",
+    "no_corticosteroids": "Bez Kortikosteroida",
+    "natural": "100% prirodno",
+    "made_in_serbia": "Napravljeno u Srbiji",
+    "money_back": "Mogućnost povraćaja",
+    "dermatologically_tested": "Dermatološki ispitano",
+    "highly_rated": "Odlično ocenjeno"
+  },
+  "order_summary": {
+    "title": "Pregled porudžbine",
+    "product": "Proizvod:",
+    "additional_product": "+ Dodatni proizvod:",
+    "delivery": "Dostava:",
+    "free": "BESPLATNO",
+    "total": "Ukupno:",
+    "secure_purchase": "Sigurna kupovina",
+    "fast_delivery": "Brza dostava",
+    "quality_guarantee": "Garancija kvaliteta",
+    "delivery_info": "Podaci za dostavu",
+    "place_order": "Naruči za {amount}",
+    "processing_order": "Obrađujem narudžbu...",
+    "secure_purchase_guarantee": "Sigurna kupovina sa garancijom povraćaja novca."
+  },
+  "testimonials_ui": {
+    "verified": "Verifikovano",
+    "used_product": "Koristio:",
+    "before": "PRE",
+    "after": "POSLE",
+    "result_image": "Slika rezultata",
+    "verified_reviews": "Verifikovane recenzije",
+    "satisfied_customers": "zadovoljnih kupaca",
+    "average_rating": "Prosečna ocena",
+    "recommends_friends": "Preporučuje prijateljima",
+    "today": "danas",
+    "yesterday": "juče",
+    "days_ago": "dana ranije",
+    "weeks_ago": "nedelja ranije",
+    "months_ago": "meseci ranije"
+  },
+
+  "upsell": {
+    "special_offer": "SPECIJALNA PONUDA",
+    "add_save_more": "Dodajte i uštedite još više!",
+    "combine_products": "Kombinujte proizvode za najbolje rezultate",
+    "added": "Dodato",
+    "add": "Dodaj",
+    "perfect_combination": "Savršena kombinacija!",
+    "most_popular_set": "Najpopularniji set",
+    "customers_choose": "95% kupaca bira ovaj set za najbolje rezultate"
+  },
+  "faq_ui": {
+    "title": "Često postavljana pitanja",
+    "subtitle": "Sve što trebate da znate o našem proizvodu i usluzi",
+    "delivery": "Dostava",
+    "product": "Proizvod",
+    "payment": "Plaćanje",
+    "returns": "Povraćaj",
+    "general": "Ostalo",
+    "no_answer": "Nemate odgovor na vaše pitanje?",
+    "support_team": "Naš tim za podršku je tu da vam pomogne",
+    "call_us": "Pozovite nas",
+    "working_hours": "Radnim danima 8-17h",
+    "send_email": "Pošaljite email",
+    "response_time": "Odgovor u 24h"
+  },
+  "ingredients": {
+    "title": "Moćni aktivni sastojci"
+  },
+  "usage": {
+    "title": "Način korišćenja",
+    "notes": "Napomene:"
+  },
+  "details": {
+    "show_hide": "Prikaži detaljne informacije",
+    "hide": "Sakrij"
+  },
+  "offers": {
+    "limited_offer": "🔥 OGRANIČENA PONUDA"
+  },
+  "guarantee": {
+    "title": "Garantujemo Rezultate ili Vraćamo Novac",
+    "description": "Da, dobro ste čuli! Ukoliko nakon potrošene kutije nema poboljšanja, kontaktirajte nas i vratit ćemo Vam novac. Na taj način obezbijedili smo Vam kupovinu bez ikakvog rizika."
+  },
+  "delivery_schedule": {
+    "delivery_1_3_days": "Dostava: 1-3 radna dana",
+    "returns_30_days": "Povraćaj: 30 dana",
+    "support_24_7": "Podrška: 24/7"
+  },
+  "shipping": {
+    "free_delivery": "Besplatna dostava na teritoriji Srbije",
+    "fast_delivery": "Brza dostava u roku od 1-3 radna dana",
+    "secure_packaging": "Sigurno pakovanje sa zaštitom",
+    "cod_title": "Plaćanje pouzećem",
+    "cod_description": "Platite kada stigne paket - sigurno i pouzdano. Bez skrivenih troškova."
+  },
+  "payment_cod": {
+    "description": "Platite kada stigne paket - sigurno i pouzdano",
+    "selected": "✓ Odabrano"
+  },
+  "placeholders": {
+    "phone": "+381 60 123 4567",
+    "email": "primer@email.com",
+    "address": "Ulica i broj"
+  },
+  "cta": {
+    "ready_to_order": "Spremni za naručivanje?",
+    "comparison_subtitle": "Videli ste prednosti - vreme je da napravite korak ka zdravijoj koži!",
+    "after_testimonials": "Pridružite se zadovoljnim kupcima!",
+    "testimonials_subtitle": "Hiljade zadovoljnih kupaca već je iskusilo prednosti naših proizvoda. Budite sledeći!",
+    "final_call": "Ne čekajte - Iskoristite akciju sada!",
+    "final_subtitle": "Sve što trebate da znate ste već videli. Kliknite dugme ispod i napravite korak ka zdravijoj, lepšoj koži već danas!",
+    "mobile_floating": "Naručite sada!"
+  },
+  "currencies": {
+    "rsd": "RSD",
+    "bam": "BAM", 
+    "eur": "EUR"
+  },
+  "locations": {
+    "belgrade": "Beograd",
+    "novi_sad": "Novi Sad",
+    "nis": "Niš",
+    "kragujevac": "Kragujevac",
+    "subotica": "Subotica",
+    "pancevo": "Pančevo"
+  },
+  "ui": {
+    "toggle_menu": "Preklapanje menija",
+    "call_us": "Pozovite nas",
+    "cookie_preferences": "Podešavanja kolačića",
+    "gdpr_required": "GDPR obavezno",
+    "added": "Dodato",
+    "quantity": "Količina",
+    "save_money": "Štedite",
+    "alt_logo": "DERMOTIN",
+    "alt_package": "FUNGEL Pakovanje"
+  },
+  "purchase_notifications": {
+    "just_bought": "Upravo je kupio",
+    "time_ago_2_min": "pre 2 minuta",
+    "time_ago_8_min": "pre 8 minuta",
+    "time_ago_12_min": "pre 12 minuta",
+    "time_ago_18_min": "pre 18 minuta",
+    "time_ago_25_min": "pre 25 minuta",
+    "time_ago_31_min": "pre 31 minut",
+    "in_stock": "Na stanju",
+    "pieces": "komada",
+    "packages_1": "1 pakovanje",
+    "packages_2": "2 pakovanja",
+    "packages_3": "3 pakovanja"
+  },
+  "thank_you": {
+    "success_title": "Hvala vam na porudžbini!",
+    "order_confirmation": "Vaša porudžbina je uspešno primljena",
+    "contact_soon": "Kontaktiraćemo vas u najkraćem roku za potvrdu",
+    "order_details": "Detalji porudžbine",
+    "order_number": "Broj porudžbine",
+    "product_info": "Informacije o proizvodu",
+    "product": "Proizvod",
+    "variant": "Varijanta",
+    "quantity": "Količina",
+    "pieces": "kom",
+    "total_paid": "Ukupno plaćeno",
+    "customer_info": "Podaci kupca",
+    "payment_method": "Način plaćanja",
+    "cod": "Plaćanje pouzećem",
+    "delivery_info": "Informacije o dostavi",
+    "courier_delivery": "će dostaviti vašu porudžbinu",
+    "expected_delivery": "Očekivano vreme dostave",
+    "what_happens_next": "Šta se dešava dalje?",
+    "step_1": "Primiće poziv u roku od 24h za potvrdu",
+    "step_2": "Pakovanje se priprema za slanje",
+    "step_3": "Proizvod se predaje kuriru",
+    "step_4": "Dostava na vašu adresu",
+    "need_help": "Potrebna vam je pomoć?",
+    "contact_support": "Naš tim za podršku je dostupan 24/7 za sve vaše potrebe",
+    "order_completed": "Porudžbina završena"
+  }
+}

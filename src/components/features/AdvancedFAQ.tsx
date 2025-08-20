@@ -1,0 +1,158 @@
+'use client';
+
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { getFAQForCountry, FAQItem } from '@/config/faq';
+import { useTranslations } from 'next-intl';
+import { 
+  ChevronDown, 
+  Truck, 
+  CreditCard, 
+  Shield, 
+  Package, 
+  HelpCircle,
+  Phone,
+  Mail
+} from 'lucide-react';
+
+interface AdvancedFAQProps {
+  countryCode: string;
+  className?: string;
+}
+
+export function AdvancedFAQ({ countryCode, className }: AdvancedFAQProps) {
+  const t = useTranslations();
+  const [openItems, setOpenItems] = useState<string[]>(['0']); // First item open by default
+  const faqItems = getFAQForCountry(countryCode);
+
+  const toggleItem = (index: string) => {
+    setOpenItems(prev => 
+      prev.includes(index) 
+        ? prev.filter(item => item !== index)
+        : [...prev, index]
+    );
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'delivery': return <Truck className="h-5 w-5 text-blue-600" />;
+      case 'payment': return <CreditCard className="h-5 w-5 text-green-600" />;
+      case 'returns': return <Shield className="h-5 w-5 text-blue-600" />;
+      case 'product': return <Package className="h-5 w-5 text-orange-600" />;
+      default: return <HelpCircle className="h-5 w-5 text-gray-600" />;
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'delivery': return 'bg-blue-100 text-blue-800';
+      case 'payment': return 'bg-green-100 text-green-800';
+      case 'returns': return 'bg-blue-100 text-blue-800';
+      case 'product': return 'bg-orange-100 text-orange-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      <div className="text-center mb-6">
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+          {t('faq_ui.title')}
+        </h2>
+        <p className="text-gray-600">
+          {t('faq_ui.subtitle')}
+        </p>
+      </div>
+
+      {/* Category filters */}
+      <div className="flex flex-wrap gap-2 justify-center mb-6">
+        {['delivery', 'product', 'payment', 'returns', 'general'].map((category) => {
+          const count = faqItems.filter(item => item.category === category).length;
+          if (count === 0) return null;
+          
+          return (
+            <Badge key={category} variant="secondary" className={`${getCategoryColor(category)} px-3 py-1`}>
+              {getCategoryIcon(category)}
+              <span className="ml-1 capitalize">
+                {category === 'delivery' ? t('faq_ui.delivery') :
+                 category === 'product' ? t('faq_ui.product') :
+                 category === 'payment' ? t('faq_ui.payment') :
+                 category === 'returns' ? t('faq_ui.returns') : t('faq_ui.general')}
+              </span>
+              <span className="ml-1">({count})</span>
+            </Badge>
+          );
+        })}
+      </div>
+
+      {/* FAQ Items */}
+      <div className="space-y-3">
+        {faqItems.map((item: FAQItem, index: number) => {
+          const isOpen = openItems.includes(index.toString());
+          
+          return (
+            <Card 
+              key={index} 
+              className="border border-gray-200 hover:border-brand-orange/50 transition-colors cursor-pointer py-0"
+              onClick={() => toggleItem(index.toString())}
+            >
+              <CardContent className="p-0">
+                <div className="w-full px-4 py-3 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    {getCategoryIcon(item.category)}
+                    <span className="font-semibold text-gray-900">{item.question}</span>
+                  </div>
+                  <ChevronDown 
+                    className={`h-5 w-5 text-gray-500 transition-transform ${
+                      isOpen ? 'rotate-180' : ''
+                    }`} 
+                  />
+                </div>
+                
+                {isOpen && (
+                  <div className="px-4 pb-4">
+                    <div className="border-t border-gray-100 pt-3">
+                      <p className="text-gray-700 leading-relaxed">{item.answer}</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Contact Section */}
+      <Card className="bg-gradient-to-r from-brand-green/10 to-brand-orange/10 border-brand-orange/20">
+        <CardContent className="p-4 text-center">
+          <h3 className="text-xl font-bold text-gray-900 mb-3">
+            {t('faq_ui.no_answer')}
+          </h3>
+          <p className="text-gray-600 mb-4">
+            {t('faq_ui.support_team')}
+          </p>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="flex items-center justify-center gap-2 p-3 bg-white rounded-lg">
+              <Phone className="h-5 w-5 text-brand-orange" />
+              <div className="text-left">
+                <p className="font-semibold text-sm">{t('faq_ui.call_us')}</p>
+                <p className="text-sm text-gray-600">{t('faq_ui.working_hours')}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-center gap-2 p-3 bg-white rounded-lg">
+              <Mail className="h-5 w-5 text-brand-orange" />
+              <div className="text-left">
+                <p className="font-semibold text-sm">{t('faq_ui.send_email')}</p>
+                <p className="text-sm text-gray-600">{t('faq_ui.response_time')}</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
