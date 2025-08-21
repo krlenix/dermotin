@@ -163,8 +163,8 @@ export const useWheelSpin = (config: WheelConfig) => {
           isSpinning: false,
           currentAngle: targetAngle,
           result,
-          showConfetti: targetPrize.isWinning,
-          showCongratulations: targetPrize.isWinning,
+          showConfetti: Boolean(targetPrize.isWinning),
+          showCongratulations: Boolean(targetPrize.isWinning),
         }));
 
         resolve(result);
