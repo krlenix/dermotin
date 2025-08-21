@@ -4,9 +4,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { getTestimonialsForCountry, Testimonial } from '@/config/testimonials';
-import { Star, Package, ChevronLeft, ChevronRight, Heart, Share } from 'lucide-react';
+import { Star, Package, Heart, Share } from 'lucide-react';
 
 interface AdvancedTestimonialsProps {
   countryCode: string;
@@ -28,6 +27,8 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
   // Create infinite loop by duplicating testimonials
   const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showSwipeIndicator, setShowSwipeIndicator] = useState(true);
   const [likedTestimonials, setLikedTestimonials] = useState<Set<string>>(new Set());
   const [cardScales, setCardScales] = useState<Record<string, number>>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -46,31 +47,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     return initialCounts;
   });
 
-  const scrollRight = useCallback(() => {
-    if (scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const scrollAmount = 400;
-      
-      // Always scroll right - infinite loop will handle the transition
-      container.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  }, []);
 
-  const scrollLeft = useCallback(() => {
-    if (scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const scrollAmount = 400;
-      
-      // Always scroll left - infinite loop will handle the transition
-      container.scrollBy({
-        left: -scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  }, []);
 
   const getTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
@@ -84,7 +61,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     return `${Math.floor(diffInDays / 30)} ${t('testimonials_ui.months_ago')}`;
   };
 
-  // Calculate 3D scale effect based on scroll position
+  // Calculate responsive scale effect based on scroll position
   const updateCardScales = useCallback(() => {
     if (!scrollContainerRef.current) return;
 
@@ -121,18 +98,24 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       if (!testimonialId) return;
       
       const distanceFromCenter = Math.abs(center - containerCenter);
-      const maxDistance = containerRect.width / 2 + 160; // Half card width
       
-      // Calculate scale based on distance from center (1.0 at center, 0.7 at edges)
-      const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
-      const scale = 1.0 - (normalizedDistance * 0.3);
-      const clampedScale = Math.max(0.7, Math.min(1.0, scale));
-      
-      newScales[testimonialId] = clampedScale;
+      if (isMobile) {
+        // Mobile: Gentler centering to prevent content cutoff
+        const threshold = 80; // More lenient threshold for mobile
+        const scale = distanceFromCenter <= threshold ? 1.0 : 0.95;
+        newScales[testimonialId] = scale;
+      } else {
+        // Desktop: Original 3D effect
+        const maxDistance = containerRect.width / 2 + 160;
+        const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
+        const scale = 1.0 - (normalizedDistance * 0.3);
+        const clampedScale = Math.max(0.7, Math.min(1.0, scale));
+        newScales[testimonialId] = clampedScale;
+      }
     });
     
     setCardScales(newScales);
-  }, []);
+  }, [isMobile]);
 
   const toggleLike = (testimonialId: string) => {
     const isCurrentlyLiked = likedTestimonials.has(testimonialId);
@@ -155,14 +138,33 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     }));
   };
 
-  // Prevent layout shifts by ensuring container loads properly
+  // Handle responsive design and prevent layout shifts
   useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      
+      // Auto-hide swipe indicator after 5 seconds only on mobile
+      if (mobile && showSwipeIndicator) {
+        setTimeout(() => {
+          setShowSwipeIndicator(false);
+        }, 5000);
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
     const timer = setTimeout(() => {
       setIsLoaded(true);
       updateCardScales();
     }, 50);
-    return () => clearTimeout(timer);
-  }, [updateCardScales]);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, [updateCardScales, showSwipeIndicator]);
 
   // Add scroll and resize listeners for 3D effect and infinite scroll
   useEffect(() => {
@@ -171,6 +173,11 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
 
     const handleScroll = () => {
       if (isTransitioning) return;
+      
+      // Hide swipe indicator on any scroll interaction
+      if (isMobile && showSwipeIndicator) {
+        setShowSwipeIndicator(false);
+      }
       
       requestAnimationFrame(() => {
         updateCardScales();
@@ -209,6 +216,11 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       isScrolling = false;
+      
+      // Hide swipe indicator on touch
+      if (isMobile && showSwipeIndicator) {
+        setShowSwipeIndicator(false);
+      }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -222,20 +234,19 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       }
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (isScrolling) {
-        const deltaX = e.changedTouches[0].clientX - startX;
-        const threshold = 50;
-        
-        if (Math.abs(deltaX) > threshold) {
-          if (deltaX > 0) {
-            scrollLeft();
-          } else {
-            scrollRight();
-          }
-        }
-      }
-    };
+         const handleTouchEnd = (e: TouchEvent) => {
+       if (isScrolling) {
+         const deltaX = e.changedTouches[0].clientX - startX;
+         const threshold = 50;
+         
+         if (Math.abs(deltaX) > threshold) {
+           // Hide swipe indicator on touch interaction
+           if (isMobile && showSwipeIndicator) {
+             setShowSwipeIndicator(false);
+           }
+         }
+       }
+     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     container.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -254,14 +265,14 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       }
     }, 100);
 
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [updateCardScales, scrollLeft, scrollRight]);
+         return () => {
+       container.removeEventListener('scroll', handleScroll);
+       container.removeEventListener('touchstart', handleTouchStart);
+       container.removeEventListener('touchmove', handleTouchMove);
+       container.removeEventListener('touchend', handleTouchEnd);
+       window.removeEventListener('resize', handleResize);
+     };
+   }, [updateCardScales, isTransitioning, isMobile, showSwipeIndicator]);
 
   return (
     <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
@@ -284,118 +295,176 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
           </p>
         </div>
         {/* 3D Testimonials Container */}
-        <div className="relative w-full testimonials-3d-container">
+        <div className="relative w-full testimonials-3d-container overflow-visible">
           
-                     {/* Navigation Buttons */}
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={scrollLeft}
-             className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white shadow-lg rounded-full w-10 h-10 p-0 border-2 flex items-center justify-center transition-all duration-200"
-           >
-             <ChevronLeft className="h-4 w-4" />
-           </Button>
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={scrollRight}
-             className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white shadow-lg rounded-full w-10 h-10 p-0 border-2 flex items-center justify-center transition-all duration-200"
-           >
-             <ChevronRight className="h-4 w-4" />
-           </Button>
+          {/* Mobile Swipe Indicator */}
+          {isMobile && showSwipeIndicator && (
+            <div className="absolute inset-0 z-30 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-brand-orange/90 to-brand-green/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl text-sm font-medium shadow-2xl border border-white/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                  <span className="font-semibold">Swipe to browse testimonials</span>
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           
-          {/* 3D Horizontal Scrolling Container */}
+          {/* Mobile-First Responsive Scrolling Container */}
           <div 
             ref={scrollContainerRef}
-            className={`flex gap-6 md:gap-8 pb-8 px-16 md:px-28 scrollbar-hide testimonials-scroll-container transition-all duration-300 ${isLoaded ? 'overflow-x-auto' : 'overflow-hidden'}`}
+            className={`flex scrollbar-hide testimonials-scroll-container transition-all duration-300 ${isLoaded ? 'overflow-x-auto' : 'overflow-hidden'} 
+              /* Mobile: Center one card with partial adjacent cards visible */
+              ${isMobile 
+                ? 'gap-4 px-[calc(50vw-140px)] scroll-smooth snap-x snap-mandatory py-4' 
+                : 'gap-8 px-28 py-8'
+              }
+            `}
           >
-                         {infiniteTestimonials.map((testimonial: Testimonial, index: number) => {
-               const scale = cardScales[testimonial.id] || 0.8;
-               const zIndex = Math.round(scale * 10);
+            {infiniteTestimonials.map((testimonial: Testimonial, index: number) => {
+              const scale = cardScales[testimonial.id] || 0.8;
+              const zIndex = Math.round(scale * 10);
               
               return (
-                                 <Card 
-                   key={`${testimonial.id}-${index}`}
-                   data-testimonial-id={testimonial.id}
-                  className="flex-shrink-0 w-80 bg-white shadow-lg hover:shadow-2xl testimonial-card-3d border-0 rounded-xl overflow-hidden" 
+                <Card 
+                  key={`${testimonial.id}-${index}`}
+                  data-testimonial-id={testimonial.id}
+                  className={`flex-shrink-0 bg-white testimonial-card-3d border-0 rounded-xl overflow-hidden transition-all duration-300
+                    ${isMobile 
+                      ? `w-[280px] snap-center ${scale > 0.98 ? 'shadow-2xl ring-2 ring-brand-orange/20' : 'shadow-md'}` 
+                      : 'w-80 shadow-lg hover:shadow-2xl'
+                    }
+                  `}
                   style={{
-                    transform: `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)`,
-                    zIndex: zIndex,
-                    minWidth: '320px',
-                    maxWidth: '320px',
-                    opacity: 0.4 + (scale * 0.6)
+                    // Responsive scaling and effects - prevent content cutoff
+                    transform: !isMobile 
+                      ? `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)` 
+                      : `scale(${scale === 1.0 ? 1.02 : 0.95})`,
+                    zIndex: scale > 0.9 ? 10 : (isMobile ? 1 : zIndex),
+                    minWidth: isMobile ? '280px' : '320px',
+                    maxWidth: isMobile ? '280px' : '320px',
+                    opacity: isMobile 
+                      ? (scale > 0.98 ? 1 : 0.8) 
+                      : (0.4 + (scale * 0.6)),
+                    transformOrigin: 'center center'
                   }}
                 >
-                <CardContent className="p-0 w-full overflow-hidden">
-                  {/* Post Header */}
-                  <div className="p-4 border-b border-gray-100 w-full">
-                    <div className="flex items-center gap-3 w-full">
-                      {/* Avatar */}
-                      <div className="w-12 h-12 bg-gradient-to-br from-brand-green to-brand-orange rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                        {testimonial.name[0]}
-                      </div>
-                      <div className="flex-1 min-w-0 overflow-hidden">
-                        <div className="flex items-center gap-2 w-full">
-                          <h3 className="font-semibold text-gray-900 truncate">{testimonial.name}</h3>
-                          {testimonial.verified && (
-                            <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200 flex-shrink-0">
-                              ✓ {t('testimonials_ui.verified')}
-                            </Badge>
-                          )}
+                  <CardContent className="p-0 w-full overflow-hidden">
+                    {/* Post Header */}
+                    <div className="p-4 border-b border-gray-100 w-full">
+                      <div className="flex items-center gap-3 w-full">
+                        {/* Avatar */}
+                        <div className="w-12 h-12 bg-gradient-to-br from-brand-green to-brand-orange rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                          {testimonial.name[0]}
                         </div>
-                        <p className="text-sm text-gray-500 truncate">{testimonial.city} • {getTimeAgo(testimonial.dateAdded)}</p>
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <div className="flex items-center gap-2 w-full">
+                            <h3 className="font-semibold text-gray-900 truncate">{testimonial.name}</h3>
+                            {testimonial.verified && (
+                              <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200 flex-shrink-0">
+                                ✓ {t('testimonials_ui.verified')}
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-500 truncate">{testimonial.city} • {getTimeAgo(testimonial.dateAdded)}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {/* Post Content */}
-                  <div className="p-4 w-full overflow-hidden">
-                    {/* Rating */}
-                    <div className="flex items-center gap-2 mb-3 w-full">
-                      <div className="flex text-yellow-400 flex-shrink-0">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} className={`h-4 w-4 ${star <= testimonial.rating ? 'fill-current' : ''}`} />
-                        ))}
+                    {/* Post Content */}
+                    <div className="p-4 w-full overflow-hidden">
+                      {/* Rating */}
+                      <div className="flex items-center gap-2 mb-3 w-full">
+                        <div className="flex text-yellow-400 flex-shrink-0">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className={`h-4 w-4 ${star <= testimonial.rating ? 'fill-current' : ''}`} />
+                          ))}
+                        </div>
+                        <span className="text-sm font-medium text-gray-600 flex-shrink-0">{testimonial.rating}/5</span>
                       </div>
-                      <span className="text-sm font-medium text-gray-600 flex-shrink-0">{testimonial.rating}/5</span>
-                    </div>
-                    {/* Review Text */}
-                    <p className="text-gray-800 leading-relaxed mb-4 text-sm w-full overflow-hidden">
-                      {testimonial.text}
-                    </p>
-                    {/* Product Tag */}
-                    <div className="flex items-center gap-2 mb-4 w-full overflow-hidden">
-                      <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 flex-shrink-0">
-                        <Package className="h-3 w-3 mr-1" />
-                        <span className="truncate">{testimonial.productUsed}</span>
-                      </Badge>
-                    </div>
-                    {/* Social Actions */}
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-100 w-full">
-                      <div className="flex items-center gap-4">
-                        <button 
-                          onClick={() => toggleLike(testimonial.id)}
-                          className={`flex items-center gap-2 transition-colors flex-shrink-0 ${
-                            likedTestimonials.has(testimonial.id) 
-                              ? 'text-red-500' 
-                              : 'text-gray-500 hover:text-red-500'
-                          }`}
-                        >
-                          <Heart className={`h-4 w-4 ${
-                            likedTestimonials.has(testimonial.id) ? 'fill-current' : ''
-                          }`} />
-                          <span className="text-sm">{likeCounts[testimonial.id] || 0}</span>
-                        </button>
-                        <button className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors flex-shrink-0">
-                          <Share className="h-4 w-4" />
-                        </button>
+                      {/* Review Text */}
+                      <p className="text-gray-800 leading-relaxed mb-4 text-sm w-full overflow-hidden">
+                        {testimonial.text}
+                      </p>
+                      {/* Product Tag */}
+                      <div className="flex items-center gap-2 mb-4 w-full overflow-hidden">
+                        <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 flex-shrink-0">
+                          <Package className="h-3 w-3 mr-1" />
+                          <span className="truncate">{testimonial.productUsed}</span>
+                        </Badge>
+                      </div>
+                      {/* Social Actions */}
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-100 w-full">
+                        <div className="flex items-center gap-4">
+                          <button 
+                            onClick={() => toggleLike(testimonial.id)}
+                            className={`flex items-center gap-2 transition-colors flex-shrink-0 ${
+                              likedTestimonials.has(testimonial.id) 
+                                ? 'text-red-500' 
+                                : 'text-gray-500 hover:text-red-500'
+                            }`}
+                          >
+                            <Heart className={`h-4 w-4 ${
+                              likedTestimonials.has(testimonial.id) ? 'fill-current' : ''
+                            }`} />
+                            <span className="text-sm">{likeCounts[testimonial.id] || 0}</span>
+                          </button>
+                          <button className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors flex-shrink-0">
+                            <Share className="h-4 w-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
+                  </CardContent>
                 </Card>
               );
             })}
           </div>
+          
+                     {/* Dot Indicators - Positioned below testimonials */}
+           <div className="flex justify-center items-center gap-2 mt-6 z-20">
+             {testimonials.map((testimonial, index) => {
+               // Calculate which testimonial is currently centered
+               const isActive = cardScales[testimonial.id] === 1.0 || 
+                               (isMobile && cardScales[testimonial.id] > 0.98);
+               
+               return (
+                 <button
+                   key={testimonial.id}
+                   onClick={() => {
+                     if (scrollContainerRef.current) {
+                       const container = scrollContainerRef.current;
+                       const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
+                       const targetScroll = index * cardWidth;
+                       
+                       container.scrollTo({
+                         left: targetScroll,
+                         behavior: 'smooth'
+                       });
+                       
+                       // Hide swipe indicator after user interaction
+                       if (isMobile && showSwipeIndicator) {
+                         setShowSwipeIndicator(false);
+                       }
+                     }
+                   }}
+                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                     isActive 
+                       ? 'bg-brand-orange scale-110 shadow-lg' 
+                       : 'bg-gray-300 hover:bg-gray-400'
+                   }`}
+                   aria-label={`Go to testimonial ${index + 1}`}
+                 />
+               );
+             })}
+           </div>
         </div>
         
         {/* Trust Indicators */}

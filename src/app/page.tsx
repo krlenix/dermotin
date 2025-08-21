@@ -4,6 +4,7 @@ import { getCountryConfig } from '@/config/countries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
 
 export default function HomePage() {
   const countryConfig = getCountryConfig('rs'); // Only Serbian now
@@ -112,6 +113,11 @@ export default function HomePage() {
             <h3 className="text-xl font-semibold mb-2">Klinički testirani</h3>
             <p className="text-gray-600">Svi proizvodi su dermatološki testirani i odobreni</p>
           </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="mt-16">
+          <AdvancedFAQ countryCode={countryConfig.code} className="bg-white rounded-lg p-8 shadow-sm" />
         </section>
       </main>
 

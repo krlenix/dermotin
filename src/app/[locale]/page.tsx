@@ -14,6 +14,7 @@ import { Footer } from '@/components/ui/footer';
 import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials';
 import { SocialProof } from '@/components/features/SocialProof';
 import { MarqueeText } from '@/components/ui/marquee-text';
+import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
 import { WheelPopup } from '@/components/wheel-of-fortune/WheelPopup';
 import { WheelOfFortune } from '@/components/wheel-of-fortune/WheelOfFortune';
 import { WHEEL_CONFIG, POPUP_CONFIG } from '@/config/wheel';
@@ -439,6 +440,14 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* FAQ Section */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <AdvancedFAQ countryCode={locale} className="bg-gray-50 rounded-2xl p-8 shadow-sm" />
+            </div>
+          </div>
+        </section>
 
       </main>
 

@@ -20,6 +20,16 @@ export interface Ingredient {
   category: 'herbal_extract' | 'essential_oil' | 'active_compound' | 'base_component' | 'preservative' | 'other';
 }
 
+export interface ProductFAQ {
+  question: string;
+  answer: string;
+  category: 'usage' | 'ingredients' | 'effects' | 'safety' | 'storage' | 'general';
+}
+
+export interface ProductFAQByCountry {
+  [countryCode: string]: ProductFAQ[];
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -56,6 +66,7 @@ export interface Product {
     bundlePrice?: number;
   };
   crossSells?: string[]; // Product IDs
+  productFAQ?: ProductFAQByCountry; // Product-specific FAQs by country
 }
 
 // Clean ingredients database - only confirmed ingredients from fungel.txt
@@ -411,7 +422,144 @@ export const PRODUCTS: Record<string, Product> = {
       discountPercentage: 30,
       bundlePrice: 5990
     },
-    crossSells: ['foot-cream', 'nail-oil']
+    crossSells: ['foot-cream', 'nail-oil'],
+    productFAQ: {
+      rs: [
+        {
+          question: "Kako se koristi FUNGEL?",
+          answer: "Nanositi 2 puta dnevno na delove kože ili noktiju. FUNGEL je leave-on formula što znači da se ne ispira nakon nanošenja. Sadržaj od 50ml je dostatan za okvirno 2 nedelje redovne upotrebe.",
+          category: "usage"
+        },
+        {
+          question: "Kada mogu očekivati prve rezultate?",
+          answer: "Prvi rezultati se mogu videti već nakon 3-5 dana redovne upotrebe. Za najbolje rezultate preporučuje se korišćenje 2-4 nedelje.",
+          category: "effects"
+        },
+        {
+          question: "Da li FUNGEL sadrži prirodne sastojke?",
+          answer: "Da, FUNGEL sadrži 6 medicinskih biljnih ekstrakata (nevena, rus, žalfija, ehinacea, kantarion, podmarenok) i 5 eteričnih ulja (čajno drvo, origano, lavanda, žalfija, eukaliptus), plus hidratantne komponente.",
+          category: "ingredients"
+        },
+        {
+          question: "Da li je FUNGEL bezbedan za svakodnevnu upotrebu?",
+          answer: "Da, FUNGEL je klinički testiran i sadrži prirodne sastojke. Formula je pH 6.7 što je kompatibilno sa kožom. Proizvod je registrovan i odobren za upotrebu.",
+          category: "safety"
+        },
+        {
+          question: "Mogu li koristiti FUNGEL na osetljivoj koži?",
+          answer: "FUNGEL sadrži prirodne sastojke, ali preporučujemo test patch na maloj površini pre prve upotrebe. Ako dođe do iritacije, prestati sa upotrebom.",
+          category: "safety"
+        },
+        {
+          question: "Kako da čuvam FUNGEL?",
+          answer: "Čuvati na hladnom, suvom mestu, van dosega dece. Zatvoriti nakon upotrebe. Rok trajanja je označen na pakovanju.",
+          category: "storage"
+        },
+        {
+          question: "Da li FUNGEL može da se koristi sa drugim proizvodima?",
+          answer: "FUNGEL može da se koristi sa drugim proizvodima, ali preporučujemo da sačekate da se upije pre nanošenja drugih proizvoda. Izbegavajte mešanje sa drugim antimikrobnim proizvodima.",
+          category: "usage"
+        },
+        {
+          question: "Šta su glavni aktivni sastojci u FUNGEL-u?",
+          answer: "Glavni aktivni sastojci su tea tree ulje i origano za antimikrobno dejstvo, panthenol (Pro-vitamin B5) za regeneraciju, vitamini E i A za antioksidativnu zaštitu, plus 6 biljnih ekstrakata.",
+          category: "ingredients"
+        }
+      ],
+      ba: [
+        {
+          question: "Kako se koristi FUNGEL?",
+          answer: "Nanositi 2 puta dnevno na delove kože ili noktiju. FUNGEL je leave-on formula što znači da se ne ispira nakon nanošenja. Sadržaj od 50ml je dostatan za okvirno 2 nedelje redovne upotrebe.",
+          category: "usage"
+        },
+        {
+          question: "Kada mogu očekivati prve rezultate?",
+          answer: "Prvi rezultati se mogu videti već nakon 3-5 dana redovne upotrebe. Za najbolje rezultate preporučuje se korišćenje 2-4 nedelje.",
+          category: "effects"
+        },
+        {
+          question: "Da li FUNGEL sadrži prirodne sastojke?",
+          answer: "Da, FUNGEL sadrži 6 medicinskih biljnih ekstrakata i 5 eteričnih ulja, plus hidratantne komponente.",
+          category: "ingredients"
+        },
+        {
+          question: "Da li je FUNGEL bezbedan za svakodnevnu upotrebu?",
+          answer: "Da, FUNGEL je klinički testiran i sadrži prirodne sastojke. Proizvod je registrovan i odobren za upotrebu.",
+          category: "safety"
+        }
+      ],
+      me: [
+        {
+          question: "Kako se koristi FUNGEL?",
+          answer: "Nanositi 2 puta dnevno na delove kože ili noktiju. FUNGEL je leave-on formula što znači da se ne ispira nakon nanošenja.",
+          category: "usage"
+        },
+        {
+          question: "Kada mogu očekivati prve rezultate?",
+          answer: "Prvi rezultati se mogu videti već nakon 3-5 dana redovne upotrebe. Za najbolje rezultate preporučuje se korišćenje 2-4 nedelje.",
+          category: "effects"
+        },
+        {
+          question: "Da li je FUNGEL bezbedan za upotrebu?",
+          answer: "Da, FUNGEL je klinički testiran i sadrži prirodne sastojke. Proizvod je registrovan i odobren za upotrebu.",
+          category: "safety"
+        }
+      ],
+      eu: [
+        {
+          question: "How to use FUNGEL?",
+          answer: "Apply twice daily to affected skin or nail areas. FUNGEL is a leave-on formula, do not rinse after application. 50ml content is sufficient for approximately 2 weeks of regular use.",
+          category: "usage"
+        },
+        {
+          question: "When can I expect first results?",
+          answer: "First results can be seen after 3-5 days of regular use. For best results, 2-4 weeks of use is recommended.",
+          category: "effects"
+        },
+        {
+          question: "Does FUNGEL contain natural ingredients?",
+          answer: "Yes, FUNGEL contains 6 medicinal plant extracts (calendula, chelidonium, sage, echinacea, galium, hypericum) and 5 essential oils (tea tree, oregano, lavender, sage, eucalyptus), plus moisturizing components.",
+          category: "ingredients"
+        },
+        {
+          question: "Is FUNGEL safe for daily use?",
+          answer: "Yes, FUNGEL is clinically tested and contains natural ingredients. The formula is pH 6.7 which is skin-compatible. The product is registered and approved for use according to EU regulations.",
+          category: "safety"
+        },
+        {
+          question: "Can I use FUNGEL on sensitive skin?",
+          answer: "FUNGEL contains natural ingredients, but we recommend a patch test on a small area before first use. If irritation occurs, discontinue use.",
+          category: "safety"
+        },
+        {
+          question: "How should I store FUNGEL?",
+          answer: "Store in a cool, dry place, out of reach of children. Close after use. Expiry date is marked on the package.",
+          category: "storage"
+        }
+      ],
+      bg: [
+        {
+          question: "Как се използва FUNGEL?",
+          answer: "Нанасяйте 2 пъти дневно на засегнатите участъци от кожата или ноктите. FUNGEL е leave-on формула, което означава, че не се изплаква след нанасяне.",
+          category: "usage"
+        },
+        {
+          question: "Кога мога да очаквам първи резултати?",
+          answer: "Първите резултати могат да се видят след 3-5 дни редовна употреба. За най-добри резултати се препоръчва употреба 2-4 седмици.",
+          category: "effects"
+        },
+        {
+          question: "Съдържа ли FUNGEL естествени съставки?",
+          answer: "Да, FUNGEL съдържа 6 медицински растителни екстракта и 5 етерични масла, плюс хидратиращи компоненти.",
+          category: "ingredients"
+        },
+        {
+          question: "Безопасен ли е FUNGEL за ежедневна употреба?",
+          answer: "Да, FUNGEL е клинично тестван и съдържа естествени съставки. Продуктът е регистриран и одобрен за употреба.",
+          category: "safety"
+        }
+      ]
+    }
   },
   'foot-cream': {
     id: 'foot-cream',
@@ -611,4 +759,13 @@ export function getProductPrice(product: Product, currency: 'RSD' | 'BAM' | 'EUR
   
   // For now, return the base price - implement currency conversion later
   return variant.discountPrice || variant.price;
+}
+
+export function getProductFAQ(product: Product, countryCode: string): ProductFAQ[] {
+  if (!product.productFAQ) return [];
+  return product.productFAQ[countryCode] || product.productFAQ['rs'] || [];
+}
+
+export function getProductFAQByCategory(product: Product, countryCode: string, category: string): ProductFAQ[] {
+  return getProductFAQ(product, countryCode).filter(item => item.category === category);
 }

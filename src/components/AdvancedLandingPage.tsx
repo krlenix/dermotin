@@ -577,7 +577,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
             {/* Advanced FAQ */}
             <div id="faq" className="mt-16">
-              <AdvancedFAQ countryCode={countryConfig.code} />
+              <AdvancedFAQ countryCode={countryConfig.code} product={product} />
             </div>
 
             {/* Full Description Toggle */}

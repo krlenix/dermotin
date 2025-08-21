@@ -26,14 +26,9 @@ export const FAQ_DATA: CountryFAQ = {
       category: "payment"
     },
     {
-      question: "Da li je proizvod bezbedan za upotrebu?",
-      answer: "Da, FUNGEL je klinički testiran i sadrži prirodne sastojke. Proizvod je registrovan i odobren za upotrebu.",
-      category: "product"
-    },
-    {
-      question: "Koliko dugo treba da koristim proizvod?",
-      answer: "Preporučuje se korišćenje 2-4 nedelje za najbolje rezultate. Prvi rezultati se mogu videti već nakon 3-5 dana.",
-      category: "product"
+      question: "Koje načine plaćanja prihvatate?",
+      answer: "Prihvatamo plaćanje pouzećem (cash on delivery), kao i kartice putem sigurnog online plaćanja.",
+      category: "payment"
     },
     {
       question: "Mogu li da vratim proizvod ako nisam zadovoljan?",
@@ -41,14 +36,24 @@ export const FAQ_DATA: CountryFAQ = {
       category: "returns"
     },
     {
-      question: "Da li je potreban recept lekara?",
-      answer: "Ne, FUNGEL je dostupan bez recepta. To je kozmetički proizvod za negu kože.",
-      category: "product"
+      question: "Kako mogu da kontaktiram vašu korisničku podršku?",
+      answer: "Možete nas kontaktirati putem telefona ili email-a. Naš tim za podršku je dostupan radnim danima od 8h do 17h.",
+      category: "general"
     },
     {
       question: "Kako da pratim moju porudžbinu?",
       answer: "Nakon slanja proizvoda, dobićete SMS sa brojem za praćenje pošiljke kod kurirske službe.",
       category: "delivery"
+    },
+    {
+      question: "Da li su vaši proizvodi testirani i sigurni?",
+      answer: "Da, svi naši proizvodi su dermatološki testirani, klinički odobreni i registrovani za upotrebu.",
+      category: "general"
+    },
+    {
+      question: "Da li nudite garanciju na vaše proizvode?",
+      answer: "Da, nudimo 30 dana garancije zadovoljstva. Ako niste zadovoljni rezultatima, možete vratiti proizvod za punu refundaciju.",
+      category: "returns"
     }
   ],
   ba: [
@@ -68,14 +73,24 @@ export const FAQ_DATA: CountryFAQ = {
       category: "payment"
     },
     {
-      question: "Da li je proizvod bezbedan za upotrebu?",
-      answer: "Da, FUNGEL je klinički testiran i sadrži prirodne sastojke. Proizvod je registrovan i odobren za upotrebu.",
-      category: "product"
+      question: "Koje načine plaćanja prihvatate?",
+      answer: "Prihvatamo plaćanje pouzećem (cash on delivery), kao i kartice putem sigurnog online plaćanja.",
+      category: "payment"
     },
     {
       question: "Mogu li da vratim proizvod ako nisam zadovoljan?",
       answer: "Da, nudimo 30 dana garancije povraćaja novca. Kontaktirajte nas za povraćaj.",
       category: "returns"
+    },
+    {
+      question: "Da li su vaši proizvodi testirani i sigurni?",
+      answer: "Da, svi naši proizvodi su dermatološki testirani, klinički odobreni i registrovani za upotrebu.",
+      category: "general"
+    },
+    {
+      question: "Kako mogu da kontaktiram vašu korisničku podršku?",
+      answer: "Možete nas kontaktirati putem telefona ili email-a. Naš tim za podršku je dostupan radnim danima od 8h do 17h.",
+      category: "general"
     }
   ],
   me: [
@@ -95,14 +110,19 @@ export const FAQ_DATA: CountryFAQ = {
       category: "payment"
     },
     {
-      question: "Da li je proizvod bezbedan za upotrebu?",
-      answer: "Da, FUNGEL je klinički testiran i sadrži prirodne sastojke. Proizvod je registrovan i odobren za upotrebu.",
-      category: "product"
-    },
-    {
       question: "Mogu li da vratim proizvod ako nisam zadovoljan?",
       answer: "Da, nudimo 30 dana garancije povraćaja novca. Kontaktirajte nas za povraćaj.",
       category: "returns"
+    },
+    {
+      question: "Da li su vaši proizvodi testirani i sigurni?",
+      answer: "Da, svi naši proizvodi su dermatološki testirani, klinički odobreni i registrovani za upotrebu.",
+      category: "general"
+    },
+    {
+      question: "Kako mogu da kontaktiram vašu korisničku podršku?",
+      answer: "Možete nas kontaktirati putem telefona ili email-a. Naš tim za podršku je dostupan radnim danima od 8h do 17h.",
+      category: "general"
     }
   ],
   eu: [
@@ -122,9 +142,14 @@ export const FAQ_DATA: CountryFAQ = {
       category: "payment"
     },
     {
-      question: "Is the product safe to use?",
-      answer: "Yes, FUNGEL is clinically tested and contains natural ingredients. The product is registered and approved for use.",
-      category: "product"
+      question: "What payment methods do you accept?",
+      answer: "We accept cash on delivery, credit/debit cards, and secure online payment methods.",
+      category: "payment"
+    },
+    {
+      question: "Are your products tested and safe?",
+      answer: "Yes, all our products are dermatologically tested, clinically approved and registered for use according to EU regulations.",
+      category: "general"
     },
     {
       question: "Can I return the product if I'm not satisfied?",
@@ -134,6 +159,11 @@ export const FAQ_DATA: CountryFAQ = {
     {
       question: "GDPR and data protection?",
       answer: "We fully comply with GDPR regulations. Your personal data is protected and used only for order processing.",
+      category: "general"
+    },
+    {
+      question: "How can I contact customer support?",
+      answer: "You can contact us via phone or email. Our support team is available on weekdays from 8am to 5pm.",
       category: "general"
     }
   ],
@@ -154,14 +184,9 @@ export const FAQ_DATA: CountryFAQ = {
       category: "payment"
     },
     {
-      question: "Безопасен ли е продуктът за употреба?",
-      answer: "Да, FUNGEL е клинично тестван и съдържа натурални съставки. Продуктът е регистриран и одобрен за употреба.",
-      category: "product"
-    },
-    {
-      question: "Колко дълго трябва да използвам продукта?",
-      answer: "Препоръчва се използване 2-4 седмици за най-добри резултати. Първите резултати могат да се видят след 3-5 дни.",
-      category: "product"
+      question: "Какви методи на плащане приемате?",
+      answer: "Приемаме плащане при доставка, както и карти чрез сигурно онлайн плащане.",
+      category: "payment"
     },
     {
       question: "Мога ли да върна продукта, ако не съм доволен?",
@@ -169,14 +194,24 @@ export const FAQ_DATA: CountryFAQ = {
       category: "returns"
     },
     {
-      question: "Нужна ли е рецепта от лекар?",
-      answer: "Не, FUNGEL е достъпен без рецепта. Това е козметичен продукт за грижа за кожата.",
-      category: "product"
+      question: "Тествани ли са вашите продукти и безопасни ли са?",
+      answer: "Да, всички наши продукти са дерматологично тествани, клинично одобрени и регистрирани за употреба.",
+      category: "general"
     },
     {
       question: "Как да проследя моята поръчка?",
       answer: "След изпращане на продукта ще получите SMS с номер за проследяване на пратката в куриерската служба.",
       category: "delivery"
+    },
+    {
+      question: "Как мога да се свържа с клиентската ви поддръжка?",
+      answer: "Можете да се свържете с нас по телефон или имейл. Нашият екип за поддръжка е на разположение в работни дни от 8ч до 17ч.",
+      category: "general"
+    },
+    {
+      question: "Предлагате ли гаранция на вашите продукти?",
+      answer: "Да, предлагаме 30 дни гаранция за удовлетвореност. Ако не сте доволни от резултатите, можете да върнете продукта за пълна компенсация.",
+      category: "returns"
     }
   ]
 };

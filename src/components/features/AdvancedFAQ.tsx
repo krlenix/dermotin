@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getFAQForCountry, FAQItem } from '@/config/faq';
+import { getProductFAQ, ProductFAQ, Product } from '@/config/products';
 import { useTranslations } from 'next-intl';
 import { 
   ChevronDown, 
@@ -14,18 +15,25 @@ import {
   Package, 
   HelpCircle,
   Phone,
-  Mail
+  Mail,
+  Leaf,
+  Award
 } from 'lucide-react';
 
 interface AdvancedFAQProps {
   countryCode: string;
   className?: string;
+  product?: Product; // Optional: if provided, show product-specific FAQs
 }
 
-export function AdvancedFAQ({ countryCode, className }: AdvancedFAQProps) {
+export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProps) {
   const t = useTranslations();
   const [openItems, setOpenItems] = useState<string[]>(['0']); // First item open by default
-  const faqItems = getFAQForCountry(countryCode);
+  
+  // Use product-specific FAQs if product is provided, otherwise use general FAQs
+  const faqItems = product 
+    ? getProductFAQ(product, countryCode)
+    : getFAQForCountry(countryCode);
 
   const toggleItem = (index: string) => {
     setOpenItems(prev => 
@@ -41,6 +49,13 @@ export function AdvancedFAQ({ countryCode, className }: AdvancedFAQProps) {
       case 'payment': return <CreditCard className="h-5 w-5 text-green-600" />;
       case 'returns': return <Shield className="h-5 w-5 text-blue-600" />;
       case 'product': return <Package className="h-5 w-5 text-orange-600" />;
+      // Product-specific categories
+      case 'usage': return <Package className="h-5 w-5 text-purple-600" />;
+      case 'ingredients': return <Leaf className="h-5 w-5 text-green-600" />;
+      case 'effects': return <Award className="h-5 w-5 text-yellow-600" />;
+      case 'safety': return <Shield className="h-5 w-5 text-red-600" />;
+      case 'storage': return <Package className="h-5 w-5 text-gray-600" />;
+      case 'general': return <HelpCircle className="h-5 w-5 text-gray-600" />;
       default: return <HelpCircle className="h-5 w-5 text-gray-600" />;
     }
   };
@@ -51,6 +66,13 @@ export function AdvancedFAQ({ countryCode, className }: AdvancedFAQProps) {
       case 'payment': return 'bg-green-100 text-green-800';
       case 'returns': return 'bg-blue-100 text-blue-800';
       case 'product': return 'bg-orange-100 text-orange-800';
+      // Product-specific categories
+      case 'usage': return 'bg-purple-100 text-purple-800';
+      case 'ingredients': return 'bg-green-100 text-green-800';
+      case 'effects': return 'bg-yellow-100 text-yellow-800';
+      case 'safety': return 'bg-red-100 text-red-800';
+      case 'storage': return 'bg-gray-100 text-gray-800';
+      case 'general': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -68,7 +90,10 @@ export function AdvancedFAQ({ countryCode, className }: AdvancedFAQProps) {
 
       {/* Category filters */}
       <div className="flex flex-wrap gap-2 justify-center mb-6">
-        {['delivery', 'product', 'payment', 'returns', 'general'].map((category) => {
+        {(product 
+          ? ['usage', 'ingredients', 'effects', 'safety', 'storage', 'general']
+          : ['delivery', 'product', 'payment', 'returns', 'general']
+        ).map((category) => {
           const count = faqItems.filter(item => item.category === category).length;
           if (count === 0) return null;
           
@@ -79,7 +104,13 @@ export function AdvancedFAQ({ countryCode, className }: AdvancedFAQProps) {
                 {category === 'delivery' ? t('faq_ui.delivery') :
                  category === 'product' ? t('faq_ui.product') :
                  category === 'payment' ? t('faq_ui.payment') :
-                 category === 'returns' ? t('faq_ui.returns') : t('faq_ui.general')}
+                 category === 'returns' ? t('faq_ui.returns') :
+                 category === 'usage' ? t('faq_ui.usage') :
+                 category === 'ingredients' ? t('faq_ui.ingredients') :
+                 category === 'effects' ? t('faq_ui.effects') :
+                 category === 'safety' ? t('faq_ui.safety') :
+                 category === 'storage' ? t('faq_ui.storage') :
+                 t('faq_ui.general')}
               </span>
               <span className="ml-1">({count})</span>
             </Badge>
@@ -89,7 +120,7 @@ export function AdvancedFAQ({ countryCode, className }: AdvancedFAQProps) {
 
       {/* FAQ Items */}
       <div className="space-y-3">
-        {faqItems.map((item: FAQItem, index: number) => {
+        {faqItems.map((item: FAQItem | ProductFAQ, index: number) => {
           const isOpen = openItems.includes(index.toString());
           
           return (
