@@ -239,7 +239,7 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
 
               {/* Fine Print */}
               <p className="text-xs text-gray-500 mt-4">
-                * Offer valid for limited time. Terms and conditions apply.
+                * {t('wheel.terms_apply')}
               </p>
             </div>
           </CardContent>

@@ -210,7 +210,7 @@ export default function HomePage() {
                   variant="outline" 
                   className="border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1"
                 >
-                  🎰 TEST WHEEL
+                  {t('wheel.debug.test_wheel')}
                 </Button>
               </div>
               
