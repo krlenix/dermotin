@@ -24,11 +24,11 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const testimonials = getTestimonialsForCountry(countryCode);
   
-  // Create infinite loop by duplicating testimonials
-  const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
   const [isLoaded, setIsLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [showSwipeIndicator, setShowSwipeIndicator] = useState(true);
+  
+  // Create infinite loop by duplicating testimonials
+  const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
   const [likedTestimonials, setLikedTestimonials] = useState<Set<string>>(new Set());
   const [cardScales, setCardScales] = useState<Record<string, number>>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -99,12 +99,12 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       
       const distanceFromCenter = Math.abs(center - containerCenter);
       
-      if (isMobile) {
-        // Mobile: Gentler centering to prevent content cutoff
-        const threshold = 80; // More lenient threshold for mobile
-        const scale = distanceFromCenter <= threshold ? 1.0 : 0.95;
-        newScales[testimonialId] = scale;
-      } else {
+             if (isMobile) {
+         // Mobile: Gentler centering to prevent content cutoff
+         const threshold = 80; // More lenient threshold for mobile
+         const scale = distanceFromCenter <= threshold ? 1.0 : 0.95;
+         newScales[testimonialId] = scale;
+       } else {
         // Desktop: Original 3D effect
         const maxDistance = containerRect.width / 2 + 160;
         const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
@@ -143,13 +143,6 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      
-      // Auto-hide swipe indicator after 5 seconds only on mobile
-      if (mobile && showSwipeIndicator) {
-        setTimeout(() => {
-          setShowSwipeIndicator(false);
-        }, 5000);
-      }
     };
     
     checkMobile();
@@ -160,48 +153,43 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       updateCardScales();
     }, 50);
     
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', checkMobile);
-    };
-  }, [updateCardScales, showSwipeIndicator]);
+         return () => {
+       clearTimeout(timer);
+       window.removeEventListener('resize', checkMobile);
+     };
+   }, [updateCardScales]);
 
   // Add scroll and resize listeners for 3D effect and infinite scroll
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const handleScroll = () => {
-      if (isTransitioning) return;
-      
-      // Hide swipe indicator on any scroll interaction
-      if (isMobile && showSwipeIndicator) {
-        setShowSwipeIndicator(false);
-      }
-      
-      requestAnimationFrame(() => {
-        updateCardScales();
-        
-        const containerWidth = container.scrollWidth;
-        const scrollLeft = container.scrollLeft;
-        const singleSetWidth = containerWidth / 3; // Since we have 3 sets of testimonials
-        
-        // Check if we need to reset position for infinite loop
-        if (scrollLeft >= singleSetWidth * 2) {
-          // We're at the end of the second set, jump to the middle set
-          setIsTransitioning(true);
-          container.scrollLeft = singleSetWidth;
-          setIsTransitioning(false);
-        } else if (scrollLeft <= 0) {
-          // We're at the start, jump to the middle set
-          setIsTransitioning(true);
-          container.scrollLeft = singleSetWidth;
-          setIsTransitioning(false);
-        }
-        
-        // Infinite scroll is always enabled
-      });
-    };
+         const handleScroll = () => {
+       if (isTransitioning) return;
+       
+                requestAnimationFrame(() => {
+           updateCardScales();
+           
+           const containerWidth = container.scrollWidth;
+           const scrollLeft = container.scrollLeft;
+           const singleSetWidth = containerWidth / 3; // Since we have 3 sets of testimonials
+           
+           // Check if we need to reset position for infinite loop
+           if (scrollLeft >= singleSetWidth * 2) {
+             // We're at the end of the second set, jump to the middle set
+             setIsTransitioning(true);
+             container.scrollLeft = singleSetWidth;
+             setIsTransitioning(false);
+           } else if (scrollLeft <= 0) {
+             // We're at the start, jump to the middle set
+             setIsTransitioning(true);
+             container.scrollLeft = singleSetWidth;
+             setIsTransitioning(false);
+           }
+           
+           // Infinite scroll is always enabled
+         });
+     };
 
     const handleResize = () => {
       requestAnimationFrame(updateCardScales);
@@ -212,16 +200,11 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     let startY = 0;
     let isScrolling = false;
 
-    const handleTouchStart = (e: TouchEvent) => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      isScrolling = false;
-      
-      // Hide swipe indicator on touch
-      if (isMobile && showSwipeIndicator) {
-        setShowSwipeIndicator(false);
-      }
-    };
+         const handleTouchStart = (e: TouchEvent) => {
+       startX = e.touches[0].clientX;
+       startY = e.touches[0].clientY;
+       isScrolling = false;
+     };
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!isScrolling) {
@@ -240,10 +223,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
          const threshold = 50;
          
          if (Math.abs(deltaX) > threshold) {
-           // Hide swipe indicator on touch interaction
-           if (isMobile && showSwipeIndicator) {
-             setShowSwipeIndicator(false);
-           }
+           // Touch interaction detected
          }
        }
      };
@@ -254,16 +234,16 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     container.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('resize', handleResize);
 
-    // Initial calculation and position
-    updateCardScales();
-    
-    // Start in the middle set for infinite scroll
-    setTimeout(() => {
-      if (container && container.scrollWidth > 0) {
-        const singleSetWidth = container.scrollWidth / 3;
-        container.scrollLeft = singleSetWidth;
-      }
-    }, 100);
+         // Initial calculation and position
+     updateCardScales();
+     
+     // Start in the middle set for infinite scroll
+     setTimeout(() => {
+       if (container && container.scrollWidth > 0) {
+         const singleSetWidth = container.scrollWidth / 3;
+         container.scrollLeft = singleSetWidth;
+       }
+     }, 100);
 
          return () => {
        container.removeEventListener('scroll', handleScroll);
@@ -272,7 +252,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
        container.removeEventListener('touchend', handleTouchEnd);
        window.removeEventListener('resize', handleResize);
      };
-   }, [updateCardScales, isTransitioning, isMobile, showSwipeIndicator]);
+        }, [updateCardScales, isTransitioning, isMobile]);
 
   return (
     <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
@@ -297,66 +277,49 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
         {/* 3D Testimonials Container */}
         <div className="relative w-full testimonials-3d-container overflow-visible">
           
-          {/* Mobile Swipe Indicator */}
-          {isMobile && showSwipeIndicator && (
-            <div className="absolute inset-0 z-30 pointer-events-none">
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-brand-orange/90 to-brand-green/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl text-sm font-medium shadow-2xl border border-white/20">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                  </div>
-                  <span className="font-semibold">Swipe to browse testimonials</span>
-                  <div className="flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
           
-          {/* Mobile-First Responsive Scrolling Container */}
-          <div 
-            ref={scrollContainerRef}
-            className={`flex scrollbar-hide testimonials-scroll-container transition-all duration-300 ${isLoaded ? 'overflow-x-auto' : 'overflow-hidden'} 
-              /* Mobile: Center one card with partial adjacent cards visible */
-              ${isMobile 
-                ? 'gap-4 px-[calc(50vw-140px)] scroll-smooth snap-x snap-mandatory py-4' 
-                : 'gap-8 px-28 py-8'
-              }
-            `}
-          >
-            {infiniteTestimonials.map((testimonial: Testimonial, index: number) => {
+          
+                     {/* Mobile-First Responsive Scrolling Container */}
+           <div 
+             ref={scrollContainerRef}
+             className={`scrollbar-hide testimonials-scroll-container transition-all duration-300 ${isLoaded ? 'overflow-x-auto' : 'overflow-hidden'} 
+               /* Mobile: Horizontal scroll with featured at top, others below */
+               ${isMobile 
+                 ? 'flex gap-4 px-[calc(50vw-140px)] scroll-smooth snap-x snap-mandatory py-4' 
+                 : 'flex gap-8 px-28 py-8'
+               }
+             `}
+           >
+                         {infiniteTestimonials.map((testimonial: Testimonial, index: number) => {
               const scale = cardScales[testimonial.id] || 0.8;
               const zIndex = Math.round(scale * 10);
               
               return (
-                <Card 
-                  key={`${testimonial.id}-${index}`}
-                  data-testimonial-id={testimonial.id}
-                  className={`flex-shrink-0 bg-white testimonial-card-3d border-0 rounded-xl overflow-hidden transition-all duration-300
-                    ${isMobile 
-                      ? `w-[280px] snap-center ${scale > 0.98 ? 'shadow-2xl ring-2 ring-brand-orange/20' : 'shadow-md'}` 
-                      : 'w-80 shadow-lg hover:shadow-2xl'
-                    }
-                  `}
-                  style={{
-                    // Responsive scaling and effects - prevent content cutoff
-                    transform: !isMobile 
-                      ? `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)` 
-                      : `scale(${scale === 1.0 ? 1.02 : 0.95})`,
-                    zIndex: scale > 0.9 ? 10 : (isMobile ? 1 : zIndex),
-                    minWidth: isMobile ? '280px' : '320px',
-                    maxWidth: isMobile ? '280px' : '320px',
-                    opacity: isMobile 
-                      ? (scale > 0.98 ? 1 : 0.8) 
-                      : (0.4 + (scale * 0.6)),
-                    transformOrigin: 'center center'
-                  }}
-                >
+                                 <Card 
+                   key={`${testimonial.id}-${index}`}
+                   data-testimonial-id={testimonial.id}
+                   data-index={index}
+                   className={`transition-all duration-300 border-0 rounded-xl overflow-hidden
+                     ${isMobile 
+                       ? `w-[280px] snap-center ${scale > 0.98 ? 'shadow-2xl ring-2 ring-brand-orange/20 bg-white' : 'shadow-md bg-white/60 backdrop-blur-sm'}` 
+                       : 'flex-shrink-0 w-80 shadow-lg hover:shadow-2xl bg-white'
+                     }
+                   `}
+                   style={{
+                     // Responsive scaling and effects
+                     transform: !isMobile 
+                       ? `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)` 
+                       : `scale(${scale === 1.0 ? 1.02 : 0.95})`,
+                     zIndex: scale > 0.9 ? 10 : (isMobile ? 1 : zIndex),
+                     minWidth: isMobile ? '280px' : '320px',
+                     maxWidth: isMobile ? '280px' : '320px',
+                     opacity: isMobile 
+                       ? (scale > 0.98 ? 1 : 0.6) 
+                       : (0.4 + (scale * 0.6)),
+                     transformOrigin: 'center center',
+                     filter: isMobile && scale < 0.98 ? 'blur(2px)' : 'none'
+                   }}
+                 >
                   <CardContent className="p-0 w-full overflow-hidden">
                     {/* Post Header */}
                     <div className="p-4 border-b border-gray-100 w-full">
@@ -428,43 +391,39 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
             })}
           </div>
           
-                     {/* Dot Indicators - Positioned below testimonials */}
-           <div className="flex justify-center items-center gap-2 mt-6 z-20">
-             {testimonials.map((testimonial, index) => {
-               // Calculate which testimonial is currently centered
-               const isActive = cardScales[testimonial.id] === 1.0 || 
-                               (isMobile && cardScales[testimonial.id] > 0.98);
-               
-               return (
-                 <button
-                   key={testimonial.id}
-                   onClick={() => {
-                     if (scrollContainerRef.current) {
-                       const container = scrollContainerRef.current;
-                       const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
-                       const targetScroll = index * cardWidth;
-                       
-                       container.scrollTo({
-                         left: targetScroll,
-                         behavior: 'smooth'
-                       });
-                       
-                       // Hide swipe indicator after user interaction
-                       if (isMobile && showSwipeIndicator) {
-                         setShowSwipeIndicator(false);
+                     {/* Dot Indicators - Desktop only */}
+           {!isMobile && (
+             <div className="flex justify-center items-center gap-2 mt-6 z-20">
+               {testimonials.map((testimonial, index) => {
+                 // Calculate which testimonial is currently centered
+                 const isActive = cardScales[testimonial.id] === 1.0;
+                 
+                 return (
+                   <button
+                     key={testimonial.id}
+                     onClick={() => {
+                       if (scrollContainerRef.current) {
+                         const container = scrollContainerRef.current;
+                         const cardWidth = 320 + 32; // card width + gap
+                         const targetScroll = index * cardWidth;
+                         
+                         container.scrollTo({
+                           left: targetScroll,
+                           behavior: 'smooth'
+                         });
                        }
-                     }
-                   }}
-                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                     isActive 
-                       ? 'bg-brand-orange scale-110 shadow-lg' 
-                       : 'bg-gray-300 hover:bg-gray-400'
-                   }`}
-                   aria-label={`Go to testimonial ${index + 1}`}
-                 />
-               );
-             })}
-           </div>
+                     }}
+                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                       isActive 
+                         ? 'bg-brand-orange scale-110 shadow-lg' 
+                         : 'bg-gray-300 hover:bg-gray-400'
+                     }`}
+                     aria-label={`Go to testimonial ${index + 1}`}
+                   />
+                 );
+               })}
+             </div>
+           )}
         </div>
         
         {/* Trust Indicators */}
