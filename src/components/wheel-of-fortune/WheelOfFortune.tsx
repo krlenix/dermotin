@@ -87,9 +87,9 @@ export const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({
     <div className={`relative ${className}`}>
       {/* Wheel Container */}
       <Card className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 shadow-2xl">
-        <CardContent className="p-8">
+        <CardContent className="p-4 sm:p-6">
           {/* Header */}
-          <div className="text-center mb-6">
+          <div className="text-center mb-4 sm:mb-6">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">
               🎡 {t('wheel.title')}
             </h2>
@@ -104,8 +104,8 @@ export const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({
           </div>
 
           {/* Simple Clean Wheel */}
-          <div className="relative flex items-center justify-center mb-8">
-            <div className="relative">
+          <div className="relative flex items-center justify-center mb-4 sm:mb-6">
+            <div className="relative wheel-container">
               {/* Simple wheel with clean design */}
               <div
                 ref={wheelRef}

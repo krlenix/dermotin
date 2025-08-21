@@ -149,16 +149,25 @@
   transform-style: preserve-3d;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments - Conservative approach */
 @media (max-width: 640px) {
   .wheel-container {
-    transform: scale(0.9);
+    transform: scale(0.85);
+    transform-origin: center;
   }
 }
 
 @media (max-width: 480px) {
   .wheel-container {
-    transform: scale(0.8);
+    transform: scale(0.7);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .wheel-container {
+    transform: scale(0.6);
+    transform-origin: center;
   }
 }
 

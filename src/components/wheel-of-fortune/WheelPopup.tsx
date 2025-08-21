@@ -72,7 +72,7 @@ export const WheelPopup: React.FC<WheelPopupProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
       data-wheel-popup
     >
       {/* Backdrop */}
@@ -82,7 +82,7 @@ export const WheelPopup: React.FC<WheelPopupProps> = ({
       />
 
       {/* Popup Content */}
-      <div className="relative z-10 w-full max-w-2xl animate-in slide-in-from-bottom duration-500">
+      <div className="relative z-10 w-full max-w-[95vw] sm:max-w-2xl animate-in slide-in-from-bottom duration-500">
         {/* Close Button */}
         <div className="absolute -top-4 -right-4 z-20">
           <Button
@@ -103,21 +103,7 @@ export const WheelPopup: React.FC<WheelPopupProps> = ({
           className="animate-in zoom-in duration-700"
         />
 
-        {/* Mobile-specific adjustments */}
-        <style jsx>{`
-          @media (max-width: 640px) {
-            .wheel-container {
-              transform: scale(0.8);
-              transform-origin: center;
-            }
-          }
-          
-          @media (max-width: 480px) {
-            .wheel-container {
-              transform: scale(0.7);
-            }
-          }
-        `}</style>
+
       </div>
     </div>
   );

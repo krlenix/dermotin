@@ -99,7 +99,7 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
 
       {/* Modal */}
       <div
-        className={`relative z-10 w-full max-w-md mx-4 transition-all duration-700 ease-out ${
+        className={`relative z-10 w-full max-w-[95vw] sm:max-w-md mx-2 sm:mx-4 transition-all duration-700 ease-out ${
           isAnimating && !isClosing
             ? 'translate-y-0 opacity-100 scale-100'
             : isClosing
@@ -115,14 +115,14 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-yellow-100 rounded-full opacity-30 animate-ping" style={{ animationDelay: '0.5s' }} />
           </div>
 
-          <CardContent className="relative p-8 text-center">
+          <CardContent className="relative p-4 sm:p-8 text-center">
             {/* Header */}
-            <div className="mb-6">
-              <div className="text-6xl mb-4 animate-bounce">🎉</div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            <div className="mb-4 sm:mb-6">
+              <div className="text-4xl sm:text-6xl mb-3 sm:mb-4 animate-bounce">🎉</div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
                 {t('wheel.congratulations')}
               </h2>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 {t('wheel.you_won')}
               </p>
             </div>
@@ -136,17 +136,17 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
               }`}
             >
               {/* Prize Icon */}
-              <div className="text-5xl mb-4 animate-pulse">
+              <div className="text-3xl sm:text-5xl mb-3 sm:mb-4 animate-pulse">
                 {prize.icon}
               </div>
 
               {/* Prize Value */}
-              <div className="mb-6">
-                <div className="text-4xl font-bold text-gradient bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent mb-2">
+              <div className="mb-4 sm:mb-6">
+                <div className="text-2xl sm:text-4xl font-bold text-gradient bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent mb-2">
                   {t(prize.label)}
                 </div>
                 {prize.value > 0 && (
-                  <p className="text-gray-600">
+                  <p className="text-sm sm:text-base text-gray-600">
                     {t('wheel.save_percentage', { percentage: prize.value })}
                   </p>
                 )}
@@ -154,12 +154,12 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
 
               {/* Coupon Code */}
               {prize.couponCode && (
-                <div className="mb-6">
-                  <p className="text-sm text-gray-600 mb-2">{t('wheel.copy_code')}:</p>
-                  <div className="flex items-center justify-center gap-2">
+                <div className="mb-4 sm:mb-6">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-2">{t('wheel.copy_code')}:</p>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
                     <Badge
                       variant="secondary"
-                      className="px-4 py-2 text-lg font-mono bg-gray-100 text-gray-800 border-2 border-dashed border-gray-300"
+                      className="px-3 sm:px-4 py-2 text-sm sm:text-lg font-mono bg-gray-100 text-gray-800 border-2 border-dashed border-gray-300 break-all"
                     >
                       {prize.couponCode.startsWith('wheel.coupon_codes.') ? t(prize.couponCode) : prize.couponCode}
                     </Badge>
@@ -167,13 +167,13 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                       size="sm"
                       variant="outline"
                       onClick={handleCopy}
-                      className="transition-all duration-200"
+                      className="transition-all duration-200 w-full sm:w-auto"
                     >
                       {copied ? '✅' : '📋'}
                     </Button>
                   </div>
                   {copied && (
-                    <p className="text-sm text-green-600 mt-1">
+                    <p className="text-xs sm:text-sm text-green-600 mt-1">
                       {t('wheel.copied')}
                     </p>
                   )}
@@ -207,17 +207,17 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
 
               {/* Action Buttons */}
               {autoCloseCountdown === null ? (
-                <div className="flex gap-3 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button
                     onClick={handleClaim}
-                    className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold px-6 py-2 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
+                    className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold px-6 py-2 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 w-full sm:w-auto"
                   >
                     {t('wheel.claim_prize')}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={onClose}
-                    className="px-6 py-2"
+                    className="px-6 py-2 w-full sm:w-auto"
                   >
                     {t('wheel.close')}
                   </Button>
@@ -230,7 +230,7 @@ export const CongratulationsModal: React.FC<CongratulationsModalProps> = ({
                       setAutoCloseCountdown(null);
                       onClose();
                     }}
-                    className="px-6 py-2"
+                    className="px-6 py-2 w-full sm:w-auto"
                   >
                     {t('wheel.close_now')}
                   </Button>
