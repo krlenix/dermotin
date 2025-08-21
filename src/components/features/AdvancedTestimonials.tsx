@@ -100,9 +100,9 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       const distanceFromCenter = Math.abs(center - containerCenter);
       
              if (isMobile) {
-         // Mobile: Gentler centering to prevent content cutoff
-         const threshold = 80; // More lenient threshold for mobile
-         const scale = distanceFromCenter <= threshold ? 1.0 : 0.95;
+         // Mobile: More precise centering for better initial state
+         const threshold = 60; // Tighter threshold for mobile
+         const scale = distanceFromCenter <= threshold ? 1.0 : 0.85;
          newScales[testimonialId] = scale;
        } else {
         // Desktop: Original 3D effect
@@ -301,24 +301,24 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                    data-index={index}
                    className={`transition-all duration-300 border-0 rounded-xl overflow-hidden
                      ${isMobile 
-                       ? `w-[280px] snap-center ${scale > 0.98 ? 'shadow-2xl ring-2 ring-brand-orange/20 bg-white' : 'shadow-md bg-white/60 backdrop-blur-sm'}` 
+                       ? `w-[280px] snap-center ${scale === 1.0 ? 'shadow-2xl ring-2 ring-brand-orange/20 bg-white' : 'shadow-md bg-white/60 backdrop-blur-sm'}` 
                        : 'flex-shrink-0 w-80 shadow-lg hover:shadow-2xl bg-white'
                      }
                    `}
-                   style={{
-                     // Responsive scaling and effects
-                     transform: !isMobile 
-                       ? `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)` 
-                       : `scale(${scale === 1.0 ? 1.02 : 0.95})`,
-                     zIndex: scale > 0.9 ? 10 : (isMobile ? 1 : zIndex),
-                     minWidth: isMobile ? '280px' : '320px',
-                     maxWidth: isMobile ? '280px' : '320px',
-                     opacity: isMobile 
-                       ? (scale > 0.98 ? 1 : 0.6) 
-                       : (0.4 + (scale * 0.6)),
-                     transformOrigin: 'center center',
-                     filter: isMobile && scale < 0.98 ? 'blur(2px)' : 'none'
-                   }}
+                                        style={{
+                       // Responsive scaling and effects
+                       transform: !isMobile 
+                         ? `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)` 
+                         : `scale(${scale === 1.0 ? 1.02 : 0.9})`,
+                       zIndex: scale > 0.9 ? 10 : (isMobile ? 1 : zIndex),
+                       minWidth: isMobile ? '280px' : '320px',
+                       maxWidth: isMobile ? '280px' : '320px',
+                       opacity: isMobile 
+                         ? (scale === 1.0 ? 1 : 0.5) 
+                         : (0.4 + (scale * 0.6)),
+                       transformOrigin: 'center center',
+                       filter: isMobile && scale < 1.0 ? 'blur(2px)' : 'none'
+                     }}
                  >
                   <CardContent className="p-0 w-full overflow-hidden">
                     {/* Post Header */}
@@ -391,39 +391,39 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
             })}
           </div>
           
-                     {/* Dot Indicators - Desktop only */}
-           {!isMobile && (
-             <div className="flex justify-center items-center gap-2 mt-6 z-20">
-               {testimonials.map((testimonial, index) => {
-                 // Calculate which testimonial is currently centered
-                 const isActive = cardScales[testimonial.id] === 1.0;
-                 
-                 return (
-                   <button
-                     key={testimonial.id}
-                     onClick={() => {
-                       if (scrollContainerRef.current) {
-                         const container = scrollContainerRef.current;
-                         const cardWidth = 320 + 32; // card width + gap
-                         const targetScroll = index * cardWidth;
-                         
-                         container.scrollTo({
-                           left: targetScroll,
-                           behavior: 'smooth'
-                         });
-                       }
-                     }}
-                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                       isActive 
-                         ? 'bg-brand-orange scale-110 shadow-lg' 
-                         : 'bg-gray-300 hover:bg-gray-400'
-                     }`}
-                     aria-label={`Go to testimonial ${index + 1}`}
-                   />
-                 );
-               })}
-             </div>
-           )}
+                     {/* Dot Indicators - All devices */}
+           {(
+                            <div className="flex justify-center items-center gap-2 mt-6 z-20">
+                 {testimonials.map((testimonial, index) => {
+                   // Calculate which testimonial is currently centered
+                   const isActive = cardScales[testimonial.id] === 1.0;
+                   
+                   return (
+                     <button
+                       key={testimonial.id}
+                       onClick={() => {
+                         if (scrollContainerRef.current) {
+                           const container = scrollContainerRef.current;
+                           const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
+                           const targetScroll = index * cardWidth;
+                           
+                           container.scrollTo({
+                             left: targetScroll,
+                             behavior: 'smooth'
+                           });
+                         }
+                       }}
+                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                         isActive 
+                           ? 'bg-brand-orange scale-110 shadow-lg' 
+                           : 'bg-gray-300 hover:bg-gray-400'
+                       }`}
+                       aria-label={`Go to testimonial ${index + 1}`}
+                     />
+                   );
+                 })}
+               </div>
+             )}
         </div>
         
         {/* Trust Indicators */}
