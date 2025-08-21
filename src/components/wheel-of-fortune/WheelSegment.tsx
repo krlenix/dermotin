@@ -91,16 +91,14 @@ export const WheelSegment: React.FC<WheelSegmentProps> = ({
     ].join(' ');
   };
 
-  // Calculate text position
-  const textRadius = radius * 0.7; // Clean positioning
+  // Calculate text position - positioned like the radial lines, along the center axis
+  const textRadius = radius * 0.55; // Position text closer to center to stay within circle
   const textAngleRad = (centerAngle * Math.PI) / 180;
   const textX = radius + Math.cos(textAngleRad) * textRadius;
   const textY = radius + Math.sin(textAngleRad) * textRadius;
 
-  // Text rotation for readability - avoid upside down text
-  const textRotation = centerAngle > 90 && centerAngle < 270 
-    ? centerAngle - 180  // Flip to keep text right-side up
-    : centerAngle;
+  // Rotate text to follow the radial direction (like the lines)
+  const textRotation = centerAngle;
 
   // Create gradient for SVG
   const gradientId = `gradient-${segment.id}`;
@@ -131,19 +129,31 @@ export const WheelSegment: React.FC<WheelSegmentProps> = ({
         }}
       />
 
-      {/* Clean text with better contrast */}
+      {/* Enhanced text with exciting effects */}
       <text
         x={textX}
         y={textY}
         textAnchor="middle"
         dominantBaseline="middle"
-        fill={prize.isWinning ? "#1f2937" : "#6b7280"} // gray-800 for winning, gray-500 for try again
-        className="font-semibold select-none pointer-events-none"
+        fill={prize.isWinning ? "#1f2937" : "#6b7280"}
+        className={`font-bold select-none pointer-events-none ${
+          prize.value >= 50 ? 'prize-glow prize-pulse' : 
+          prize.value >= 30 ? 'prize-glow' : 
+          prize.value >= 20 ? 'prize-pulse' : 
+          prize.isWinning ? 'prize-pulse' : ''
+        }`}
         transform={`rotate(${textRotation}, ${textX}, ${textY})`}
         style={{
-          fontSize: '14px',
-          fontWeight: '600',
-          textShadow: prize.isWinning ? '0 1px 2px rgba(255, 255, 255, 0.8)' : 'none',
+          fontSize: prize.value >= 50 ? '16px' : '14px',
+          fontWeight: prize.value >= 50 ? '800' : '700',
+          textShadow: prize.isWinning 
+            ? `0 2px 4px rgba(255, 255, 255, 0.9), 0 0 8px ${prize.value >= 50 ? 'rgba(234, 88, 12, 0.6)' : 'rgba(251, 146, 60, 0.4)'}` 
+            : 'none',
+          filter: prize.value >= 50 
+            ? 'drop-shadow(0 0 6px rgba(234, 88, 12, 0.8))' 
+            : prize.isWinning 
+            ? 'drop-shadow(0 0 4px rgba(251, 146, 60, 0.6))' 
+            : 'none',
         }}
       >
         {t(prize.label)}

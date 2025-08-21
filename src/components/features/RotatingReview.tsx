@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getTestimonialsForCountry } from '@/config/testimonials';
@@ -15,11 +15,12 @@ export function RotatingReview({ countryCode, className, interval = 5000 }: Rota
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [animationDirection, setAnimationDirection] = useState<'next' | 'prev'>('next');
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Get testimonials for the country
   const countryTestimonials = getTestimonialsForCountry(countryCode);
   
-  const changeReview = (newIndex: number, direction: 'next' | 'prev' = 'next') => {
+  const changeReview = useCallback((newIndex: number, direction: 'next' | 'prev' = 'next') => {
     if (isTransitioning) return;
     
     setAnimationDirection(direction);
@@ -31,18 +32,81 @@ export function RotatingReview({ countryCode, className, interval = 5000 }: Rota
         setIsTransitioning(false);
       }, 50); // Small delay to ensure smooth transition
     }, 350); // Duration of exit animation
-  };
+  }, [isTransitioning]);
+
+  const goToNext = useCallback(() => {
+    const nextIndex = (currentIndex + 1) % countryTestimonials.length;
+    changeReview(nextIndex, 'next');
+  }, [currentIndex, countryTestimonials.length, changeReview]);
+
+  const goToPrev = useCallback(() => {
+    const prevIndex = currentIndex === 0 ? countryTestimonials.length - 1 : currentIndex - 1;
+    changeReview(prevIndex, 'prev');
+  }, [currentIndex, countryTestimonials.length, changeReview]);
   
+  // Auto-rotation effect
   useEffect(() => {
     if (countryTestimonials.length <= 1) return;
 
     const timer = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % countryTestimonials.length;
-      changeReview(nextIndex, 'next');
+      goToNext();
     }, interval);
 
     return () => clearInterval(timer);
-  }, [countryTestimonials.length, interval, currentIndex]);
+  }, [countryTestimonials.length, interval, currentIndex, goToNext]);
+
+  // Touch/swipe support for mobile
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let startX = 0;
+    let startY = 0;
+    let isScrolling = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isScrolling = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isScrolling) {
+        const deltaX = Math.abs(e.touches[0].clientX - startX);
+        const deltaY = Math.abs(e.touches[0].clientY - startY);
+        
+        if (deltaX > deltaY && deltaX > 10) {
+          isScrolling = true;
+          e.preventDefault(); // Prevent page scroll
+        }
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isScrolling && !isTransitioning) {
+        const deltaX = e.changedTouches[0].clientX - startX;
+        const threshold = 50;
+        
+        if (Math.abs(deltaX) > threshold) {
+          if (deltaX > 0) {
+            goToPrev();
+          } else {
+            goToNext();
+          }
+        }
+      }
+    };
+
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [goToNext, goToPrev, isTransitioning]);
 
   if (!countryTestimonials.length) return null;
 
@@ -62,7 +126,11 @@ export function RotatingReview({ countryCode, className, interval = 5000 }: Rota
   };
 
   return (
-    <div className={`bg-white/70 p-4 rounded-lg border border-gray-200 overflow-hidden ${className}`}>
+    <div 
+      ref={containerRef}
+      className={`bg-white/70 p-4 rounded-lg border border-gray-200 overflow-hidden cursor-pointer select-none touch-pan-y ${className}`}
+      style={{ touchAction: 'pan-y' }}
+    >
       <div 
         className={`transition-all duration-350 ease-in-out transform ${getAnimationClasses()}`}
         style={{

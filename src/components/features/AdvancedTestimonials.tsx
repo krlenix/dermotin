@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getTestimonialsForCountry, Testimonial } from '@/config/testimonials';
-import { Star, Quote, Calendar, Package, ChevronLeft, ChevronRight, Heart, Share } from 'lucide-react';
+import { Star, Package, ChevronLeft, ChevronRight, Heart, Share } from 'lucide-react';
 
 interface AdvancedTestimonialsProps {
   countryCode: string;
@@ -24,8 +24,13 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
   const t = useTranslations();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const testimonials = getTestimonialsForCountry(countryCode);
+  
+  // Create infinite loop by duplicating testimonials
+  const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
   const [isLoaded, setIsLoaded] = useState(false);
   const [likedTestimonials, setLikedTestimonials] = useState<Set<string>>(new Set());
+  const [cardScales, setCardScales] = useState<Record<string, number>>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>(() => {
     const initialCounts: Record<string, number> = {};
     testimonials.forEach(testimonial => {
@@ -41,23 +46,31 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     return initialCounts;
   });
 
-  const scrollLeft = () => {
+  const scrollRight = useCallback(() => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: -400,
+      const container = scrollContainerRef.current;
+      const scrollAmount = 400;
+      
+      // Always scroll right - infinite loop will handle the transition
+      container.scrollBy({
+        left: scrollAmount,
         behavior: 'smooth'
       });
     }
-  };
+  }, []);
 
-  const scrollRight = () => {
+  const scrollLeft = useCallback(() => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: 400,
+      const container = scrollContainerRef.current;
+      const scrollAmount = 400;
+      
+      // Always scroll left - infinite loop will handle the transition
+      container.scrollBy({
+        left: -scrollAmount,
         behavior: 'smooth'
       });
     }
-  };
+  }, []);
 
   const getTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
@@ -70,6 +83,56 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} ${t('testimonials_ui.weeks_ago')}`;
     return `${Math.floor(diffInDays / 30)} ${t('testimonials_ui.months_ago')}`;
   };
+
+  // Calculate 3D scale effect based on scroll position
+  const updateCardScales = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.left + containerRect.width / 2;
+    const cards = container.querySelectorAll('[data-testimonial-id]');
+    
+    const newScales: Record<string, number> = {};
+    const visibleCards: Array<{ element: HTMLElement; rect: DOMRect; center: number }> = [];
+    
+    // First, collect only visible cards
+    cards.forEach((card) => {
+      const cardElement = card as HTMLElement;
+      const cardRect = cardElement.getBoundingClientRect();
+      
+      // Check if card is visible in the container viewport
+      const isVisible = cardRect.right > containerRect.left && 
+                       cardRect.left < containerRect.right;
+      
+      if (isVisible) {
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        visibleCards.push({
+          element: cardElement,
+          rect: cardRect,
+          center: cardCenter
+        });
+      }
+    });
+    
+    // Calculate scales based only on visible cards
+    visibleCards.forEach(({ element, center }) => {
+      const testimonialId = element.dataset.testimonialId;
+      if (!testimonialId) return;
+      
+      const distanceFromCenter = Math.abs(center - containerCenter);
+      const maxDistance = containerRect.width / 2 + 160; // Half card width
+      
+      // Calculate scale based on distance from center (1.0 at center, 0.7 at edges)
+      const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
+      const scale = 1.0 - (normalizedDistance * 0.3);
+      const clampedScale = Math.max(0.7, Math.min(1.0, scale));
+      
+      newScales[testimonialId] = clampedScale;
+    });
+    
+    setCardScales(newScales);
+  }, []);
 
   const toggleLike = (testimonialId: string) => {
     const isCurrentlyLiked = likedTestimonials.has(testimonialId);
@@ -96,13 +159,113 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
+      updateCardScales();
     }, 50);
     return () => clearTimeout(timer);
-  }, []);
+  }, [updateCardScales]);
+
+  // Add scroll and resize listeners for 3D effect and infinite scroll
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (isTransitioning) return;
+      
+      requestAnimationFrame(() => {
+        updateCardScales();
+        
+        const containerWidth = container.scrollWidth;
+        const scrollLeft = container.scrollLeft;
+        const singleSetWidth = containerWidth / 3; // Since we have 3 sets of testimonials
+        
+        // Check if we need to reset position for infinite loop
+        if (scrollLeft >= singleSetWidth * 2) {
+          // We're at the end of the second set, jump to the middle set
+          setIsTransitioning(true);
+          container.scrollLeft = singleSetWidth;
+          setIsTransitioning(false);
+        } else if (scrollLeft <= 0) {
+          // We're at the start, jump to the middle set
+          setIsTransitioning(true);
+          container.scrollLeft = singleSetWidth;
+          setIsTransitioning(false);
+        }
+        
+        // Infinite scroll is always enabled
+      });
+    };
+
+    const handleResize = () => {
+      requestAnimationFrame(updateCardScales);
+    };
+
+    // Add touch/swipe support for mobile
+    let startX = 0;
+    let startY = 0;
+    let isScrolling = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isScrolling = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isScrolling) {
+        const deltaX = Math.abs(e.touches[0].clientX - startX);
+        const deltaY = Math.abs(e.touches[0].clientY - startY);
+        
+        if (deltaX > deltaY && deltaX > 10) {
+          isScrolling = true;
+        }
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isScrolling) {
+        const deltaX = e.changedTouches[0].clientX - startX;
+        const threshold = 50;
+        
+        if (Math.abs(deltaX) > threshold) {
+          if (deltaX > 0) {
+            scrollLeft();
+          } else {
+            scrollRight();
+          }
+        }
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('resize', handleResize);
+
+    // Initial calculation and position
+    updateCardScales();
+    
+    // Start in the middle set for infinite scroll
+    setTimeout(() => {
+      if (container && container.scrollWidth > 0) {
+        const singleSetWidth = container.scrollWidth / 3;
+        container.scrollLeft = singleSetWidth;
+      }
+    }, 100);
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [updateCardScales, scrollLeft, scrollRight]);
 
   return (
     <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
-      <div className="container mx-auto px-4 w-full overflow-hidden" style={{maxWidth: '100%'}}>
+      <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-3">
@@ -120,47 +283,49 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
             {t('testimonials.social_media_subtitle')}
           </p>
         </div>
-        {/* Social Media Style Feed */}
-        <div className="relative w-full overflow-hidden" style={{maxWidth: '100%'}}>
-          {/* Navigation Buttons - positioned safely within container */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={scrollLeft}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white shadow-lg rounded-full w-10 h-10 p-0 border-2 hidden md:flex md:items-center md:justify-center"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={scrollRight}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white shadow-lg rounded-full w-10 h-10 p-0 border-2 hidden md:flex md:items-center md:justify-center"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          {/* Horizontal Scrolling Container */}
+        {/* 3D Testimonials Container */}
+        <div className="relative w-full testimonials-3d-container">
+          
+                     {/* Navigation Buttons */}
+           <Button
+             variant="outline"
+             size="sm"
+             onClick={scrollLeft}
+             className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white shadow-lg rounded-full w-10 h-10 p-0 border-2 flex items-center justify-center transition-all duration-200"
+           >
+             <ChevronLeft className="h-4 w-4" />
+           </Button>
+           <Button
+             variant="outline"
+             size="sm"
+             onClick={scrollRight}
+             className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white shadow-lg rounded-full w-10 h-10 p-0 border-2 flex items-center justify-center transition-all duration-200"
+           >
+             <ChevronRight className="h-4 w-4" />
+           </Button>
+          
+          {/* 3D Horizontal Scrolling Container */}
           <div 
             ref={scrollContainerRef}
-            className={`flex gap-4 md:gap-6 pb-4 px-2 md:px-12 snap-x snap-mandatory transition-all duration-300 ${isLoaded ? 'overflow-x-auto scrollbar-hide' : 'overflow-hidden'}`}
-            style={{ 
-              scrollbarWidth: 'none', 
-              msOverflowStyle: 'none', 
-              maxWidth: '100vw',
-              width: '100%',
-              boxSizing: 'border-box'
-            }}
+            className={`flex gap-6 md:gap-8 pb-8 px-16 md:px-28 scrollbar-hide testimonials-scroll-container transition-all duration-300 ${isLoaded ? 'overflow-x-auto' : 'overflow-hidden'}`}
           >
-            {testimonials.map((testimonial: Testimonial) => (
-              <Card 
-                key={testimonial.id} 
-                className="flex-shrink-0 w-64 md:w-72 lg:w-80 bg-white shadow-lg hover:shadow-xl transition-all duration-300 border-0 rounded-xl snap-start overflow-hidden" 
-                style={{
-                  maxWidth: 'calc(100vw - 32px)', 
-                  minWidth: '250px',
-                  boxSizing: 'border-box'
-                }}
-              >
+                         {infiniteTestimonials.map((testimonial: Testimonial, index: number) => {
+               const scale = cardScales[testimonial.id] || 0.8;
+               const zIndex = Math.round(scale * 10);
+              
+              return (
+                                 <Card 
+                   key={`${testimonial.id}-${index}`}
+                   data-testimonial-id={testimonial.id}
+                  className="flex-shrink-0 w-80 bg-white shadow-lg hover:shadow-2xl testimonial-card-3d border-0 rounded-xl overflow-hidden" 
+                  style={{
+                    transform: `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)`,
+                    zIndex: zIndex,
+                    minWidth: '320px',
+                    maxWidth: '320px',
+                    opacity: 0.4 + (scale * 0.6)
+                  }}
+                >
                 <CardContent className="p-0 w-full overflow-hidden">
                   {/* Post Header */}
                   <div className="p-4 border-b border-gray-100 w-full">
@@ -227,12 +392,14 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         </div>
+        
         {/* Trust Indicators */}
-        <div className="mt-8 grid md:grid-cols-3 gap-6">
+        <div className="mt-12 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-orange-100">
             <div className="text-4xl font-bold text-brand-orange mb-2">
               {BUSINESS_METRICS.SATISFIED_CUSTOMERS.toLocaleString('sr')}+

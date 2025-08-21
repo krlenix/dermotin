@@ -262,6 +262,32 @@ export const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({
             transform: perspective(1000px) rotateX(15deg) rotate(var(--final-rotation));
           }
         }
+
+        @keyframes prizeGlow {
+          0%, 100% {
+            filter: drop-shadow(0 0 6px rgba(234, 88, 12, 0.8)) drop-shadow(0 0 12px rgba(234, 88, 12, 0.4));
+          }
+          50% {
+            filter: drop-shadow(0 0 10px rgba(234, 88, 12, 1)) drop-shadow(0 0 20px rgba(234, 88, 12, 0.6));
+          }
+        }
+
+        @keyframes prizePulse {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.05);
+          }
+        }
+
+        .prize-glow {
+          animation: prizeGlow 2s ease-in-out infinite;
+        }
+
+        .prize-pulse {
+          animation: prizePulse 1.5s ease-in-out infinite;
+        }
       `}</style>
     </div>
   );

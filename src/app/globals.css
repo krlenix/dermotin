@@ -270,6 +270,37 @@
   --tw-ring-color: var(--brand-orange);
 }
 
+/* 3D Testimonials specific styles */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.testimonials-3d-container {
+  perspective: 1000px;
+  perspective-origin: center center;
+}
+
+.testimonial-card-3d {
+  transform-style: preserve-3d;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.testimonial-card-3d:hover {
+  transform-origin: center center;
+}
+
+/* Smooth scroll behavior for testimonials container */
+.testimonials-scroll-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* iOS momentum scrolling */
+}
+
 /* Print styles */
 @media print {
   .no-print {
