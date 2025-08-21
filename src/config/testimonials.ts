@@ -133,6 +133,74 @@ export const TESTIMONIALS: Record<string, Testimonial[]> = {
       dateAdded: "2024-01-11",
       featured: true
     }
+  ],
+  bg: [
+    {
+      id: "t1",
+      name: "Мария С.",
+      city: "София",
+      rating: 5,
+      text: "Невероятно! Вече след първата седмица на употреба виждам огромна разлика. Препоръчвам на всички!",
+      verified: true,
+      productUsed: "FUNGEL",
+      dateAdded: "2024-01-15",
+      featured: true
+    },
+    {
+      id: "t2", 
+      name: "Стефан М.",
+      city: "Пловдив",
+      rating: 5,
+      text: "Накрая намерих продукт, който наистина работи. Натурални съставки и отличен ефект!",
+      verified: true,
+      productUsed: "FUNGEL",
+      dateAdded: "2024-01-10",
+      featured: true
+    },
+    {
+      id: "t3",
+      name: "Ана П.",
+      city: "Варна", 
+      rating: 5,
+      text: "Бърза доставка, отличен продукт. Вече поръчвам втора опаковка!",
+      verified: true,
+      productUsed: "FUNGEL",
+      dateAdded: "2024-01-08",
+      featured: false
+    },
+    {
+      id: "t4",
+      name: "Петър Й.",
+      city: "Бургас",
+      rating: 4,
+      text: "Добър продукт, работи както трябва. Само че очаквах по-бързи резултати.",
+      verified: true,
+      productUsed: "FUNGEL", 
+      dateAdded: "2024-01-05",
+      featured: false
+    },
+    {
+      id: "t5",
+      name: "Милица Р.",
+      city: "Русе",
+      rating: 5,
+      text: "Отличен гел, помага наистина! Кожата ми се възстанови напълно за 2 седмици.",
+      verified: true,
+      productUsed: "FUNGEL",
+      dateAdded: "2024-01-03",
+      featured: true
+    },
+    {
+      id: "t6",
+      name: "Александър Т.",
+      city: "Стара Загора", 
+      rating: 5,
+      text: "Супер продукт! Използва цялото семейство. Натурален и ефикасен.",
+      verified: true,
+      productUsed: "FUNGEL",
+      dateAdded: "2024-01-01",
+      featured: false
+    }
   ]
 };
 

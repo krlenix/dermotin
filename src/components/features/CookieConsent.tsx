@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { X, Settings, Shield } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -69,13 +68,13 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
   if (!isEU || !showBanner) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
-      <Card className="w-full m-4 p-6 max-w-2xl mx-auto">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-end justify-center p-4">
+      <div className="w-full max-w-2xl bg-white border border-gray-300 shadow-2xl rounded-lg p-6 text-gray-900">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-blue-600" />
-            <h3 className="font-semibold">{t('ui.cookie_preferences')}</h3>
-            <Badge variant="secondary" className="text-xs">{t('ui.gdpr_required')}</Badge>
+            <h3 className="font-semibold">{t('cookie_settings')}</h3>
+            <Badge variant="secondary" className="text-xs">GDPR</Badge>
           </div>
           <Button
             variant="ghost"
@@ -89,7 +88,7 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
         {!showSettings ? (
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-700">
               {t('cookie_notice')}
             </p>
             
@@ -115,8 +114,8 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">Necessary Cookies</h4>
-                  <p className="text-sm text-gray-600">Required for basic website functionality</p>
+                  <h4 className="font-medium">{t('necessary_cookies')}</h4>
+                  <p className="text-sm text-gray-700">{t('necessary_cookies_desc')}</p>
                 </div>
                 <input 
                   type="checkbox" 
@@ -128,8 +127,8 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">Analytics Cookies</h4>
-                  <p className="text-sm text-gray-600">Help us understand website usage</p>
+                  <h4 className="font-medium">{t('analytics_cookies')}</h4>
+                  <p className="text-sm text-gray-700">{t('analytics_cookies_desc')}</p>
                 </div>
                 <input 
                   type="checkbox" 
@@ -141,8 +140,8 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">Marketing Cookies</h4>
-                  <p className="text-sm text-gray-600">Used for targeted advertising</p>
+                  <h4 className="font-medium">{t('marketing_cookies')}</h4>
+                  <p className="text-sm text-gray-700">{t('marketing_cookies_desc')}</p>
                 </div>
                 <input 
                   type="checkbox" 
@@ -154,8 +153,8 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">Functional Cookies</h4>
-                  <p className="text-sm text-gray-600">Enable enhanced features</p>
+                  <h4 className="font-medium">{t('functional_cookies')}</h4>
+                  <p className="text-sm text-gray-700">{t('functional_cookies_desc')}</p>
                 </div>
                 <input 
                   type="checkbox" 
@@ -168,17 +167,17 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
             <div className="flex gap-2">
               <Button onClick={savePreferences} className="flex-1">
-                Save Preferences
+                {t('save_preferences')}
               </Button>
               <Button onClick={() => setShowSettings(false)} variant="outline">
-                Back
+                {t('back')}
               </Button>
             </div>
           </div>
         )}
 
         <div className="mt-4 pt-4 border-t">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-600">
             Read our{' '}
             <button 
               onClick={() => window.open('/privacy-policy', '_blank')}
@@ -189,7 +188,7 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
             for more information.
           </p>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

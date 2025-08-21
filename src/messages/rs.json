@@ -147,7 +147,17 @@
     "accept_all": "Prihvati sve",
     "accept_necessary": "Samo neophodni",
     "cookie_settings": "Podešavanja kolačića",
-    "privacy_policy": "Politika privatnosti"
+    "privacy_policy": "Politika privatnosti",
+    "necessary_cookies": "Neophodni kolačići",
+    "necessary_cookies_desc": "Potrebni za osnovnu funkcionalnost sajta",
+    "analytics_cookies": "Analitički kolačići",
+    "analytics_cookies_desc": "Pomažu nam da razumemo korišćenje sajta",
+    "marketing_cookies": "Marketing kolačići",
+    "marketing_cookies_desc": "Koriste se za ciljano reklamiranje",
+    "functional_cookies": "Funkcionalni kolačići",
+    "functional_cookies_desc": "Omogućavaju poboljšane funkcije",
+    "save_preferences": "Sačuvaj podešavanja",
+    "back": "Nazad"
   },
   "success": {
     "order_placed": "Uspešno naručeno!",
@@ -348,5 +358,48 @@
     "need_help": "Potrebna vam je pomoć?",
     "contact_support": "Naš tim za podršku je dostupan 24/7 za sve vaše potrebe",
     "order_completed": "Porudžbina završena"
+  },
+  "wheel": {
+    "title": "Točak Sreće",
+    "subtitle": "Okretaj i osvoji fantastične nagrade!",
+    "spin_button": "Okreni Točak! 🎰",
+    "spin_again_button": "Pokušaj ponovo! 🍀",
+    "spinning": "Okreće se...",
+    "congratulations": "Čestitamo!",
+    "you_won": "Osvojili ste fantastičnu nagradu!",
+    "prize_claimed": "Nagrada je iskorišćena! Zatvaranje za {countdown} sekund{plural}...",
+    "claim_prize": "Iskoristi Nagradu 🎁",
+    "close": "Zatvori",
+    "close_now": "Zatvori odmah",
+    "copy_code": "Kopiraj kod",
+    "copied": "Kopirano u klipbord!",
+    "how_to_use": "Kako da koristiš:",
+    "copy_coupon_instructions": "Kopiraj kupon kod i primeni ga pri poručivanju da dobiješ popust!",
+    "terms_apply": "Ponuda važi ograničeno vreme. Važe uslovi korišćenja.",
+    "only_one_chance": "😔 Imaš samo još jednu priliku da pobediš!",
+    "you_won_message": "🎉 Čestitamo! Osvojili ste {prize}!",
+    "prizes": {
+      "50_off": "50% POPUST",
+      "30_off": "30% POPUST", 
+      "20_off": "20% POPUST",
+      "15_off": "15% POPUST",
+      "10_off": "10% POPUST",
+      "free_shipping": "Besplatna Dostava",
+      "try_again": "Pokušaj Ponovo"
+    },
+    "coupon_codes": {
+      "LUCKY50": "SREĆA50",
+      "SAVE30": "POPUST30",
+      "DEAL20": "AKCIJA20", 
+      "SAVE15": "POPUST15",
+      "SAVE10": "POPUST10",
+      "FREESHIP": "BESPLATNODOSTAVA"
+    },
+    "save_percentage": "Uštedi {percentage}% na kupovinu!",
+    "debug": {
+      "force_show": "Prikaži Točak",
+      "reset_storage": "Resetuj Memoriju",
+      "test_wheel": "🎰 TESTIRAJ TOČAK"
+    }
   }
 }

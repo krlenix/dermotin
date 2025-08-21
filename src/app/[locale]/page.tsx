@@ -14,6 +14,9 @@ import { Footer } from '@/components/ui/footer';
 import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials';
 import { SocialProof } from '@/components/features/SocialProof';
 import { MarqueeText } from '@/components/ui/marquee-text';
+import { WheelPopup } from '@/components/wheel-of-fortune/WheelPopup';
+import { WheelOfFortune } from '@/components/wheel-of-fortune/WheelOfFortune';
+import { WHEEL_CONFIG, POPUP_CONFIG } from '@/config/wheel';
 import { useParams } from 'next/navigation';
 import { 
   Star, 
@@ -45,6 +48,33 @@ export default function HomePage() {
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [showWheelTest, setShowWheelTest] = useState(false);
+
+  // Handle wheel of fortune prize won
+  const handlePrizeWon = (couponCode: string) => {
+    console.log('Prize won with coupon code:', couponCode);
+    // Here you can implement logic to:
+    // - Save coupon to local storage
+    // - Send analytics event
+    // - Show notification
+    // - Apply coupon automatically to cart
+    
+    // For now, we'll just show an alert
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('wheel_coupon', couponCode);
+    }
+  };
+
+  const handleWheelClose = () => {
+    console.log('Wheel popup closed');
+    // Analytics or other cleanup logic can go here
+  };
+
+  // Debug wheel configuration
+  useEffect(() => {
+    console.log('🎡 HomePage: WHEEL_CONFIG:', WHEEL_CONFIG);
+    console.log('🎡 HomePage: POPUP_CONFIG:', POPUP_CONFIG);
+  }, []);
 
   // Handle scroll for header effects
   useEffect(() => {
@@ -169,9 +199,18 @@ export default function HomePage() {
                 </p>
               </div>
               
-              <div className="animate-fadeInUp" style={{animationDelay: '0.4s'}}>
+              <div className="animate-fadeInUp space-x-4" style={{animationDelay: '0.4s'}}>
                 <Button size="lg" className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
                   PROIZVODI
+                </Button>
+                {/* Test button for wheel */}
+                <Button 
+                  onClick={() => setShowWheelTest(true)}
+                  size="lg" 
+                  variant="outline" 
+                  className="border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1"
+                >
+                  🎰 TEST WHEEL
                 </Button>
               </div>
               
@@ -279,6 +318,59 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Before/After Section - Animated */}
+        <section className="py-20 bg-gradient-to-r from-brand-green/10 to-brand-orange/10">
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6 animate-on-scroll-left">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                  Pogledajte rezultate pre i posle
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Naši klijenti dele svoje neverovatne transformacije nakon korišćenja DERMOTIN proizvoda. 
+                  Prirodni sastojci donose vidljive rezultate već posle nekoliko nedelja redovne upotrebe.
+                </p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.1s'}}>
+                    <CheckCircle className="h-5 w-5 text-brand-green" />
+                    <span className="text-gray-700">Vidljivi rezultati za 2-3 nedelje</span>
+                  </div>
+                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
+                    <CheckCircle className="h-5 w-5 text-brand-green" />
+                    <span className="text-gray-700">Sigurni za sve tipove kože</span>
+                  </div>
+                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
+                    <CheckCircle className="h-5 w-5 text-brand-green" />
+                    <span className="text-gray-700">Bez neželjenih efekata</span>
+                  </div>
+                </div>
+                
+                <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-3 rounded-lg hover:scale-105 transition-all duration-300 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
+                  SAZNAJTE VIŠE
+                </Button>
+              </div>
+              
+              <div className="relative animate-on-scroll-right">
+                <div className="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden group">
+                  <Image
+                    src="https://dermotin.shop/wp-content/uploads/2024/10/c2-vid-blg-2-opt.jpg"
+                    alt="Pre i posle rezultati"
+                    width={600}
+                    height={400}
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors duration-300">
+                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform duration-300 cursor-pointer">
+                      <Play className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         {/* Testimonials Section */}
         <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
@@ -355,6 +447,41 @@ export default function HomePage() {
 
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />
+
+      {/* Wheel of Fortune Popup */}
+      <WheelPopup
+        wheelConfig={WHEEL_CONFIG}
+        popupConfig={POPUP_CONFIG}
+        onPrizeWon={handlePrizeWon}
+        onClose={handleWheelClose}
+      />
+
+      {/* Test Wheel Modal */}
+      {showWheelTest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setShowWheelTest(false)}
+          />
+          <div className="relative z-10 w-full max-w-2xl">
+            <div className="absolute -top-4 -right-4 z-20">
+              <Button
+                onClick={() => setShowWheelTest(false)}
+                size="sm"
+                variant="outline"
+                className="rounded-full w-10 h-10 p-0 bg-white/90 hover:bg-white border-2 border-gray-300 shadow-lg"
+              >
+                ✕
+              </Button>
+            </div>
+            <WheelOfFortune
+              config={WHEEL_CONFIG}
+              onPrizeWon={handlePrizeWon}
+              onClose={() => setShowWheelTest(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,7 +5,7 @@ export interface ProductVariant {
   size?: string;
   quantity?: number;
   price: number;
-  currency: 'RSD' | 'BAM' | 'EUR';
+  currency: 'RSD' | 'BAM' | 'EUR' | 'BGN';
   discountPrice?: number;
   isDefault?: boolean;
 }
@@ -14,7 +14,9 @@ export interface Ingredient {
   id: string;
   inciName: string;
   serbianName: string;
+  bulgarianName?: string;
   description: string;
+  bulgarianDescription?: string;
   category: 'herbal_extract' | 'essential_oil' | 'active_compound' | 'base_component' | 'preservative' | 'other';
 }
 
@@ -63,7 +65,9 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     id: 'calendula-extract',
     inciName: 'Calendula Officinalis Flower Extract',
     serbianName: 'Ekstrakt cveta nevena',
+    bulgarianName: 'Екстракт от цвят на невен',
     description: 'Tradicionalno se koristi za smiravanje kože, pomaže u obnovi oštećene kože i ima anti-inflamatorna svojstva',
+    bulgarianDescription: 'Традиционно се използва за успокояване на кожата, помага за възстановяване на увредената кожа и има противовъзпалителни свойства',
     category: 'herbal_extract'
   },
   'chelidonium-extract': {
@@ -107,7 +111,9 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     id: 'tea-tree-oil',
     inciName: 'Melaleuca Alternifolia Leaf Oil',
     serbianName: 'Ulje čajnog drveta',
+    bulgarianName: 'Масло от чаено дърво',
     description: 'Snažna antimikrobna i antifungalna svojstva, tradicionalno se koristi za problematičnu kožu',
+    bulgarianDescription: 'Силни антимикробни и антифунгални свойства, традиционно се използва за проблемна кожа',
     category: 'essential_oil'
   },
   'oregano-oil': {
@@ -389,7 +395,7 @@ export const PRODUCTS: Record<string, Product> = {
     ],
     slug: 'fungel',
     alternativeSlugs: ['fungel-promo', 'antifungal-gel', 'gljivice-stopala'],
-    availableCountries: ['rs', 'ba', 'me', 'eu'],
+    availableCountries: ['rs', 'ba', 'me', 'eu', 'bg'],
     seoTitle: 'DERMOTIN FUNGEL - Emulzija za kožu sa 6 biljnih ekstrakata | 50ml',
     seoDescription: 'DERMOTIN FUNGEL - specijalizovana emulzija za kožu sa 6 medicinskih biljnih ekstrakata i 5 eteričnih ulja. Čajno drvo, origano, nevena. EU-usklađena formula. 50ml.',
     urgencyElements: {
@@ -452,7 +458,7 @@ export const PRODUCTS: Record<string, Product> = {
     ],
     slug: 'foot-cream',
     alternativeSlugs: ['krema-za-stopala'],
-    availableCountries: ['rs', 'ba', 'me', 'eu'],
+    availableCountries: ['rs', 'ba', 'me', 'eu', 'bg'],
     seoTitle: 'DERMOTIN Foot Cream - Krema za stopala',
     seoDescription: 'Hidratantna krema za stopala sa prirodnim ekstraktima.',
     urgencyElements: {
@@ -504,7 +510,7 @@ export const PRODUCTS: Record<string, Product> = {
     ],
     slug: 'face-serum',
     alternativeSlugs: ['serum-za-lice'],
-    availableCountries: ['rs', 'ba', 'me', 'eu'],
+    availableCountries: ['rs', 'ba', 'me', 'eu', 'bg'],
     seoTitle: 'DERMOTIN Face Serum - Anti-age serum za lice',
     seoDescription: 'Intenzivni serum za lice sa vitaminima i prirodnim uljima.',
     urgencyElements: {
@@ -556,7 +562,7 @@ export const PRODUCTS: Record<string, Product> = {
     ],
     slug: 'body-lotion',
     alternativeSlugs: ['losion-za-telo'],
-    availableCountries: ['rs', 'ba', 'me', 'eu'],
+    availableCountries: ['rs', 'ba', 'me', 'eu', 'bg'],
     seoTitle: 'DERMOTIN Body Lotion - Hidratantna losion za telo',
     seoDescription: 'Hidratantna losion za telo sa ekstraktima biljaka.',
     urgencyElements: {
@@ -596,7 +602,7 @@ export function getProductsForCountry(countryCode: string): Product[] {
   );
 }
 
-export function getProductPrice(product: Product, currency: 'RSD' | 'BAM' | 'EUR', variantId?: string): number {
+export function getProductPrice(product: Product, currency: 'RSD' | 'BAM' | 'EUR' | 'BGN', variantId?: string): number {
   const variant = variantId 
     ? product.variants.find(v => v.id === variantId)
     : product.variants.find(v => v.isDefault) || product.variants[0];

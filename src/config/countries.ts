@@ -64,6 +64,34 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       trackingUrl: 'https://postexpress.rs/tracking'
     }
   },
+  bg: {
+    code: 'bg',
+    name: 'Bulgaria',
+    locale: 'bg-BG',
+    currency: 'BGN',
+    currencySymbol: 'лв',
+    region: 'Balkans',
+    isEU: true,
+    timezone: 'Europe/Sofia',
+    logo: '/images/main/logo.png',
+    company: {
+      name: 'DERMOTIN Bulgaria EOOD',
+      address: 'ул. Витоша 15',
+      city: 'София',
+      postalCode: '1000',
+      country: 'България',
+      taxNumber: 'BG123456789',
+      phone: '+359 2 123 4567',
+      email: 'support@dermotin.bg',
+      registrationNumber: '12345678'
+    },
+    courier: {
+      name: 'Econt Express',
+      logo: '/images/couriers/econt.png',
+      deliveryTime: '1-2 работни дни',
+      trackingUrl: 'https://econt.com/tracking'
+    }
+  },
   // Ready for future expansion:
   // ba: { /* Bosnia configuration */ },
   // me: { /* Montenegro configuration */ },
@@ -72,13 +100,14 @@ export const COUNTRIES: Record<string, CountryConfig> = {
 
 export const DEFAULT_COUNTRY = 'rs';
 
-export const SUPPORTED_CURRENCIES = ['RSD', 'BAM', 'EUR'] as const;
+export const SUPPORTED_CURRENCIES = ['RSD', 'BAM', 'EUR', 'BGN'] as const;
 export type SupportedCurrency = typeof SUPPORTED_CURRENCIES[number];
 
 export const CURRENCY_RATES: Record<SupportedCurrency, number> = {
   RSD: 1, // Base currency
   BAM: 0.5, // Approximate rate - will be updated when adding Bosnia
-  EUR: 0.0085 // Approximate rate - will be updated when adding EU/Montenegro
+  EUR: 0.0085, // Approximate rate - will be updated when adding EU/Montenegro
+  BGN: 0.017 // Approximate rate - will be updated when adding Bulgaria
 };
 
 export function getCountryConfig(countryCode: string): CountryConfig {

@@ -1,0 +1,246 @@
+/* Wheel of Fortune CSS Animations */
+
+/* Custom animations for wheel components */
+@keyframes wheelSpin {
+  from {
+    transform: rotate(var(--start-rotation, 0deg));
+  }
+  to {
+    transform: rotate(var(--final-rotation));
+  }
+}
+
+@keyframes wheelBounce {
+  0%, 100% {
+    transform: rotate(var(--final-rotation)) scale(1);
+  }
+  50% {
+    transform: rotate(var(--final-rotation)) scale(1.05);
+  }
+}
+
+@keyframes wheelGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+  }
+}
+
+@keyframes pointerBounce {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes confettiFloat {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Utility classes for animations */
+.animate-wheelSpin {
+  animation: wheelSpin var(--spin-duration, 4s) var(--easing-function, ease-out) forwards;
+}
+
+.animate-wheelBounce {
+  animation: wheelBounce 1s ease-in-out infinite;
+}
+
+.animate-wheelGlow {
+  animation: wheelGlow 2s ease-in-out infinite;
+}
+
+.animate-pointerBounce {
+  animation: pointerBounce 0.3s ease-in-out;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slideInFromBottom {
+  animation: slideInFromBottom 0.5s ease-out forwards;
+}
+
+.animate-slideInFromTop {
+  animation: slideInFromTop 0.5s ease-out forwards;
+}
+
+.animate-zoomIn {
+  animation: zoomIn 0.7s ease-out forwards;
+}
+
+.animate-confettiFloat {
+  animation: confettiFloat var(--confetti-duration, 3s) linear forwards;
+}
+
+/* 3D Transform utilities */
+.transform-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.wheel-3d {
+  transform: perspective(1000px) rotateX(15deg);
+  transform-style: preserve-3d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .wheel-container {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 480px) {
+  .wheel-container {
+    transform: scale(0.8);
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-wheelSpin {
+    animation-duration: 1s;
+  }
+  
+  .animate-wheelBounce,
+  .animate-wheelGlow,
+  .animate-pointerBounce {
+    animation: none;
+  }
+  
+  .animate-confettiFloat {
+    animation-duration: 1s;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .wheel-segment {
+    stroke-width: 3px;
+  }
+  
+  .wheel-pointer {
+    filter: contrast(2);
+  }
+}
+
+/* Hover effects for interactive elements */
+.wheel-interactive:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-out;
+}
+
+.button-hover-effect {
+  transition: all 0.3s ease;
+}
+
+.button-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading states */
+.wheel-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.wheel-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Focus states for accessibility */
+.wheel-focusable:focus {
+  outline: 2px solid #4F46E5;
+  outline-offset: 2px;
+}
+
+/* Print styles (hide wheel in print) */
+@media print {
+  .wheel-popup,
+  .wheel-component {
+    display: none !important;
+  }
+}

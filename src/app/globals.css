@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "react-phone-number-input/style.css";
+@import "../styles/wheel-animations.css";
 
 @theme inline {
   --color-background: 0 0% 100%;
