@@ -31,7 +31,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = ({
   particleCount = 150,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(0);
   const particles = useRef<Particle[]>([]);
   const startTime = useRef<number>(0);
 
