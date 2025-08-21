@@ -319,7 +319,7 @@ export default function HomePage() {
         </section>
 
         {/* Before/After Section - Animated */}
-        <section className="py-20 bg-gradient-to-r from-brand-green/10 to-brand-orange/10">
+        <section className="py-20 bg-gradient-to-r from-brand-green/10 to-brand-orange/10 w-full overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6 animate-on-scroll-left">
@@ -351,8 +351,8 @@ export default function HomePage() {
                 </Button>
               </div>
               
-              <div className="relative animate-on-scroll-right">
-                <div className="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden group">
+              <div className="relative animate-on-scroll-right w-full">
+                <div className="w-full max-w-full aspect-video bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden group">
                   <Image
                     src="https://dermotin.shop/wp-content/uploads/2024/10/c2-vid-blg-2-opt.jpg"
                     alt="Pre i posle rezultati"

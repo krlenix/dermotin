@@ -57,8 +57,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
   // Apply global overflow fix and prevent layout shifts
   useEffect(() => {
-    document.body.style.overflowX = 'hidden';
-    document.documentElement.style.overflowX = 'hidden';
+    // Only set maxWidth to prevent horizontal scroll, but keep overflow visible for sticky positioning
     document.body.style.maxWidth = '100vw';
     document.documentElement.style.maxWidth = '100vw';
     
@@ -71,8 +70,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     }, 100);
     
     return () => {
-      document.body.style.overflowX = '';
-      document.documentElement.style.overflowX = '';
       document.body.style.maxWidth = '';
       document.documentElement.style.maxWidth = '';
       document.body.style.position = '';
@@ -239,7 +236,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative overflow-x-hidden w-full" style={{maxWidth: '100vw'}}>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative w-full" style={{maxWidth: '100vw'}}>
       {/* Top Bar Marquee - HIDDEN */}
       {/* <div className="fixed top-0 left-0 right-0 z-50">
         <MarqueeText 
@@ -541,9 +538,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </div>
 
       {/* Bundle Selection & Checkout */}
-      <section className="py-6 md:py-12 bg-white w-full overflow-hidden">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-7xl mx-auto w-full">
+          <div className="max-w-7xl mx-auto">
             <div id="order" className="grid lg:grid-cols-2 gap-8">
               {/* Bundle Selection */}
               <div className="lg:sticky lg:top-12 lg:self-start">
@@ -572,7 +569,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
           </div>
         </div>
       </section>
-
 
 
       {/* Comparison Table */}
