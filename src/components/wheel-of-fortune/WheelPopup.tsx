@@ -96,12 +96,12 @@ export const WheelPopup: React.FC<WheelPopupProps> = ({
         </div>
 
         {/* Wheel Component */}
-        <WheelOfFortune
+        {/* <WheelOfFortune
           config={wheelConfig}
           onPrizeWon={handlePrizeWon}
           onClose={handleClose}
           className="animate-in zoom-in duration-700"
-        />
+        /> */}
 
 
       </div>
