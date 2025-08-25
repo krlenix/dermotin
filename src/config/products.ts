@@ -35,6 +35,7 @@ export interface Product {
   name: string;
   description: string;
   shortDescription: string;
+  purpose: string; // What the product is created for
   category: string;
   images: {
     main: string;
@@ -304,6 +305,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'FUNGEL',
     description: 'FUNGEL je specijalizovana emulzija za kožu koja kombinuje 6 medicinskih biljnih ekstrakata (23.48% ukupno) sa 5 eteričnih ulja predvođenih čajnim drvetom i origanom. Obogaćena panthenolom (pro-vitamin B5), vitaminima A i E, plus hidratantnim agensima uključujući glicerin, ulje slatkog badema i ricinusovo ulje.',
     shortDescription: 'Emulzija za kožu sa 6 biljnih ekstrakata i 5 eteričnih ulja - 50ml',
+    purpose: 'Kreiran za tretman problematične kože, gljivičnih infekcija i podršku obnovi kože',
     category: 'skincare',
     images: {
       main: '/images/products/fungel/fungel-box-and-product-mockup.png',
@@ -566,6 +568,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'DERMOTIN Foot Cream (DEMO)',
     description: 'Hidratantna krema za stopala sa prirodnim ekstraktima.',
     shortDescription: 'Dubinska hidratacija i zaštita stopala - DEMO proizvod',
+    purpose: 'Kreiran za dubinsku hidrataciju i zaštitu stopala, omekšavanje grube kože i sprečavanje pucanja',
     category: 'skincare',
     images: {
       main: '/images/products/fungel/fungel-box-and-product-mockup.png',
@@ -618,6 +621,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'DERMOTIN Face Serum (DEMO)',
     description: 'Intenzivni serum za lice sa vitaminima i prirodnim uljima.',
     shortDescription: 'Anti-age serum sa vitamin C i E - DEMO proizvod',
+    purpose: 'Kreiran za pomlađivanje kože, izglađivanje bora i dubinsku hidrataciju sa prirodnim antioksidantima',
     category: 'skincare',
     images: {
       main: '/images/products/fungel/fungel-box-and-product-mockup.png',
@@ -670,6 +674,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'DERMOTIN Body Lotion (DEMO)',
     description: 'Hidratantna losion za telo sa ekstraktima biljaka.',
     shortDescription: 'Nežna hidratacija za celo telo - DEMO proizvod',
+    purpose: 'Kreiran za nežnu hidrataciju celog tela, brzu apsorpciju i pogodnost za osetljivu kožu',
     category: 'skincare',
     images: {
       main: '/images/products/fungel/fungel-box-and-product-mockup.png',

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { getProductsForCountry } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
+import { HOMEPAGE_IMAGES } from '@/config/images';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -40,6 +41,9 @@ import {
   Play
 } from 'lucide-react';
 
+// Homepage statistics are now available through translations
+// Access via: t('homepage.stats_customers'), t('homepage.stats_rating'), etc.
+
 export default function HomePage() {
   const params = useParams();
   const locale = params.locale as string;
@@ -49,6 +53,29 @@ export default function HomePage() {
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+
+  // Smooth scroll functions
+  const scrollToProducts = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+      productsSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  const scrollToTestimonials = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const testimonialsSection = document.querySelector('[data-section="testimonials"]');
+    if (testimonialsSection) {
+      testimonialsSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
   // const [showWheelTest, setShowWheelTest] = useState(false);
 
   // Handle wheel of fortune prize won
@@ -127,18 +154,26 @@ export default function HomePage() {
             <nav className="hidden md:flex items-center space-x-8">
               <Link href={`/${locale}`} className="text-gray-800 hover:text-brand-green font-medium transition-colors relative group">
                 {t('navigation.home')}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-green transition-all group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-brand-green"></span>
               </Link>
-              <Link href={`/${locale}/products`} className="text-gray-800 hover:text-brand-green font-medium transition-colors relative group">
+              <button 
+                onClick={scrollToProducts}
+                className="text-gray-800 hover:text-brand-green font-medium transition-colors relative group cursor-pointer"
+              >
                 {t('navigation.products')}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-green transition-all group-hover:w-full"></span>
-              </Link>
-              <Link href={`/${locale}/about`} className="text-gray-800 hover:text-brand-green font-medium transition-colors relative group">
-                {t('navigation.about')}
+              </button>
+              <button 
+                onClick={scrollToTestimonials}
+                className="text-gray-800 hover:text-brand-green font-medium transition-colors relative group cursor-pointer"
+              >
+                {t('navigation.testimonials')}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-green transition-all group-hover:w-full"></span>
-              </Link>
-              <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white px-6 py-2">
-                {t('navigation.contact')}
+              </button>
+              <Button asChild className="bg-brand-orange hover:bg-brand-orange/90 text-white px-6 py-2">
+                <Link href={`/${locale}/contact`}>
+                  {t('navigation.contact')}
+                </Link>
               </Button>
             </nav>
 
@@ -158,14 +193,28 @@ export default function HomePage() {
                 <Link href={`/${locale}`} className="text-gray-800 hover:text-brand-green font-medium transition-colors">
                   {t('navigation.home')}
                 </Link>
-                <Link href={`/${locale}/products`} className="text-gray-800 hover:text-brand-green font-medium transition-colors">
+                <button 
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    scrollToProducts();
+                  }}
+                  className="text-gray-800 hover:text-brand-green font-medium transition-colors text-left"
+                >
                   {t('navigation.products')}
-                </Link>
-                <Link href={`/${locale}/about`} className="text-gray-800 hover:text-brand-green font-medium transition-colors">
-                  {t('navigation.about')}
-                </Link>
-                <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white w-full">
-                  {t('navigation.contact')}
+                </button>
+                <button 
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    scrollToTestimonials();
+                  }}
+                  className="text-gray-800 hover:text-brand-green font-medium transition-colors text-left"
+                >
+                  {t('navigation.testimonials')}
+                </button>
+                <Button asChild className="bg-brand-orange hover:bg-brand-orange/90 text-white w-full">
+                  <Link href={`/${locale}/contact`}>
+                    {t('navigation.contact')}
+                  </Link>
                 </Button>
               </nav>
             </div>
@@ -173,86 +222,109 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section - Animated & Parallax */}
-      <section className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 overflow-hidden">
-        {/* Animated Background Elements */}
+      {/* Hero Section - Enhanced with Modern Design */}
+      <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 overflow-hidden">
+        {/* Dynamic Background Elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 right-20 w-64 h-64 bg-brand-green/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-48 h-48 bg-brand-orange/10 rounded-full blur-2xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-blue-200/20 rounded-full blur-xl animate-bounce delay-500"></div>
-          <div className="absolute bottom-1/4 right-1/3 w-20 h-20 bg-green-300/20 rounded-full blur-lg animate-ping delay-700"></div>
+          <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-r from-brand-green/15 to-emerald-300/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 left-20 w-56 h-56 bg-gradient-to-r from-brand-orange/15 to-orange-300/10 rounded-full blur-2xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-gradient-to-r from-blue-200/20 to-cyan-200/15 rounded-full blur-xl animate-bounce delay-500"></div>
+          <div className="absolute bottom-1/4 right-1/3 w-24 h-24 bg-gradient-to-r from-green-300/20 to-emerald-300/15 rounded-full blur-lg animate-ping delay-700"></div>
+          
+          {/* Floating particles */}
+          <div className="absolute top-1/3 left-1/2 w-2 h-2 bg-brand-orange/30 rounded-full animate-float delay-200"></div>
+          <div className="absolute top-2/3 right-1/4 w-3 h-3 bg-brand-green/25 rounded-full animate-float delay-1500"></div>
+          <div className="absolute top-1/4 right-1/2 w-1 h-1 bg-emerald-400/40 rounded-full animate-ping delay-800"></div>
         </div>
         
         <div className="container mx-auto px-4 pt-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
-            {/* Left Content - Fade in from left */}
+            {/* Left Content - Enhanced with better animations */}
             <div className="space-y-8 lg:pr-8 animate-fadeInLeft">
+              {/* Badge */}
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-green/10 to-emerald-100/50 border border-brand-green/20 rounded-full text-sm font-medium text-brand-green animate-fadeInUp">
+                <Sparkles className="w-4 h-4 mr-2" />
+                {t('homepage.trusted_by_thousands')}
+              </div>
+
               <div className="space-y-6">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.1] animate-fadeInUp">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent leading-[1.1] animate-fadeInUp">
                   {t('homepage.hero_title')}
                 </h1>
                 
                 <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-lg animate-fadeInUp" style={{animationDelay: '0.2s'}}>
                   {t('homepage.hero_subtitle')}
                 </p>
+
               </div>
               
-              <div className="animate-fadeInUp space-x-4" style={{animationDelay: '0.4s'}}>
-                <Button size="lg" className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
-                  {t('homepage.products_button')}
-                </Button>
-                {/* Test button for wheel */}
-                {/* <Button 
-                  onClick={() => setShowWheelTest(true)}
+              <div className="flex flex-col sm:flex-row gap-4 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
+                <Button 
                   size="lg" 
-                  variant="outline" 
-                  className="border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1"
+                  onClick={scrollToProducts}
+                  className="bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-102 hover:-translate-y-0.5 group cursor-pointer relative overflow-hidden"
                 >
-                  {t('wheel.debug.test_wheel')}
-                </Button> */}
+                  {/* Subtle background glow on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 -translate-x-full group-hover:translate-x-full"></div>
+                  
+                  {/* Button content */}
+                  <span className="relative z-10 flex items-center">
+                    {t('homepage.products_button')}
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                </Button>
               </div>
-              
-                          </div>
-            
-            {/* Right Image - Fade in from right with floating effect */}
-            <div className="relative lg:h-[700px] animate-fadeInRight">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100/50 to-green-100/50 rounded-3xl animate-float"></div>
-              <div className="relative h-full flex items-center justify-center p-6">
-                <div className="relative group">
-                                     <Image
-                     src="https://dermotin.shop/wp-content/uploads/2025/06/IMG_1585-1-qv31g6nybslcns2bzmoe8ky033v7opjd9wrqwip0cg.png"
-                     alt={t('homepage.natural_beauty_alt')}
-                     width={600}
-                     height={700}
-                     className="object-cover w-full h-full max-w-xl rounded-2xl shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
-                   />
-                  <div className="absolute -inset-4 bg-gradient-to-r from-brand-green/20 to-brand-orange/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+              {/* Trust indicators */}
+              <div className="flex flex-wrap items-center gap-6 pt-4 animate-fadeInUp" style={{animationDelay: '0.5s'}}>
+                <div className="flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-brand-green" />
+                  <span className="text-sm text-gray-600">{t('homepage.trust_dermatologically_tested')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Leaf className="w-5 h-5 text-brand-green" />
+                  <span className="text-sm text-gray-600">{t('homepage.trust_natural_ingredients')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-brand-green" />
+                  <span className="text-sm text-gray-600">{t('homepage.trust_clinically_proven')}</span>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Clean Trust Section */}
-      <section className="py-12 bg-white border-y border-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-            <div className="flex items-center gap-3 text-gray-600">
-              <Shield className="w-5 h-5 text-brand-green" />
-              <span className="text-sm font-medium">{t('homepage.trust_dermatologically_tested')}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Leaf className="w-5 h-5 text-brand-green" />
-              <span className="text-sm font-medium">{t('homepage.trust_natural_ingredients')}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Award className="w-5 h-5 text-brand-green" />
-              <span className="text-sm font-medium">{t('homepage.trust_clinically_proven')}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <ShieldCheck className="w-5 h-5 text-brand-green" />
-              <span className="text-sm font-medium">{t('homepage.trust_no_parabens')}</span>
+            
+            {/* Right Image - Enhanced with better effects */}
+            <div className="relative lg:h-[700px] animate-fadeInRight">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-green-100/30 rounded-3xl animate-float"></div>
+              <div className="relative h-full flex items-center justify-center p-6">
+                <div className="relative group">
+                  {/* Enhanced background glow effect */}
+                  <div className="absolute -inset-8 bg-gradient-to-r from-brand-green/20 via-transparent to-brand-orange/20 rounded-3xl blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
+                  
+                  {/* Additional floating particles */}
+                  <div className="absolute -top-4 -left-4 w-8 h-8 bg-brand-green/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.2s'}}></div>
+                  <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-brand-orange/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.4s'}}></div>
+                  <div className="absolute top-1/2 -right-6 w-4 h-4 bg-brand-green/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.6s'}}></div>
+                  
+                  {/* Main image with enhanced hover effects */}
+                  <div className="relative overflow-hidden rounded-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-700">
+                    <Image
+                      src={HOMEPAGE_IMAGES.hero.main}
+                      alt={t('homepage.natural_beauty_alt')}
+                      width={600}
+                      height={700}
+                      className="object-cover w-full h-full max-w-xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
+                    />
+                    
+                    {/* Overlay effect on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    {/* Sparkle effect */}
+                    <div className="absolute top-4 right-4 w-6 h-6 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-0 group-hover:scale-100">
+                      <Sparkles className="w-3 h-3 text-brand-orange" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -260,116 +332,235 @@ export default function HomePage() {
 
       <main className="bg-white">
 
-        {/* Product Showcase - Animated */}
-        <section className="py-20 animate-on-scroll">
+        {/* Enhanced Product Showcase */}
+        <section id="products" className="py-20 bg-gradient-to-b from-white to-gray-50 scroll-mt-20">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12 animate-fadeInUp">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <div className="text-center mb-16 animate-fadeInUp">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-orange/10 to-orange-100/50 border border-brand-orange/20 rounded-full text-sm font-medium text-brand-orange mb-6">
+                <Sparkles className="w-4 h-4 mr-2" />
+                {t('homepage.most_popular')}
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
                 {t('homepage.products_section_title')}
               </h2>
-              <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white px-6 py-2 rounded-full hover:scale-105 transition-all duration-300">
-                {t('homepage.view_all_button')}
-              </Button>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+                {t('homepage.product_showcase_subtitle')}
+              </p>
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {products.map((product, index) => (
                 <Card 
                   key={product.id} 
-                  className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group animate-slideInScale"
+                  className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group animate-slideInScale bg-white relative"
                   style={{animationDelay: `${index * 0.1}s`}}
                 >
-                  <div className="aspect-square relative bg-gradient-to-br from-white to-gray-50 p-4">
-                    <div className="w-full h-full flex items-center justify-center">
+                  {/* Bestseller Badge */}
+                  {index === 0 && (
+                    <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-brand-orange to-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                      {t('homepage.bestseller')}
+                    </div>
+                  )}
+                  
+                  <div className="aspect-square relative bg-gradient-to-br from-gray-50 to-white p-6 overflow-hidden">
+                    {/* Background decoration */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-green/5 to-brand-orange/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    <div className="relative w-full h-full flex items-center justify-center">
                       <Image
                         src={product.images.main}
                         alt={product.name}
                         width={300}
                         height={300}
-                        className="object-contain w-full h-full group-hover:scale-110 group-hover:rotate-2 transition-transform duration-500"
+                        className="object-contain w-full h-full group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700"
                       />
                     </div>
+                    
+                    {/* Floating elements */}
+                    <div className="absolute top-4 right-4 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+                      <Heart className="w-4 h-4 text-red-500" />
+                    </div>
                   </div>
-                  <CardContent className="p-4 text-center">
-                    <h3 className="font-bold text-gray-900 mb-2">{product.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{product.shortDescription}</p>
-                    <div className="flex items-center justify-center gap-2 mb-3">
+                  
+                  <CardContent className="p-6 text-center relative">
+                    <h3 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-brand-green transition-colors duration-300">{product.name}</h3>
+                    <p className="text-sm text-gray-600 mb-4 leading-relaxed">{product.shortDescription}</p>
+                    
+                    {/* Product Purpose */}
+                    <p className="text-xs text-gray-500 mb-6 leading-relaxed italic">{product.purpose}</p>
+                    
+                    {/* Rating - Commented Out */}
+                    {/* <div className="flex items-center justify-center gap-2 mb-4">
                       <div className="flex text-yellow-400">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} className="h-3 w-3 fill-current" />
+                          <Star key={star} className="h-4 w-4 fill-current" />
                         ))}
                       </div>
-                      <span className="text-xs text-gray-500">(4.8)</span>
-                    </div>
-                    <div className="text-lg font-bold text-brand-orange mb-3">
-                      {product.variants[0].discountPrice || product.variants[0].price} {countryConfig.currencySymbol}
-                    </div>
-                    <Button asChild size="sm" className="bg-brand-orange hover:bg-brand-orange/90 text-white w-full rounded-lg">
+                      <span className="text-sm text-gray-500 font-medium">(4.8)</span>
+                      <span className="text-xs text-gray-400">• 127 {t('homepage.reviews_count')}</span>
+                    </div> */}
+                    
+                    {/* Price - Commented Out */}
+                    {/* <div className="mb-6">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-2xl font-bold text-brand-orange">
+                          {product.variants[0].discountPrice || product.variants[0].price} {countryConfig.currencySymbol}
+                        </span>
+                        {product.variants[0].discountPrice && (
+                          <span className="text-sm text-gray-500 line-through">
+                            {product.variants[0].price} {countryConfig.currencySymbol}
+                          </span>
+                        )}
+                      </div>
+                      {product.variants[0].discountPrice && (
+                        <div className="text-sm text-green-600 font-medium mt-1">
+                          {t('homepage.savings')}: {product.variants[0].price - product.variants[0].discountPrice} {countryConfig.currencySymbol}
+                        </div>
+                      )}
+                    </div> */}
+                    
+                    {/* CTA Button */}
+                    <Button asChild size="lg" className="bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white w-full rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group/btn">
                       <Link href={`/${locale}/checkouts/${product.slug}`}>
-                        {t('homepage.add_to_cart_button')}
+                        {t('homepage.more_info')}
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                       </Link>
                     </Button>
+                    
+                    {/* Trust indicators */}
+                    <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Truck className="w-3 h-3" />
+                        <span>{t('homepage.fast_delivery')}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Shield className="w-3 h-3" />
+                        <span>{t('homepage.guarantee')}</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
+            
+
           </div>
         </section>
 
-        {/* Before/After Section - Animated */}
-        <section className="py-20 bg-gradient-to-r from-brand-green/10 to-brand-orange/10 w-full overflow-hidden">
+        {/* Trust Badges Section */}
+        <section className="py-8 bg-gradient-to-r from-gray-50 to-white border-y border-gray-100">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
+                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
+                  <Shield className="w-5 h-5 text-brand-green" />
+                </div>
+                <span className="text-sm font-medium">{t('homepage.trust_dermatologically_tested')}</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
+                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
+                  <Leaf className="w-5 h-5 text-brand-green" />
+                </div>
+                <span className="text-sm font-medium">{t('homepage.trust_natural_ingredients')}</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
+                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
+                  <Award className="w-5 h-5 text-brand-green" />
+                </div>
+                <span className="text-sm font-medium">{t('homepage.trust_clinically_proven')}</span>
+              </div>
+              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
+                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
+                  <ShieldCheck className="w-5 h-5 text-brand-green" />
+                </div>
+                <span className="text-sm font-medium">{t('homepage.trust_no_parabens')}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Enhanced Before/After Section */}
+        <section className="py-20 bg-gradient-to-br from-emerald-50 via-white to-orange-50 w-full overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 animate-on-scroll-left">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+              <div className="space-y-8 animate-on-scroll-left">
+                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-green/10 to-emerald-100/50 border border-brand-green/20 rounded-full text-sm font-medium text-brand-green">
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  {t('homepage.proven_results')}
+                </div>
+                
+                <h2 className="text-3xl md:text-5xl font-bold text-gray-900">
                   {t('homepage.before_after_title')}
                 </h2>
-                <p className="text-lg text-gray-600 leading-relaxed">
+                <p className="text-xl text-gray-600 leading-relaxed">
                   {t('homepage.before_after_subtitle')}
                 </p>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.1s'}}>
-                    <CheckCircle className="h-5 w-5 text-brand-green" />
-                    <span className="text-gray-700">{t('homepage.visible_results')}</span>
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4 p-4 bg-white/70 rounded-xl shadow-sm animate-fadeInUp" style={{animationDelay: '0.1s'}}>
+                    <div className="w-10 h-10 bg-brand-green/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-5 w-5 text-brand-green" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">{t('homepage.visible_results')}</h4>
+                      <p className="text-sm text-gray-600">{t('homepage.visible_results_desc')}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
-                    <CheckCircle className="h-5 w-5 text-brand-green" />
-                    <span className="text-gray-700">{t('homepage.safe_all_skin')}</span>
+                  
+                  <div className="flex items-start gap-4 p-4 bg-white/70 rounded-xl shadow-sm animate-fadeInUp" style={{animationDelay: '0.2s'}}>
+                    <div className="w-10 h-10 bg-brand-green/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-5 w-5 text-brand-green" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">{t('homepage.safe_all_skin')}</h4>
+                      <p className="text-sm text-gray-600">{t('homepage.safe_all_skin_desc')}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
-                    <CheckCircle className="h-5 w-5 text-brand-green" />
-                    <span className="text-gray-700">{t('homepage.no_side_effects')}</span>
+                  
+                  <div className="flex items-start gap-4 p-4 bg-white/70 rounded-xl shadow-sm animate-fadeInUp" style={{animationDelay: '0.3s'}}>
+                    <div className="w-10 h-10 bg-brand-green/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-5 w-5 text-brand-green" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">{t('homepage.no_side_effects')}</h4>
+                      <p className="text-sm text-gray-600">{t('homepage.no_side_effects_desc')}</p>
+                    </div>
                   </div>
                 </div>
                 
-                <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-3 rounded-lg hover:scale-105 transition-all duration-300 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
-                  {t('homepage.learn_more_button')}
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
+                  <Button 
+                    onClick={scrollToProducts}
+                    className="bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer"
+                  >
+                    {t('homepage.view_all_products')}
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </div>
               </div>
               
               <div className="relative animate-on-scroll-right w-full">
-                <div className="w-full max-w-full aspect-video bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden group">
+                <div className="w-full max-w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden group shadow-2xl">
                   <Image
-                    src="https://dermotin.shop/wp-content/uploads/2024/10/c2-vid-blg-2-opt.jpg"
+                    src={HOMEPAGE_IMAGES.beforeAfter.main}
                     alt={t('homepage.before_after_alt')}
                     width={600}
                     height={400}
                     className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors duration-300">
-                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm hover:scale-110 transition-transform duration-300 cursor-pointer">
-                      <Play className="w-8 h-8 text-white" />
-                    </div>
-                  </div>
+
                 </div>
+                
+
               </div>
             </div>
           </div>
         </section>
         
         {/* Testimonials Section */}
-        <AdvancedTestimonials countryCode={locale} />
+        <div data-section="testimonials">
+          <AdvancedTestimonials countryCode={locale} />
+        </div>
 
         {/* Why Natural Section - Inspired by Reference */}
         <section className="py-20">
@@ -378,7 +569,7 @@ export default function HomePage() {
               <div className="relative">
                 <div className="aspect-square bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden">
                                      <Image
-                     src="https://dermotin.shop/wp-content/uploads/2025/06/462513468_17881674504134626_2080050215120435048_n.webp"
+                     src={HOMEPAGE_IMAGES.naturalScience.main}
                      alt={t('homepage.nature_science_alt')}
                      width={500}
                      height={500}
@@ -420,17 +611,13 @@ export default function HomePage() {
                      </div>
                    </div>
                 </div>
-                
-                                 <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white px-8 py-3 rounded-lg">
-                   {t('homepage.learn_ingredients_button')}
-                 </Button>
               </div>
             </div>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 bg-white">
+        <section id="faq" className="py-20 bg-white scroll-mt-20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <AdvancedFAQ countryCode={locale} className="bg-gray-50 rounded-2xl p-8 shadow-sm" />

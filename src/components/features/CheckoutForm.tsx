@@ -15,6 +15,8 @@ import { ProductVariant } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useTranslations } from 'next-intl';
+import { VALIDATION_RULES } from '@/config/constants';
+import { calculateShippingCost, getShippingCostDisplay } from '@/utils/shipping';
 import { Package, Truck, CreditCard, Banknote, Shield, Phone, MapPin, User } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
@@ -45,17 +47,18 @@ export function CheckoutForm({
   
   // Form validation function
   const validateField = (field: string, value: string): string => {
+    const tValidation = t.raw('validation');
     switch (field) {
       case 'firstName':
-        return value.length < 2 ? 'Ime mora imati najmanje 2 karaktera' : '';
+        return value.length < VALIDATION_RULES.minNameLength ? tValidation.name_min_length : '';
       case 'lastName':
-        return value.length < 2 ? 'Prezime mora imati najmanje 2 karaktera' : '';
+        return value.length < VALIDATION_RULES.minSurnameLength ? tValidation.surname_min_length : '';
       case 'phone':
-        return !isValidPhoneNumber(value) ? 'Neispravna format telefona' : '';
+        return !isValidPhoneNumber(value) ? tValidation.phone_invalid : '';
       case 'address':
-        return value.length < 5 ? 'Adresa mora imati najmanje 5 karaktera' : '';
+        return value.length < VALIDATION_RULES.minAddressLength ? tValidation.address_min_length : '';
       case 'city':
-        return value.length < 2 ? 'Mesto mora imati najmanje 2 karaktera' : '';
+        return value.length < VALIDATION_RULES.minCityLength ? tValidation.city_min_length : '';
       default:
         return '';
     }
@@ -127,7 +130,9 @@ export function CheckoutForm({
   const orderTotal = selectedVariant.discountPrice || selectedVariant.price;
   const bundleTotal = Object.values(bundleItems).reduce((sum, price) => sum + price, 0);
   const subtotal = orderTotal + bundleTotal;
-  const shippingCost = selectedVariant.id === 'fungel-1pak' && bundleTotal === 0 ? 280 : 0;
+  
+  // Calculate shipping cost using utility function
+  const shippingCost = calculateShippingCost(subtotal, countryConfig);
   const finalTotal = subtotal + shippingCost;
 
   return (

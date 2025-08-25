@@ -42,6 +42,7 @@ export interface BusinessInfo {
   deliveryServiceName: string;
   deliveryCost: number;
   deliveryCostCurrency: string;
+  freeShippingThreshold: number; // Minimum order amount for free shipping
   deliveryTimeMin: number;
   deliveryTimeMax: number;
   deliveryTimeUnit: string;
@@ -135,8 +136,9 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       deliveryArea: 'teritoriji Republike Srbije',
       deliveryService: 'BEX',
       deliveryServiceName: 'kurirske službe BEX',
-      deliveryCost: 400,
+      deliveryCost: 280,
       deliveryCostCurrency: 'dinara',
+      freeShippingThreshold: 3000,
       deliveryTimeMin: 3,
       deliveryTimeMax: 5,
       deliveryTimeUnit: 'radnih dana',
@@ -216,8 +218,9 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       deliveryArea: 'територията на Република България',
       deliveryService: 'Econt',
       deliveryServiceName: 'куриерската служба Econt',
-      deliveryCost: 8,
+      deliveryCost: 5,
       deliveryCostCurrency: 'лева',
+      freeShippingThreshold: 50,
       deliveryTimeMin: 2,
       deliveryTimeMax: 4,
       deliveryTimeUnit: 'работни дни',
