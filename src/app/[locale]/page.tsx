@@ -215,17 +215,17 @@ export default function HomePage() {
                           </div>
             
             {/* Right Image - Fade in from right with floating effect */}
-            <div className="relative lg:h-[600px] animate-fadeInRight">
+            <div className="relative lg:h-[700px] animate-fadeInRight">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-100/50 to-green-100/50 rounded-3xl animate-float"></div>
-              <div className="relative h-full flex items-center justify-center p-8">
+              <div className="relative h-full flex items-center justify-center p-6">
                 <div className="relative group">
-                  <Image
-                    src="https://dermotin.shop/wp-content/uploads/2025/06/IMG_1585-1-qv31g6nybslcns2bzmoe8ky033v7opjd9wrqwip0cg.png"
-                    alt={t('homepage.natural_beauty_alt')}
-                    width={400}
-                    height={500}
-                    className="object-cover w-full h-full max-w-md rounded-2xl shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
-                  />
+                                     <Image
+                     src="https://dermotin.shop/wp-content/uploads/2025/06/IMG_1585-1-qv31g6nybslcns2bzmoe8ky033v7opjd9wrqwip0cg.png"
+                     alt={t('homepage.natural_beauty_alt')}
+                     width={600}
+                     height={700}
+                     className="object-cover w-full h-full max-w-xl rounded-2xl shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
+                   />
                   <div className="absolute -inset-4 bg-gradient-to-r from-brand-green/20 to-brand-orange/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
               </div>
@@ -369,11 +369,7 @@ export default function HomePage() {
         </section>
         
         {/* Testimonials Section */}
-        <section className="bg-gray-50">
-          <div className="container mx-auto px-4">
-            <AdvancedTestimonials countryCode={locale} />
-          </div>
-        </section>
+        <AdvancedTestimonials countryCode={locale} />
 
         {/* Why Natural Section - Inspired by Reference */}
         <section className="py-20">

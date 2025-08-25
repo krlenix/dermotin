@@ -249,7 +249,6 @@ export function CheckoutForm({
                     id="postalCode"
                     value={formData.postalCode}
                     onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                    placeholder="11000"
                     className="focus:ring-brand-orange focus:border-brand-orange"
                   />
                 </div>

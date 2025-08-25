@@ -105,12 +105,19 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
          const scale = distanceFromCenter <= threshold ? 1.0 : 0.85;
          newScales[testimonialId] = scale;
        } else {
-        // Desktop: Original 3D effect
-        const maxDistance = containerRect.width / 2 + 160;
-        const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
-        const scale = 1.0 - (normalizedDistance * 0.3);
-        const clampedScale = Math.max(0.7, Math.min(1.0, scale));
-        newScales[testimonialId] = clampedScale;
+        // Desktop: Improved focus detection
+        const threshold = 100; // Threshold for center focus
+        if (distanceFromCenter <= threshold) {
+          // Card is in center focus
+          newScales[testimonialId] = 1.0;
+        } else {
+          // Card is not in center, apply scaling based on distance
+          const maxDistance = containerRect.width / 2 + 200;
+          const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
+          const scale = 1.0 - (normalizedDistance * 0.35);
+          const clampedScale = Math.max(0.65, Math.min(0.95, scale));
+          newScales[testimonialId] = clampedScale;
+        }
       }
     });
     
@@ -237,11 +244,14 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
          // Initial calculation and position
      updateCardScales();
      
-     // Start in the middle set for infinite scroll
+     // Start in the middle set for infinite scroll with proper centering
      setTimeout(() => {
        if (container && container.scrollWidth > 0) {
          const singleSetWidth = container.scrollWidth / 3;
+         // Start with the first testimonial of the middle set properly centered
          container.scrollLeft = singleSetWidth;
+         // Trigger scale calculation after positioning
+         setTimeout(() => updateCardScales(), 50);
        }
      }, 100);
 
@@ -256,23 +266,25 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
 
   return (
     <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            {t('testimonials.section_title')}
-          </h2>
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <div className="flex text-yellow-400">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="h-6 w-6 fill-current" />
-              ))}
+      <div className="w-full">
+        {/* Header - Centered content */}
+        <div className="text-center mb-8 px-4">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">
+              {t('testimonials.section_title')}
+            </h2>
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="flex text-yellow-400">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} className="h-6 w-6 fill-current" />
+                ))}
+              </div>
+              <span className="text-lg font-medium">4.8/5</span>
             </div>
-            <span className="text-lg font-medium">4.8/5</span>
+            <p className="text-gray-600">
+              {t('testimonials.social_media_subtitle')}
+            </p>
           </div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            {t('testimonials.social_media_subtitle')}
-          </p>
         </div>
         {/* 3D Testimonials Container */}
         <div className="relative w-full testimonials-3d-container overflow-visible">
@@ -286,7 +298,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                /* Mobile: Horizontal scroll with featured at top, others below */
                ${isMobile 
                  ? 'flex gap-4 px-[calc(50vw-140px)] scroll-smooth snap-x snap-mandatory py-4' 
-                 : 'flex gap-8 px-28 py-8'
+                 : 'flex gap-8 px-[calc(50vw-176px)] py-8'
                }
              `}
            >
@@ -405,7 +417,10 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                          if (scrollContainerRef.current) {
                            const container = scrollContainerRef.current;
                            const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
-                           const targetScroll = index * cardWidth;
+                           const singleSetWidth = container.scrollWidth / 3;
+                           
+                           // Calculate target scroll position for the clicked testimonial
+                           const targetScroll = singleSetWidth + (index * cardWidth);
                            
                            container.scrollTo({
                              left: targetScroll,
@@ -427,7 +442,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
         </div>
         
         {/* Trust Indicators */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="mt-12 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto px-4">
           <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-orange-100">
             <div className="text-4xl font-bold text-brand-orange mb-2">
               {BUSINESS_METRICS.SATISFIED_CUSTOMERS.toLocaleString('sr')}+

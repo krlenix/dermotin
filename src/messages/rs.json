@@ -437,5 +437,28 @@
       "reset_storage": "Resetuj Memoriju",
       "test_wheel": "🎰 TESTIRAJ TOČAK"
     }
+  },
+  "legal": {
+    "back_to_home": "Povratak na početnu",
+    "legal_pages": "Pravni dokumenti",
+    "terms_of_service": "Uslovi korišćenja",
+    "privacy_policy": "Politika privatnosti",
+    "cookie_policy": "Politika kolačića",
+    "returns_policy": "Politika povrata",
+    "shipping_policy": "Politika dostave",
+    "disclaimer": "Odricanje od odgovornosti",
+    "legal_contact": "Pravni kontakt",
+    "legal_documents": "Pravni dokumenti",
+    "legal_overview": "Pregled svih naših pravnih dokumenata i politika",
+    "terms_description": "Uslovi korišćenja našeg sajta i usluga",
+    "privacy_description": "Kako čuvamo i koristimo vaše lične podatke",
+    "cookies_description": "Kako koristimo kolačiće na našem sajtu",
+    "returns_description": "Politika povrata i zamene proizvoda",
+    "shipping_description": "Informacije o dostavi i troškovima",
+    "disclaimer_description": "Važne napomene o našim proizvodima i uslugama",
+    "legal_contact_description": "Kontakt informacije za pravna pitanja",
+    "read_more": "Pročitaj više",
+    "important_note": "Važna napomena",
+    "legal_disclaimer_note": "Ovi dokumenti su važni za razumevanje vaših prava i obaveza. Preporučujemo da ih pažljivo pročitate pre korišćenja naših usluga."
   }
 }
