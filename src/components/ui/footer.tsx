@@ -1,16 +1,34 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { CountryConfig } from '@/config/countries';
-import { Phone, Mail } from 'lucide-react';
+import { Phone, Mail, FileText, Building2, MapPin, Hash } from 'lucide-react';
 import Image from 'next/image';
+import { LegalDocumentModal } from '@/components/features/LegalDocumentModal';
 
 interface FooterProps {
   countryConfig: CountryConfig;
+  locale?: string;
 }
 
-export function Footer({ countryConfig }: FooterProps) {
+export function Footer({ countryConfig, locale = 'rs' }: FooterProps) {
   const t = useTranslations();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<{
+    type: string;
+    title: string;
+  } | null>(null);
+
+  const openDocument = (type: string, title: string) => {
+    setSelectedDocument({ type, title });
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedDocument(null);
+  };
 
   return (
     <footer className="bg-gray-800 text-white py-12">
@@ -48,36 +66,107 @@ export function Footer({ countryConfig }: FooterProps) {
                 <span className="font-medium">{countryConfig.company.email}</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="h-4 w-4 flex items-center justify-center">
-                  <div className="w-3 h-3 bg-brand-green rounded-full"></div>
+                <Building2 className="h-4 w-4 text-gray-400" />
+                <span className="font-medium">{countryConfig.company.name} {t('footer.powered_by')} {countryConfig.company.legalName}</span>
+              </div>
+              
+              {/* Address - Styled like phone/email */}
+              <div className="flex items-center gap-3">
+                <MapPin className="h-4 w-4 text-gray-400" />
+                <span className="font-medium text-gray-300">
+                  {countryConfig.company.address}, {countryConfig.company.city}, {countryConfig.company.postalCode}, {countryConfig.company.country}
+                </span>
+              </div>
+              
+              {/* Business Information - Styled like phone/email */}
+              {(countryConfig.company.taxNumber || countryConfig.company.registrationNumber) && (
+                <div className="flex items-center gap-3">
+                  <Hash className="h-4 w-4 text-gray-400" />
+                  <div className="font-medium text-gray-300 text-sm">
+                    {countryConfig.company.taxNumber && countryConfig.company.registrationNumber ? (
+                      <span>PIB: {countryConfig.company.taxNumber} | MB: {countryConfig.company.registrationNumber}</span>
+                    ) : (
+                      <>
+                        {countryConfig.company.taxNumber && <span>PIB: {countryConfig.company.taxNumber}</span>}
+                        {countryConfig.company.registrationNumber && <span>MB: {countryConfig.company.registrationNumber}</span>}
+                      </>
+                    )}
+                  </div>
                 </div>
-                <span className="font-medium">{countryConfig.company.name} by Clicky DOO</span>
-              </div>
-              <div className="space-y-1 pt-2">
-                <p className="text-gray-400">{countryConfig.company.address}</p>
-                <p className="text-gray-400">{countryConfig.company.city}, {countryConfig.company.postalCode}</p>
-                <p className="text-gray-400">{countryConfig.company.country}</p>
-              </div>
+              )}
             </div>
           </div>
           
           <div>
-            <h4 className="font-bold mb-4">{t('footer.customer_service')}</h4>
-            <div className="space-y-2 text-sm text-gray-300">
-              <p>{t('delivery_schedule.delivery_1_3_days')}</p>
-              <p>{t('delivery_schedule.returns_30_days')}</p>
-              <p>{t('delivery_schedule.support_24_7')}</p>
-              <p>{t('sections.guarantee_satisfaction')}</p>
+            <h4 className="font-bold mb-4">{t('footer.legal_documents')}</h4>
+            <div className="space-y-2 text-sm">
+              <button
+                onClick={() => openDocument('terms-of-service', t('legal.terms_of_service'))}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors w-full text-left"
+              >
+                <FileText className="h-4 w-4" />
+                {t('legal.terms_of_service')}
+              </button>
+              <button
+                onClick={() => openDocument('privacy-policy', t('legal.privacy_policy'))}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors w-full text-left"
+              >
+                <FileText className="h-4 w-4" />
+                {t('legal.privacy_policy')}
+              </button>
+              <button
+                onClick={() => openDocument('cookie-policy', t('legal.cookie_policy'))}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors w-full text-left"
+              >
+                <FileText className="h-4 w-4" />
+                {t('legal.cookie_policy')}
+              </button>
+              <button
+                onClick={() => openDocument('returns-policy', t('legal.returns_policy'))}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors w-full text-left"
+              >
+                <FileText className="h-4 w-4" />
+                {t('legal.returns_policy')}
+              </button>
+              <button
+                onClick={() => openDocument('disclaimer', t('legal.disclaimer'))}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors w-full text-left"
+              >
+                <FileText className="h-4 w-4" />
+                {t('legal.disclaimer')}
+              </button>
+              <button
+                onClick={() => openDocument('contact-info', t('legal.contact_info'))}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors w-full text-left"
+              >
+                <FileText className="h-4 w-4" />
+                {t('legal.contact_info')}
+              </button>
             </div>
           </div>
         </div>
         
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-          <p className="text-sm text-gray-400">
-            © 2024 {countryConfig.company.name}. {t('footer.all_rights_reserved')}
-          </p>
+        <div className="border-t border-gray-700 mt-8 pt-8">
+          {/* Copyright */}
+          <div className="text-center">
+            <p className="text-sm text-gray-400">
+              © 2024 {countryConfig.company.name}. {t('footer.all_rights_reserved')}
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* Legal Document Modal */}
+      {selectedDocument && (
+        <LegalDocumentModal
+          isOpen={modalOpen}
+          onClose={closeModal}
+          documentType={selectedDocument.type}
+          documentTitle={selectedDocument.title}
+          countryConfig={countryConfig}
+          locale={locale}
+        />
+      )}
     </footer>
   );
 }

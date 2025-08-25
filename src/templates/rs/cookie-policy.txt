@@ -1,0 +1,79 @@
+Politika kolačića
+
+Ova Politika kolačića je poslednji put ažurirana {{legal.lastUpdated}} i primenjuje se na građane Evropskog ekonomskog prostora i Srbije.
+
+1. Uvod
+Naš veb sajt, {{company.website}} (u daljem tekstu "veb sajt") koristi "kolačiće" i druge povezane tehnologije (radi jednostavnosti sve tehnologije se nazivaju "kolačići"). Kolačiće postavljamo i mi i treće strane koje smo angažovali. U dokumentu ispod vas obaveštavamo o korišćenju kolačića na našem veb sajtu.
+
+2. Šta su kolačići?
+Kolačić je mala jednostavna datoteka koja se šalje zajedno sa stranicama ovog veb sajta i čuva se od strane vašeg pregledača na hard disku vašeg računara ili drugog uređaja. Informacije sačuvane u njemu mogu biti vraćene našim serverima ili serverima odgovarajućih trećih strana tokom sledeće posete.
+
+3. Šta su skriptovi?
+Skript je deo programskog koda koji se koristi da naš veb sajt funkcioniše pravilno i interaktivno. Ovaj kod se izvršava na našem serveru ili na vašem uređaju.
+
+4. Šta je veb beacon?
+Veb beacon (ili pixel tag) je mali, nevidljiv tekst ili slika na veb sajtu koji se koristi za praćenje saobraćaja na veb sajtu. Da bi se to uradilo, različiti podaci o vama se čuvaju pomoću veb beacon-a.
+
+5. Kolačići
+
+5.1 Tehnički ili funkcionalni kolačići
+Neki kolačići osiguravaju da određeni delovi veb sajta rade pravilno i da vaše korisničke preferencije ostanu poznate. Postavljanjem funkcionalnih kolačića, olakšavamo vam posetu našem veb sajtu. Na ovaj način nije potrebno da više puta unosite iste informacije kada posetite naš veb sajt i na primer, artikli ostaju u vašoj korpi za kupovinu dok ne platite. Možemo postaviti ove kolačiće bez vašeg pristanka.
+
+5.2 Marketing/Praćenje kolačića
+Marketing/praćenje kolačića su kolačići ili drugi oblik lokalnog skladištenja koji se koriste za kreiranje korisničkih profila za prikazivanje reklama ili za praćenje korisnika na ovom veb sajtu ili na nekoliko veb sajtova u slične marketinške svrhe.
+
+5.3 Dugmad za društvene mreže
+Ne koristimo dugmad za društvene mreže niti ugrađene sadržaje trećih strana koji postavljaju kolačiće.
+
+6. Postavljeni kolačići
+
+Funkcionalni kolačići:
+- Neophodni kolačići za rad veb sajta (sesije, bezbednost, korisničke preferencije)
+
+Analitički/performanse:
+- Interno praćenje URL parametara (campaign_id, adset_id, ad_id, medium, affId) radi merenja kampanja; podaci se čuvaju u našem internom sistemu i ne dele se sa trećim licima.
+
+Marketing kolačići:
+- Meta (Facebook) Pixel: praćenje konverzija i optimizacija oglasa (campaign_id, adset_id, ad_id)
+- TikTok Pixel: praćenje konverzija na TikTok platformi (campaign_id, adset_id, ad_id)
+
+Bez drugih skripti trećih strana:
+- Na veb sajtu se ne izvršavaju drugi skriptovi trećih strana osim navedenih piksela.
+
+7. Pristanak
+Kada prvi put posetite naš veb sajt, pokazaćemo vam iskačući prozor sa objašnjenjem o kolačićima. Čim kliknete na "Sačuvaj preferencije", pristajete da koristimo kategorije kolačića i plugin-ova koje ste izabrali u iskačućem prozoru, kao što je opisano u ovoj Politici kolačića. Možete deaktivirati korišćenje kolačića preko vašeg pregledača, ali imajte na umu da naš veb sajt možda neće više raditi pravilno.
+
+7.1 Upravljanje vašim podešavanjima pristanka
+- Neophodni: Uvek aktivni (potrebni za rad sajta)
+- Marketing: Možete birati (Meta i TikTok pikseli)
+
+8. Aktiviranje/deaktiviranje i brisanje kolačića
+Možete koristiti vaš internet pregledač da automatski ili ručno obrišete kolačiće. Takođe možete specificirati da određeni kolačići ne mogu biti postavljeni. Druga opcija je da promenite podešavanja vašeg internet pregledača tako da dobijate poruku svaki put kada se postavlja kolačić. Za više informacija o ovim opcijama, molimo pogledajte instrukcije u Help sekciji vašeg pregledača.
+
+Molimo imajte na umu da naš veb sajt možda neće raditi pravilno ako su svi kolačići onemogućeni. Ako obrišete kolačiće u vašem pregledaču, oni će biti ponovo postavljeni nakon vašeg pristanka kada ponovo posetite naše veb sajtove.
+
+9. Vaša prava u vezi sa ličnim podacima
+Imate sledeća prava u vezi sa vašim ličnim podacima:
+
+- Imate pravo da znate zašto su potrebni vaši lični podaci, šta će se desiti sa njima i koliko dugo će biti zadržani.
+- Pravo pristupa: Imate pravo pristupa vašim ličnim podacima koji su nam poznati.
+- Pravo ispravke: imate pravo da dopunite, ispravite, obrišete ili blokirate vaše lične podatke kada želite.
+- Ako nam date pristanak za obradu vaših podataka, imate pravo da povučete taj pristanak i obrišete vaše lične podatke.
+- Pravo prenosa vaših podataka: imate pravo da zatražite sve vaše lične podatke od kontrolora i da ih u potpunosti prenesete drugom kontroloru.
+- Pravo prigovora: možete prigovoriti obradi vaših podataka. Mi se pridržavamo ovoga, osim ako ne postoje opravdani razlozi za obradu.
+
+Da biste ostvarili ova prava, molimo kontaktirajte nas. Molimo pogledajte kontakt podatke na dnu ove Politike kolačića. Ako imate žalbu o načinu na koji obrađujemo vaše podatke, voleli bismo da nas kontaktirate, ali imate pravo da podnesete žalbu nadzornom organu (Povereniku za informacije od javnog značaja i zaštitu podataka o ličnosti).
+
+10. Kontakt podaci
+Za pitanja i/ili komentare o našoj Politici kolačića i ovoj izjavi, molimo kontaktirajte nas koristeći sledeće kontakt podatke:
+
+{{company.legalName}}
+Grad: {{company.city}}, {{company.country}}
+Adresa: {{company.address}}
+PIB: {{company.taxNumber}}
+MB: {{company.registrationNumber}}
+Veb sajt: {{company.website}}
+Email: {{company.email}}
+Telefon: {{company.phone}}
+
+Ova politika kolačića je poslednji put ažurirana {{legal.lastUpdated}}

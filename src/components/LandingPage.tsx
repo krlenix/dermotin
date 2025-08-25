@@ -24,9 +24,10 @@ interface LandingPageProps {
   product: Product;
   countryConfig: CountryConfig;
   slug: string;
+  locale?: string;
 }
 
-export function LandingPage({ product, countryConfig }: LandingPageProps) {
+export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPageProps) {
   const t = useTranslations();
   const { formatPrice } = useCurrency(countryConfig.currency as SupportedCurrency);
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
@@ -202,7 +203,7 @@ export function LandingPage({ product, countryConfig }: LandingPageProps) {
       </main>
 
       {/* Footer */}
-      <Footer countryConfig={countryConfig} />
+      <Footer countryConfig={countryConfig} locale={locale} />
 
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />

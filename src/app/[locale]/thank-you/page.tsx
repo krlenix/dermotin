@@ -14,6 +14,7 @@ export default async function ThankYou({ params }: ThankYouPageProps) {
   return (
     <ThankYouPage 
       countryConfig={countryConfig}
+      locale={locale}
     />
   );
 }

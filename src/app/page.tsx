@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
+import { Footer } from '@/components/ui/footer';
+import { CookieConsent } from '@/components/features/CookieConsent';
 
 export default function HomePage() {
   const countryConfig = getCountryConfig('rs'); // Only Serbian now
@@ -122,37 +124,10 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="font-bold mb-4">Informacije o kompaniji</h3>
-              <div className="space-y-1 text-sm">
-                <p>{countryConfig.company.name}</p>
-                <p>{countryConfig.company.address}</p>
-                <p>{countryConfig.company.city}, {countryConfig.company.postalCode}</p>
-                <p>{countryConfig.company.phone}</p>
-                <p>{countryConfig.company.email}</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">Korisnička podrška</h3>
-              <div className="space-y-2 text-sm">
-                <p>Kontakt</p>
-                <p>Dostava</p>
-                <p>Povraćaj</p>
-                <p>Uslovi korišćenja</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">DERMOTIN</h3>
-              <p className="text-sm text-gray-300">
-                © 2024 {countryConfig.company.name}. Sva prava zadržana.
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer countryConfig={countryConfig} locale="rs" />
+
+      {/* GDPR Cookie Consent for EU */}
+      <CookieConsent isEU={countryConfig.isEU} />
     </div>
   );
 }

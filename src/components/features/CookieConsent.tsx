@@ -16,9 +16,7 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState({
     necessary: true,
-    analytics: false,
-    marketing: false,
-    functional: false
+    marketing: false
   });
 
   useEffect(() => {
@@ -36,9 +34,7 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
   const acceptAll = () => {
     const allAccepted = {
       necessary: true,
-      analytics: true,
-      marketing: true,
-      functional: true
+      marketing: true
     };
     setPreferences(allAccepted);
     localStorage.setItem('cookie-consent', JSON.stringify(allAccepted));
@@ -49,9 +45,7 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
   const acceptNecessary = () => {
     const necessaryOnly = {
       necessary: true,
-      analytics: false,
-      marketing: false,
-      functional: false
+      marketing: false
     };
     setPreferences(necessaryOnly);
     localStorage.setItem('cookie-consent', JSON.stringify(necessaryOnly));
@@ -127,39 +121,19 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
-                  <h4 className="font-medium">{t('analytics_cookies')}</h4>
-                  <p className="text-sm text-gray-700">{t('analytics_cookies_desc')}</p>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={preferences.analytics} 
-                  onChange={(e) => setPreferences(prev => ({ ...prev, analytics: e.target.checked }))}
-                  className="h-4 w-4"
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
                   <h4 className="font-medium">{t('marketing_cookies')}</h4>
                   <p className="text-sm text-gray-700">{t('marketing_cookies_desc')}</p>
+                  <div className="mt-2 text-xs text-gray-600">
+                    <div className="font-medium mb-1">Tracking parameters:</div>
+                    <div>• campaign_id, adset_id, ad_id, medium</div>
+                    <div>• Meta (Facebook) Pixel</div>
+                    <div>• TikTok Pixel</div>
+                  </div>
                 </div>
                 <input 
                   type="checkbox" 
                   checked={preferences.marketing} 
                   onChange={(e) => setPreferences(prev => ({ ...prev, marketing: e.target.checked }))}
-                  className="h-4 w-4"
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <h4 className="font-medium">{t('functional_cookies')}</h4>
-                  <p className="text-sm text-gray-700">{t('functional_cookies_desc')}</p>
-                </div>
-                <input 
-                  type="checkbox" 
-                  checked={preferences.functional} 
-                  onChange={(e) => setPreferences(prev => ({ ...prev, functional: e.target.checked }))}
                   className="h-4 w-4"
                 />
               </div>

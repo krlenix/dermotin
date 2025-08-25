@@ -171,7 +171,11 @@
     "newsletter": "Newsletter",
     "newsletter_description": "Prijavite se za naše obaveštenja i ekskluzivne ponude",
     "subscribe": "Prijavite se",
-    "all_rights_reserved": "Sva prava zadržana"
+    "all_rights_reserved": "Sva prava zadržana",
+    "legal_documents": "Pravni dokumenti",
+    "powered_by": "Powered by",
+    "address": "Adresa",
+    "business_info": "Poslovne informacije"
   },
   "gdpr": {
     "cookie_notice": "Ova stranica koristi kolačiće da bi poboljšala vaše iskustvo.",
@@ -184,7 +188,7 @@
     "analytics_cookies": "Analitički kolačići",
     "analytics_cookies_desc": "Pomažu nam da razumemo korišćenje sajta",
     "marketing_cookies": "Marketing kolačići",
-    "marketing_cookies_desc": "Koriste se za ciljano reklamiranje",
+    "marketing_cookies_desc": "Meta i TikTok pikseli za praćenje konverzija i optimizaciju oglasa",
     "functional_cookies": "Funkcionalni kolačići",
     "functional_cookies_desc": "Omogućavaju poboljšane funkcije",
     "save_preferences": "Sačuvaj podešavanja",
@@ -352,7 +356,8 @@
     "quantity": "Količina",
     "save_money": "Štedite",
     "alt_logo": "DERMOTIN",
-    "alt_package": "FUNGEL Pakovanje"
+    "alt_package": "FUNGEL Pakovanje",
+    "close": "Zatvori"
   },
   "purchase_notifications": {
     "just_bought": "Upravo je kupio",
@@ -447,6 +452,7 @@
     "returns_policy": "Politika povrata",
     "shipping_policy": "Politika dostave",
     "disclaimer": "Odricanje od odgovornosti",
+    "contact_info": "Kontakt informacije",
     "legal_contact": "Pravni kontakt",
     "legal_documents": "Pravni dokumenti",
     "legal_overview": "Pregled svih naših pravnih dokumenata i politika",

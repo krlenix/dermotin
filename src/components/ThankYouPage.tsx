@@ -15,9 +15,10 @@ import { useRouter } from 'next/navigation';
 
 interface ThankYouPageProps {
   countryConfig: CountryConfig;
+  locale?: string;
 }
 
-export function ThankYouPage({ countryConfig }: ThankYouPageProps) {
+export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps) {
   const t = useTranslations();
   const router = useRouter();
   const [orderData, setOrderData] = useState<OrderData | null>(null);
@@ -349,7 +350,7 @@ export function ThankYouPage({ countryConfig }: ThankYouPageProps) {
       </main>
 
       {/* Footer */}
-      <Footer countryConfig={countryConfig} />
+      <Footer countryConfig={countryConfig} locale={locale} />
 
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />

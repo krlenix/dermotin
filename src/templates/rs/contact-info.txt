@@ -1,0 +1,16 @@
+Kontakt informacije
+
+{{company.name}}
+{{company.legalName}}
+
+Adresa: {{company.address}}, {{company.city}} {{company.postalCode}}, {{company.country}}
+
+Telefon: {{company.phone}}
+Email: {{company.email}}
+Website: {{company.website}}
+
+PIB: {{company.taxNumber}}
+Matični broj: {{company.registrationNumber}}
+Šifra delatnosti: {{company.activityCode}} - {{company.activityDescription}}
+
+Poslednje ažuriranje: {{legal.lastUpdated}}

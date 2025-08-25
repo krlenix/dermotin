@@ -1,3 +1,5 @@
+import { getWebsiteDomain } from '@/lib/utils';
+
 export interface CountryConfig {
   code: string;
   name: string;
@@ -8,23 +10,58 @@ export interface CountryConfig {
   isEU: boolean;
   company: CompanyInfo;
   courier: CourierInfo;
+  fulfillmentCenter?: FulfillmentCenterInfo;
   logo: string;
   domain?: string;
   timezone: string;
+  business: BusinessInfo;
+  legal: LegalInfo;
 }
 
 export interface CompanyInfo {
   name: string;
+  legalName: string;
   address: string;
   city: string;
   postalCode: string;
   country: string;
-  taxNumber: string;
+  taxNumber: string; // PIB/Tax ID
   vatNumber?: string;
   phone: string;
   email: string;
   bankAccount?: string;
-  registrationNumber: string;
+  registrationNumber: string; // MB
+  activityCode: string;
+  activityDescription: string;
+  website: string;
+}
+
+export interface BusinessInfo {
+  deliveryArea: string;
+  deliveryService: string;
+  deliveryServiceName: string;
+  deliveryCost: number;
+  deliveryCostCurrency: string;
+  deliveryTimeMin: number;
+  deliveryTimeMax: number;
+  deliveryTimeUnit: string;
+  paymentMethods: string[];
+  returnPeriodDays: number;
+  warrantyPeriodYears: number;
+  complaintResponseDays: number;
+  complaintResolutionDays: number;
+  technicalComplaintResolutionDays: number;
+}
+
+export interface LegalInfo {
+  lastUpdated: string;
+  copyrightLaw: string;
+  criminalCode: string;
+  consumerProtectionLaw: string;
+  dataProtectionLaw: string;
+  obligationsLaw: string;
+  ministryWebsite: string;
+  disputeResolutionListUrl: string;
 }
 
 export interface CourierInfo {
@@ -32,6 +69,33 @@ export interface CourierInfo {
   logo: string;
   deliveryTime: string;
   trackingUrl?: string;
+}
+
+export interface FulfillmentCenterInfo {
+  name: string;
+  legalName: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  phone: string;
+  email: string;
+  website?: string;
+  // Privacy and data protection information
+  dataProcessingAgreement: boolean; // Whether DPA is in place
+  gdprCompliant: boolean; // Whether fulfillment center is GDPR compliant
+  dataRetentionPeriod: number; // Data retention period in days
+  dataProcessingPurpose: string; // Purpose of data processing
+  // Operational information
+  operatingHours: string;
+  supportedCountries: string[]; // Countries this fulfillment center serves
+  // Legal information for privacy notices
+  privacyPolicyUrl?: string;
+  dataProtectionOfficer?: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
 }
 
 export const COUNTRIES: Record<string, CountryConfig> = {
@@ -46,22 +110,52 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     timezone: 'Europe/Belgrade',
     logo: '/images/main/logo.png',
     company: {
-      name: 'DERMOTIN Serbia DOO',
-      address: 'Zvezdarskih jelki 3/2',
+      name: 'Dermotin',
+      legalName: 'Clicky Doo',
+      address: 'ul. Zvezdarskih Jelki 3/2',
       city: 'Beograd',
       postalCode: '11050',
-      country: 'Srbija',
+      country: 'Republika Srbija',
       taxNumber: '114158912',
-      phone: '+381 11 44 100 22',
-      email: 'support@dermotin.com',
+      phone: '011/44-100-22',
+      email: 'info@dermotin.com',
       registrationNumber: '21980218',
-      bankAccount: '265-1234567890123456-78'
+      bankAccount: '265-1234567890123456-78',
+      activityCode: '47.91',
+      activityDescription: 'Trgovina na malo posredstvom pošte ili preko interneta',
+      website: 'dermotin.com' // Will be dynamically replaced in getCountryConfig
     },
     courier: {
       name: 'Post Express',
       logo: '/images/couriers/postexpress.png',
       deliveryTime: '1-2 radna dana',
       trackingUrl: 'https://postexpress.rs/tracking'
+    },
+    business: {
+      deliveryArea: 'teritoriji Republike Srbije',
+      deliveryService: 'BEX',
+      deliveryServiceName: 'kurirske službe BEX',
+      deliveryCost: 400,
+      deliveryCostCurrency: 'dinara',
+      deliveryTimeMin: 3,
+      deliveryTimeMax: 5,
+      deliveryTimeUnit: 'radnih dana',
+      paymentMethods: ['platnim karticama', 'gotovinom prilikom dostave', 'poštanskim uplatnicama'],
+      returnPeriodDays: 14,
+      warrantyPeriodYears: 2,
+      complaintResponseDays: 8,
+      complaintResolutionDays: 15,
+      technicalComplaintResolutionDays: 30
+    },
+    legal: {
+      lastUpdated: '2024-01-01',
+      copyrightLaw: 'Zakona o autorskom i srodnim pravima ("Sl. glasnik RS", br. 104/2009, 99/2011, 119/2012, 29/2016 – odluka US i 66/2019)',
+      criminalCode: 'Krivičnog zakonika Republike Srbije ("Sl. glasnik RS", br. 85/2005, 88/2005 – ispr., 107/2005 – ispr., 72/2009, 111/2009, 121/2012, 104/2013, 108/2014, 94/2016 i 35/2019)',
+      consumerProtectionLaw: 'Zakona o zaštiti potrošača Republike Srbije',
+      dataProtectionLaw: 'Zakona o zaštiti podataka o ličnosti',
+      obligationsLaw: 'Zakona o obligacionim odnosima',
+      ministryWebsite: 'https://mtt.gov.rs/tekst/2306/zastita-potrosaca.php',
+      disputeResolutionListUrl: 'https://mtt.gov.rs/extfile/sr/33309/ha12.pdf'
     }
   },
   bg: {
@@ -75,7 +169,8 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     timezone: 'Europe/Sofia',
     logo: '/images/main/logo.png',
     company: {
-      name: 'DERMOTIN Bulgaria EOOD',
+      name: 'Dermotin',
+      legalName: 'DERMOTIN Bulgaria EOOD',
       address: 'ул. Витоша 15',
       city: 'София',
       postalCode: '1000',
@@ -83,13 +178,65 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       taxNumber: 'BG123456789',
       phone: '+359 2 123 4567',
       email: 'support@dermotin.bg',
-      registrationNumber: '12345678'
+      registrationNumber: '12345678',
+      activityCode: '47.91',
+      activityDescription: 'Търговия на дребно чрез пощата или интернет',
+      website: 'dermotin.bg' // Will be dynamically replaced in getCountryConfig
     },
     courier: {
       name: 'Econt Express',
       logo: '/images/couriers/econt.png',
       deliveryTime: '1-2 работни дни',
       trackingUrl: 'https://econt.com/tracking'
+    },
+    fulfillmentCenter: {
+      name: 'EU Fulfillment Center',
+      legalName: 'European Logistics Solutions EOOD',
+      address: 'бул. Черни връх 47',
+      city: 'София',
+      postalCode: '1407',
+      country: 'България',
+      phone: '+359 2 987 6543',
+      email: 'fulfillment@eu-logistics.bg',
+      website: 'https://eu-logistics.bg',
+      dataProcessingAgreement: true,
+      gdprCompliant: true,
+      dataRetentionPeriod: 730, // 2 years
+      dataProcessingPurpose: 'Order fulfillment, inventory management, and customer service',
+      operatingHours: 'Monday-Friday 8:00-18:00 EET',
+      supportedCountries: ['BG', 'RO', 'GR', 'HR', 'SI'],
+      privacyPolicyUrl: 'https://eu-logistics.bg/privacy-policy',
+      dataProtectionOfficer: {
+        name: 'Maria Petrova',
+        email: 'dpo@eu-logistics.bg',
+        phone: '+359 2 987 6544'
+      }
+    },
+    business: {
+      deliveryArea: 'територията на Република България',
+      deliveryService: 'Econt',
+      deliveryServiceName: 'куриерската служба Econt',
+      deliveryCost: 8,
+      deliveryCostCurrency: 'лева',
+      deliveryTimeMin: 2,
+      deliveryTimeMax: 4,
+      deliveryTimeUnit: 'работни дни',
+      paymentMethods: ['платежни карти', 'наложен платеж', 'банков превод'],
+      returnPeriodDays: 14,
+      warrantyPeriodYears: 2,
+      complaintResponseDays: 8,
+      complaintResolutionDays: 15,
+      technicalComplaintResolutionDays: 30
+    },
+    legal: {
+      lastUpdated: '2024-01-01',
+      copyrightLaw: 'Закона за авторското право и сродните му права',
+      criminalCode: 'Наказателния кодекс на Република България',
+      consumerProtectionLaw: 'Закона за защита на потребителите',
+      dataProtectionLaw: 'Закона за защита на личните данни',
+      obligationsLaw: 'Закона за задълженията и договорите',
+      ministryWebsite: 'https://www.mi.government.bg/bg/',
+      disputeResolutionListUrl: 'https://www.mi.government.bg/bg/'
     }
   },
   // Ready for future expansion:
@@ -111,7 +258,16 @@ export const CURRENCY_RATES: Record<SupportedCurrency, number> = {
 };
 
 export function getCountryConfig(countryCode: string): CountryConfig {
-  return COUNTRIES[countryCode] || COUNTRIES[DEFAULT_COUNTRY];
+  const config = COUNTRIES[countryCode] || COUNTRIES[DEFAULT_COUNTRY];
+  
+  // Create a copy with dynamic website URL
+  return {
+    ...config,
+    company: {
+      ...config.company,
+      website: getWebsiteDomain()
+    }
+  };
 }
 
 export function getCurrencySymbol(currency: SupportedCurrency): string {

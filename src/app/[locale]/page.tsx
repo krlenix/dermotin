@@ -441,7 +441,7 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <Footer countryConfig={countryConfig} />
+      <Footer countryConfig={countryConfig} locale={locale} />
 
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />

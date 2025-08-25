@@ -1,0 +1,261 @@
+Uslovi korišćenja
+Korišćenje web portala {{company.website}} (u daljem tekstu "portal") njegovih sadržaja i povezanih web stranica podleže Uslovima koršćenja između Vas i privrednog društva {{company.legalName}} (u daljem tekstu {{company.legalName}} ili Prodavac) sa sedištem u {{company.address}}, PIB: {{company.taxNumber}}, MB: {{company.registrationNumber}}, Šifra delatnosti: {{company.activityDescription}} ({{company.activityCode}}), {{company.city}}, {{company.country}}, kontakt e‑mail: {{company.email}} i telefon: {{company.phone}}.
+
+Ovi Uslovi korišćenja su pravno obavezujući između Vas i privrednog društva {{company.legalName}} u odnosu na vaše korišćenje sadržaja i usluga koje pruža portal. Svi sadržaji objavljeni na portalu su isključivo vlasništvo privrednog društva {{company.legalName}}. Nije dozvoljeno umnožavanje, reprodukovanje, javno prikazivanje ili distribuiranje sadržaja portala, na bilo koji način, bez pisanog odobrenja privrednog društva {{company.legalName}}
+
+Sadržaj portala predstavlja zaštićeno autorsko pravo koje pripada privrednom društvu {{company.legalName}} ili je u vlasništvu trećih lica koje su prenele pravo korišćenja istih. Privrednom društvu {{company.legalName}}, takođe, pripadaju autorska prava u oblastima: uređivanja, izbora i usklađivanja sadržaja. Zaštitni znakovi, logo znakovi, imena pojedinaca i druga slična intelektualna svojina je u posedu privrednog društva {{company.legalName}} ili u vlasništvu trećih lica. Nepoštovanje uslova korišćenja portala podleže sankcijama u skladu sa odredbama {{legal.copyrightLaw}} i {{legal.criminalCode}}
+
+Odricanje od odgovornosti
+
+Svaka odgovornost privrednog društva {{company.legalName}} za štetu proisteklu iz korišćenja ovog sajta, bez obzira na pravni osnov, uključujući štetnu radnju – ograničena je na štetu prouzrokovanu namerno ili nepažnjom. U meri u kojoj postoji zakonska odgovornost privrednog društva {{company.legalName}} za povredu bitnih ugovornih obaveza, ukupna visini iznosa zahteva za naknadu štete je ograničen na štetu koja je dokazana. To ne utiče na odgovornost privrednog društva {{company.legalName}} na osnovu važećeg zakona o odgovornosti proizvođača stvari sa nedostatkom. Nijedno navedeno ograničenje odgovornosti ne primenjuje se u slučaju štete po život, telesne povrede ili oštećenja zdravlja.
+
+Privredno društva {{company.legalName}} ulaže velike napore da internet stranica/stranice privrednog društva {{company.legalName}} budu bezbedna od virusa, ali ne možemo garantovati da virusa nikako nema. Stoga, preporučujemo da se postarate da na odgovarajući način obezbedite zaštitu od virusa (na primer, primenom skenera za virus) pre no što preuzmete dokumente i podatke sa ovog portala.
+
+Privredno društvo {{company.legalName}} ne garantuje da se neće dogoditi nikakva greška prilikom korišćenja usluga ponuđenih na internet stranici, niti da će te usluge uvek biti na raspolaganju.
+
+Autorska prava
+
+Portal štiti privatnost korisnika (u daljem tekstu korisnik ili potrošač) u skladu sa važećom Zakonskom regulativom i sopstvenim mogućnostima. Portal polaže autorska prava na sve svoje sadržaje (autorske tekstove, istraživanja, vesti, multimedijalne sadržaje, baze podataka i programski kod).
+
+Ukoliko drugi mediji prenose sadržaj objavljen na portalu, u obavezi su da nedvosmisleno i na vidnom mestu označe portal u vlasništvu privrednog društva {{company.legalName}}, kao izvor sadržaja. Ako se sadržaj sa portala prenosi na drugi digitalni medij, taj sadržaj se mora referisati na tačnu web adresu (link) na portalu.
+
+Prava i obaveze
+
+Privredno društvo {{company.legalName}} preko sajta {{company.website}} prodaje robu na teritoriji Republike Srbije.
+
+Objavljivanje informacija o robi na veb sajtu ne predstavlja ponudu sajta {{company.website}} za zaključenje ugovora o kupovini već samo poziv korisniku da učini ponudu pod objavljenim uslovima klikom na dugme ‘’Kupi’’. Ukoliko sajt {{company.website}} prihvati ovakvu ponudu korisnika nastaje ugovorni odnos i korisnik preuzima ugovornu obavezu da plati izabranu robu. Prodaja može biti ograničena na maksimalni broj korisnika zainteresovanih za određenu robu.
+
+Korisnik robu plaća putem poštanskih uplatnica, gotovinom, platnih kartica ili na drugi elektronski način ponuđen na sajtu i oslobađa sajt {{company.website}} i privredno društvo {{company.legalName}} nije odgovorna za štetu prouzrokovanu korisniku u vezi sa ovakvim načinima plaćanja.
+
+Za svaku pojedinačnu kupljenu robu {{company.legalName}} izdaje račun na ime korisnika koji ga identifikuje i daje mu pravo da potražuje kupljenu robu. Ukoliko Korisnik ne iskoristi kupljenu robu u roku važenja promotivne ponude koji je istaknut na samoj ponudi, sajt {{company.website}} nije dužan da Korisniku vrati novac, osim u slučaju ostvarivanja prava na jednostrani raskid.
+
+Roba koja je označena kao roba sa greškom, polovna roba ili roba koja nije upotrebljavana, ali zbog godine proizvodnje ne može biti smatrana novom robom, biće kao takva označene na sajtu privrednog društva {{company.legalName}}. Za takvu robu {{company.legalName}} nije dužan da Korisniku vrati novac, osim u slučaju ostvarivanja prava na jednostrani raskid, već će biti izvršena zamena ili popravka iste.
+
+Plaćanje robe
+
+Plaćanje je moguće izvršiti platnim karticama ili u gotovini (plaćanjem kuriru prilikom dostave). Plaćanje kuriru prilikom dostave se može izvršiti gotovinom ili platnim karticama, s obzirom da {{company.legalName}} sarađuje sa kurirskom službom {{business.deliveryService}} koja je obazbedila plaćanje karticama prilikom dostave.
+
+Ukoliko {{company.legalName}} iz opravdani razloga nije u mogućnosti da obezbedi kurirsku službu koja je obezbedila plaćanje robe ili usluge platnim karticama, plaćanje se može izvršiti u gotovini.
+
+Prilikom plaćanja i unošenja podataka o platnoj kartici, poverljive informacije se prenose putem javne mreže u zaštićenoj (kriptovanoj) formi upotrebnom SSL protokola i PKI sistema, kao trenutno najsavremenije kriptografske tehnologije. Sigurnost podataka prilikom kupovine garantuje procesor platnih kartica ChipCard a.d Beograd, pa se tako kompletan proces naplate obavlja na stranicama ChipCard-a. Prilikom transakcije i razmene podataka o Vašoj platnoj kartici, podaci o Vašoj platnoj kartici nisu dostupni našem sistemu.
+
+Plaćanje je moguće platnim karticama domaćih i inostranih banaka.
+
+Transkacije će biti kompletirana i iznos skinut sa vašeg računa tek kada su proizvodi pripremljeni za transport i predati kurirskoj službi. U slučaju da se plaćanje ne kompletira, odnosno iznos se ne skine sa računa do isteka 14 dana od prihvatanja Vaše porudžbine, ta porudžbenica će biti otkazana i izbrisana. Nakon isteka roka od 14 dana, novac rezervisan na Vašem računu se oslobađa i biće Vam ponovo na raspolaganju. Nakon toga možete ponoviti istu ili novu porudžbinu i izvršiti plaćanje.
+
+Proverite kod banke koja je karticu izdala da li Vaša kartica podržava plaćanje preko Interneta.
+
+Zabranjena je trgovina, kopiranje ili falsifikovanje
+
+Korisnik je saglasan da od sajta {{company.website}} prima komercijalne poruke u vezi prodaje robe/usluga putem veb sajta uz pravo da u svakom trenutku povuče saglasnost tako što će obavestiti sajt {{company.website}} pismenim putem.
+
+Sajt {{company.website}} zadržava pravo da ponudi specijalnu ponudu po posebnim uslovima u okviru redovne ponude.
+
+Informacije o isporuci i načinu plaćanja
+
+Proizvodi kupljeni na sajtu {{company.website}} isporučuju se isključivo na teritoriji Republike Srbije.
+
+Pre nego što potrošač poruči robu, potrošaču su na raspolaganju informacije o troškovima dostave, imajući u vidu da je cenovnik dostave sastavni deo ovih Opštih uslova i predugovornih informacija. Prilikom kupovine robe preko sajta Prodavca, potrošač daje saglasnost da je informisan o mogućim načinima isporuke, kao i roku i ceni isporuke robe. Kada se kupac prilikom potvrđivanja porudžbine saglasi sa “Uslovima korišćenja” time, kupac time potvrđuje da je obavešten i o iznosu cene robe, troškova dostave i načinima isporuke. Troškovi dostave prikazuju se na specifikaciji porudžbine, kao i na računu koji se dostavlja potrošaču na e-mail ili u SMS poruci.
+
+Napomena: U istaknute cene dostave dostave uključen je PDV.
+
+Dostava poručene robe se vrši preko {{business.deliveryServiceName}}.
+
+Troškovi dostave iznose {{business.deliveryCost}} {{business.deliveryCostCurrency}}.
+
+Način i rok dostave
+
+Dostava na kućnu adresu potrošača – Potrošač bira adresu na koju želi da mu proizvod bude dostavljen (kućna adresa, adresa kancelarije itd.). U dostavu nije uključeno sklapanje, montiranje, i postavljanje uređaja, iznošenje starog uređaja, odnošenje ambalaže itd.
+
+Rok za dostavu proizvoda na adresu potrošača računa se od trenutka potvrde porudžbine. Dostava se vrši svakog radnog dana u periodu 8-16h, zbog čega je neophodno da se u tom period na adresi nalazi osoba koja će preuzeti pošiljku. Uobičajeno vreme za isporuku je {{business.deliveryTimeMin}} {{business.deliveryTimeUnit}}, a maksimalno {{business.deliveryTimeMax}} {{business.deliveryTimeUnit}}.
+
+Uobičajena praksa je da, ukoliko prva isporuka ne bude uspešna, kurir pozove na telefon koji je ostavljen kao kontakt prilikom kreiranja porudžbine i ugovori novi termin dostave. Ukoliko i drugi pokušaj bude neuspešan, pošiljka će nam biti vraćena.
+
+Jednostrani raskid
+
+Kupac ima pravo da u roku od 14 dana od dana zaključenja ugovora o kupovini proizvoda bez navođenja razloga jednostrano raskine ugovor. Jednostranim raskidom kupac se oslobađa svih ugovornih obaveza, osim neposrednih troškova povraćaja robe koje kupac snosi sam. Kupac gubi pravo na jednostrani raskid ukoliko je kupljena roba oštećena.
+
+U slučaju reklamacija ili jednostranog raskida možete nas kontaktirati putem e-maila:
+
+{{company.email}} ili telefonom na {{company.phone}}.
+
+REKLAMACIJA
+
+Postupak za izjavljivanje reklamacije 
+
+Potrošač može izjaviti reklamaciju, telefonom, pisanim putem, elektronskim putem, odnosno na trajnom nosaču zapisa.
+
+Da bi potrošač mogao ostvariti pravo na reklamaciju, ima obavezu da dostavi dokaz da je izvršio kupovinu robe od Prodavca, odnosno kao dokaz mora dostaviti Prodavcu na uvid račun ili fiskalni račun, overenu kopiju računa ili fiskalnog računa, slip, administrativnu zabranu, odnosno izvod iz poslovne banke u kojoj ima otvoren tekući račun kao dokaz da je plaćanje izvršeno platnom karticom ili čekom u korist Prodavca ili neki drugi drugi dokument koji predstavlja dokaz da je kupovina izvršena.
+
+Uz reklamaciju, potrošač predočava, odnosno predaje robu koja je predmet reklamacije. Nemogućnost potrošača da Prodavcu dostavi ambalažu robe nije i ne može biti uslov zbog kojeg Prodavac može odbiti potrošačev zahtev za rešavanje reklamacije.
+
+Potrošač nema pravo na reklamaciju ako se utvrdi da su nedostaci na kupljenoj robi nastali njegovom krivicom (uključujući, ali ne ograničavajući se na mehaničke kvarove i mehanička oštećenja, upotrebu kupljene robe suprotno deklaraciji ili uputstvu, punjenje neadekvatnim punjačima ili postavljanje neadekvatnih baterija i sl.) ili ako nema račun ili drugi dokaz o kupovini, a na način predviđen stavom 2 ovog člana.
+
+Prodavac vodi evidenciju primljenih reklamacija i istu čuva dve godina od dana podnošenja reklamacija od strane potrošača.
+
+Po prijemu izjave o reklamaciji Prodavac će izdati elektronsku potvrdu da je istu primio i o tome obavestiti potrošača elektronskim putem. Ovakav način obaveštavanja potrošača predstavlja potvrdu prijema reklamacije. Potvrda o prijemu reklamacije sadrži broj pod kojim je zavedena reklamacija potrošača zavedena u evidenciji primljenih reklamacija.
+
+Evidencija o primljenim reklamacijama vodi se u elektronskom obliku i sadrži podatke o podnosiocu i datumu prijema reklamacije, podatke o robi, kratkom opisu nesaobraznosti i zahtevu iz reklamacije, datumu izdavanja potvrde o prijemu reklamacije, odluci o odgovoru potrošaču, datumu dostavljanja te odluke, načinu i primerenom roku za rešavanje reklamacije, a sa kojim se saglasio potrošač, kao i informacije o produžavanju roka za rešavanje reklamacije, saglasnost potrošača za produženje roka, te ostale napomene ukoliko iste budu postojale.
+
+Lice koje je kod Prodavca zaduženo za upis podataka u evidenciju o primljenim reklamacijama upisuje u ovu evidenciju i obrađuje one podatke o ličnosti podnosioca reklamacije koji su neophodni za ostvarenje svrhe upisa u ovu evidenciju i reklamacije, i to ime i prezime i kontakt detalje podnosioca. Lice zaduženo za upis podataka u ovu evidenciju, prethodno, a u skladu sa odredbama Zakona o zaštiti podataka o ličnosti, obaveštava podnosioca o obradi tih podataka i pribavlja punovažan pristanak za obradu ovih podataka u svrhu reklamacije. Obaveštenje o obradi podataka o ličnosti i pristanak potrošača na obradu istih, konstatuju se u napomenama u evidenciji o primljenim reklamacijama.
+
+Prodavac bez odlaganja, a najkasnije u roku od {{business.complaintResponseDays}} dana od dana prijema reklamacije, pisanim ili elektronskim putem potrošaču dostavlja odgovor na izjavljenu reklamaciju.
+
+Odgovor Prodavca na reklamaciju potrošača sadrži odluku da li prihvata reklamaciju, izjašnjenje o zahtevu potrošača i konkretan predlog i rok za rešavanje reklamacije. Rok za rešavanje reklamacije ne može da biti duži od {{business.complaintResolutionDays}} dana od dana prijema izjave o reklamaciji od strane potrošača, dok za tehničku robu i nameštaj rok za rešavanje reklamacije ne može biti duži od {{business.technicalComplaintResolutionDays}} dana.
+
+Izjavljenu reklamaciju rešaava ovlašćeno lice Prodavca. Ovlašćeno lice Prodavca ispituje reklamaciju, pregleda robu koja je predmet reklamacije i daje odgovor na reklamaciju.
+
+Kada ovlašćeno lice Prodavca utvrdi da je reklamacija izjavljena u roku i da je opravdana, prihvata reklamaciju, izjašnjava se o zahtevu potrošača i daje mu konkretan predlog i rok za rešavanje reklamacije.
+
+Kada rešavanje reklamacije nije bilo moguće izvršiti u propisanom roku, ovlašćeno lice Prodavca obaveštava potrošača obaveštenjem koje sadrži pisano obrazloženje koje sadrži razloge zbog kojih o reklamaciji nije odlučeno u propisanom roku.
+
+U slučaju prihvatanja reklamacije, a saglasno uslovima propisanim odredbama zakona i ovim uslovima, ovlašćeno lice Prodavca, potrošaču može dati predlog za:
+
+otklanjanje nedostatka robe;
+zamenu robe sa nedostatkom za novu robu, odnosno robu odgovarajućeg modela, tipa ili sličnu robu;
+umanjenje, odnosno korekciju cene robe;
+raskid ugovora i povraćaj novčanog iznosa plaćenog za tu robu.
+Ukoliko potrošač odbije predlog za rešavanja reklamacije, ovlašćeno lice Prodavca će u skladu sa zakonom, ovim uslovima, te drugim važećim propisima i opštim aktima, a u skladu sa dobrom poslovnom praksom i načelom savesnosti i poštenja, nastojati da sa potrošačem pronađe najbolji način za rešenje nastalog spornog pitanja.
+
+Kada ovlašćeno lice Prodavca utvrdi da je protekao rok za reklamaciju ili da reklamacija nije opravdana o tome obaveštava potroašača dostavljanjem pisanog odgovora na reklamaciju u kome se jasno navode razlozi neprihvatanja reklamacije.
+
+Kada se utvrdi da je reklamacija neosnovana, potrošaču se dostavlja roba koja je bila predmet reklamacije.
+
+Ovlašćeno lice Prodavca je ovlašćeno da ne prihvati reklamaciju potrošača kada utvrde da je nedostatak na robi nastao krivicom potrošača, uključujući nastanak i nedostatka usled nepridržavanja uputstava za upotrebu i održavanje ili iz uputstvima navedenim u deklaraciji robe.
+
+Ako potrošač, nakon  primljeng obaveštenja od strane Prodavca, odbije da primi robu za koju reklamacija nije prihvaćena, ovlašćeno lice Prodavca će preporučenom poštom dostaviti robu na kućnu adresu potrošača u roku od (pet) dana.
+
+Ukoliko Prodavac iz objektivnih razloga nije u mogućnosti da udovolji zahtevu potrošača u predviđenom roku, Prodavac je dužan da o produženju roka za rešavanje reklamacije obavesti potrošača i navede rok u kojem će je rešiti zahtev za reklamaciju. Potrošač da je saglasnost za produženje roka. Obaveštenje Prodavca i saglasnost potrošača se moraju evidentirati u evidenciji primljenih reklamacija. Produženje roka za rešavanje reklamacija moguće je samo jednom.
+
+Rok za rešavanje reklamacije prekida se kada potrošač primi odgovor prodavca i počinje da teče iznova kada prodavac primi izjašnjenje potrošača na odgovor prodavca. Potrošač je dužan da se izjasni na odgovor prodavca najkasnije u roku od tri dana od dana prijema odgovora prodavca.
+
+Smatraće se da potrošač nije saglasan sa predlogom prodavca ukoliko se ne izjasni u roku od tri dana.
+
+Troškove koji nastanu po osnovu reklamacije snosi Prodavac.
+
+Rešene reklamacije dostavljaju se, sa odgovarajućom dokumentacijom za razduženje i drugom pripadajućom dokumentacijom, Prodavcu i službi zaduženoj za knjigovodstvo i radunovodstvo.
+
+Reklamacije vezane za izvršenu uplatu su moguće zbog zloupotrebe platne kartice i zbog pogrešno unetog iznosa (nula više i sl.). U slučaju reklamacija iz nekog od napred navedena dva razloga, iste se primaju tako što se e-mail sa potvrdom o izvršenoj transakciji prosleđuje na e-mail adresu {{company.website}} i uz njega se prilaže skeniran zahtev za povraćaj sredstava u slobodnoj formi u kojem se navodi razlog. Potrebno je da zahtev sadrži potpis vlasnika kartice i skeniranu ličnu kartu, kao i kontakt telefon. Pošiljalac će biti kontaktiran, a sredstva vraćena u roku od 10 dana nakon uspostavljenog kontakta. Sredstva se vraćaju na račun koji je vezan za vlasnika/korisnika platne kartice kojom je izvršena uplata. Zahtevi se mogu slati i poštom na: {{company.legalName}}, ul. Zvezdarskih jelki 3/2, 11050 Beograd i potrebno je da sadrže sve elemente kao i zahtevi poslati e-mailom.
+
+Reklamacija se može izjaviti za svu robu u asortimanu ponude Prodavca.
+
+Za robu, koja je kupljena na akcijama, sniženjima i rasprodajama reklamaciji može se izjaviti reklamacija.
+
+Za robu koja se prodaje sa oznakom „roba sa nedostatkom“, ne može se izjaviti reklamacija.
+
+Saobraznost robe 
+
+{{company.legalName}} kao prodavac imao obavezu da kupcu isporuči artikle koji su saobrazni ugovoru, u skladu sa odredbama Zakona o zaštiti potrošača Republike Srbije. Prodavac je odgovoran za nesaobraznost robe koja se pojavi u roku od dve godine od dana prelaska rizika na potrošača, na način kako je definisano odredbama Zakona.
+
+Isporučena roba je saobrazna ugovoru ako:
+
+ako odgovara opisu koji je dao prodavac i ako ima svojstva robe koju je prodavac prikazao potrošaču kao uzorak ili model;
+ako ima svojstva potrebna za naročitu upotrebu za koju je potrošač nabavlja, a koja je bila poznata prodavcu ili mu je morala biti poznata u vreme zaključenja ugovora;
+ako ima svojstva potrebna za redovnu upotrebu robe iste vrste;
+ako po kvalitetu i funkcionisanju odgovara onome što je uobičajeno kod robe iste vrste i što potrošač može osnovano da očekuje s obzirom na prirodu robe i javna obećanja o posebnim svojstvima robe data od strane prodavca, proizvođača ili njihovih predstavnika, naročito ako je obećanje učinjeno putem oglasa ili na ambalaži robe.
+U slučaju nesaobraznosti isporučene robe, potrošač koji je obavestio prodavca o nesaobraznosti (izjavio reklamaciju), ima pravo da zahteva od prodavca da otkloni nesaobraznost bez naknade, na jedan od sledećih načina:
+
+popravkom ili zamenom;
+umanjenjem cene ili raskidom ugovora u pogledu te robe.
+U slučaju da se nesobraznost pojavi u roku od 6 meseci od dana prelaska rizika na potrošača, potrošač ima pravo da bira da se ista otkloni:
+
+zamenom;
+odgovarajućim umanjenjem cene;
+izjavom o raskidu ugovora
+popravkom, uz izričitu saglasnost kupca.
+Međutim, ukoliko se nesaobraznost pojavi nakon isteka ovog roka od 6 meseci, potrošač može prvenstveno da bira između popravke ili zamene.  Ako se posle prve popravke, pojavi isti ili drugi nedostatak saobraznosti, ponovna popravka moguća je samo uz izričitu saglasnost potrošača. Posle prve popravke, potrošač ima izbor između zamene, odgovarajućeg umanjenja cene ili raskida ugovora u pogledu te robe.
+
+Sve troškove koji su neophodni da bi se roba saobrazila ugovoru, a naročito troškove rada, materijala, preuzimanja i isporuke, snosi prodavac.
+
+U slučaju neizvršenja ove obaveze, prodavac će se postarati da se proizvod zameni novim ili da vrati novac u vrednosti kupljenog proizvoda.
+
+Ukoliko se za uređaj izdaje garancija u kojoj se predviđa  odgovornost proizvođača/uvoznika za ispravno funkcionisanje artikla u dužem trajanju od 2 godine, taj rok se unosi u poseban garantni list i overava pečatom i potpisom ovlašćenog prodavca. U skladu sa politikom dobavljača/uvoznika, dodatna garancija na ispravan rad/funkciju artikla se može ostvariti i elektronskim putem – registracijom na predvidjenom veb-sajtu ili poštom, a u skladu sa pripadajućim uputstvom za upotrebu. Nakon isteka roka od dve godine, kupac se obraća isključivo ovlašćenom serviseru ili proizviđaču u skladu sa instrukcijama navedenim u samom garantnom listu.
+
+Kupac gubi pravo na otklanjanje saobraznosti ako se nesaobaznost (kvar) izazove nepridržavanjem datih uputstava za upotrebu i ako su na proizvodu vršene bilo kakve popravke/ prepravke/ nadogradnje i sl. od strane neovlašćenih lica.
+
+Prigovori na saobraznost
+
+U cilju izbegavanje nesporazuma, u slučaju materijalnih nedostataka isporučene robe, kupac nema pravo na isticanje prigovora, odnosno reklamacije zbog nesaobraznosti u skladu sa Zakonom o zaštiti potrošača, a u vezi sa Zakonom o obligacionim odnosima u sledećim slučajevima:
+
+da je potrošaču u trenutku zaključenja ugovora bilo poznato ili mu nije moglo ostati nepoznato da roba nije saobrazna ugovoru;
+da su u trenutku zaključenja ugovora nedostaci potrošaču bili poznati, odnosno koje nedostatke bi brižljivo lice sa prosečnim znanjem i iskustvom lica istog zanimanja i struke kao potrošač moglo lako opaziti pri uobičajenom pregledu stvari;
+da potrošač nije izvršio pregled isporučene robe, odnosno nije obavestio prodavca u zakonskom roku o svim vidljivim i/ili skrivenim nedostacima iste.
+Prigovor o fizičkom oštećenju proizvoda u skladu sa zakonom, kupac može uložiti e-mailom ili pozivom na kontakt telefon koji je naveden na sajtu {{company.website}}. Naknadni prigovori neće biti uvaženi.
+
+Kupac može svoje pravo na reklamaciju, zbog nesaobraznosti, ostvariti pod uslovima i u skladu sa Zakonom o zaštiti potrošača.
+
+Rok u kome Prodavac mora da odgovori na reklamaciju je {{business.complaintResponseDays}} dana od datuma prijema reklamacije.
+
+Zahtev za reklamaciju zbog nesaobraznosti, kupac može uputiti na e-mail-a adresu {{company.email}} i telefon: {{company.phone}}.
+
+Vansudsko rešavanje sporova
+
+Privredno društvo {{company.legalName}} obaveštava svoje cenjene potrošače, koji robu kupuju putem internet sajta {{company.website}}, da imaju mogućnost da u roku od godinu dana od dana izjavljivanja reklamacije pokrenu vansudski postupak rešavanja potrošačkog spora pred nadležnim telom za vansudsko rešavanje potrošačkih sporova koja se nalaze na listi koju sačinjava i javno objavljuje Ministarstvo nadležno za poslove trgovine i zaštitu potrošača. Listu tela nadležnih za vansudsko rešavanje potrošačkih sporova možete pronaći na sledećem linku {{legal.disputeResolutionListUrl}} . Ministarstvo unutrašnje i spoljne trgovine RS može povremeno da ažurira listu, te shodno tome upućujemo potrošače i na odgovarajuću internet stranicu pomenutog ministarstva, a kako bi isti imali dodatnu mogućnost provere {{legal.ministryWebsite}}. 
+
+Potrošački spor može se rešiti postupkom vansudskog rešavanja potrošačkih sporova. Kao trgovac smo dužni da vas obavestimo da smo po zakonu obavezni da učestvujemo u ovom postupku. Vansudsko rešavanje potrošačkih sporova obavlja se na transparentan, efikasan, brz i pravičan način pred telom za vansudsko rešavanje potrošačkih sporova. Ministarstvo sačinjava listu tela i javno je objavljuje.
+
+Postupak pred telom može da pokrene potrošač samo ukoliko je prethodno izjavio reklamaciju ili prigovor trgovcu. Potrošač protekom jedne godine od dana (bezuspešnog) podnošenja reklamacije gubi pravo na podnošenje predloga za vansudsko rešavanje spora.
+
+Vansudsko rešavanje potrošačkog spora može da traje najduže 90 dana od dana podnošenja predloga.
+
+Vansudsko rešavanje potrošačkih sporova, ne primenjuje se, pored ostalog:
+
+u potrošačkim sporovima koji su predmet Zakona o zaštiti potrošača, ako je vansudsko rešavanje sporova uređeno posebnim zakonom, a naročito u oblasti pružanja elektronskih komunikacionih usluga, poštanskih usluga, finansijskih usluga, osim finansijskih pogodbi, usluga putovanja;
+za rešavanje sporova po procedurama koje je ustanovio sam trgovac;
+na neposredne pregovore između potrošača i trgovca;
+na pokušaj mirenja strana povodom spora u parničnom postupku;
+u postupcima koje je trgovac pokrenuo protiv potrošač
+Svaka stranka u postupku vansudskog rešavanja potrošačkog spora plaća svoje troškove (troškovi zastupanja, putni troškovi i sl.). Rad tela za vansudsko rešavanje potrošačkog spora je besplatan za stranke u postupku vansudskog rešavanja potrošačkog spora.
+
+Povraćaj sredstava
+
+U slučaju vraćanja robe i povraćaja sredstava kupcu koji je izvršio plaćanje nekom od platnih kartica, delimično ili u celosti, a bez obzira na razlog vraćanja, {{company.legalName}} je u obavezi da povraćaj vrši isključivo preko VISA, EC/MC i Maestro i/ili sličnog metoda plaćanja.  Ukoliko je plaćanje izvršeno gotovinom, bez obzira na razlog vraćanja, {{company.legalName}} vrši povraćaj novca na tekući račun potrošača. Ukoliko je potrošač robu platio u gotovini, a nema otvoren račun u banci, uplaćena sredstva će biti vraćena preko kurirske službe koja je izvršila dostavu robe ili preuzimanje vraćene robe ili putem poštanske uplatnice.
+
+Izjava o konverziji
+
+Sva plaćanja biće izvršena u lokalnoj valuti Republike Srbije – dinar (RSD). Za informativni prikaz cena u drugim valutama koristi se kurs narodne banke Srbije. Iznos za koji će biti zadužena Vaša platna kartica biće izražen u Vašoj lokalnoj valuti kroz konverziju u istu po kursu koji koriste kartičarske organizacije, a koji nama u trenutku transakcije ne može biti poznat. Kao rezultat ove konverzije postoji mogućnost neznatne razlike od originalne cene navedene na našem sajtu. Hvala Vam na razumevanju.
+
+Privatnost podataka 
+
+Otvaranjem korisničkog naloga putem našeg sajta, korisnik/kupac je saglasan da {{company.legalName}} ovako dobijene lične podatke i podatke o transakcijama zaključenih ugovora na daljinu, koristi za potrebe poslovanja, kao i u svrhe obaveštavanja o marketinškim uslugama, sve dok je korisnički nalog aktivan. Da bi naši zaposleni uspešno obradili Vašu porudžbinu potrebni su nam ime i prezime, adresa, e-mail i telefon.
+
+Uz pomoć navedenih podataka bićemo u mogućnosti da Vam isporučimo željenu robu, kao i da Vas obavestimo o trenutnom statusu porudžbine. Pribavljene podatke o registrovanom korisniku/kupcu obrađujemo i čuvamo u skladu sa odredbama Zakona o zaštiti podataka o ličnosti. Kao korisnik/kupac možete u svakom trenutku pisanim putem tražiti da {{company.legalName}} prestane da koristi lične podatke i podatke o kupovini za navedene namene.
+
+Zahtev za prestankom korišćenja ličnih podataka i brisanje iz baze podataka, dostavljate na e-mail adresu  {{company.email}}. U svakom trenutku možete zahtevati da se vaša e-mail adresa ukloni sa newsletter liste, koja se koriste isključivo u svrhu obaveštavanja o marketinškim uslugama {{company.website}}. Zahtev možete uputiti i putem kontakt forme sa sajta ili pozivom na telefon: {{company.phone}}.
+
+
+Izjava o odricanju od odgovornosti 
+
+Svi podaci objavljeni na sajtu {{company.website}} – opisi artikala i slike, informativne su prirode i ne snosimo odgovornost za eventualne nenamerne greške u sadržaju sajta. Svi artikli prikazani na sajtu {{company.website}} su deo naše ponude, ali se ne podrazumeva da su dostupni u svakom trenutku. Prilikom započinjanja kupovine na našem sajtu dobićete odgovor putem email-a ili SMS-a u kome će biti naveden status vase porudžbine. Kada utvrdimo da artikal imamo na stanju stići će vam odgovor da je vaša porudžbina potvrđena. U suprotnom, obavestićemo vas da predmetni artikal nemamo na stanju i ponudićemo vam neki drugi artikal sličnih karakteristika i kvaliteta i u istom ili približnom cenovnom rangu.  Sve informacije o dostupnosti artikala sa sajta, možete dobiti pozivom na telefon: {{company.phone}}.
+
+ 
+
+Prenošenje sadržaja sa portala u drugim medijima
+
+Fizička i pravna lica, te štampani i elektronski mediji mogu prenositi autorski sadržaj portala pod sledećim uslovima:
+
+ukoliko autor nije izričito zabranio reprodukovanje, distribuiranje te komuniciranje javnosti svog sadržaja i ukoliko se autorski sadržaj koristi u opsegu koji odgovara svrsi i načinu izveštavanja i opšteg informisanja,
+obavezno je, prilikom prenošenja autorskog sadržaja, u zaglavlju teksta naznačiti izvor i autorstvo ({{company.website}}),
+obavezno je u telu teksta prenesenog autorskog sadržaja naznačiti oznaku web stranice portala na kojoj se nalazi izvorni članak, odnosno autorski sadržaj koji je predmet prenosa.
+Portal ne snosi odgovornost za tačnost, preciznost i verodostojnost informacija objavljenih na internet stranicama koje su u vlasništvu trećih lica, a čije podatke, informacije i linkove ovaj portal preuzima. Ukoliko korisnik smatra da su na portalu povređena autorska prava, dužan je da o tome obavesti uredništvo portala na {{company.website}}.
+
+Obaveze korisnika prilikom korišćenja informacija i podataka sa portala
+
+Korisnici sajta mogu uredništvu dostavljati pitanja, komentare, beleške, predloge i ideje u vezi sa sadržajem sajta, sve dok nisu nezakonite, opscene, klevetničke, preteće i ne ugrožavaju privatnost i autorska prava {{company.legalName}} ili treće strane, ako ne sadrže viruse, nisu deo političke/predizborne kampanje, lančana pisma, masovna pošta ili neki drugi vid neželjene pošte / Spam-a. Ne smete koristiti lažnu email adresu ili predstavljati drugu osobu ili entitet. {{company.legalName}} zadržava pravo, ali ne i obavezu, da ukloni ili izmeni takve informacije.
+
+Privredno društvo {{company.legalName}} ne nadzire sadržaj koji razmenjuju posetioci na ovom portal i ne može garantovati za njegovu tačnost, poreklo ili kvalitet. Privredno drutštvo {{company.legalName}} ni na koji način neće biti odgovoran za sadržaj ili gubitak i oštećenje sadržaja nastalo zbog korišćenja usluga na ovom portalu. Da bi se osiguralo slobodno i neometano korišćenje usluga portala, nije prihvatljivo i strogo je zabranjeno sledeće:
+
+objavljivanje, slanje i razmena sadržaja koja su u suprotnosti sa važećim propisima Republike Srbije;
+uvredljiv, vulgaran, preteći, rasistički ili šovinistički sadržaj te sadržaj štetan na bilo koji drugi način;
+objavljivanje, slanje, razmena i prenošenje informacija za koje posetilac zna ili pretpostavlja da su lažne, a čija bi upotreba mogla naneti štetu drugim korisnicima;
+lažno predstavljanje, odnosno predstavljanje u ime, drugog, pravnog ili fizičkog lica;
+manipulisanje identifikatorima da bi se prikrilo poreklo sadržaja koji se objavljuje ili šalje u sklopu usluga portala;
+objavljivanje, slanje i razmena sadržaja zaštićenog autorskim pravom;
+objavljivanje, razmena i slanje neželjenog sadržaja korisnika bez njihovog pristanka ili zahteva da isti bude poslat, kao što su promotivni materijali, reklamne poruke, spam poruke, lančana pisma, promotivni i reklamni materijali koji sadrže lažne informacije, navode ili tvrdnje koje mogu zavarati korisnike;
+svesno objavljivanje, slanje i razmena sadržaja s virusima ili sličnim fajlovima ili programima izrađenima u svrhu uništenja ili ograničenja rada bilo kojega softvera i/ili hardvera te telekomunikacijske opreme;
+prikupljanje, čuvanje i objavljivanje ličnih podataka drugih posetilaca portala i korisnika.
+Portal zadržava pravo da ukloni sadržaj koji smatra neprimerenim ili nije u skladu sa uslovima korišćenja. Korisnici su odgovorni za svaku štetu koju pričine nepoštovanjem ovih Uslova korišćenja, a koja nastane kao posledica njihovih aktivnosti. Portal ne snosi odgovornost za bilo kakvu štetu nastalu korišćenjem istog suprotno načinu koji je predviđen Uslovima korišćenja.
+
+Komentarisanje i servisi za razmenu informacija
+
+Ovaj portal omogućava posetiocima besplatno korišćenje servisa za razmenu informacija pod uslovom da ne krše Uslove korišćenja portal, te važeće zakonske propise Republike Srbije koja važe za servis i komentarisanje sadržaja. Korišćenjem komunikacijskih servisa korisnik se obavezuje da će slati i primati elektronske materijale koji su sačinjeni i poslati u skladu sa zakonom, te one materijale na kojima treća lica nemaju prava.

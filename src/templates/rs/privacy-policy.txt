@@ -1,0 +1,152 @@
+Politika privatnosti
+{{company.legalName}} (u daljem tekstu {{company.legalName}} ili Prodavac), sa sedištem u {{company.address}}, PIB: {{company.taxNumber}}, MB {{company.registrationNumber}}, Šifra delatnosti: {{company.activityDescription}} ({{company.activityCode}}), {{company.city}}, {{company.country}}, kontakt e‑mail: {{company.email}} i telefon: {{company.phone}}, je odgovoran za primenu Zakona o zaštiti podataka o ličnosti.
+
+U ime kompanije {{company.legalName}} se obavezujemo da ćemo čuvati privatnost svih naših kupaca. Prikupljamo samo neophodne, osnovne podatke o kupcima/korisnicima i podatke neophodne za poslovanje i informisanje korisnika u skladu sa dobrim poslovnim običajima i u cilju pružanja kvalititne usluge. Dajemo kupcima mogućnost izbora uključujući mogućnost odluke da li žele ili ne da se izbrišu sa mailing lista koje se koriste za marketinške kampanje. Svi podaci o korisnicima/kupcima se strogo čuvaju i dostupni su samo zaposlenima kojima su ti podaci nužni za obavljanje posla. Svi zaposleni kompanije {{company.legalName}} odgovorni su za poštovanje načela zaštite privatnosti.
+
+Vrste i način prikupljanja informacija
+
+Kada ostvarite kontakt sa nama, bilo da koristite našu web stranicu ili komunicirate s nama putem društvenih mreža i aplikacija za komunikaciju, možemo prikupiti sledeće informacije o vama:
+
+Informacije koje nam dajete: možete nam dati podatke o sebi ako kreirate nalog na našoj web stranici, izvršite porudžbinu, popunite bilo koji obrazac (poput obrazaca za registraciju, konkurs i ankete), odlučite se za prijem našeg newslettera, učestvujte u promociji na društvenim mrežama sa našim web sajtom ili se dopisujte s nama (putem e-maila, telefona, chata, društvenih mreža ili na neki drugi način).
+U zavisnosti od toga šta navedete, informacije koje tokom komunikacije prikupimo na prethodno opisan način mogu uključivati vaše ime, adresu, IP adresu ili vašu lokaciju, broj telefona, adresu e-maila, datum rođenja, pol, fotografiju, nadimak, informacije o kupovini, preferencije kupovine, slike i finansijske podatke (uključujući podatke o vašoj kreditnoj ili debitnoj kartici, koje se nalaze kod našeg partnera za obradu plaćanja karticom).
+
+Informacije koje dobijamo o vama, sa drugih računa ili izvora, možemo ih dobiti iz drugih izvora, kao što su drugi nalozi sa drugih web stranica, uključujući posrednike podataka, naše partnere, društvene i oglašivačke mreže, kao i procesori plaćanja i službe dostave.
+
+Podatke koje nam dostavljate dopunjavamo podacima iz servisa koje dodaju podatke, kao što su javni podaci ili podaci o društvenim kretanjima, kako bismo vam pružili bolji sadržaj ili promocije. Dodaćemo ove podatke postojećim informacijama o korisniku, kako bismo bolje razumeli interese kupaca i pružili relevantnije preporuke za artikle i oglašavanje, povećali sigurnost naših kupaca prilikom korišćenja naše web stranice i u skladu sa našim zakonskim obavezama. Ovi podaci mogu uključivati veličinu domaćinstva, prihod domaćinstva ili profesiju. Ove informacije mogu biti povezane sa vašim ličnim podacima kao što su ime i prezime, e-mail, adresa stanovanja ili broj telefona.
+
+Prikupljanje, čuvanje, obrada i kontrola podataka
+
+Vaše lične podatke prikuplja, obrađuje i kontroliše {{company.legalName}}, sa jasno navedenom svrhom, na način koji je dozvoljen zakonom.
+
+Zadržavamo Vaše  lične podatke da Vam pružimo uslugu i ispunimo svrhu opisanu u ovoj politici, a samo u periodu koji nam je neophodan za ostvarivanje cilja prikupljanja podataka opisanog u ovoj Politici  privatnosti ili bilo kojim posebnim pravilima o privatnosti vezanim za određeni proizvod ili uslugu ili kada to zahteva važeći zakon.
+
+Podaci koje dostavite se čuvaju onoliko koliko je potrebno da bi se ispunila određena svrha zbog koje ste nam dostavili podatke, ili da bi se ispoštovale zakonske odredbe.
+Kada se više ne ispunjavaju uslovi za zadržavanje ovih podataka, iste brišemo i uklanjamo iz naših baza podataka.
+
+Takođe, ukoliko korisnici i posetioci sajta više ne žele da čuvamo i obrađujemo njihove podatke o ličnosti, mogu zatražiti da uništimo sve njihove podatke o ličnosti iz naših sistema. Uništavanje ili brisanje podataka nije moguće samo ukoliko je zakonom propisana obaveze da određene podatke o ličnosti moramo da čuvamo i obrađujemo, te stoga ne bi mogli biti obrisani ili uništeni bez obziran za vaš zahtev, zbog čega bimos morali odbiti vaš zahtev i nastaviti sa čuvanjem i bradom ličnih podataka.
+
+Svrha korišćenja prikupjenih ličnih podataka
+
+Cilj prikupljanja ličnih podataka je da Vam pružimo usluge u skladu sa svim važećim zakonima, propisima i drugim pravnim zahtevima. To uključuje: pružanje, obradu, održavanje, poboljšanje i razvoj naših usluga koje Vam pružamo, kao što su isporuka, aktiviranje, potvrđivanje usluge nakon prodaje, korisnička podrška itd.
+Prikupljamo, analiziramo i obrađujemo podatke o uslugama koje naši posetioci traže kao i o stranicama koje posećuju, kako bismo poboljšali naše usluge i proizvode. Te podatke koristimo da bismo poboljšali aktivnosti i izgled naših stranica i omogućili Vam bolje korisničko iskustvo. Takođe, Vaše lične podatke koristimo u statističke svrhe (broj poseta, zadržavanje na sajtu, ponašanje itd.)
+
+ 
+
+Kolačići
+
+Informacije koje naši IT sistemi prikupljaju o vama: svaki put kada posetite web lokaciju, određeni podaci će se kreirati i automatski evidentirati od strane naših IT sistema – tzv. kolačići.
+
+Koristimo isključivo sledeće kategorije kolačića i praćenja:
+- Neophodni kolačići: obavezni za funkcionisanje sajta (sesije, bezbednost, korisničke preferencije) – bez pristanka.
+- Marketing kolačići: Meta (Facebook) Pixel i TikTok Pixel radi praćenja konverzija i optimizacije oglasa; obrađuju parametre kampanja (campaign_id, adset_id, ad_id, medium) – uz vaš pristanak.
+- Interno praćenje: zadržavamo URL parametre (campaign_id, adset_id, ad_id, medium) u našem internom sistemu radi merenja performansi kampanja; ne delimo sa trećim licima.
+
+Informacije koje pruža vaš uređaj razlikovaće se u zavisnosti od vašeg operativnog sistema i postavki uređaja (npr. PC, Mac, iPhone, Android ili drugo), ali mogu uključiti IP adresu i približnu lokaciju uređaja, pregledač, stranice koje ste posetili, vremensku zonu i jezik.
+
+Svrha korišćenja prikupljenih podataka
+
+Da bismo vam pružali usluge i pristup sajtu, uključujući omogućavanje poručivanja i dostave artikala, administriranje vašeg naloga i optimizaciju vašeg iskustva, informacije koje prikupljamo koristimo na više različitih načina. Informacije takođe koristimo u marketinške i reklamne svrhe. Tamo gde ste nam rekli da želite da primate marketing materijale ili kada kupite koristeći naš sajt, mi i naši partneri ćemo koristiti vaše lične podatke (uključujući vaše ime, e-maila i adresu) da bismo vam povremeno slali novosti, vesti, i ponude putem e-maila, telefona ili poštom. Vaše podatke možemo koristiti za prilagođavanje ovih poruka vama. Ako se u nekom mometnu odlučite da više ne želite da ih dobijate, možete da se odjavite iz naše baze, tako što slediti uputstva za odjavu u promotivnim sadržajima koje vam šaljemo bilo kojim kanalom (e-mail, sms, viber, poštom…)
+
+Nezavisne servise usluga koristimo za prikazivanje oglasa koji su za vas najrelevantniji na različitim uređajima, na sopstvenim i tuđim web sajtovima i u mobilnim aplikacijama. Pored informacija o vašim posetama našem web sajtu, naši servisi usluga mogu takođe koristiti informacije o vašoj interakciji sa drugim web sajtovima ili aplikacijama, za ciljanje reklama za artikle dostupne na {{company.website}}.
+Takođe vršimo istraživanje, analizu i ankete o vašoj upotrebi naše web stranice i šta ste gledali. Pratimo vašu potrošnju na našoj web stranici I koristimo vaše podatke da bismo potvrdili vaš identitet i izvršili proveru protiv prevara, kako bismo osigurali vašu i našu finansijsku sigurnost.
+
+Pravni osnov obrade
+
+Vaše podatke obrađujemo na sledećim osnovima:
+- Ugovor: obrada neophodna za prijem i isporuku porudžbine, korisničku podršku i garanciju.
+- Pravni osnov (zakonska obaveza): računovodstvo, poreske obaveze i čuvanje poslovne dokumentacije.
+- Legitimni interes: sprečavanje zloupotreba i prevara, unapređenje bezbednosti i performansi sajta.
+- Pristanak: marketing kolačići (Meta i TikTok pikseli) i slanje marketinških obaveštenja kada je primenljivo.
+
+Deljenje prikupljenih podataka
+
+Da bismo vam pružali usluge i pristup sajtu, radimo sa brojnim pažljivo odabranim trećim stranama. Da bismo ovo odradili, Vaše podatke možemo deliti sa trećim stranama u sledećim ograničenim okolnostima:
+
+Naši partneri i brendovi od kojih kupujete artikle: oslanjamo se na pažljivo odabrane partnere koji isporučuju artikle koje vidite na našoj web stranici.
+
+Nezavisni dobavljači usluga u poslovne svrhe: da bismo pravilno funkcionisali, oslanjamo se na brojne pažljivo odabrane treće strane koje će nam pružiti usluge i artikle. Ovim kompanijama dozvoljavamo da koriste vaše lične podatke, samo onoliko koliko je potrebno da nam pruže svoje usluge i proizvode.
+
+Kurirske kompanije koje koristimo da bismo vam isporučili artikle i kao takve moraju da imaju pristup informacijama o vašoj porudžbini, uključujući vaše ime i adresu.
+
+Davaoci usluga plaćanja koje koristimo za obradu vaših podataka o plaćanju (uključujući detalje vaše kreditne / debitne kartice) kako bismo mogli da naplatimo od vas.
+
+Davaoci usluga zaštite od prevara i kredita da bi nas zaštitili.
+
+Interni analitički sistemi koje koristimo za poboljšanje i optimizaciju web stranice (bez deljenja sa trećim licima).
+
+Davaoci usluga za upravljanje klijentima koji nam omogućavaju pružanje usluga korisnicima i poboljšanje i upravljanje vašim iskustvom kupaca.
+
+Davaoci usluga marketinških alata (Meta i TikTok) koji nam pomažu da omogućimo marketing – samo uz vaš pristanak.
+
+Istraživanje kompanija koje možemo angažovati da nam pomognu u sprovođenju anketa u vezi sa vašom upotrebom naše web stranice i usluga.
+
+Provajderi IT / tehnologije koje koristimo za podršku, održavanje i pružanje naše tehnologije i IT infrastrukture koja podržava našu web stranicu i skladištenje vaših podataka.
+
+Oglašivači u marketinške svrhe: vaše podatke možemo pružiti isključivo Meta (Facebook) i TikTok platformama radi prikazivanja relevantnih oglasa, i to samo uz vaš pristanak.
+
+Fulfillment centar (ako primenljivo): u slučaju korišćenja eksternog centra za ispunjenje narudžbina, podaci neophodni za isporuku (npr. ime i adresa) mogu biti podeljeni sa {{fulfillmentCenter.legalName}} na adresi {{fulfillmentCenter.address}}, {{fulfillmentCenter.city}} {{fulfillmentCenter.postalCode}}, {{fulfillmentCenter.country}}; kontakt: {{fulfillmentCenter.email}}, {{fulfillmentCenter.phone}}. Subjekt je GDPR usklađen: {{fulfillmentCenter.gdprCompliant}}; DPA zaključen: {{fulfillmentCenter.dataProcessingAgreement}}; svrha: {{fulfillmentCenter.dataProcessingPurpose}}; period čuvanja (dana): {{fulfillmentCenter.dataRetentionPeriod}}.
+
+Međunarodni prenos podataka
+
+Zbog korišćenja Meta (Facebook) i TikTok piksela može doći do prenosa podataka u treće zemlje izvan EEA. U tim slučajevima oslanjamo se na odgovarajuće zaštitne mere (npr. Standardne ugovorne klauzule) i dodatne tehničke i organizacione mere kako bismo zaštitili vaše podatke.
+
+Period čuvanja podataka
+
+Podatke čuvamo onoliko dugo koliko je potrebno za ispunjenje svrhe obrade ili koliko nalaže zakon. Marketinške kolačiće i parametre kampanja čuvamo do povlačenja pristanka, a interne evidencije o kampanjama zadržavamo razumno ograničeno vreme, u skladu sa poslovnim potrebama i važećim propisima.
+
+Obavezujemo se da nećemo trgovati Vašim ličnim podacima, osim na način kako je opisano u ovoj Politici privatnosti.  Zadržavamo pravo da zaposlimo druge kompanije, tj. treća lica i pojedince kako bi olakšali naše usluge (npr. održavanje, analiza, revizija, marketing i razvoj), ali ova lica imaju ograničen pristup informacijama i to samo za obavljanje ovih poslova u naše ime i dužni su da ne otkrivaju ili koriste ove podatke u druge svrhe. Ova lica će primeniti odgovarajuće tehničke i organizacione mere na takav način da će obrada zadovoljavati zahteve ove Politike privatnosti i osigurati zaštitu prava nosioca podataka. Podatke posetilaca sajta mžemo podeliti samo ukoliko se to od nas bude zahtevalo i to sa sledećim entitetima (u skladu sa zakonodavstvom):
+
+Državnim organima, predstavnicima vlasti, te drugim entitetima sa javnim ovlašćenjima, ukoliko je potrebno radi ostvarivanja bilo koje svrhe naznačene u ovoj Politici o privatnosti, kao i ako je to propisano zakonom ili je neophodno za ostvarivanje pravne zaštite naših pravnih interesa u skladu sa zakonom.
+Partnerima i saradnicima u slučaju organizovanja i vođenja zajedničkih programa, događaja ili promocija sa drugim kompanijama na njihovim web-sajtovima ili aplikacijama. Naš partner koristi Vaše podatke o ličnosti, samo ako smo u tu svrhu pribavili Vašu pristanak/saglasnsot. Ako niste saglasni sa ovim navodima, uvek možete da odlučite da ne budete deo predmetnih programa, promocija ili događ
+Web strane trećih lica i društvene mreže
+
+Naš web sajt može sadržati veze sa web sajtovima naših partnera i brendova, oglašivača i povezanih kompanija. Ako sledite vezu do bilo koje od ovih web sajtova, imajte na umu da se ova Politika privatnosti ne odnosi na njih. Nismo odgovorni za Politiku privatnosti tih web sajtova, zato vas molimo da to proverite, pre nego što im pošaljete bilo kakve lične podatke.
+
+Bezbednost
+
+Zaštita vas i vaših ličnih podataka nam je veoma važna. Preduzimamo niz razumnih koraka kako bismo pokušali da zaštitimo lične podatke koje pružate, uključujući:
+
+Zaštita vaših ličnih podataka se vrši putem šifrovanja i antivirus i malver zaštite, tako da se sa vašim ličnim podacima, koje ste nam poslali tokom postupka porudžbine (uključujući sve finansijske informacije poput podataka o kreditnoj ili debitnoj kartici), ne mogu upoznati neovlašćena lica.
+
+Molimo vas da prilikom kreiranja korisničkog naloga uspostavite jedinstveno korisničko ime i lozinku za pristup svom nalogu na našoj web stranici, kako neovlašćena lica ne bi zloupotrebila vaše podatke.
+
+Ukoliko svoje podatke o vašoj kreditnoj ili debitnoj kartici ne čuvate na način koji bi onemogućio bilo kojoj trećoj strani da vrši transakcije pomoću te kreditne ili debitne kartice (kao što je vaš CVV broj), vaši podaci mogu biti zloupotrebljeni.
+
+Mi vršimo redovno nadgledanje naših servera i IT sistema radi mogućih slabosti i napada,. Nažalost, uprkos tome, prenos informacija putem Interneta nije u potpunosti siguran. Ne možemo da garantujemo sigurnost vaših ličnih podataka koji se prenose putem naše web stranice, pa tako svaki prenos radite na sopstveni rizik. Konkretno, imajte na umu da ako dobrovoljno otkrivate lične podatke putem sredstava komunikacije, osim web lokacije, u nezaštićenom okruženju (kao što su e-mail, sms, chat poruke), te informacije mogu sakupljati i koristiti trece strane van naše ili vaše kontrole.
+
+Mi preduzimamo sve odgovarajuće mere bezbednosti kako bismo zaštitili Vaše informacije od neovlašćenog pristupa, korišćenja, gubitka ili objavljivanja, a da bi zaštitili podatke koji se skladište na našim serverima, mi takođe redovno pratimo naš sistem tražeći eventualne propuste i napade, i koristimo najviši nivo sigurnosnih pristupa našem centru za čuvanje podataka.
+
+S obzirom da prenos informacija putem interneta nikada nije u potpunosti bezbedan, te imajući u vidu činjenicu da internet nije 100% sigurno okruženje, pa iako se trudimo da zaštitimo lične podatke, mi ne možemo garantovati sigurnost informacija koje se prenose putem našeg internet sajta. Ovaj internet sajt može da koristi aplikacije ili usluge za društvene mreže koje vam omogućavaju da delite sadržaje sa drugim korisnicima (zajedno „aplikacije za društvene mreže“). Bilo koji lični podatak ili druga informacija koju možete podeliti putem aplikacija za društvene mreže može biti pročitana, prikupljena ili korišćena od strane drugih korisnika aplikacija za društvene mreže nad kojima imamo malu ili uopšte nemamo kontrolu. Zbog toga ne možemo biti odgovorni za korišćenje, zloupotrebu ili neprikladnu upotrebu bilo kog ličnog podatka ili drugih informacija koje ste podelili putem aplikacija za društvene mreže.
+
+Vremenski period korišćenja ličnih podataka
+
+Podatke koje nam dostavljate zadržavamo sve dok imate svoj račun kod nas i nakon toga u onom periodu u kojem možete imati pitanja ili potraživanja u vezi sa našim uslugama, bez obzira na bilo koji superiorniji period čuvanja koji bismo mogli biti obavezni da poštujemo u u skladu sa zakonskim zahtevima koji važe za nas.
+U nekim okolnostima možete tražiti od nas da izbrišemo vaše podatke kako je navedeno u nastavku. Nakon što prekinete korišćenje naših usluga, možemo da skladištimo vaše podatke u objedinjenom i anonimnom formatu.
+
+Prava lica čiji se podaci obrađuju
+
+Od nas imate poravo da dobijete potvrdu da li obrađujemo podatke o vašoj ličnosti, te pravo da pristupite svim vašim podacima koji su prikupljeni tokom obrade.
+
+Ukoliko ste uočili grešku koja je učinjena prilikom obrade podataka o vašoj ličnosti, imate pravo da da zahtevate ispravku istih.
+
+Vi imate pravo da u bilo koje vreme zahtevate prekid obrade vaših ličnih podataka i to pravo vam niko ne može uskratiti ili ograničiti.
+
+Pored prava da zahtevate prekid obrade vaših podataka, imate pravo da zahevate brisanje podataka vaših ličnih podataka koji su prikupljeni tokom obrade istih. Takođe, imate pravo da zatražite prenos obrađenih podataka o vašoj ličnosti kod drugog pruđaoca usluge.
+
+ 
+
+Poverenik za informacije od javnog značaja i zaštitu podataka o ličnosti
+
+Nadležni organ za zaštitu podataka o ličnosti je Poverenik za informacije od javnog značaja i zaštitu podataka o ličnosti Republike Srbije. Povereniku za informacije od javnog značaja i zaštitu podataka o ličnosti Republike Srbije se možete obratiti preko adrese Bulevar kralja Aleksandra br. 15, 11000 Beograd, Republika Srbija ili putem email adrese office@poverenik.rs ili putem telefona +381 11 3408 900.
+
+Prigovor
+
+Ako imate bilo kakvih pitanja ili nedoumica u vezi sa ovom Politikom privatnosti, kontaktirajte nas:
+
+Pošaljite nam e-mail na {{company.email}}
+
+Pozovite nas na {{company.phone}}
+
+Ažuriranje politike privatnosti
+
+Sve promene koje ubuduće napravimo u ovoj Politici privatnosti biće objavljene na ovoj stranici i po potrebi ćemo slati obaveštenje putem e-maila. Molimo vas da redovno proveravate da biste bili obavešteni o ažuriranjima ili promenama ove Politike privatnosti.

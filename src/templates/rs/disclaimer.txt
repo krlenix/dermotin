@@ -1,0 +1,48 @@
+Odricanje od odgovornosti
+
+Korišćenjem veb stranice {{company.website}}, vi prihvatate sledeće uslove i odricanja od odgovornosti od strane {{company.legalName}}.
+
+Opšte odricanje od odgovornosti
+
+Informacije na ovoj veb stranici pružaju se "kakve jesu" bez ikakvih garancija, izričitih ili podrazumevanih. {{company.legalName}} ne garantuje tačnost, potpunost ili korisnost bilo koje informacije na ovoj veb stranici.
+
+Ograničenje odgovornosti
+
+{{company.legalName}} neće biti odgovorno za bilo kakvu štetu koja može nastati korišćenjem ove veb stranice, uključujući ali ne ograničavajući se na:
+- Direktnu, indirektnu, slučajnu ili posledičnu štetu
+- Gubitak podataka ili profita
+- Prekid poslovanja
+- Bilo koju drugu komercijalnu štetu ili gubitak
+
+Medicinski disclaimer
+
+Proizvodi i informacije na ovoj veb stranici nisu namenjeni dijagnozi, lečenju, ublažavanju ili sprečavanju bilo koje bolesti. Uvek se konsultujte sa kvalifikovanim zdravstvenim radnikom pre korišćenja bilo kojeg proizvoda.
+
+Dostupnost veb stranice
+
+{{company.legalName}} ne garantuje da će veb stranica biti dostupna u svakom trenutku ili da neće doći do prekida u radu. Zadržavamo pravo da privremeno obustavimo rad veb stranice radi održavanja ili poboljšanja.
+
+Spoljni linkovi
+
+Naša veb stranica može sadržavati linkove ka spoljnim veb stranicama. {{company.legalName}} nije odgovorno za sadržaj ili politike privatnosti tih spoljnih stranica.
+
+Izmene disclaimer-a
+
+{{company.legalName}} zadržava pravo da izmeni ovaj disclaimer u bilo kom trenutku bez prethodne najave. Izmene stupaju na snagu odmah nakon objavljivanja na veb stranici.
+
+Saglasnost
+
+Korišćenjem veb stranice potvrđujete da ste upoznati i saglasni sa ovim odricanjem od odgovornosti, kao i sa našom Politikom privatnosti i Politikom kolačića. Ako se ne slažete sa bilo kojim delom ovih dokumenata, molimo vas da ne koristite našu veb stranicu i odmah je napustite.
+
+Primenljivo pravo
+
+Ovaj disclaimer se tumači u skladu sa zakonima {{company.country}} i svi sporovi će se rešavati pred nadležnim sudovima u {{company.city}}.
+
+Kontakt
+
+Za pitanja u vezi sa ovim disclaimer-om, kontaktirajte nas na:
+Email: {{company.email}}
+Telefon: {{company.phone}}
+Adresa: {{company.address}}, {{company.city}}, {{company.country}}
+
+Poslednje ažuriranje: {{legal.lastUpdated}}
