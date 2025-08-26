@@ -203,9 +203,9 @@ export default function HomePage() {
                   {t('navigation.products')}
                 </button>
                 <button 
-                  onClick={() => {
+                  onClick={(e) => {
                     setIsMenuOpen(false);
-                    scrollToTestimonials();
+                    scrollToTestimonials(e);
                   }}
                   className="text-gray-800 hover:text-brand-green font-medium transition-colors text-left"
                 >

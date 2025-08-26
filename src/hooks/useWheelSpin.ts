@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { SpinState, SpinResult, Prize, WheelConfig, WheelSegment } from '@/types/wheel';
-import { SPIN_LOGIC } from '@/config/wheel/behavior';
-import { getGrandPrize, getLosingPrize, getWinningPrizes } from '@/config/wheel/prizes';
+import { getGrandPrize, getLosingPrize } from '@/config/wheel/prizes';
 
 export const useWheelSpin = (config: WheelConfig) => {
   const [spinState, setSpinState] = useState<SpinState>({
@@ -134,6 +133,7 @@ export const useWheelSpin = (config: WheelConfig) => {
       
       // Reset animation to ensure it starts fresh
       wheelRef.current.style.animation = 'none';
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       wheelRef.current.offsetHeight; // Force reflow
       wheelRef.current.style.animation = `wheelSpin ${spinDuration}ms ${config.animations.easingFunction} forwards`;
     }
@@ -172,7 +172,7 @@ export const useWheelSpin = (config: WheelConfig) => {
 
       timeoutRefs.current.push(resultTimeout);
     });
-  }, [spinState, config, segments, getPredeterminedOutcome, calculateTargetAngle, clearTimeouts]);
+  }, [spinState, config, getPredeterminedOutcome, calculateTargetAngle, clearTimeouts]);
 
   // Reset wheel state
   const reset = useCallback(() => {

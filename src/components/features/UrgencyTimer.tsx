@@ -23,7 +23,6 @@ export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
     // Calculate end time (duration hours from now)
     const endTime = new Date();
     endTime.setHours(endTime.getHours() + duration);
-    const totalDuration = duration * 60 * 60 * 1000; // Total duration in milliseconds
 
     const timer = setInterval(() => {
       const now = new Date().getTime();

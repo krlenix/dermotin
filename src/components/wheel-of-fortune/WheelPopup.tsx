@@ -1,20 +1,15 @@
 import React from 'react';
-import { WheelConfig, WheelPopupConfig } from '@/types/wheel';
+import { WheelPopupConfig } from '@/types/wheel';
 import { useWheelPopup } from '@/hooks/useWheelPopup';
-import { WheelOfFortune } from './WheelOfFortune';
 import { Button } from '@/components/ui/button';
 
 interface WheelPopupProps {
-  wheelConfig: WheelConfig;
   popupConfig: WheelPopupConfig;
-  onPrizeWon?: (couponCode: string) => void;
   onClose?: () => void;
 }
 
 export const WheelPopup: React.FC<WheelPopupProps> = ({
-  wheelConfig,
   popupConfig,
-  onPrizeWon,
   onClose,
 }) => {
   const { isVisible, hidePopup, forceShow, reset } = useWheelPopup(popupConfig);
@@ -30,13 +25,6 @@ export const WheelPopup: React.FC<WheelPopupProps> = ({
     if (onClose) {
       onClose();
     }
-  };
-
-  const handlePrizeWon = (couponCode: string) => {
-    if (onPrizeWon) {
-      onPrizeWon(couponCode);
-    }
-    // Keep popup open to show congratulations
   };
 
   if (!isVisible) {

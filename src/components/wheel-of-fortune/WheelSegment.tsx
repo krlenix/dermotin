@@ -14,8 +14,6 @@ export const WheelSegment: React.FC<WheelSegmentProps> = ({
   segment,
   radius,
   isHighlighted = false,
-  index,
-  totalSegments,
 }) => {
   const t = useTranslations();
   const { prize, startAngle, endAngle, centerAngle } = segment;

@@ -23,7 +23,7 @@ export const HOMEPAGE_IMAGES = {
   }
 };
 
-export const getImagePath = (key: string, locale?: string): string => {
+export const getImagePath = (key: string): string => {
   // For now, return the default path
   // In the future, this can be extended to support locale-specific images
   const imagePaths: Record<string, string> = {

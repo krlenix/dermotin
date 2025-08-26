@@ -83,8 +83,8 @@ export function LegalDocumentModal({
     processed = processed.replace(/\{\{business\.deliveryArea\}\}/g, config.business.deliveryArea);
     processed = processed.replace(/\{\{business\.deliveryService\}\}/g, defaultCourier.name);
     processed = processed.replace(/\{\{business\.deliveryServiceName\}\}/g, defaultCourier.displayName);
-    processed = processed.replace(/\{\{business\.deliveryCost\}\}/g, config.business.deliveryCost.toString());
-    processed = processed.replace(/\{\{business\.deliveryCostCurrency\}\}/g, config.business.deliveryCostCurrency);
+    processed = processed.replace(/\{\{business\.deliveryCost\}\}/g, defaultCourier.shipping.cost.toString());
+    processed = processed.replace(/\{\{business\.deliveryCostCurrency\}\}/g, defaultCourier.shipping.currency);
     processed = processed.replace(/\{\{business\.deliveryTimeMin\}\}/g, config.business.deliveryTimeMin.toString());
     processed = processed.replace(/\{\{business\.deliveryTimeMax\}\}/g, config.business.deliveryTimeMax.toString());
     processed = processed.replace(/\{\{business\.deliveryTimeUnit\}\}/g, config.business.deliveryTimeUnit);

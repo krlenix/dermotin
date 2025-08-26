@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 interface ConfettiEffectProps {
   isActive: boolean;
@@ -36,7 +36,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = ({
   const startTime = useRef<number>(0);
 
   // Create particles
-  const createParticles = (): Particle[] => {
+  const createParticles = useCallback((): Particle[] => {
     const newParticles: Particle[] = [];
     
     for (let i = 0; i < particleCount; i++) {
@@ -61,7 +61,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = ({
     }
     
     return newParticles;
-  };
+  }, [particleCount]);
 
   // Update particle physics
   const updateParticles = (deltaTime: number) => {
@@ -118,7 +118,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = ({
   };
 
   // Animation loop
-  const animate = (currentTime: number) => {
+  const animate = useCallback((currentTime: number) => {
     if (!canvasRef.current) return;
     
     const ctx = canvasRef.current.getContext('2d');
@@ -147,7 +147,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = ({
         onComplete();
       }
     }
-  };
+  }, [duration, onComplete]);
 
   // Resize canvas
   const resizeCanvas = () => {

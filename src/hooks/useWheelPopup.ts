@@ -120,7 +120,7 @@ export const useWheelPopup = (config: WheelPopupConfig) => {
       console.log('🎡 useWheelPopup: Cleaning up timer');
       clearTimeout(timer);
     };
-  }, [config.enabled, config.delayMs, config.showOnlyOnce, checkIfShownBefore, showPopup]);
+  }, [config, checkIfShownBefore, showPopup]);
 
   // Keyboard event handling
   useEffect(() => {
