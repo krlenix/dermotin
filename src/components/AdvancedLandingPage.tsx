@@ -24,6 +24,7 @@ import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { useCurrency } from '@/hooks/useCurrency';
 import { SupportedCurrency } from '@/config/countries';
+import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
 import { 
   Star, 
   Shield, 
@@ -46,6 +47,7 @@ interface AdvancedLandingPageProps {
 export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingPageProps) {
   const t = useTranslations();
   const { } = useCurrency(countryConfig.currency as SupportedCurrency);
+  const { trackEvent } = usePixelTracking(countryConfig.code);
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
@@ -198,6 +200,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative w-full" style={{maxWidth: '100vw'}}>
+      {/* Pixel Tracking */}
+      <PixelTracker countryCode={countryConfig.code} />
+      
       {/* Top Bar Marquee - HIDDEN */}
       {/* <div className="fixed top-0 left-0 right-0 z-50">
         <MarqueeText 

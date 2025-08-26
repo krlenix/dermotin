@@ -30,7 +30,14 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
   // Create infinite loop by duplicating testimonials
   const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
   const [likedTestimonials, setLikedTestimonials] = useState<Set<string>>(new Set());
-  const [cardScales, setCardScales] = useState<Record<string, number>>({});
+  const [cardScales, setCardScales] = useState<Record<string, number>>(() => {
+    // Initialize with first testimonial focused
+    const initialScales: Record<string, number> = {};
+    testimonials.forEach((testimonial, index) => {
+      initialScales[testimonial.id] = index === 0 ? 1.0 : 0.8;
+    });
+    return initialScales;
+  });
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>(() => {
     const initialCounts: Record<string, number> = {};
@@ -61,7 +68,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     return `${Math.floor(diffInDays / 30)} ${t('testimonials_ui.months_ago')}`;
   };
 
-  // Calculate responsive scale effect based on scroll position
+    // Calculate responsive scale effect based on scroll position
   const updateCardScales = useCallback(() => {
     if (!scrollContainerRef.current) return;
 
@@ -71,9 +78,9 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     const cards = container.querySelectorAll('[data-testimonial-id]');
     
     const newScales: Record<string, number> = {};
-    const visibleCards: Array<{ element: HTMLElement; rect: DOMRect; center: number }> = [];
+    let closestCard: { element: HTMLElement; distance: number } | null = null;
     
-    // First, collect only visible cards
+    // Find the card closest to center
     cards.forEach((card) => {
       const cardElement = card as HTMLElement;
       const cardRect = cardElement.getBoundingClientRect();
@@ -84,40 +91,48 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
       
       if (isVisible) {
         const cardCenter = cardRect.left + cardRect.width / 2;
-        visibleCards.push({
-          element: cardElement,
-          rect: cardRect,
-          center: cardCenter
-        });
+        const distanceFromCenter = Math.abs(cardCenter - containerCenter);
+        
+        if (!closestCard || distanceFromCenter < closestCard.distance) {
+          closestCard = { element: cardElement, distance: distanceFromCenter };
+        }
       }
     });
     
-    // Calculate scales based only on visible cards
-    visibleCards.forEach(({ element, center }) => {
-      const testimonialId = element.dataset.testimonialId;
+    // Calculate scales for all visible cards
+    cards.forEach((card) => {
+      const cardElement = card as HTMLElement;
+      const cardRect = cardElement.getBoundingClientRect();
+      const testimonialId = cardElement.dataset.testimonialId;
+      
       if (!testimonialId) return;
       
-      const distanceFromCenter = Math.abs(center - containerCenter);
+      // Check if card is visible
+      const isVisible = cardRect.right > containerRect.left && 
+                       cardRect.left < containerRect.right;
       
-             if (isMobile) {
-         // Mobile: More precise centering for better initial state
-         const threshold = 60; // Tighter threshold for mobile
-         const scale = distanceFromCenter <= threshold ? 1.0 : 0.85;
-         newScales[testimonialId] = scale;
-       } else {
-        // Desktop: Improved focus detection
-        const threshold = 100; // Threshold for center focus
-        if (distanceFromCenter <= threshold) {
-          // Card is in center focus
+      if (isVisible) {
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const distanceFromCenter = Math.abs(cardCenter - containerCenter);
+        
+        // The closest card gets full scale (1.0), others get reduced scale
+        if (closestCard && cardElement === closestCard.element) {
           newScales[testimonialId] = 1.0;
         } else {
-          // Card is not in center, apply scaling based on distance
-          const maxDistance = containerRect.width / 2 + 200;
-          const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
-          const scale = 1.0 - (normalizedDistance * 0.35);
-          const clampedScale = Math.max(0.65, Math.min(0.95, scale));
-          newScales[testimonialId] = clampedScale;
+          if (isMobile) {
+            // Mobile: Binary scaling for cleaner look
+            newScales[testimonialId] = 0.85;
+          } else {
+            // Desktop: Gradual scaling based on distance
+            const maxDistance = containerRect.width / 2 + 200;
+            const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
+            const scale = 1.0 - (normalizedDistance * 0.35);
+            newScales[testimonialId] = Math.max(0.65, Math.min(0.95, scale));
+          }
         }
+      } else {
+        // Not visible cards get minimum scale
+        newScales[testimonialId] = 0.65;
       }
     });
     
@@ -248,12 +263,26 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
      setTimeout(() => {
        if (container && container.scrollWidth > 0) {
          const singleSetWidth = container.scrollWidth / 3;
-         // Start with the first testimonial of the middle set properly centered
-         container.scrollLeft = singleSetWidth;
+         const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
+         const containerWidth = container.clientWidth;
+         
+         // Calculate offset to center the first card
+         const centerOffset = (containerWidth / 2) - (cardWidth / 2);
+         
+         // Position to show first testimonial of middle set centered
+         container.scrollLeft = singleSetWidth - centerOffset;
+         
          // Trigger scale calculation after positioning
-         setTimeout(() => updateCardScales(), 50);
+         setTimeout(() => {
+           updateCardScales();
+           // Ensure first testimonial is marked as focused
+           const firstTestimonialId = testimonials[0]?.id;
+           if (firstTestimonialId) {
+             setCardScales(prev => ({ ...prev, [firstTestimonialId]: 1.0 }));
+           }
+         }, 100);
        }
-     }, 100);
+     }, 150);
 
          return () => {
        container.removeEventListener('scroll', handleScroll);
@@ -295,11 +324,11 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
            <div 
              ref={scrollContainerRef}
              className={`scrollbar-hide testimonials-scroll-container transition-all duration-300 ${isLoaded ? 'overflow-x-auto' : 'overflow-hidden'} 
-               /* Mobile: Horizontal scroll with featured at top, others below */
-               ${isMobile 
-                 ? 'flex gap-4 px-[calc(50vw-140px)] scroll-smooth snap-x snap-mandatory py-4' 
-                 : 'flex gap-8 px-[calc(50vw-176px)] py-8'
-               }
+                             /* Mobile: Horizontal scroll with featured at top, others below */
+              ${isMobile 
+                ? 'flex gap-4 px-[calc(50vw-140px)] scroll-smooth snap-x snap-mandatory py-4' 
+                : 'flex gap-8 px-[calc(50vw-160px)] py-8'
+              }
              `}
            >
                          {infiniteTestimonials.map((testimonial: Testimonial, index: number) => {
@@ -408,7 +437,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                             <div className="flex justify-center items-center gap-2 mt-6 z-20">
                  {testimonials.map((testimonial, index) => {
                    // Calculate which testimonial is currently centered
-                   const isActive = cardScales[testimonial.id] === 1.0;
+                   const isActive = cardScales[testimonial.id] === 1.0 || (index === 0 && Object.keys(cardScales).length === 0);
                    
                    return (
                      <button
@@ -418,14 +447,19 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                            const container = scrollContainerRef.current;
                            const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
                            const singleSetWidth = container.scrollWidth / 3;
+                           const containerWidth = container.clientWidth;
+                           const centerOffset = (containerWidth / 2) - (cardWidth / 2);
                            
-                           // Calculate target scroll position for the clicked testimonial
-                           const targetScroll = singleSetWidth + (index * cardWidth);
+                           // Calculate target scroll position for the clicked testimonial to be centered
+                           const targetScroll = singleSetWidth + (index * cardWidth) - centerOffset;
                            
                            container.scrollTo({
                              left: targetScroll,
                              behavior: 'smooth'
                            });
+                           
+                           // Update scales immediately for better UX
+                           setTimeout(() => updateCardScales(), 300);
                          }
                        }}
                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
@@ -466,3 +500,4 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     </section>
   );
 }
+

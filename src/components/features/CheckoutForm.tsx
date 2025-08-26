@@ -21,6 +21,7 @@ import { getDefaultCourier } from '@/config/countries';
 import { Package, Truck, CreditCard, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
+import { usePixelTracking } from '@/components/tracking/PixelTracker';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -49,6 +50,7 @@ export function CheckoutForm({
 }: CheckoutFormProps) {
   const t = useTranslations();
   const { formatPrice } = useCurrency();
+  const { trackEvent } = usePixelTracking(countryConfig.code);
   
   // Form validation function
   const validateField = (field: string, value: string): string => {
@@ -83,9 +85,33 @@ export function CheckoutForm({
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasStartedCheckout, setHasStartedCheckout] = useState(false);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Track InitiateCheckout event when user starts filling the form (only once)
+    if (!hasStartedCheckout && typeof value === 'string' && value.trim().length > 0) {
+      setHasStartedCheckout(true);
+      
+      // Track the event with order data
+      const eventData = {
+        content_name: productName,
+        content_category: 'Product',
+        content_ids: [selectedVariant.id || mainProductId],
+        contents: [{
+          id: selectedVariant.id || mainProductId,
+          quantity: 1,
+          item_price: selectedVariant.discountPrice || selectedVariant.price
+        }],
+        currency: countryConfig.currencyCode || 'RSD',
+        value: (selectedVariant.discountPrice || selectedVariant.price) + Object.values(bundleItems).reduce((sum, price) => sum + price, 0),
+        num_items: 1 + Object.keys(bundleItems).length
+      };
+      
+      trackEvent('initiate_checkout', eventData);
+    }
+    
     // Clear error when user starts typing
     if (formErrors[field]) {
       setFormErrors(prev => ({ ...prev, [field]: '' }));

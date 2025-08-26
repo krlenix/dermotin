@@ -108,3 +108,6 @@ export const PAYMENT_METHODS = {
 export type PaymentMethod = keyof typeof PAYMENT_METHODS;
 export type FormField = keyof typeof FORM_FIELDS;
 export type SupportedCountry = keyof typeof PHONE_FORMATS;
+
+// Note: Pixel tracking configuration is in src/config/pixels.ts
+// Update pixel IDs there to enable Meta and TikTok tracking
