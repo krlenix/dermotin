@@ -194,7 +194,10 @@
     "courier_title": "Dostava putem",
     "delivery_by": "Dostavljaće",
     "delivery_time": "Vreme dostave",
-    "reliable_delivery": "Brza i pouzdana dostava direktno na vašu adresu"
+    "reliable_delivery": "Brza i pouzdana dostava direktno na vašu adresu",
+    "select_courier": "Izaberite kurirsku službu",
+    "recommended": "Preporučeno",
+    "shipping": "dostava"
   },
   "navigation": {
     "home": "Početna",

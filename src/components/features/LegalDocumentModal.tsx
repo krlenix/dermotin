@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { X } from 'lucide-react';
-import { CountryConfig } from '@/config/countries';
+import { CountryConfig, getDefaultCourier } from '@/config/countries';
 import { useTranslations } from 'next-intl';
 
 interface LegalDocumentModalProps {
@@ -79,9 +79,10 @@ export function LegalDocumentModal({
     processed = processed.replace(/\{\{company\.activityDescription\}\}/g, config.company.activityDescription);
 
     // Process business placeholders
+    const defaultCourier = getDefaultCourier(config);
     processed = processed.replace(/\{\{business\.deliveryArea\}\}/g, config.business.deliveryArea);
-    processed = processed.replace(/\{\{business\.deliveryService\}\}/g, config.business.deliveryService);
-    processed = processed.replace(/\{\{business\.deliveryServiceName\}\}/g, config.business.deliveryServiceName);
+    processed = processed.replace(/\{\{business\.deliveryService\}\}/g, defaultCourier.name);
+    processed = processed.replace(/\{\{business\.deliveryServiceName\}\}/g, defaultCourier.displayName);
     processed = processed.replace(/\{\{business\.deliveryCost\}\}/g, config.business.deliveryCost.toString());
     processed = processed.replace(/\{\{business\.deliveryCostCurrency\}\}/g, config.business.deliveryCostCurrency);
     processed = processed.replace(/\{\{business\.deliveryTimeMin\}\}/g, config.business.deliveryTimeMin.toString());
@@ -104,9 +105,9 @@ export function LegalDocumentModal({
     processed = processed.replace(/\{\{legal\.disputeResolutionListUrl\}\}/g, config.legal.disputeResolutionListUrl);
 
     // Process courier placeholders
-    processed = processed.replace(/\{\{courier\.name\}\}/g, config.courier.name);
-    processed = processed.replace(/\{\{courier\.deliveryTime\}\}/g, config.courier.deliveryTime);
-    processed = processed.replace(/\{\{courier\.trackingUrl\}\}/g, config.courier.trackingUrl || '');
+    processed = processed.replace(/\{\{courier\.name\}\}/g, defaultCourier.name);
+    processed = processed.replace(/\{\{courier\.deliveryTime\}\}/g, defaultCourier.deliveryTime);
+    processed = processed.replace(/\{\{courier\.trackingUrl\}\}/g, defaultCourier.trackingUrl || '');
 
     // Process fulfillment center placeholders (if available)
     if (config.fulfillmentCenter) {

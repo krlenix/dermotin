@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { CountryConfig } from '@/config/countries';
+import { CountryConfig, getDefaultCourier } from '@/config/countries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -140,14 +140,14 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
               {/* Left: Courier Info */}
               <div className="flex items-center gap-3">
                 <Image
-                  src={countryConfig.courier.logo}
-                  alt={countryConfig.courier.name}
+                  src={getDefaultCourier(countryConfig).logo}
+                  alt={getDefaultCourier(countryConfig).name}
                   width={80}
                   height={28}
                   className="object-contain"
                 />
                 <div className="text-sm">
-                  <p className="font-semibold text-green-800">{countryConfig.courier.name}</p>
+                  <p className="font-semibold text-green-800">{getDefaultCourier(countryConfig).name}</p>
                   <p className="text-green-600 text-xs">{t('thank_you.courier_delivery')}</p>
                 </div>
               </div>

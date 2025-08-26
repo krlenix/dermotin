@@ -1,20 +1,21 @@
-import { CountryConfig } from '@/config/countries';
+import { CountryConfig, CourierInfo } from '@/config/countries';
 
 /**
- * Calculate shipping cost based on order total and country configuration
+ * Calculate shipping cost based on order total, courier, and country's free shipping threshold
  */
 export function calculateShippingCost(
   orderTotal: number, 
+  courier: CourierInfo,
   countryConfig: CountryConfig
 ): number {
   if (orderTotal >= countryConfig.business.freeShippingThreshold) {
-    return 0; // Free shipping
+    return 0; // Free shipping based on order value
   }
-  return countryConfig.business.deliveryCost;
+  return courier.shipping.cost;
 }
 
 /**
- * Check if order qualifies for free shipping
+ * Check if order qualifies for free shipping based on country's threshold
  */
 export function qualifiesForFreeShipping(
   orderTotal: number, 
@@ -28,12 +29,23 @@ export function qualifiesForFreeShipping(
  */
 export function getShippingCostDisplay(
   orderTotal: number, 
+  courier: CourierInfo,
   countryConfig: CountryConfig,
   formatPrice: (amount: number) => string,
   freeText: string
 ): string {
-  const shippingCost = calculateShippingCost(orderTotal, countryConfig);
+  const shippingCost = calculateShippingCost(orderTotal, courier, countryConfig);
   return shippingCost === 0 ? freeText : formatPrice(shippingCost);
+}
+
+/**
+ * Get shipping cost info for a courier
+ */
+export function getCourierShippingInfo(courier: CourierInfo) {
+  return {
+    cost: courier.shipping.cost,
+    currency: courier.shipping.currency
+  };
 }
 
 /**

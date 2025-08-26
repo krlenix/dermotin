@@ -9,7 +9,7 @@ export interface CountryConfig {
   region: string;
   isEU: boolean;
   company: CompanyInfo;
-  courier: CourierInfo;
+  couriers: CourierInfo[]; // Array of available couriers
   fulfillmentCenter?: FulfillmentCenterInfo;
   logo: string;
   domain?: string;
@@ -38,11 +38,7 @@ export interface CompanyInfo {
 
 export interface BusinessInfo {
   deliveryArea: string;
-  deliveryService: string;
-  deliveryServiceName: string;
-  deliveryCost: number;
-  deliveryCostCurrency: string;
-  freeShippingThreshold: number; // Minimum order amount for free shipping
+  freeShippingThreshold: number; // Order value threshold for free shipping (applies to all couriers)
   deliveryTimeMin: number;
   deliveryTimeMax: number;
   deliveryTimeUnit: string;
@@ -66,10 +62,18 @@ export interface LegalInfo {
 }
 
 export interface CourierInfo {
+  id: string;
   name: string;
+  displayName: string; // Full name for legal documents
   logo: string;
   deliveryTime: string;
   trackingUrl?: string;
+  isDefault?: boolean;
+  enabled: boolean; // Whether this courier is currently available
+  shipping: {
+    cost: number; // Shipping cost for this courier
+    currency: string; // Currency for the shipping cost
+  };
 }
 
 export interface FulfillmentCenterInfo {
@@ -126,19 +130,51 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       activityDescription: 'Trgovina na malo posredstvom pošte ili preko interneta',
       website: 'dermotin.com' // Will be dynamically replaced in getCountryConfig
     },
-    courier: {
-      name: 'Post Express',
-      logo: '/images/couriers/postexpress.png',
-      deliveryTime: '1-2 radna dana',
-      trackingUrl: 'https://postexpress.rs/tracking'
-    },
+    couriers: [
+      {
+        id: 'post-express',
+        name: 'Post Express',
+        displayName: 'kurirske službe Post Express',
+        logo: '/images/couriers/postexpress.png',
+        deliveryTime: '1-2 radna dana',
+        trackingUrl: 'https://postexpress.rs/tracking',
+        isDefault: true,
+        enabled: true,
+        shipping: {
+          cost: 280,
+          currency: 'dinara'
+        }
+      },
+      {
+        id: 'bex',
+        name: 'BEX',
+        displayName: 'kurirske službe BEX',
+        logo: '/images/couriers/bex.png',
+        deliveryTime: '1-3 radna dana',
+        trackingUrl: 'https://bex.rs/tracking',
+        enabled: true,
+        shipping: {
+          cost: 350,
+          currency: 'dinara'
+        }
+      },
+      {
+        id: 'aks',
+        name: 'AKS',
+        displayName: 'kurirske službe AKS',
+        logo: '/images/couriers/aks.png',
+        deliveryTime: '2-4 radna dana',
+        trackingUrl: 'https://aks.rs/tracking',
+        enabled: false, // Currently disabled for testing
+        shipping: {
+          cost: 400,
+          currency: 'dinara'
+        }
+      }
+    ],
     business: {
       deliveryArea: 'teritoriji Republike Srbije',
-      deliveryService: 'BEX',
-      deliveryServiceName: 'kurirske službe BEX',
-      deliveryCost: 280,
-      deliveryCostCurrency: 'dinara',
-      freeShippingThreshold: 3000,
+      freeShippingThreshold: 3000, // Free shipping for orders over 3000 dinara
       deliveryTimeMin: 3,
       deliveryTimeMax: 5,
       deliveryTimeUnit: 'radnih dana',
@@ -185,12 +221,22 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       activityDescription: 'Търговия на дребно чрез пощата или интернет',
       website: 'dermotin.bg' // Will be dynamically replaced in getCountryConfig
     },
-    courier: {
-      name: 'Econt Express',
-      logo: '/images/couriers/econt.png',
-      deliveryTime: '1-2 работни дни',
-      trackingUrl: 'https://econt.com/tracking'
-    },
+    couriers: [
+      {
+        id: 'econt',
+        name: 'Econt Express',
+        displayName: 'куриерската служба Econt',
+        logo: '/images/couriers/econt.png',
+        deliveryTime: '1-2 работни дни',
+        trackingUrl: 'https://econt.com/tracking',
+        isDefault: true,
+        enabled: true,
+        shipping: {
+          cost: 5,
+          currency: 'лева'
+        }
+      }
+    ],
     fulfillmentCenter: {
       name: 'EU Fulfillment Center',
       legalName: 'European Logistics Solutions EOOD',
@@ -216,11 +262,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     },
     business: {
       deliveryArea: 'територията на Република България',
-      deliveryService: 'Econt',
-      deliveryServiceName: 'куриерската служба Econt',
-      deliveryCost: 5,
-      deliveryCostCurrency: 'лева',
-      freeShippingThreshold: 50,
+      freeShippingThreshold: 50, // Free shipping for orders over 50 лева
       deliveryTimeMin: 2,
       deliveryTimeMax: 4,
       deliveryTimeUnit: 'работни дни',
@@ -271,6 +313,31 @@ export function getCountryConfig(countryCode: string): CountryConfig {
       website: getWebsiteDomain()
     }
   };
+}
+
+export function getDefaultCourier(countryConfig: CountryConfig): CourierInfo {
+  // First try to find enabled default courier
+  const enabledDefault = countryConfig.couriers.find(courier => courier.isDefault && courier.enabled);
+  if (enabledDefault) return enabledDefault;
+  
+  // Fallback to first enabled courier
+  const firstEnabled = countryConfig.couriers.find(courier => courier.enabled);
+  if (firstEnabled) return firstEnabled;
+  
+  // Last resort: return first courier (even if disabled)
+  return countryConfig.couriers[0];
+}
+
+export function getCourierById(countryConfig: CountryConfig, courierId: string): CourierInfo | undefined {
+  return countryConfig.couriers.find(courier => courier.id === courierId);
+}
+
+export function getAvailableCouriers(countryConfig: CountryConfig): CourierInfo[] {
+  return countryConfig.couriers.filter(courier => courier.enabled);
+}
+
+export function getAllCouriers(countryConfig: CountryConfig): CourierInfo[] {
+  return countryConfig.couriers;
 }
 
 export function getCurrencySymbol(currency: SupportedCurrency): string {

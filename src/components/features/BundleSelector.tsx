@@ -4,14 +4,18 @@ import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProductVariant } from '@/config/products';
+import { CountryConfig, CourierInfo, getDefaultCourier } from '@/config/countries';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useTranslations } from 'next-intl';
 import { CheckCircle, Gift } from 'lucide-react';
+import { calculateShippingCost } from '@/utils/shipping';
 
 interface BundleSelectorProps {
   variants: ProductVariant[];
   selectedVariant: ProductVariant;
   onVariantChange: (variant: ProductVariant) => void;
+  countryConfig: CountryConfig;
+  selectedCourier?: CourierInfo;
   className?: string;
 }
 
@@ -19,6 +23,8 @@ export function BundleSelector({
   variants, 
   selectedVariant, 
   onVariantChange, 
+  countryConfig,
+  selectedCourier,
   className 
 }: BundleSelectorProps) {
   const { formatPrice } = useCurrency();
@@ -117,7 +123,9 @@ export function BundleSelector({
                       )}
                       {index === 0 && (
                         <p className="text-xs text-gray-500">
-                          {t('bundles.shipping_cost')}
+                          {t('bundles.shipping_cost', { 
+                            cost: formatPrice((selectedCourier || getDefaultCourier(countryConfig)).shipping.cost) 
+                          })}
                         </p>
                       )}
                     </div>

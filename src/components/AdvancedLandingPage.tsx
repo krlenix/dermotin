@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Product } from '@/config/products';
-import { CountryConfig } from '@/config/countries';
+import { CountryConfig, getDefaultCourier, CourierInfo } from '@/config/countries';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -52,6 +52,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
+  const [selectedCourier, setSelectedCourier] = useState<CourierInfo>(getDefaultCourier(countryConfig));
 
   // Apply global overflow fix and prevent layout shifts
   useEffect(() => {
@@ -118,8 +119,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       quantity: 1,
       totalPrice: orderData.orderTotal as number,
       currency: countryConfig.currencySymbol,
-      courierName: countryConfig.courier.name,
-      deliveryTime: countryConfig.courier.deliveryTime,
+      courierName: selectedCourier.name,
+      deliveryTime: selectedCourier.deliveryTime,
       paymentMethod: orderData.paymentMethod as string,
       bundleItems: bundleItems,
       locale: countryConfig.code
@@ -508,6 +509,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   variants={product.variants}
                   selectedVariant={selectedVariant}
                   onVariantChange={setSelectedVariant}
+                  countryConfig={countryConfig}
+                  selectedCourier={selectedCourier}
                 />
               </div>
 
@@ -521,6 +524,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   onOrderSubmit={handleOrderSubmit}
                   mainProductId={product.id}
                   onAddToBundle={handleAddToBundle}
+                  selectedCourier={selectedCourier}
+                  onCourierChange={setSelectedCourier}
                 />
                 
 

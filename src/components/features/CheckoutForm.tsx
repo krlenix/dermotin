@@ -12,12 +12,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ProductVariant } from '@/config/products';
-import { CountryConfig } from '@/config/countries';
+import { CountryConfig, CourierInfo, getAvailableCouriers } from '@/config/countries';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
-import { calculateShippingCost, getShippingCostDisplay } from '@/utils/shipping';
-import { Package, Truck, CreditCard, Banknote, Shield, Phone, MapPin, User } from 'lucide-react';
+import { calculateShippingCost, getShippingCostDisplay, qualifiesForFreeShipping } from '@/utils/shipping';
+import { getDefaultCourier } from '@/config/countries';
+import { Package, Truck, CreditCard, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 
@@ -30,6 +31,8 @@ interface CheckoutFormProps {
   className?: string;
   mainProductId: string;
   onAddToBundle: (productId: string, price: number) => void;
+  selectedCourier?: CourierInfo;
+  onCourierChange?: (courier: CourierInfo) => void;
 }
 
 export function CheckoutForm({ 
@@ -40,7 +43,9 @@ export function CheckoutForm({
   onOrderSubmit,
   className,
   mainProductId,
-  onAddToBundle
+  onAddToBundle,
+  selectedCourier,
+  onCourierChange
 }: CheckoutFormProps) {
   const t = useTranslations();
   const { formatPrice } = useCurrency();
@@ -131,9 +136,15 @@ export function CheckoutForm({
   const bundleTotal = Object.values(bundleItems).reduce((sum, price) => sum + price, 0);
   const subtotal = orderTotal + bundleTotal;
   
-  // Calculate shipping cost using utility function
-  const shippingCost = calculateShippingCost(subtotal, countryConfig);
+  // Use selected courier or fallback to default
+  const displayCourier = selectedCourier || getDefaultCourier(countryConfig);
+  const availableCouriers = getAvailableCouriers(countryConfig);
+  const showCourierSelection = availableCouriers.length > 1;
+  
+  // Calculate shipping cost using selected courier and country threshold
+  const shippingCost = calculateShippingCost(subtotal, displayCourier, countryConfig);
   const finalTotal = subtotal + shippingCost;
+  const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -260,29 +271,108 @@ export function CheckoutForm({
               </div>
             </div>
 
-            {/* Courier Information */}
-            <div className="space-y-4">
-              <Label className="text-base font-semibold text-gray-900">{t('delivery.courier_title')}</Label>
-              <div className="p-4 border rounded-lg bg-blue-50 border-blue-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center">
-                    <Image
-                      src={countryConfig.courier.logo}
-                      alt={countryConfig.courier.name}
-                      width={40}
-                      height={40}
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-blue-800">{t('delivery.delivery_by')} {countryConfig.courier.name}</p>
-                    <p className="text-sm text-blue-600">{t('delivery.delivery_time')}: {countryConfig.courier.deliveryTime}</p>
-                    <p className="text-xs text-blue-500">{t('delivery.reliable_delivery')}</p>
-                  </div>
-                  <Truck className="h-6 w-6 text-blue-600" />
+            {/* Courier Selection */}
+            {showCourierSelection && (
+              <div className="space-y-3">
+                <Label className="text-base font-semibold text-gray-900">{t('delivery.select_courier')}</Label>
+                <div className="space-y-2">
+                  {availableCouriers.map((courier) => {
+                    const isSelected = displayCourier.id === courier.id;
+                    
+                    return (
+                      <div
+                        key={courier.id}
+                        onClick={() => onCourierChange?.(courier)}
+                        className={`
+                          relative flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all
+                          ${isSelected 
+                            ? 'border-blue-500 bg-blue-50' 
+                            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                          }
+                        `}
+                      >
+                        {/* Recommended Badge in Corner */}
+                        {courier.isDefault && (
+                          <Badge 
+                            variant="secondary" 
+                            className={`absolute -top-2 -right-2 text-xs z-10 ${
+                              isSelected ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-gray-100 text-gray-500 border-gray-200'
+                            }`}
+                          >
+                            {t('delivery.recommended')}
+                          </Badge>
+                        )}
+                        {/* Selection Indicator */}
+                        <div className={`
+                          w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
+                          ${isSelected 
+                            ? 'border-blue-500 bg-blue-500' 
+                            : 'border-gray-300 bg-white'
+                          }
+                        `}>
+                          {isSelected && (
+                            <Check className="w-3 h-3 text-white" />
+                          )}
+                        </div>
+                        
+                        {/* Courier Logo */}
+                        <div className="w-8 h-8 bg-white rounded shadow-sm flex items-center justify-center">
+                          <Image
+                            src={courier.logo}
+                            alt={courier.name}
+                            width={24}
+                            height={24}
+                            className={`w-6 h-6 object-contain ${
+                              isSelected ? 'opacity-100' : 'opacity-60'
+                            }`}
+                          />
+                        </div>
+                        
+                        {/* Courier Info */}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-sm font-medium ${
+                              isSelected ? 'text-blue-900' : 'text-gray-600'
+                            }`}>
+                              {courier.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs ${
+                              isSelected ? 'text-blue-600' : 'text-gray-400'
+                            }`}>
+                              {courier.deliveryTime}
+                            </span>
+                            <span className="text-xs text-gray-400">•</span>
+                            {hasFreeShipping ? (
+                              <Badge 
+                                variant="secondary" 
+                                className={`text-xs ${
+                                  isSelected ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                                }`}
+                              >
+                                {t('bundles.free_shipping')}
+                              </Badge>
+                            ) : (
+                              <span className={`text-xs ${
+                                isSelected ? 'text-blue-600' : 'text-gray-400'
+                              }`}>
+                                {formatPrice(courier.shipping.cost)} {t('delivery.shipping')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Truck Icon */}
+                        <Truck className={`h-4 w-4 ${
+                          isSelected ? 'text-blue-500' : 'text-gray-300'
+                        }`} />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Payment Method */}
             <div className="space-y-4">
@@ -307,21 +397,25 @@ export function CheckoutForm({
             />
 
             {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-brand-orange hover:bg-brand-orange/90 text-white font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-              size="lg"
-            >
-              {isSubmitting ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  {t('order_summary.processing_order')}
-                </div>
-              ) : (
-                t('order_summary.place_order', { amount: formatPrice(finalTotal) })
-              )}
-            </Button>
+            <div className="relative animate-elegant-pulse">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-brand-green hover:bg-green-600 text-white font-bold py-6 px-8 text-xl rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 border-2 border-green-400/30 hover:border-green-300/50 transform hover:-translate-y-1 hover:scale-[1.02] group sword-shine focus:outline-none focus:ring-4 focus:ring-green-300/50"
+                size="lg"
+              >
+                <span className="relative z-10">
+                  {isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      <span className="text-xl">{t('order_summary.processing_order')}</span>
+                    </div>
+                  ) : (
+                    t('order_summary.place_order', { amount: formatPrice(finalTotal) })
+                  )}
+                </span>
+              </Button>
+            </div>
 
             <p className="text-xs text-gray-500 text-center">
               {t('order_summary.secure_purchase_guarantee')}

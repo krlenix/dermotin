@@ -194,7 +194,10 @@
     "courier_title": "Доставка чрез",
     "delivery_by": "Ще достави",
     "delivery_time": "Време за доставка",
-    "reliable_delivery": "Бърза и надеждна доставка директно на вашия адрес"
+    "reliable_delivery": "Бърза и надеждна доставка директно на вашия адрес",
+    "select_courier": "Изберете куриерска служба",
+    "recommended": "Препоръчано",
+    "shipping": "доставка"
   },
   "navigation": {
     "home": "Начало",
