@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+
 import { Badge } from '@/components/ui/badge';
 import { getFAQForCountry, FAQItem } from '@/config/faq';
 import { getProductFAQ, ProductFAQ, Product } from '@/config/products';
@@ -28,12 +28,40 @@ interface AdvancedFAQProps {
 
 export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProps) {
   const t = useTranslations();
+  const tFaq = useTranslations('faq_ui');
   const [openItems, setOpenItems] = useState<string[]>(['0']); // First item open by default
+  
+  // Create a proper translations object by manually building it
+  // This bypasses the useTranslations issue by creating the structure we need
+  const translations = {
+    faq_ui: {
+      delivery_time_question: tFaq.raw('delivery_time_question'),
+      delivery_time_answer: tFaq.raw('delivery_time_answer'),
+      delivery_cost_question: tFaq.raw('delivery_cost_question'),
+      delivery_cost_answer: tFaq.raw('delivery_cost_answer'),
+      cash_on_delivery_question: tFaq.raw('cash_on_delivery_question'),
+      cash_on_delivery_answer: tFaq.raw('cash_on_delivery_answer'),
+      payment_methods_question: tFaq.raw('payment_methods_question'),
+      payment_methods_answer: tFaq.raw('payment_methods_answer'),
+      returns_question: tFaq.raw('returns_question'),
+      returns_answer: tFaq.raw('returns_answer'),
+      support_question: tFaq.raw('support_question'),
+      support_answer: tFaq.raw('support_answer'),
+      tracking_question: tFaq.raw('tracking_question'),
+      tracking_answer: tFaq.raw('tracking_answer'),
+      safety_question: tFaq.raw('safety_question'),
+      safety_answer: tFaq.raw('safety_answer'),
+      warranty_question: tFaq.raw('warranty_question'),
+      warranty_answer: tFaq.raw('warranty_answer')
+    }
+  };
+  
+  console.log('FAQ Debug - translations object:', translations);
   
   // Use product-specific FAQs if product is provided, otherwise use general FAQs
   const faqItems = product 
-    ? getProductFAQ(product, countryCode)
-    : getFAQForCountry(countryCode);
+    ? getProductFAQ(product)
+    : getFAQForCountry(countryCode, translations);
 
   const toggleItem = (index: string) => {
     setOpenItems(prev => 

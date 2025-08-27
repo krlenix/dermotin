@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getProduct } from '@/config/products';
+import { getProduct, Product } from '@/config/products';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useTranslations } from 'next-intl';
 import { Plus, Star, Gift, Sparkles, Check } from 'lucide-react';
@@ -20,30 +20,46 @@ export function UpsellCrossSell({ mainProductId, onAddToBundle, className }: Ups
   const { formatPrice } = useCurrency();
   const t = useTranslations();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [showAnimation, setShowAnimation] = useState(false);
 
-  const mainProduct = getProduct(mainProductId);
-  
 
+  const [mainProduct, setMainProduct] = useState<Product | null>(null);
+  const [crossSellProducts, setCrossSellProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const product = await getProduct(mainProductId);
+        setMainProduct(product || null);
+        
+        if (product?.crossSells) {
+          const crossSells = await Promise.all(
+            product.crossSells.map(id => getProduct(id))
+          );
+          setCrossSellProducts(crossSells.filter(Boolean) as Product[]);
+        }
+      } catch (error) {
+        console.error('Failed to load products:', error);
+        setMainProduct(null);
+        setCrossSellProducts([]);
+      }
+    };
+    
+    loadProducts();
+  }, [mainProductId]);
 
   if (!mainProduct?.crossSells) return null;
-
-  const crossSellProducts = mainProduct.crossSells
-    .map(id => getProduct(id))
-    .filter(Boolean);
 
   const handleAddItem = (productId: string, price: number) => {
     if (selectedItems.includes(productId)) {
       setSelectedItems(prev => prev.filter(id => id !== productId));
     } else {
       setSelectedItems(prev => [...prev, productId]);
-      setShowAnimation(true);
-      setTimeout(() => setShowAnimation(false), 1000);
+
     }
     onAddToBundle(productId, price);
   };
 
-  const totalSavings = selectedItems.length * 500; // Example savings calculation
+
 
   if (crossSellProducts.length === 0) return null;
 

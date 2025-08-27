@@ -15,7 +15,7 @@ interface AdvancedTestimonialsProps {
 // Business metrics - easy to update
 const BUSINESS_METRICS = {
   SATISFIED_CUSTOMERS: 20000,
-  AVERAGE_RATING: 4.8,
+  AVERAGE_RATING: 4.97,
   RECOMMENDATION_RATE: 98
 };
 
@@ -31,10 +31,11 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
   const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
   const [likedTestimonials, setLikedTestimonials] = useState<Set<string>>(new Set());
   const [cardScales, setCardScales] = useState<Record<string, number>>(() => {
-    // Initialize with first testimonial focused
+    // Initialize with middle testimonial focused
     const initialScales: Record<string, number> = {};
+    const middleIndex = Math.floor(testimonials.length / 2);
     testimonials.forEach((testimonial, index) => {
-      initialScales[testimonial.id] = index === 0 ? 1.0 : 0.8;
+      initialScales[testimonial.id] = index === middleIndex ? 1.0 : 0.6;
     });
     return initialScales;
   });
@@ -78,12 +79,15 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
     const cards = container.querySelectorAll('[data-testimonial-id]');
     
     const newScales: Record<string, number> = {};
-    let closestCard: { element: HTMLElement; distance: number } | null = null;
+    let closestCard: { element: HTMLElement; distance: number; testimonialId: string } | null = null;
     
     // Find the card closest to center
     cards.forEach((card) => {
       const cardElement = card as HTMLElement;
       const cardRect = cardElement.getBoundingClientRect();
+      const testimonialId = cardElement.dataset.testimonialId;
+      
+      if (!testimonialId) return;
       
       // Check if card is visible in the container viewport
       const isVisible = cardRect.right > containerRect.left && 
@@ -94,50 +98,52 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
         const distanceFromCenter = Math.abs(cardCenter - containerCenter);
         
         if (!closestCard || distanceFromCenter < closestCard.distance) {
-          closestCard = { element: cardElement, distance: distanceFromCenter };
+          closestCard = { element: cardElement, distance: distanceFromCenter, testimonialId: testimonialId as string };
         }
       }
     });
     
-    // Calculate scales for all visible cards
-    cards.forEach((card) => {
-      const cardElement = card as HTMLElement;
-      const cardRect = cardElement.getBoundingClientRect();
-      const testimonialId = cardElement.dataset.testimonialId;
+    // Set all cards to minimum scale first
+    testimonials.forEach(testimonial => {
+      newScales[testimonial.id] = 0.5;
+    });
+    
+    // Only the closest card gets full scale, others get reduced scale
+    if (closestCard) {
+      newScales[(closestCard as { element: HTMLElement; distance: number; testimonialId: string }).testimonialId] = 1.0;
       
-      if (!testimonialId) return;
-      
-      // Check if card is visible
-      const isVisible = cardRect.right > containerRect.left && 
-                       cardRect.left < containerRect.right;
-      
-      if (isVisible) {
-        const cardCenter = cardRect.left + cardRect.width / 2;
-        const distanceFromCenter = Math.abs(cardCenter - containerCenter);
+      // Calculate scales for other visible cards based on distance from the focused one
+      cards.forEach((card) => {
+        const cardElement = card as HTMLElement;
+        const cardRect = cardElement.getBoundingClientRect();
+        const testimonialId = cardElement.dataset.testimonialId;
         
-        // The closest card gets full scale (1.0), others get reduced scale
-        if (closestCard && cardElement === closestCard.element) {
-          newScales[testimonialId] = 1.0;
-        } else {
+        if (!testimonialId || !closestCard || testimonialId === closestCard.testimonialId) return;
+        
+        // Check if card is visible
+        const isVisible = cardRect.right > containerRect.left && 
+                         cardRect.left < containerRect.right;
+        
+        if (isVisible) {
+          const cardCenter = cardRect.left + cardRect.width / 2;
+          const distanceFromCenter = Math.abs(cardCenter - containerCenter);
+          
           if (isMobile) {
             // Mobile: Binary scaling for cleaner look
-            newScales[testimonialId] = 0.85;
+            newScales[testimonialId] = 0.6;
           } else {
             // Desktop: Gradual scaling based on distance
             const maxDistance = containerRect.width / 2 + 200;
             const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
-            const scale = 1.0 - (normalizedDistance * 0.35);
-            newScales[testimonialId] = Math.max(0.65, Math.min(0.95, scale));
+            const scale = 0.8 - (normalizedDistance * 0.3);
+            newScales[testimonialId] = Math.max(0.5, Math.min(0.7, scale));
           }
         }
-      } else {
-        // Not visible cards get minimum scale
-        newScales[testimonialId] = 0.65;
-      }
-    });
+      });
+    }
     
     setCardScales(newScales);
-  }, [isMobile]);
+  }, [isMobile, testimonials]);
 
   const toggleLike = (testimonialId: string) => {
     const isCurrentlyLiked = likedTestimonials.has(testimonialId);
@@ -265,20 +271,23 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
          const singleSetWidth = container.scrollWidth / 3;
          const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
          const containerWidth = container.clientWidth;
+         const middleIndex = Math.floor(testimonials.length / 2);
          
-         // Calculate offset to center the first card
-         const centerOffset = (containerWidth / 2) - (cardWidth / 2);
+         // Calculate the exact center position for the middle testimonial
+         const containerCenter = containerWidth / 2;
+         const cardCenter = cardWidth / 2;
          
-         // Position to show first testimonial of middle set centered
-         container.scrollLeft = singleSetWidth - centerOffset;
+         // Position to center the middle testimonial of the middle set
+         const targetScrollPosition = singleSetWidth + (middleIndex * cardWidth) + cardCenter - containerCenter;
+         container.scrollLeft = Math.max(0, targetScrollPosition);
          
          // Trigger scale calculation after positioning
          setTimeout(() => {
            updateCardScales();
-           // Ensure first testimonial is marked as focused
-           const firstTestimonialId = testimonials[0]?.id;
-           if (firstTestimonialId) {
-             setCardScales(prev => ({ ...prev, [firstTestimonialId]: 1.0 }));
+           // Ensure middle testimonial is marked as focused
+           const middleTestimonialId = testimonials[middleIndex]?.id;
+           if (middleTestimonialId) {
+             setCardScales(prev => ({ ...prev, [middleTestimonialId]: 1.0 }));
            }
          }, 100);
        }
@@ -291,7 +300,7 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
        container.removeEventListener('touchend', handleTouchEnd);
        window.removeEventListener('resize', handleResize);
      };
-        }, [updateCardScales, isTransitioning, isMobile]);
+        }, [updateCardScales, isTransitioning, isMobile, testimonials]);
 
   return (
     <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
@@ -340,25 +349,25 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                    key={`${testimonial.id}-${index}`}
                    data-testimonial-id={testimonial.id}
                    data-index={index}
-                   className={`transition-all duration-300 border-0 rounded-xl overflow-hidden
-                     ${isMobile 
-                       ? `w-[280px] snap-center ${scale === 1.0 ? 'shadow-2xl ring-2 ring-brand-orange/20 bg-white' : 'shadow-md bg-white/60 backdrop-blur-sm'}` 
-                       : 'flex-shrink-0 w-80 shadow-lg hover:shadow-2xl bg-white'
-                     }
-                   `}
+                                     className={`transition-all duration-500 border-0 rounded-xl overflow-hidden
+                    ${isMobile 
+                      ? `w-[280px] snap-center ${scale === 1.0 ? 'shadow-2xl ring-4 ring-brand-orange/30 bg-white border-2 border-brand-orange/20' : 'shadow-sm bg-white/40 backdrop-blur-sm'}` 
+                      : `flex-shrink-0 w-80 ${scale === 1.0 ? 'shadow-2xl ring-4 ring-brand-orange/30 bg-white border-2 border-brand-orange/20' : 'shadow-md bg-white/70'} hover:shadow-xl`
+                    }
+                  `}
                                         style={{
                        // Responsive scaling and effects
                        transform: !isMobile 
-                         ? `scale(${scale}) translateZ(${(scale - 0.7) * 100}px)` 
-                         : `scale(${scale === 1.0 ? 1.02 : 0.9})`,
-                       zIndex: scale > 0.9 ? 10 : (isMobile ? 1 : zIndex),
+                         ? `scale(${scale}) translateZ(${(scale - 0.5) * 150}px)` 
+                         : `scale(${scale === 1.0 ? 1.05 : 0.85})`,
+                       zIndex: scale === 1.0 ? 20 : (scale > 0.8 ? 10 : (isMobile ? 1 : zIndex)),
                        minWidth: isMobile ? '280px' : '320px',
                        maxWidth: isMobile ? '280px' : '320px',
                        opacity: isMobile 
-                         ? (scale === 1.0 ? 1 : 0.5) 
-                         : (0.4 + (scale * 0.6)),
+                         ? (scale === 1.0 ? 1 : 0.3) 
+                         : (scale === 1.0 ? 1 : 0.2 + (scale * 0.5)),
                        transformOrigin: 'center center',
-                       filter: isMobile && scale < 1.0 ? 'blur(2px)' : 'none'
+                       filter: scale < 1.0 ? 'blur(1px)' : 'none'
                      }}
                  >
                   <CardContent className="p-0 w-full overflow-hidden">
@@ -437,7 +446,8 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                             <div className="flex justify-center items-center gap-2 mt-6 z-20">
                  {testimonials.map((testimonial, index) => {
                    // Calculate which testimonial is currently centered
-                   const isActive = cardScales[testimonial.id] === 1.0 || (index === 0 && Object.keys(cardScales).length === 0);
+                   const middleIndex = Math.floor(testimonials.length / 2);
+                   const isActive = cardScales[testimonial.id] === 1.0 || (index === middleIndex && Object.keys(cardScales).length === 0);
                    
                    return (
                      <button
@@ -448,13 +458,16 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
                            const cardWidth = isMobile ? 280 + 16 : 320 + 32; // card width + gap
                            const singleSetWidth = container.scrollWidth / 3;
                            const containerWidth = container.clientWidth;
-                           const centerOffset = (containerWidth / 2) - (cardWidth / 2);
                            
-                           // Calculate target scroll position for the clicked testimonial to be centered
-                           const targetScroll = singleSetWidth + (index * cardWidth) - centerOffset;
+                           // Calculate the exact center position for the clicked testimonial
+                           const containerCenter = containerWidth / 2;
+                           const cardCenter = cardWidth / 2;
+                           
+                           // Position to center the clicked testimonial of the middle set
+                           const targetScrollPosition = singleSetWidth + (index * cardWidth) + cardCenter - containerCenter;
                            
                            container.scrollTo({
-                             left: targetScroll,
+                             left: Math.max(0, targetScrollPosition),
                              behavior: 'smooth'
                            });
                            

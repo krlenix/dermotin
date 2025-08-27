@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { ShoppingCart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -19,7 +19,7 @@ interface PurchaseNotificationsProps {
   className?: string;
 }
 
-export function PurchaseNotifications({ className }: PurchaseNotificationsProps) {
+export function PurchaseNotifications({ }: PurchaseNotificationsProps) {
   const t = useTranslations();
   const [stockCount, setStockCount] = useState(() => {
     // Get from session storage or default to 47
@@ -31,7 +31,7 @@ export function PurchaseNotifications({ className }: PurchaseNotificationsProps)
   });
 
   // Sample purchase data - this would normally come from your backend
-  const samplePurchases: PurchaseNotification[] = [
+  const samplePurchases: PurchaseNotification[] = useMemo(() => [
     {
       id: '1',
       customerName: 'Marija S.',
@@ -86,7 +86,7 @@ export function PurchaseNotifications({ className }: PurchaseNotificationsProps)
       timeAgo: t('purchase_notifications.time_ago_31_min'),
       verified: true
     }
-  ];
+  ], [t]);
 
   useEffect(() => {
     // Update session storage when stock changes
@@ -127,7 +127,7 @@ export function PurchaseNotifications({ className }: PurchaseNotificationsProps)
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [samplePurchases]);
+  }, [samplePurchases, stockCount, t]);
 
   // Component now uses toast notifications instead of popup cards
   return null;

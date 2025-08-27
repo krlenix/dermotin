@@ -61,7 +61,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = ({
     }
     
     return newParticles;
-  }, [particleCount]);
+  }, [particleCount, colors]);
 
   // Update particle physics
   const updateParticles = (deltaTime: number) => {
@@ -176,7 +176,7 @@ export const ConfettiEffect: React.FC<ConfettiEffectProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isActive]);
+  }, [isActive, animate, createParticles]);
 
   // Handle window resize
   useEffect(() => {

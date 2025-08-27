@@ -10,7 +10,7 @@ interface ProductPageProps {
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const countryConfig = getCountryConfig('rs'); // Only Serbian now
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug, 'rs');
 
   if (!product) {
     notFound();
@@ -26,7 +26,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 }
 
 export async function generateStaticParams() {
-  const products = getProductsForCountry('rs');
+  const products = await getProductsForCountry('rs', 'rs');
   return products.map((product) => ({
     slug: product.slug,
   }));

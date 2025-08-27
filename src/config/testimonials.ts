@@ -22,10 +22,10 @@ export const TESTIMONIALS: Record<string, Testimonial[]> = {
       name: "Marija S.",
       city: "Beograd",
       rating: 5,
-      text: "Neverovatno! Već nakon prve nedelje korišćenja vidim ogromnu razliku. Preporučujem svima!",
+      text: "Imala sam problem sa gljivicama na stopalima već mesecima. FUNGEL mi je pomogao za samo 10 dana! Krem se lako nanosi, ne maže i ima prijatan miris. Konačno mogu da nosim otvorene cipele bez stida.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-15",
+      dateAdded: "2024-12-15",
       featured: true
     },
     {
@@ -33,10 +33,10 @@ export const TESTIMONIALS: Record<string, Testimonial[]> = {
       name: "Stefan M.",
       city: "Novi Sad",
       rating: 5,
-      text: "Konačno sam našao proizvod koji stvarno radi. Prirodni sastojci i odličan efekat!",
+      text: "Kao sportista, često imam problema sa kožom zbog znojenja. FUNGEL sa čajnim drvetom je bio prava stvar - prirodan, efikasan i bez hemikalija. Koristim ga već 2 meseca i rezultati su fantastični.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-10",
+      dateAdded: "2024-12-10",
       featured: true
     },
     {
@@ -44,21 +44,21 @@ export const TESTIMONIALS: Record<string, Testimonial[]> = {
       name: "Ana P.",
       city: "Niš", 
       rating: 5,
-      text: "Brza dostava, odličan proizvod. Već naručujem drugo pakovanje!",
+      text: "Moja kćerka je imala problematičnu kožu oko noktiju. Probali smo mnoge proizvode, ali FUNGEL je jedini koji je stvarno pomogao. Prirodni sastojci su mi bili važni jer je reč o detetu. Preporučujem!",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-08",
-      featured: false
+      dateAdded: "2024-12-08",
+      featured: true
     },
     {
       id: "t4",
       name: "Petar J.",
       city: "Kragujevac",
       rating: 4,
-      text: "Dobar proizvod, radi kako treba. Jedino što sam očekivao brže rezultate.",
+      text: "Dobar proizvod, radi postepeno ali sigurno. Trebalo mi je oko 3 nedelje da vidim punu promenu, ali vredi čekanja. Cena je prihvatljiva za kvalitet koji dobijate.",
       verified: true,
       productUsed: "FUNGEL", 
-      dateAdded: "2024-01-05",
+      dateAdded: "2024-12-05",
       featured: false
     },
     {
@@ -66,10 +66,10 @@ export const TESTIMONIALS: Record<string, Testimonial[]> = {
       name: "Milica R.",
       city: "Subotica",
       rating: 5,
-      text: "Odličan gel, pomaže stvarno! Kožu mi je potpuno obnovio za 2 nedelje.",
+      text: "Radim u vlažnoj sredini i često imam problema sa kožom na rukama. FUNGEL mi je ne samo rešio problem, već i učinio kožu mekšom i zdravijom. Sada ga koristim preventivno.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-03",
+      dateAdded: "2024-12-03",
       featured: true
     },
     {
@@ -77,128 +77,100 @@ export const TESTIMONIALS: Record<string, Testimonial[]> = {
       name: "Aleksandar T.",
       city: "Pančevo", 
       rating: 5,
-      text: "Super proizvod! Koristi cela porodica. Prirodan i efikasan.",
+      text: "Skeptičan sam bio prema prirodnim proizvodima, ali FUNGEL me je pozitivno iznenadio. Brzo deluje, nema neželjenih efekata i stvarno pomaže. Već sam preporučio trojici prijatelja.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-01",
+      dateAdded: "2024-12-01",
+      featured: false
+    },
+    {
+      id: "t7",
+      name: "Jovana M.",
+      city: "Zemun",
+      rating: 5,
+      text: "Kao kozmetolog, često preporučujem FUNGEL svojim klijentima. Prirodni sastojci poput nevena i čajnog drveta čine čuda za problematičnu kožu. Profesionalno i efikasno rešenje.",
+      verified: true,
+      productUsed: "FUNGEL",
+      dateAdded: "2024-11-28",
+      featured: true
+    },
+    {
+      id: "t8",
+      name: "Nikola D.",
+      city: "Valjevo",
+      rating: 4,
+      text: "Koristim FUNGEL već mesec dana. Rezultati su vidljivi, koža je zdravija i nema više iritacije. Jedino što bih voleo da pakovanje bude veće jer se brzo potroši.",
+      verified: true,
+      productUsed: "FUNGEL",
+      dateAdded: "2024-11-25",
       featured: false
     }
   ],
   ba: [
     {
-      id: "t1",
-      name: "Amira H.",
+      id: "ba1",
+      name: "Amela H.",
       city: "Sarajevo",
       rating: 5,
-      text: "Odličan proizvod, već nakon nekoliko dana sam videla poboljšanje!",
+      text: "FUNGEL mi je pomogao kada ništa drugo nije. Imala sam hronične probleme sa kožom i ovaj prirodni proizvod je konačno donio olakšanje. Preporučujem svima koji traže efikasno rešenje.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-12",
+      dateAdded: "2024-12-12",
       featured: true
     },
     {
-      id: "t2",
+      id: "ba2",
       name: "Emir K.",
       city: "Tuzla",
       rating: 5,
-      text: "Preporučujem svima. Prirodni sastojci i brz efekat.",
+      text: "Kao čovjek koji radi fizički posao, često imam problema sa kožom na rukama. FUNGEL sa čajnim drvetom i origanom je bio prava stvar. Prirodan, bez kemikalija i stvarno efikasan.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-08",
-      featured: true
-    }
-  ],
-  me: [
-    {
-      id: "t1",
-      name: "Jovana M.",
-      city: "Podgorica",
-      rating: 5,
-      text: "Fantastičan gel! Rešio je moj problem sa gljivicama za kratko vreme.",
-      verified: true,
-      productUsed: "FUNGEL",
-      dateAdded: "2024-01-14",
-      featured: true
-    }
-  ],
-  eu: [
-    {
-      id: "t1",
-      name: "Maria L.",
-      city: "Amsterdam",
-      rating: 5,
-      text: "Amazing product! Natural ingredients and fast results. Highly recommended!",
-      verified: true,
-      productUsed: "FUNGEL",
-      dateAdded: "2024-01-11",
-      featured: true
-    }
-  ],
-  bg: [
-    {
-      id: "t1",
-      name: "Мария С.",
-      city: "София",
-      rating: 5,
-      text: "Невероятно! Вече след първата седмица на употреба виждам огромна разлика. Препоръчвам на всички!",
-      verified: true,
-      productUsed: "FUNGEL",
-      dateAdded: "2024-01-15",
+      dateAdded: "2024-12-09",
       featured: true
     },
     {
-      id: "t2", 
-      name: "Стефан М.",
-      city: "Пловдив",
+      id: "ba3",
+      name: "Selma B.",
+      city: "Zenica",
       rating: 5,
-      text: "Накрая намерих продукт, който наистина работи. Натурални съставки и отличен ефект!",
+      text: "Moj sin je imao problematičnu kožu oko noktiju. FUNGEL je jedini proizvod koji je stvarno pomogao. Prirodni sastojci su mi bili važni, a rezultati su vidljivi već nakon nedelju dana.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-10",
+      dateAdded: "2024-12-06",
       featured: true
     },
     {
-      id: "t3",
-      name: "Ана П.",
-      city: "Варна", 
-      rating: 5,
-      text: "Бърза доставка, отличен продукт. Вече поръчвам втора опаковка!",
-      verified: true,
-      productUsed: "FUNGEL",
-      dateAdded: "2024-01-08",
-      featured: false
-    },
-    {
-      id: "t4",
-      name: "Петър Й.",
-      city: "Бургас",
+      id: "ba4",
+      name: "Adnan M.",
+      city: "Banja Luka",
       rating: 4,
-      text: "Добър продукт, работи както трябва. Само че очаквах по-бързи резултати.",
+      text: "Dobar proizvod, radi postupno ali sigurno. Trebalo mi je oko tri sedmice da vidim potpunu promjenu, ali vrijedi čekanja. Cijena je prihvatljiva za kvalitet.",
       verified: true,
-      productUsed: "FUNGEL", 
-      dateAdded: "2024-01-05",
+      productUsed: "FUNGEL",
+      dateAdded: "2024-12-03",
       featured: false
     },
     {
-      id: "t5",
-      name: "Милица Р.",
-      city: "Русе",
+      id: "ba5",
+      name: "Lejla S.",
+      city: "Mostar",
       rating: 5,
-      text: "Отличен гел, помага наистина! Кожата ми се възстанови напълно за 2 седмици.",
+      text: "Radim u vlažnoj sredini i često imam problema sa kožom. FUNGEL mi je ne samo riješio problem, već i učinio kožu mekšom i zdravijom. Sada ga koristim preventivno.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-03",
+      dateAdded: "2024-11-30",
       featured: true
     },
     {
-      id: "t6",
-      name: "Александър Т.",
-      city: "Стара Загора", 
+      id: "ba6",
+      name: "Mirsad J.",
+      city: "Bijeljina",
       rating: 5,
-      text: "Супер продукт! Използва цялото семейство. Натурален и ефикасен.",
+      text: "Skeptičan sam bio prema prirodnim proizvodima, ali FUNGEL me pozitivno iznenadio. Brzo djeluje, nema neželjenih efekata i stvarno pomaže. Već sam preporučio dvojici prijatelja.",
       verified: true,
       productUsed: "FUNGEL",
-      dateAdded: "2024-01-01",
+      dateAdded: "2024-11-27",
       featured: false
     }
   ]

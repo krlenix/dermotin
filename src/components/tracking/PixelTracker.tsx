@@ -11,8 +11,19 @@ interface PixelTrackerProps {
 // Declare global types for pixel functions
 declare global {
   interface Window {
-    fbq: any;
-    ttq: any;
+    fbq: {
+      (command: string, ...args: unknown[]): void;
+      callMethod?: (...args: unknown[]) => void;
+      queue?: unknown[];
+      push?: (args: unknown[]) => void;
+      loaded?: boolean;
+      version?: string;
+    };
+    ttq: {
+      load: (pixelId: string) => void;
+      page: () => void;
+      track: (event: string, data?: Record<string, unknown>) => void;
+    };
   }
 }
 
@@ -62,12 +73,13 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
             }}
           />
           <noscript>
-            <img
-              height="1"
-              width="1"
-              style={{ display: 'none' }}
-              src={`https://www.facebook.com/tr?id=${pixelConfig.meta.pixelId}&ev=PageView&noscript=1`}
-              alt=""
+            <div
+              style={{ 
+                display: 'none',
+                backgroundImage: `url(https://www.facebook.com/tr?id=${pixelConfig.meta.pixelId}&ev=PageView&noscript=1)`,
+                width: '1px',
+                height: '1px'
+              }}
             />
           </noscript>
         </>
@@ -97,7 +109,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
 export function usePixelTracking(countryCode: string) {
   const pixelConfig = getPixelConfig(countryCode);
 
-  const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart', eventData?: any) => {
+  const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart', eventData?: Record<string, unknown>) => {
     if (typeof window === 'undefined') return;
 
     // Track Meta Pixel event

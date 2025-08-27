@@ -8,9 +8,9 @@ import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
 import { Footer } from '@/components/ui/footer';
 import { CookieConsent } from '@/components/features/CookieConsent';
 
-export default function HomePage() {
+export default async function HomePage() {
   const countryConfig = getCountryConfig('rs'); // Only Serbian now
-  const products = getProductsForCountry('rs');
+  const products = await getProductsForCountry('rs', 'rs');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -97,7 +97,7 @@ export default function HomePage() {
               <span className="text-white text-2xl">🚚</span>
             </div>
             <h3 className="text-xl font-semibold mb-2">Besplatna dostava</h3>
-            <p className="text-gray-600">Za sve porudžbine preko 3000 {countryConfig.currencySymbol}</p>
+            <p className="text-gray-600">Za sve porudžbine preko {countryConfig.business.freeShippingThreshold} {countryConfig.currencySymbol}</p>
           </div>
           
           <div className="text-center p-6">

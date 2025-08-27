@@ -416,7 +416,7 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
   return (
     <div className={cn("w-full max-w-3xl mx-auto", className)}>
       <div className="space-y-2">
-        {accordionItems.map((item, index) => {
+        {accordionItems.map((item) => {
           const isOpen = openItems.has(item.id);
           
           return (

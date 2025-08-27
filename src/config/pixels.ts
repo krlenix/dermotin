@@ -32,18 +32,6 @@ export const PIXEL_CONFIG: CountryPixelConfig = {
     },
   },
   
-  // Bulgaria
-  bg: {
-    meta: {
-      pixelId: 'YOUR_META_PIXEL_ID_BG', // Replace with actual Meta Pixel ID for Bulgaria
-      enabled: true,
-    },
-    tiktok: {
-      pixelId: 'YOUR_TIKTOK_PIXEL_ID_BG', // Replace with actual TikTok Pixel ID for Bulgaria
-      enabled: true,
-    },
-  },
-  
   // Bosnia and Herzegovina
   ba: {
     meta: {
@@ -55,37 +43,13 @@ export const PIXEL_CONFIG: CountryPixelConfig = {
       enabled: true,
     },
   },
-  
-  // Montenegro
-  me: {
-    meta: {
-      pixelId: 'YOUR_META_PIXEL_ID_ME', // Replace with actual Meta Pixel ID for Montenegro
-      enabled: true,
-    },
-    tiktok: {
-      pixelId: 'YOUR_TIKTOK_PIXEL_ID_ME', // Replace with actual TikTok Pixel ID for Montenegro
-      enabled: true,
-    },
-  },
-  
-  // Default/fallback configuration
-  default: {
-    meta: {
-      pixelId: 'YOUR_DEFAULT_META_PIXEL_ID', // Replace with default Meta Pixel ID
-      enabled: true,
-    },
-    tiktok: {
-      pixelId: 'YOUR_DEFAULT_TIKTOK_PIXEL_ID', // Replace with default TikTok Pixel ID
-      enabled: true,
-    },
-  },
 };
 
 /**
  * Get pixel configuration for a specific country
  */
 export function getPixelConfig(countryCode: string): PixelConfig {
-  return PIXEL_CONFIG[countryCode] || PIXEL_CONFIG.default;
+  return PIXEL_CONFIG[countryCode] || PIXEL_CONFIG.rs;
 }
 
 /**

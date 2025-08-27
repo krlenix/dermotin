@@ -48,6 +48,8 @@ export interface BusinessInfo {
   complaintResponseDays: number;
   complaintResolutionDays: number;
   technicalComplaintResolutionDays: number;
+  // FAQ configuration - defines which FAQ items to show
+  faqItems: string[]; // Array of FAQ keys that should be displayed for this country
 }
 
 export interface LegalInfo {
@@ -133,39 +135,13 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     couriers: [
       {
         id: 'post-express',
-        name: 'Post Express',
-        displayName: 'kurirske službe Post Express',
+        name: 'PostExpress',
+        displayName: 'kurirske službe PostExpress',
         logo: '/images/couriers/postexpress.png',
         deliveryTime: '1-2 radna dana',
         trackingUrl: 'https://postexpress.rs/tracking',
         isDefault: true,
         enabled: true,
-        shipping: {
-          cost: 280,
-          currency: 'dinara'
-        }
-      },
-      {
-        id: 'bex',
-        name: 'BEX',
-        displayName: 'kurirske službe BEX',
-        logo: '/images/couriers/bex.png',
-        deliveryTime: '1-3 radna dana',
-        trackingUrl: 'https://bex.rs/tracking',
-        enabled: true,
-        shipping: {
-          cost: 350,
-          currency: 'dinara'
-        }
-      },
-      {
-        id: 'aks',
-        name: 'AKS',
-        displayName: 'kurirske službe AKS',
-        logo: '/images/couriers/aks.png',
-        deliveryTime: '2-4 radna dana',
-        trackingUrl: 'https://aks.rs/tracking',
-        enabled: false, // Currently disabled for testing
         shipping: {
           cost: 400,
           currency: 'dinara'
@@ -174,19 +150,20 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     ],
     business: {
       deliveryArea: 'teritoriji Republike Srbije',
-      freeShippingThreshold: 3000, // Free shipping for orders over 3000 dinara
-      deliveryTimeMin: 3,
-      deliveryTimeMax: 5,
+      freeShippingThreshold: 4700, // Free shipping for orders over 4700 dinara
+      deliveryTimeMin: 1,
+      deliveryTimeMax: 2,
       deliveryTimeUnit: 'radnih dana',
-      paymentMethods: ['platnim karticama', 'gotovinom prilikom dostave', 'poštanskim uplatnicama'],
+      paymentMethods: ['gotovinom prilikom dostave (pouzećem)'],
       returnPeriodDays: 14,
       warrantyPeriodYears: 2,
       complaintResponseDays: 8,
       complaintResolutionDays: 15,
-      technicalComplaintResolutionDays: 30
+      technicalComplaintResolutionDays: 30,
+      faqItems: ['delivery_time', 'delivery_cost', 'cash_on_delivery', 'payment_methods', 'returns', 'support', 'tracking', 'safety', 'warranty']
     },
     legal: {
-      lastUpdated: '2024-01-01',
+      lastUpdated: '2025-01-01',
       copyrightLaw: 'Zakona o autorskom i srodnim pravima ("Sl. glasnik RS", br. 104/2009, 99/2011, 119/2012, 29/2016 – odluka US i 66/2019)',
       criminalCode: 'Krivičnog zakonika Republike Srbije ("Sl. glasnik RS", br. 85/2005, 88/2005 – ispr., 107/2005 – ispr., 72/2009, 111/2009, 121/2012, 104/2013, 108/2014, 94/2016 i 35/2019)',
       consumerProtectionLaw: 'Zakona o zaštiti potrošača Republike Srbije',
@@ -196,110 +173,84 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       disputeResolutionListUrl: 'https://mtt.gov.rs/extfile/sr/33309/ha12.pdf'
     }
   },
-  bg: {
-    code: 'bg',
-    name: 'Bulgaria',
-    locale: 'bg-BG',
-    currency: 'BGN',
-    currencySymbol: 'лв',
+
+  // Ready for future expansion:
+  ba: {
+    code: 'ba',
+    name: 'Bosnia and Herzegovina',
+    locale: 'bs-BA',
+    currency: 'BAM',
+    currencySymbol: 'KM',
     region: 'Balkans',
-    isEU: true,
-    timezone: 'Europe/Sofia',
+    isEU: false,
+    timezone: 'Europe/Sarajevo',
     logo: '/images/main/logo.png',
     company: {
       name: 'Dermotin',
-      legalName: 'DERMOTIN Bulgaria EOOD',
-      address: 'ул. Витоша 15',
-      city: 'София',
-      postalCode: '1000',
-      country: 'България',
-      taxNumber: 'BG123456789',
-      phone: '+359 2 123 4567',
-      email: 'support@dermotin.bg',
-      registrationNumber: '12345678',
+      legalName: 'Dermotin d.o.o.',
+      address: 'Majevička 133',
+      city: 'Bijeljina',
+      postalCode: '76300',
+      country: 'Bosna i Hercegovina',
+      taxNumber: '4405305760000 ',
+      phone: '+387 66 063 133',
+      email: 'info@dermotin.com',
+      registrationNumber: '11666779',
       activityCode: '47.91',
-      activityDescription: 'Търговия на дребно чрез пощата или интернет',
-      website: 'dermotin.bg' // Will be dynamically replaced in getCountryConfig
+      activityDescription: 'Trgovina na malo posredstvom pošte ili preko interneta',
+      website: 'dermotin.com'
     },
     couriers: [
       {
-        id: 'econt',
-        name: 'Econt Express',
-        displayName: 'куриерската служба Econt',
-        logo: '/images/couriers/econt.png',
-        deliveryTime: '1-2 работни дни',
-        trackingUrl: 'https://econt.com/tracking',
+        id: 'poste-srpske',
+        name: 'Pošte Srpske',
+        displayName: 'kurirske službe Pošte Srpske',
+        logo: '/images/couriers/postexpress.png',
+        deliveryTime: '1-2 radna dana',
+        trackingUrl: 'https://postesrpske.com/tracking',
         isDefault: true,
         enabled: true,
         shipping: {
-          cost: 5,
-          currency: 'лева'
+          cost: 9,
+          currency: 'KM'
         }
       }
     ],
-    fulfillmentCenter: {
-      name: 'EU Fulfillment Center',
-      legalName: 'European Logistics Solutions EOOD',
-      address: 'бул. Черни връх 47',
-      city: 'София',
-      postalCode: '1407',
-      country: 'България',
-      phone: '+359 2 987 6543',
-      email: 'fulfillment@eu-logistics.bg',
-      website: 'https://eu-logistics.bg',
-      dataProcessingAgreement: true,
-      gdprCompliant: true,
-      dataRetentionPeriod: 730, // 2 years
-      dataProcessingPurpose: 'Order fulfillment, inventory management, and customer service',
-      operatingHours: 'Monday-Friday 8:00-18:00 EET',
-      supportedCountries: ['BG', 'RO', 'GR', 'HR', 'SI'],
-      privacyPolicyUrl: 'https://eu-logistics.bg/privacy-policy',
-      dataProtectionOfficer: {
-        name: 'Maria Petrova',
-        email: 'dpo@eu-logistics.bg',
-        phone: '+359 2 987 6544'
-      }
-    },
     business: {
-      deliveryArea: 'територията на Република България',
-      freeShippingThreshold: 50, // Free shipping for orders over 50 лева
-      deliveryTimeMin: 2,
-      deliveryTimeMax: 4,
-      deliveryTimeUnit: 'работни дни',
-      paymentMethods: ['платежни карти', 'наложен платеж', 'банков превод'],
+      deliveryArea: 'teritoriji Bosne i Hercegovine',
+      freeShippingThreshold: 79,
+      deliveryTimeMin: 1,
+      deliveryTimeMax: 2,
+      deliveryTimeUnit: 'radnih dana',
+      paymentMethods: ['gotovinom prilikom dostave (pouzećem)'],
       returnPeriodDays: 14,
       warrantyPeriodYears: 2,
       complaintResponseDays: 8,
       complaintResolutionDays: 15,
-      technicalComplaintResolutionDays: 30
+      technicalComplaintResolutionDays: 30,
+      faqItems: ['delivery_time', 'delivery_cost', 'cash_on_delivery', 'payment_methods', 'returns', 'support', 'tracking', 'safety', 'warranty']
     },
     legal: {
-      lastUpdated: '2024-01-01',
-      copyrightLaw: 'Закона за авторското право и сродните му права',
-      criminalCode: 'Наказателния кодекс на Република България',
-      consumerProtectionLaw: 'Закона за защита на потребителите',
-      dataProtectionLaw: 'Закона за защита на личните данни',
-      obligationsLaw: 'Закона за задълженията и договорите',
-      ministryWebsite: 'https://www.mi.government.bg/bg/',
-      disputeResolutionListUrl: 'https://www.mi.government.bg/bg/'
+      lastUpdated: '2025-01-01',
+      copyrightLaw: 'Zakona o autorskom pravu',
+      criminalCode: 'Krivičnog zakonika BiH',
+      consumerProtectionLaw: 'Zakona o zaštiti potrošača BiH',
+      dataProtectionLaw: 'Zakona o zaštiti ličnih podataka BiH',
+      obligationsLaw: 'Zakona o obligacionim odnosima BiH',
+      ministryWebsite: 'https://example.ba',
+      disputeResolutionListUrl: 'https://example.ba/disputes'
     }
-  },
-  // Ready for future expansion:
-  // ba: { /* Bosnia configuration */ },
-  // me: { /* Montenegro configuration */ },
-  // eu: { /* EU configuration */ }
+  }
 };
 
 export const DEFAULT_COUNTRY = 'rs';
 
-export const SUPPORTED_CURRENCIES = ['RSD', 'BAM', 'EUR', 'BGN'] as const;
+export const SUPPORTED_CURRENCIES = ['RSD', 'BAM'] as const;
 export type SupportedCurrency = typeof SUPPORTED_CURRENCIES[number];
 
 export const CURRENCY_RATES: Record<SupportedCurrency, number> = {
   RSD: 1, // Base currency
-  BAM: 0.5, // Approximate rate - will be updated when adding Bosnia
-  EUR: 0.0085, // Approximate rate - will be updated when adding EU/Montenegro
-  BGN: 0.017 // Approximate rate - will be updated when adding Bulgaria
+  BAM: 0.5 // Approximate rate - will be updated when adding Bosnia
 };
 
 export function getCountryConfig(countryCode: string): CountryConfig {

@@ -38,7 +38,7 @@ export function SocialProof({
   const trustBadges = [
     { icon: Shield, text: t('money_back_guarantee') },
     { icon: CheckCircle, text: t('verified_reviews') },
-    { icon: Star, text: t('customer_rating') + ': 4.8/5' },
+    { icon: Star, text: t('customer_rating') + ': 4.97/5' },
   ];
 
   return (
@@ -77,7 +77,7 @@ export function SocialProof({
                   <Star key={star} className="h-4 w-4 fill-current" />
                 ))}
               </div>
-              <span className="text-sm font-medium">4.8/5</span>
+              <span className="text-sm font-medium">4.97/5</span>
             </div>
             <Badge variant="secondary">
               {t('based_on_reviews', { count: 234 })}

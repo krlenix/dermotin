@@ -1,6 +1,6 @@
 import createMiddleware from 'next-intl/middleware';
 
-const locales = ['rs', 'bg']; // Ready for: 'ba', 'me', 'eu'
+const locales = ['rs', 'ba']; // Serbia and Bosnia only
 
 export default createMiddleware({
   // A list of all locales that are supported
@@ -21,7 +21,7 @@ export const config = {
     
     // Set a cookie to remember the previous locale for
     // all requests that have a locale prefix
-    '/(rs|bg|ba|me|eu)/:path*',
+    '/(rs|ba)/:path*',
     
     // Enable redirects that add missing locales
     // (e.g. `/pathnames` -> `/rs/pathnames`)

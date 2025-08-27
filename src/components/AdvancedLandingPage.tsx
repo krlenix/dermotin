@@ -5,37 +5,31 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Product } from '@/config/products';
 import { CountryConfig, getDefaultCourier, CourierInfo } from '@/config/countries';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
+
 import { Button } from '@/components/ui/button';
 import { BundleSelector } from '@/components/features/BundleSelector';
 import { CheckoutForm } from '@/components/features/CheckoutForm';
 import { UrgencyTimer } from '@/components/features/UrgencyTimer';
 import { CookieConsent } from '@/components/features/CookieConsent';
-import { UpsellCrossSell } from '@/components/features/UpsellCrossSell';
+
 import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
 import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials';
 // import { PurchaseNotifications } from '@/components/features/PurchaseNotifications';
 import { RotatingReview } from '@/components/features/RotatingReview';
 import { Footer } from '@/components/ui/footer';
 import { ComparisonTable } from '@/components/features/ComparisonTable';
-import { MarqueeText } from '@/components/ui/marquee-text';
+
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { useCurrency } from '@/hooks/useCurrency';
 import { SupportedCurrency } from '@/config/countries';
-import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
+import { PixelTracker } from '@/components/tracking/PixelTracker';
 import { 
   Star, 
-  Shield, 
   ShieldCheck,
   CheckCircle,
-  Award, 
-  Leaf,
-  Clock,
-  Phone,
-  ChevronDown,
-  Hourglass
+  Phone
 } from 'lucide-react';
 
 interface AdvancedLandingPageProps {
@@ -47,9 +41,7 @@ interface AdvancedLandingPageProps {
 export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingPageProps) {
   const t = useTranslations();
   const { } = useCurrency(countryConfig.currency as SupportedCurrency);
-  const { trackEvent } = usePixelTracking(countryConfig.code);
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
-  const [showFullDescription, setShowFullDescription] = useState(false);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
@@ -400,7 +392,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                       <Star key={star} className="h-5 w-5 fill-current" />
                     ))}
                   </div>
-                  <span className="text-sm font-medium">4.8/5</span>
+                  <span className="text-sm font-medium">4.97/5</span>
                   <span className="text-sm text-gray-500">{t('sections.based_on_reviews')}</span>
                 </div>
 

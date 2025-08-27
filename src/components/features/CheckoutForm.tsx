@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
+
+
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ProductVariant } from '@/config/products';
@@ -16,9 +16,9 @@ import { CountryConfig, CourierInfo, getAvailableCouriers } from '@/config/count
 import { useCurrency } from '@/hooks/useCurrency';
 import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
-import { calculateShippingCost, getShippingCostDisplay, qualifiesForFreeShipping } from '@/utils/shipping';
+import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
 import { getDefaultCourier } from '@/config/countries';
-import { Package, Truck, CreditCard, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
+import { Package, Truck, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
@@ -104,7 +104,7 @@ export function CheckoutForm({
           quantity: 1,
           item_price: selectedVariant.discountPrice || selectedVariant.price
         }],
-        currency: countryConfig.currencyCode || 'RSD',
+        currency: countryConfig.currency || 'RSD',
         value: (selectedVariant.discountPrice || selectedVariant.price) + Object.values(bundleItems).reduce((sum, price) => sum + price, 0),
         num_items: 1 + Object.keys(bundleItems).length
       };

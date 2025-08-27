@@ -4,41 +4,34 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { getProductsForCountry } from '@/config/products';
+import { getProductsForCountry, Product } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
 import { HOMEPAGE_IMAGES } from '@/config/images';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { Footer } from '@/components/ui/footer';
 import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials';
-import { SocialProof } from '@/components/features/SocialProof';
-import { MarqueeText } from '@/components/ui/marquee-text';
+
+
 import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
 // import { WheelPopup } from '@/components/wheel-of-fortune/WheelPopup';
 // import { WheelOfFortune } from '@/components/wheel-of-fortune/WheelOfFortune';
 // import { WHEEL_CONFIG, POPUP_CONFIG } from '@/config/wheel';
 import { useParams } from 'next/navigation';
 import { 
-  Star, 
   Shield, 
   Truck, 
   Award, 
   Leaf, 
-  Heart,
   CheckCircle,
   ArrowRight,
-  Phone,
-  Mail,
   Menu,
   X,
   Sparkles,
-  Users,
-  Clock,
   Zap,
-  ShieldCheck,
-  Play
+  ShieldCheck
 } from 'lucide-react';
 
 // Homepage statistics are now available through translations
@@ -49,7 +42,22 @@ export default function HomePage() {
   const locale = params.locale as string;
   const t = useTranslations();
   const countryConfig = getCountryConfig(locale);
-  const products = getProductsForCountry(locale);
+  const [products, setProducts] = useState<Product[]>([]);
+  
+  // Load products for the current locale
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const loadedProducts = await getProductsForCountry(locale, locale);
+        setProducts(loadedProducts);
+      } catch (error) {
+        console.error('Failed to load products:', error);
+        setProducts([]);
+      }
+    };
+    
+    loadProducts();
+  }, [locale]);
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
@@ -376,10 +384,7 @@ export default function HomePage() {
                       />
                     </div>
                     
-                    {/* Floating elements */}
-                    <div className="absolute top-4 right-4 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
-                      <Heart className="w-4 h-4 text-red-500" />
-                    </div>
+
                   </div>
                   
                   <CardContent className="p-6 text-center relative">

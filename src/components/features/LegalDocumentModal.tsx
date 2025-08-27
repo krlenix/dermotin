@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -32,13 +32,7 @@ export function LegalDocumentModal({
   // Mobile close button text
   const mobileCloseButtonText = t('ui.close') || 'Zatvori';
 
-  useEffect(() => {
-    if (isOpen && documentType) {
-      loadDocument();
-    }
-  }, [isOpen, documentType, countryConfig, locale]);
-
-  const loadDocument = async () => {
+  const loadDocument = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch the template file
@@ -58,7 +52,13 @@ export function LegalDocumentModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [documentType, countryConfig, locale]);
+
+  useEffect(() => {
+    if (isOpen && documentType) {
+      loadDocument();
+    }
+  }, [isOpen, documentType, loadDocument]);
 
   const processTemplate = (template: string, config: CountryConfig): string => {
     let processed = template;

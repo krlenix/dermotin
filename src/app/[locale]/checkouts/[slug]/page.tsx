@@ -14,7 +14,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { locale, slug } = await params;
   
   // Get product by slug
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug, locale);
   if (!product) {
     notFound();
   }
@@ -23,7 +23,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const countryConfig = getCountryConfig(locale);
   
   // Check if product is available in this country
-  if (!product.availableCountries.includes(locale)) {
+  if (product.availableCountries && !product.availableCountries.includes(locale)) {
     notFound();
   }
 

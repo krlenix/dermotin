@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
@@ -18,8 +18,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   const [selectedImage, setSelectedImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [transitionDirection, setTransitionDirection] = useState<'left' | 'right' | 'fade'>('fade');
-  const [imageKey, setImageKey] = useState(0); // Force re-render for transitions
+
   
   // Touch/swipe functionality refs and state
   const touchStartX = useRef<number>(0);
@@ -30,7 +29,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   // Combine main image with gallery for full collection
   const allImages = [images.main, ...images.gallery];
   
-  const changeImage = (newIndex: number, direction: 'left' | 'right' | 'fade' = 'fade') => {
+  const changeImage = (newIndex: number) => {
     if (isTransitioning || newIndex === selectedImage) return;
     
     setIsTransitioning(true);
@@ -44,16 +43,16 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   
   const handlePrevious = () => {
     const newIndex = selectedImage === 0 ? allImages.length - 1 : selectedImage - 1;
-    changeImage(newIndex, 'right');
+    changeImage(newIndex);
   };
   
   const handleNext = () => {
     const newIndex = selectedImage === allImages.length - 1 ? 0 : selectedImage + 1;
-    changeImage(newIndex, 'left');
+    changeImage(newIndex);
   };
   
   const handleThumbnailClick = (index: number) => {
-    changeImage(index, 'fade');
+    changeImage(index);
   };
 
   // Touch event handlers for swipe functionality

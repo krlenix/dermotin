@@ -60,7 +60,7 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
           quantity: orderData.quantity || 1,
           item_price: orderData.totalPrice
         }],
-        currency: orderData.currency || countryConfig.currencyCode || 'RSD',
+        currency: orderData.currency || countryConfig.currency || 'RSD',
         value: orderData.totalPrice,
         order_id: orderData.orderId,
         num_items: orderData.quantity || 1
@@ -69,7 +69,7 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
       // Track purchase event on both Meta and TikTok
       trackEvent('purchase', purchaseEventData);
     }
-  }, [orderData, purchaseTracked, trackEvent, countryConfig.currencyCode]);
+  }, [orderData, purchaseTracked, trackEvent, countryConfig.currency]);
 
   // Animated progress steps
   useEffect(() => {

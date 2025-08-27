@@ -7,8 +7,8 @@ import { ProductVariant } from '@/config/products';
 import { CountryConfig, CourierInfo, getDefaultCourier } from '@/config/countries';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useTranslations } from 'next-intl';
-import { CheckCircle, Gift } from 'lucide-react';
-import { calculateShippingCost } from '@/utils/shipping';
+import { CheckCircle } from 'lucide-react';
+
 
 interface BundleSelectorProps {
   variants: ProductVariant[];

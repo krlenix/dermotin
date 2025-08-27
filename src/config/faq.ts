@@ -1,3 +1,6 @@
+import { getFAQContent } from './app-config';
+import { getCountryConfig } from './countries';
+
 export interface FAQItem {
   question: string;
   answer: string;
@@ -8,218 +11,131 @@ export interface CountryFAQ {
   [countryCode: string]: FAQItem[];
 }
 
-export const FAQ_DATA: CountryFAQ = {
-  rs: [
-    {
-      question: "Koliko traje dostava?",
-      answer: "Dostava traje 1-3 radna dana za teritoriju Srbije. Kurirske službe rade radnim danima od 8h do 17h.",
-      category: "delivery"
-    },
-    {
-      question: "Koliko košta dostava?",
-      answer: "Dostava za pakovanje do 2kg košta 280 dinara. Besplatna dostava za porudžbine preko 3000 dinara.",
-      category: "delivery"
-    },
-    {
-      question: "Da li mogu da platim pouzećem?",
-      answer: "Da, podržavamo plaćanje pouzećem (cash on delivery). Platite kada vam kurir dostavi paket.",
-      category: "payment"
-    },
-    {
-      question: "Koje načine plaćanja prihvatate?",
-      answer: "Prihvatamo plaćanje pouzećem (cash on delivery), kao i kartice putem sigurnog online plaćanja.",
-      category: "payment"
-    },
-    {
-      question: "Mogu li da vratim proizvod ako nisam zadovoljan?",
-      answer: "Da, nudimo 30 dana garancije povraćaja novca. Kontaktirajte nas na telefon ili email za povraćaj.",
-      category: "returns"
-    },
-    {
-      question: "Kako mogu da kontaktiram vašu korisničku podršku?",
-      answer: "Možete nas kontaktirati putem telefona ili email-a. Naš tim za podršku je dostupan radnim danima od 8h do 17h.",
-      category: "general"
-    },
-    {
-      question: "Kako da pratim moju porudžbinu?",
-      answer: "Nakon slanja proizvoda, dobićete SMS sa brojem za praćenje pošiljke kod kurirske službe.",
-      category: "delivery"
-    },
-    {
-      question: "Da li su vaši proizvodi testirani i sigurni?",
-      answer: "Da, svi naši proizvodi su dermatološki testirani, klinički odobreni i registrovani za upotrebu.",
-      category: "general"
-    },
-    {
-      question: "Da li nudite garanciju na vaše proizvode?",
-      answer: "Da, nudimo 30 dana garancije zadovoljstva. Ako niste zadovoljni rezultatima, možete vratiti proizvod za punu refundaciju.",
-      category: "returns"
-    }
-  ],
-  ba: [
-    {
-      question: "Koliko traje dostava?",
-      answer: "Dostava traje 2-4 radna dana za teritoriju BiH. Kurirske službe rade radnim danima od 8h do 17h.",
-      category: "delivery"
-    },
-    {
-      question: "Koliko košta dostava?",
-      answer: "Dostava košta 5 KM. Besplatna dostava za porudžbine preko 50 KM.",
-      category: "delivery"
-    },
-    {
-      question: "Da li mogu da platim pouzećem?",
-      answer: "Da, podržavamo plaćanje pouzećem. Platite kada vam kurir dostavi paket.",
-      category: "payment"
-    },
-    {
-      question: "Koje načine plaćanja prihvatate?",
-      answer: "Prihvatamo plaćanje pouzećem (cash on delivery), kao i kartice putem sigurnog online plaćanja.",
-      category: "payment"
-    },
-    {
-      question: "Mogu li da vratim proizvod ako nisam zadovoljan?",
-      answer: "Da, nudimo 30 dana garancije povraćaja novca. Kontaktirajte nas za povraćaj.",
-      category: "returns"
-    },
-    {
-      question: "Da li su vaši proizvodi testirani i sigurni?",
-      answer: "Da, svi naši proizvodi su dermatološki testirani, klinički odobreni i registrovani za upotrebu.",
-      category: "general"
-    },
-    {
-      question: "Kako mogu da kontaktiram vašu korisničku podršku?",
-      answer: "Možete nas kontaktirati putem telefona ili email-a. Naš tim za podršku je dostupan radnim danima od 8h do 17h.",
-      category: "general"
-    }
-  ],
-  me: [
-    {
-      question: "Koliko traje dostava?",
-      answer: "Dostava traje 1-3 radna dana za teritoriju Crne Gore. Kurirske službe rade radnim danima od 8h do 17h.",
-      category: "delivery"
-    },
-    {
-      question: "Koliko košta dostava?",
-      answer: "Dostava košta 3€. Besplatna dostava za porudžbine preko 30€.",
-      category: "delivery"
-    },
-    {
-      question: "Da li mogu da platim pouzećem?",
-      answer: "Da, podržavamo plaćanje pouzećem. Platite kada vam kurir dostavi paket.",
-      category: "payment"
-    },
-    {
-      question: "Mogu li da vratim proizvod ako nisam zadovoljan?",
-      answer: "Da, nudimo 30 dana garancije povraćaja novca. Kontaktirajte nas za povraćaj.",
-      category: "returns"
-    },
-    {
-      question: "Da li su vaši proizvodi testirani i sigurni?",
-      answer: "Da, svi naši proizvodi su dermatološki testirani, klinički odobreni i registrovani za upotrebu.",
-      category: "general"
-    },
-    {
-      question: "Kako mogu da kontaktiram vašu korisničku podršku?",
-      answer: "Možete nas kontaktirati putem telefona ili email-a. Naš tim za podršku je dostupan radnim danima od 8h do 17h.",
-      category: "general"
-    }
-  ],
-  eu: [
-    {
-      question: "How long does delivery take?",
-      answer: "Delivery takes 3-7 business days within EU. Courier services operate on weekdays from 8am to 5pm.",
-      category: "delivery"
-    },
-    {
-      question: "How much does shipping cost?",
-      answer: "Shipping costs €5. Free shipping for orders over €50.",
-      category: "delivery"
-    },
-    {
-      question: "Can I pay cash on delivery?",
-      answer: "Yes, we support cash on delivery in most EU countries. Pay when the courier delivers your package.",
-      category: "payment"
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer: "We accept cash on delivery, credit/debit cards, and secure online payment methods.",
-      category: "payment"
-    },
-    {
-      question: "Are your products tested and safe?",
-      answer: "Yes, all our products are dermatologically tested, clinically approved and registered for use according to EU regulations.",
-      category: "general"
-    },
-    {
-      question: "Can I return the product if I'm not satisfied?",
-      answer: "Yes, we offer a 30-day money-back guarantee. Contact us for returns according to EU consumer rights.",
-      category: "returns"
-    },
-    {
-      question: "GDPR and data protection?",
-      answer: "We fully comply with GDPR regulations. Your personal data is protected and used only for order processing.",
-      category: "general"
-    },
-    {
-      question: "How can I contact customer support?",
-      answer: "You can contact us via phone or email. Our support team is available on weekdays from 8am to 5pm.",
-      category: "general"
-    }
-  ],
-  bg: [
-    {
-      question: "Колко време отнема доставката?",
-      answer: "Доставката отнема 1-3 работни дни за територията на България. Куриерските служби работят в работни дни от 8ч до 17ч.",
-      category: "delivery"
-    },
-    {
-      question: "Колко струва доставката?",
-      answer: "Доставката за опаковка до 2кг струва 5 лева. Безплатна доставка за поръчки над 50 лева.",
-      category: "delivery"
-    },
-    {
-      question: "Мога ли да платя при доставка?",
-      answer: "Да, поддържаме плащане при доставка. Платете когато куриерът ви достави пакета.",
-      category: "payment"
-    },
-    {
-      question: "Какви методи на плащане приемате?",
-      answer: "Приемаме плащане при доставка, както и карти чрез сигурно онлайн плащане.",
-      category: "payment"
-    },
-    {
-      question: "Мога ли да върна продукта, ако не съм доволен?",
-      answer: "Да, предлагаме 30 дни гаранция за връщане на парите. Свържете се с нас на телефон или имейл за връщане.",
-      category: "returns"
-    },
-    {
-      question: "Тествани ли са вашите продукти и безопасни ли са?",
-      answer: "Да, всички наши продукти са дерматологично тествани, клинично одобрени и регистрирани за употреба.",
-      category: "general"
-    },
-    {
-      question: "Как да проследя моята поръчка?",
-      answer: "След изпращане на продукта ще получите SMS с номер за проследяване на пратката в куриерската служба.",
-      category: "delivery"
-    },
-    {
-      question: "Как мога да се свържа с клиентската ви поддръжка?",
-      answer: "Можете да се свържете с нас по телефон или имейл. Нашият екип за поддръжка е на разположение в работни дни от 8ч до 17ч.",
-      category: "general"
-    },
-    {
-      question: "Предлагате ли гаранция на вашите продукти?",
-      answer: "Да, предлагаме 30 дни гаранция за удовлетвореност. Ако не сте доволни от резултатите, можете да върнете продукта за пълна компенсация.",
-      category: "returns"
-    }
-  ]
-};
-
-export function getFAQForCountry(countryCode: string): FAQItem[] {
-  return FAQ_DATA[countryCode] || FAQ_DATA['rs'];
+// FAQ template structure - defines which FAQs to generate
+export interface FAQTemplate {
+  key: string;
+  category: 'delivery' | 'product' | 'payment' | 'returns' | 'general';
+  questionKey: string; // Translation key for question
+  answerKey: string;   // Translation key for answer template
 }
 
-export function getFAQByCategory(countryCode: string, category: string): FAQItem[] {
-  return getFAQForCountry(countryCode).filter(item => item.category === category);
+// Define all available FAQ templates - countries can pick which ones to show
+export const ALL_FAQ_TEMPLATES: Record<string, FAQTemplate> = {
+  delivery_time: { key: 'delivery_time', category: 'delivery', questionKey: 'faq_ui.delivery_time_question', answerKey: 'faq_ui.delivery_time_answer' },
+  delivery_cost: { key: 'delivery_cost', category: 'delivery', questionKey: 'faq_ui.delivery_cost_question', answerKey: 'faq_ui.delivery_cost_answer' },
+  cash_on_delivery: { key: 'cash_on_delivery', category: 'payment', questionKey: 'faq_ui.cash_on_delivery_question', answerKey: 'faq_ui.cash_on_delivery_answer' },
+  payment_methods: { key: 'payment_methods', category: 'payment', questionKey: 'faq_ui.payment_methods_question', answerKey: 'faq_ui.payment_methods_answer' },
+  returns: { key: 'returns', category: 'returns', questionKey: 'faq_ui.returns_question', answerKey: 'faq_ui.returns_answer' },
+  support: { key: 'support', category: 'general', questionKey: 'faq_ui.support_question', answerKey: 'faq_ui.support_answer' },
+  tracking: { key: 'tracking', category: 'delivery', questionKey: 'faq_ui.tracking_question', answerKey: 'faq_ui.tracking_answer' },
+  safety: { key: 'safety', category: 'general', questionKey: 'faq_ui.safety_question', answerKey: 'faq_ui.safety_answer' },
+  warranty: { key: 'warranty', category: 'returns', questionKey: 'faq_ui.warranty_question', answerKey: 'faq_ui.warranty_answer' },
+  // More FAQ items can be added here and countries can choose which ones to display
+  shipping_international: { key: 'shipping_international', category: 'delivery', questionKey: 'faq_ui.shipping_international_question', answerKey: 'faq_ui.shipping_international_answer' },
+  bulk_orders: { key: 'bulk_orders', category: 'general', questionKey: 'faq_ui.bulk_orders_question', answerKey: 'faq_ui.bulk_orders_answer' }
+};
+
+// Get FAQ templates for a specific country (based on country configuration)
+export function getFAQTemplatesForCountry(countryCode: string): FAQTemplate[] {
+  const countryConfig = getCountryConfig(countryCode);
+  return countryConfig.business.faqItems.map(key => ALL_FAQ_TEMPLATES[key]).filter(Boolean);
+}
+
+// Dynamic FAQ generation function - now completely modular and country-configurable
+export function generateFAQData(countryCode: string, translations: Record<string, unknown>): FAQItem[] {
+  const faqContent = getFAQContent(countryCode);
+  const faqTemplates = getFAQTemplatesForCountry(countryCode);
+  
+  return faqTemplates.map(template => {
+    // Get question from translations
+    const question = getNestedTranslation(translations, template.questionKey);
+    
+    // Get answer template from translations and replace placeholders
+    let answer = getNestedTranslation(translations, template.answerKey);
+    
+    // Replace placeholders with dynamic data
+    answer = replacePlaceholders(answer, faqContent);
+    
+    return {
+      question,
+      answer,
+      category: template.category
+    };
+  });
+}
+
+// Helper function to get nested translation keys (e.g., 'faq_ui.delivery_time_question')
+function getNestedTranslation(translations: Record<string, unknown>, key: string): string {
+  const keys = key.split('.');
+  let value: unknown = translations;
+  
+  for (const k of keys) {
+    if (value && typeof value === 'object' && k in value) {
+      value = (value as Record<string, unknown>)[k];
+    } else {
+      console.warn(`Translation key not found: ${key}`, { translations, keys, currentKey: k });
+      return key; // Return the key itself as fallback
+    }
+  }
+  
+  return typeof value === 'string' ? value : key;
+}
+
+// Helper function to replace placeholders in answer templates
+function replacePlaceholders(template: string, faqContent: Record<string, unknown>): string {
+  if (!template || typeof template !== 'string') {
+    console.warn('Invalid template provided to replacePlaceholders:', template);
+    return template || '';
+  }
+
+  // Debug logging to help identify placeholder issues
+  if (template.includes('{freeShippingThreshold}')) {
+    console.log('FAQ Debug - Replacing freeShippingThreshold:', {
+      template,
+      freeShippingThreshold: (faqContent as Record<string, Record<string, unknown>>)?.delivery?.freeShippingThreshold,
+      delivery: faqContent?.delivery
+    });
+  }
+
+  try {
+    const content = faqContent as Record<string, Record<string, unknown>>;
+    return template
+      .replace('{deliveryTime}', (content?.delivery?.time as string) || 'N/A')
+      .replace('{deliveryArea}', (content?.delivery?.area as string) || 'N/A')
+      .replace('{cost}', (content?.delivery?.cost as string) || 'N/A')
+      .replace('{currency}', (content?.delivery?.currency as string) || 'N/A')
+      .replace('{threshold}', (content?.delivery?.freeShippingThreshold as string) || 'N/A')
+      .replace('{freeShippingThreshold}', (content?.delivery?.freeShippingThreshold as string) || 'N/A')
+      .replace('{currencySymbol}', (content?.delivery?.currencySymbol as string) || 'N/A')
+      .replace('{periodDays}', (content?.returns?.periodDays as string) || 'N/A')
+      .replace('{phone}', (content?.company?.phone as string) || 'N/A')
+      .replace('{email}', (content?.company?.email as string) || 'N/A')
+      .replace('{paymentMethods}', Array.isArray(content?.payment?.methods) ? (content.payment.methods as string[]).join(', ') : (content?.payment?.methods as string) || 'N/A');
+  } catch (error) {
+    console.error('Error replacing placeholders:', error, { template, faqContent });
+    return template;
+  }
+}
+
+// This will be populated dynamically by the FAQ component
+export const FAQ_DATA: CountryFAQ = {};
+
+export function getFAQForCountry(countryCode: string, translations?: Record<string, unknown>): FAQItem[] {
+  // If translations are provided, generate FAQ dynamically
+  if (translations) {
+    try {
+      return generateFAQData(countryCode, translations);
+    } catch (error) {
+      console.warn('Error generating FAQ with translations, falling back to empty FAQ:', error);
+    }
+  }
+  
+  // If no translations provided, return empty array
+  // The component should handle loading translations properly
+  console.warn(`No translations provided for FAQ in country: ${countryCode}`);
+  return [];
+}
+
+export function getFAQByCategory(countryCode: string, category: string, translations?: Record<string, unknown>): FAQItem[] {
+  return getFAQForCountry(countryCode, translations).filter(item => item.category === category);
 }
