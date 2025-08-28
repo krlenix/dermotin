@@ -21,6 +21,7 @@ import { getDefaultCourier } from '@/config/countries';
 import { Package, Truck, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
+import { CompactOrderSummary } from './CompactOrderSummary';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
 
 interface CheckoutFormProps {
@@ -34,6 +35,7 @@ interface CheckoutFormProps {
   onAddToBundle: (productId: string, price: number) => void;
   selectedCourier?: CourierInfo;
   onCourierChange?: (courier: CourierInfo) => void;
+  onReselect?: () => void;
 }
 
 export function CheckoutForm({ 
@@ -46,7 +48,8 @@ export function CheckoutForm({
   mainProductId,
   onAddToBundle,
   selectedCourier,
-  onCourierChange
+  onCourierChange,
+  onReselect
 }: CheckoutFormProps) {
   const t = useTranslations();
   // Simple price formatter using the country's currency symbol (no conversion)
@@ -305,6 +308,16 @@ export function CheckoutForm({
               </div>
             </div>
 
+            {/* Compact Order Summary */}
+            <CompactOrderSummary
+              selectedVariant={selectedVariant}
+              productName={productName}
+              countryConfig={countryConfig}
+              bundleItems={bundleItems}
+              onReselect={onReselect || (() => {})}
+              className="mb-4"
+            />
+
                          {/* Courier Selection */}
              {showCourierSelection && (
                <div className="space-y-3">
@@ -464,7 +477,8 @@ export function CheckoutForm({
         </CardContent>
       </Card>
 
-      {/* Order Summary */}
+      {/* Order Summary - COMMENTED OUT FOR FUTURE USE */}
+      {/* 
       <Card className="border-brand-orange/30 bg-gradient-to-br from-white to-orange-50/30 shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-brand-orange text-lg">
@@ -474,6 +488,7 @@ export function CheckoutForm({
         </CardHeader>
         <CardContent className="space-y-5">
           {/* Product Details */}
+          {/* 
           <div className="flex justify-between items-start p-4 bg-white/80 rounded-lg border border-orange-100">
             <div className="flex-1">
               <h4 className="font-semibold text-gray-900 text-base">{productName}</h4>
@@ -493,6 +508,7 @@ export function CheckoutForm({
           </div>
           
           {/* Price Breakdown */}
+          {/* 
           <div className="space-y-3 p-4 bg-gray-50/50 rounded-lg">
             <div className="flex justify-between text-sm">
               <span className="text-gray-700">{t('order_summary.product')}</span>
@@ -500,6 +516,7 @@ export function CheckoutForm({
             </div>
             
             {/* Bundle Items */}
+            {/* 
             {Object.keys(bundleItems).length > 0 && (
               <>
                 {Object.entries(bundleItems).map(([productId, price]) => (
@@ -527,6 +544,7 @@ export function CheckoutForm({
           </div>
 
           {/* Trust Indicators */}
+          {/* 
           <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-gray-200">
             <div className="flex items-center gap-2 text-gray-600">
               <Shield className="h-4 w-4 text-green-600" />
@@ -543,6 +561,7 @@ export function CheckoutForm({
           </div>
         </CardContent>
       </Card>
+      */}
     </div>
   );
 }

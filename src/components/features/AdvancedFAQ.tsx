@@ -158,22 +158,26 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
               onClick={() => toggleItem(index.toString())}
             >
               <CardContent className="p-0">
-                <div className="w-full px-4 py-3 flex justify-between items-center hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    {getCategoryIcon(item.category)}
-                    <span className="font-semibold text-gray-900">{item.question}</span>
+                <div className="w-full px-3 md:px-4 py-3 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                    <div className="flex-shrink-0">
+                      {getCategoryIcon(item.category)}
+                    </div>
+                    <span className="font-semibold text-gray-900 text-sm md:text-base leading-tight">{item.question}</span>
                   </div>
-                  <ChevronDown 
-                    className={`h-5 w-5 text-gray-500 transition-transform ${
-                      isOpen ? 'rotate-180' : ''
-                    }`} 
-                  />
+                  <div className="flex-shrink-0 ml-2">
+                    <ChevronDown 
+                      className={`h-4 w-4 md:h-5 md:w-5 text-gray-500 transition-transform ${
+                        isOpen ? 'rotate-180' : ''
+                      }`} 
+                    />
+                  </div>
                 </div>
                 
                 {isOpen && (
-                  <div className="px-4 pb-4">
+                  <div className="px-3 md:px-4 pb-3 md:pb-4">
                     <div className="border-t border-gray-100 pt-3">
-                      <p className="text-gray-700 leading-relaxed">{item.answer}</p>
+                      <p className="text-gray-700 leading-relaxed text-sm md:text-base">{item.answer}</p>
                     </div>
                   </div>
                 )}
@@ -185,28 +189,28 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
 
       {/* Contact Section */}
       <Card className="bg-gradient-to-r from-brand-green/10 to-brand-orange/10 border-brand-orange/20">
-        <CardContent className="p-4 text-center">
-          <h3 className="text-xl font-bold text-gray-900 mb-3">
+        <CardContent className="p-3 md:p-4 text-center">
+          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">
             {t('faq_ui.no_answer')}
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">
             {t('faq_ui.support_team')}
           </p>
           
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="flex items-center justify-center gap-2 p-3 bg-white rounded-lg">
-              <Phone className="h-5 w-5 text-brand-orange" />
+          <div className="grid md:grid-cols-2 gap-3 md:gap-4">
+            <div className="flex items-center justify-center gap-2 p-2 md:p-3 bg-white rounded-lg">
+              <Phone className="h-4 w-4 md:h-5 md:w-5 text-brand-orange flex-shrink-0" />
               <div className="text-left">
-                <p className="font-semibold text-sm">{t('faq_ui.call_us')}</p>
-                <p className="text-sm text-gray-600">{t('faq_ui.working_hours')}</p>
+                <p className="font-semibold text-xs md:text-sm">{t('faq_ui.call_us')}</p>
+                <p className="text-xs md:text-sm text-gray-600">{t('faq_ui.working_hours')}</p>
               </div>
             </div>
             
-            <div className="flex items-center justify-center gap-2 p-3 bg-white rounded-lg">
-              <Mail className="h-5 w-5 text-brand-orange" />
+            <div className="flex items-center justify-center gap-2 p-2 md:p-3 bg-white rounded-lg">
+              <Mail className="h-4 w-4 md:h-5 md:w-5 text-brand-orange flex-shrink-0" />
               <div className="text-left">
-                <p className="font-semibold text-sm">{t('faq_ui.send_email')}</p>
-                <p className="text-sm text-gray-600">{t('faq_ui.response_time')}</p>
+                <p className="font-semibold text-xs md:text-sm">{t('faq_ui.send_email')}</p>
+                <p className="text-xs md:text-sm text-gray-600">{t('faq_ui.response_time')}</p>
               </div>
             </div>
           </div>

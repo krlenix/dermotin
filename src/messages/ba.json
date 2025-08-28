@@ -293,6 +293,8 @@
     "title": "Pregled narudžbe",
     "product": "Proizvod:",
     "additional_product": "+ Dodatni proizvod:",
+    "additional_items": "dodatnih proizvoda",
+    "change": "Promijeni",
     "delivery": "Dostava:",
     "free": "BESPLATNO",
     "total": "Ukupno:",

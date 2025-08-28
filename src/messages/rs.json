@@ -294,6 +294,8 @@
     "title": "Pregled porudžbine",
     "product": "Proizvod:",
     "additional_product": "+ Dodatni proizvod:",
+    "additional_items": "dodatnih proizvoda",
+    "change": "Promeni",
     "delivery": "Dostava:",
     "free": "BESPLATNO",
     "total": "Ukupno:",

@@ -714,9 +714,9 @@ export default function HomePage() {
 
         {/* FAQ Section */}
         <section id="faq" className="py-20 bg-white scroll-mt-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <AdvancedFAQ countryCode={locale} className="bg-gray-50 rounded-2xl p-8 shadow-sm" />
+          <div className="container mx-auto px-2 md:px-4">
+            <div className="max-w-6xl mx-auto">
+              <AdvancedFAQ countryCode={locale} className="bg-gray-50 rounded-2xl p-3 md:p-8 shadow-sm" />
             </div>
           </div>
         </section>

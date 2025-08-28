@@ -98,6 +98,21 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     }
   };
 
+  // Smooth scroll to quantity selection (Bundle Selector)
+  const scrollToQuantitySelection = () => {
+    const bundleSelector = document.getElementById('bundle-selector');
+    if (bundleSelector) {
+      // Calculate offset to show the bundle selector
+      const elementTop = bundleSelector.getBoundingClientRect().top;
+      const offsetPosition = elementTop + window.pageYOffset - 100; // 100px offset for better visibility
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // Reusable CTA Button Component
   const CTAButton = ({ size = "lg", className = "", showPulse = false }: { size?: "sm" | "lg", className?: string, showPulse?: boolean }) => (
     <Button 
@@ -566,6 +581,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   onAddToBundle={handleAddToBundle}
                   selectedCourier={selectedCourier}
                   onCourierChange={setSelectedCourier}
+                  onReselect={scrollToQuantitySelection}
                 />
                 
 
