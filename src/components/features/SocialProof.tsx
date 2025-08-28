@@ -23,8 +23,15 @@ export function SocialProof({
 }: SocialProofProps) {
   const t = useTranslations('social_proof');
   const [currentPurchases, setCurrentPurchases] = useState(recentPurchases);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     // Simulate live purchase updates
     const interval = setInterval(() => {
       if (Math.random() > 0.7) {
@@ -33,7 +40,7 @@ export function SocialProof({
     }, 30000); // Update every 30 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isClient]);
 
   const trustBadges = [
     { icon: Shield, text: t('money_back_guarantee') },

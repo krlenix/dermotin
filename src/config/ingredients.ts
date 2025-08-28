@@ -284,6 +284,15 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     bulgarianDescription: 'Съдържа природни танини, традиционно се използва за стягане и защита на кожата',
     category: 'herbal_extract'
   },
+  'quercus-bark-extract': {
+    id: 'quercus-bark-extract',
+    inciName: 'Quercus Robur Bark Extract',
+    serbianName: 'Ekstrakt hrastove kore',
+    bulgarianName: 'Екстракт от кора на дъб',
+    description: 'Bogat prirodnim taninima (8-20%), deluje adstringentno i smanjuje iritacije kože',
+    bulgarianDescription: 'Богат на природни танини (8-20%), действа стягащо и намалява раздразненията на кожата',
+    category: 'herbal_extract'
+  },
   'rosemary-oil': {
     id: 'rosemary-oil',
     inciName: 'Rosmarinus Officinalis Oil',
@@ -339,5 +348,70 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     description: 'Osvežava i čisti kožu, ima prirodna antiseptička svojstva',
     bulgarianDescription: 'Освежава и почиства кожата, има естествени антисептични свойства',
     category: 'essential_oil'
+  },
+
+  // BIOROID-specific ingredients
+  'aesculus-extract': {
+    id: 'aesculus-extract',
+    inciName: 'Aesculus Hippocastanum Seed Extract',
+    serbianName: 'Ekstrakt divljeg kestena',
+    bulgarianName: 'Екстракт от див кестен',
+    description: 'Poznato po jačajućem i tonizujućem efektu, tradicionalno se koristi za negu osetljive kože',
+    bulgarianDescription: 'Известен със своя укрепващ и тонизиращ ефект, традиционно се използва за грижа за чувствителна кожа',
+    category: 'herbal_extract'
+  },
+  'capsella-extract': {
+    id: 'capsella-extract',
+    inciName: 'Capsella Bursa-Pastoris Extract',
+    serbianName: 'Ekstrakt pastirske torbice',
+    bulgarianName: 'Екстракт от овчарска торбичка',
+    description: 'Doprinosi održavanju komfora kože, tradicionalno se koristi u nezi osetljive kože',
+    bulgarianDescription: 'Допринася за поддържане на комфорта на кожата, традиционно се използва в грижата за чувствителна кожа',
+    category: 'herbal_extract'
+  },
+  'geranium-extract': {
+    id: 'geranium-extract',
+    inciName: 'Geranium Robertianum Extract',
+    serbianName: 'Ekstrakt zdravca',
+    bulgarianName: 'Екстракт от здравец',
+    description: 'Osvežavajući i umirujući efekat na kožu, tradicionalno se koristi za negu problematične kože',
+    bulgarianDescription: 'Освежаващ и успокояващ ефект върху кожата, традиционно се използва за грижа за проблемна кожа',
+    category: 'herbal_extract'
+  },
+  'chamomile-extract': {
+    id: 'chamomile-extract',
+    inciName: 'Chamomilla Recutita Flower Extract',
+    serbianName: 'Ekstrakt kamilice',
+    bulgarianName: 'Екстракт от лайка',
+    description: 'Nežno umirujuće dejstvo, pogodan za nežnu kožu, tradicionalno se koristi za smirenje iritacija',
+    bulgarianDescription: 'Нежно успокояващо действие, подходящ за нежна кожа, традиционно се използва за успокояване на раздразнения',
+    category: 'herbal_extract'
+  },
+  'menthol': {
+    id: 'menthol',
+    inciName: 'Menthol',
+    serbianName: 'Mentol',
+    bulgarianName: 'Ментол',
+    description: 'Pruža hlađenje i osvežavajući osećaj, smiruje kožu i daje prijatnu svežinu',
+    bulgarianDescription: 'Осигурява охлаждане и освежаващо усещане, успокоява кожата и дава приятна свежест',
+    category: 'active_compound'
+  },
+  'patchouli-oil': {
+    id: 'patchouli-oil',
+    inciName: 'Pogostemon Cablin Leaf Oil',
+    serbianName: 'Eterično ulje pačulija',
+    bulgarianName: 'Етерично масло от пачули',
+    description: 'Aromatično ulje tradicionalno korišćeno u nezi kože, ima umirujuće svojstva',
+    bulgarianDescription: 'Ароматично масло традиционно използвано в грижата за кожата, има успокояващи свойства',
+    category: 'essential_oil'
+  },
+  'limonene': {
+    id: 'limonene',
+    inciName: 'Limonene',
+    serbianName: 'Limonen',
+    bulgarianName: 'Лимонен',
+    description: 'Prirodna komponenta eteričnih ulja, daje prijatan miris i ima blago antiseptičko dejstvo',
+    bulgarianDescription: 'Естествена съставка на етеричните масла, придава приятен аромат и има слабо антисептично действие',
+    category: 'other'
   }
 };

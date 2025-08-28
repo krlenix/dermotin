@@ -63,6 +63,19 @@ export function LegalDocumentModal({
   const processTemplate = (template: string, config: CountryConfig): string => {
     let processed = template;
 
+    // Get the correct website domain - prioritize environment variable
+    const websiteDomain = process.env.NEXT_PUBLIC_DOMAIN?.replace(/^https?:\/\//, '') || 
+                         process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, '') || 
+                         config.company.website;
+    
+    // Debug logging - remove this after testing
+    console.log('Legal Document Debug:', {
+      NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      configWebsite: config.company.website,
+      finalWebsiteDomain: websiteDomain
+    });
+
     // Process company placeholders
     processed = processed.replace(/\{\{company\.name\}\}/g, config.company.name);
     processed = processed.replace(/\{\{company\.legalName\}\}/g, config.company.legalName);
@@ -74,7 +87,7 @@ export function LegalDocumentModal({
     processed = processed.replace(/\{\{company\.registrationNumber\}\}/g, config.company.registrationNumber);
     processed = processed.replace(/\{\{company\.phone\}\}/g, config.company.phone);
     processed = processed.replace(/\{\{company\.email\}\}/g, config.company.email);
-    processed = processed.replace(/\{\{company\.website\}\}/g, config.company.website);
+    processed = processed.replace(/\{\{company\.website\}\}/g, websiteDomain);
     processed = processed.replace(/\{\{company\.activityCode\}\}/g, config.company.activityCode);
     processed = processed.replace(/\{\{company\.activityDescription\}\}/g, config.company.activityDescription);
 

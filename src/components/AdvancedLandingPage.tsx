@@ -122,7 +122,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     // Store order data in session storage immediately
     const orderForThankYou = {
       ...apiOrderData,
-      orderId: `ORDER_${Date.now()}` // Generate temporary ID
+      orderId: `ORDER_${crypto.randomUUID().slice(0, 8).toUpperCase()}` // Generate temporary ID
     };
     
     sessionStorage.setItem('completedOrder', JSON.stringify(orderForThankYou));

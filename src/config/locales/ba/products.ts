@@ -181,7 +181,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-12",
-        featured: true
+        featured: true,
+        likes: 43
       },
       {
         id: "ba2",
@@ -192,7 +193,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-09",
-        featured: true
+        featured: true,
+        likes: 39
       },
       {
         id: "ba3",
@@ -203,7 +205,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-06",
-        featured: true
+        featured: true,
+        likes: 36
       },
       {
         id: "ba4",
@@ -214,7 +217,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-03",
-        featured: false
+        featured: false,
+        likes: 30
       },
       {
         id: "ba5",
@@ -225,7 +229,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-11-30",
-        featured: true
+        featured: true,
+        likes: 33
       },
       {
         id: "ba6",
@@ -236,7 +241,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-11-27",
-        featured: false
+        featured: false,
+        likes: 27
       }
     ]
   },
@@ -425,7 +431,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-13",
-        featured: true
+        featured: true,
+        likes: 44
       },
       {
         id: "bab2",
@@ -436,7 +443,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-10",
-        featured: true
+        featured: true,
+        likes: 40
       },
       {
         id: "bab3",
@@ -447,7 +455,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-08",
-        featured: true
+        featured: true,
+        likes: 37
       },
       {
         id: "bab4",
@@ -458,7 +467,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-05",
-        featured: false
+        featured: false,
+        likes: 31
       },
       {
         id: "bab5",
@@ -469,7 +479,355 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-02",
-        featured: true
+        featured: true,
+        likes: 35
+      }
+    ]
+  },
+
+  biowart: {
+    id: 'biowart',
+    name: 'BIOWART',
+    description: 'Prirodna pomoć u borbi protiv virusnih bradavica. Ubrzava proces regeneracije kože pogođene virusnim bradavicama. Pruža zaštitu od iritacija i ubrzava zarastanje kože. Pogodan za svakodnevnu upotrebu, čak i na osjetljivoj koži. Bez parabena, veštačkih boja i mirisa, idealan je za prirodnu i bezbjednu njegu kože.',
+    shortDescription: 'Prirodna pomoć u borbi protiv virusnih bradavica',
+    purpose: 'Podržava regeneraciju kože pogođene virusnim bradavicama',
+    category: 'skincare',
+    slug: 'biowart',
+    alternativeSlugs: [],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'BIOWART - Prirodna pomoć protiv virusnih bradavica | DERMOTIN',
+    seoDescription: 'BIOWART od DERMOTIN brenda - prirodna formula sa 6 biljnih ekstrakata i 7 eteričnih ulja za njegu kože pogođene virusnim bradavicama. Bez parabena, pogodan za osjetljivu kožu. 50ml.',
+    urgencyElements: {
+      limitedStock: 15,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 23,
+        timeFrame: 'poslednja 24h'
+      }
+    },
+    images: {
+      main: '/images/products/biowart/biowart-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/biowart/biowart-box-only.png',
+        '/images/products/biowart/biowart-open-bottle.png',
+        '/images/products/biowart/biowart-old-product-image.png'
+      ],
+      thumbnail: '/images/products/biowart/biowart-box-only.png',
+      fallback: '/images/products/biowart/biowart-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'biowart-1pak',
+        sku: 'BIOWART',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno 2 sedmice upotrebe',
+        quantity: 1,
+        price: 39.9,
+        currency: 'BAM',
+        discountPrice: 33.9,
+        isDefault: true
+      },
+      {
+        id: 'biowart-2pak',
+        sku: 'BIOWART',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno mjesec dana upotrebe',
+        quantity: 2,
+        price: 79.8,
+        currency: 'BAM',
+        discountPrice: 59.9
+      },
+      {
+        id: 'biowart-3pak',
+        sku: 'BIOWART',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 2 mjeseca upotrebe',
+        quantity: 3,
+        price: 119.7,
+        currency: 'BAM',
+        discountPrice: 79.9
+      }
+    ],
+    benefits: [
+      'Podržava regeneraciju kože pogođene virusnim bradavicama',
+      'Smiruje iritacije i ubrzava zarastanje kože',
+      'Pruža zaštitu od spoljašnjih uticaja',
+      'Pogodan za svakodnevnu upotrebu, čak i na osjetljivoj koži',
+      'Bez parabena, veštačkih boja i mirisa',
+      'Idealan za prirodnu i bezbjednu njegu kože',
+      'Leave-on formula - ne ispira se, djeluje kontinuirano',
+      'Sadrži 6 ljekovitih biljaka i 7 eteričnih ulja'
+    ],
+    ingredients: [
+      // Key active ingredients first - based on BIOWART documentation
+      'chelidonium-extract', // Rus - primary ingredient for warts (7-8.5%)
+      'calendula-extract', // Neven - highest concentration (7-8.5%)
+      'achillea-extract', // Hajdučka trava (3-4.5%)
+      'salvia-leaf-extract', // Žalfija (3-4.5%)
+      'hypericum-extract', // Kantarion (3-4.5%)
+      'galium-extract', // Ivanjsko cvijeće (3-4.5%)
+      'quercus-bark-extract', // Hrastova kora (3-4.5%)
+      // Essential oils - 7 different oils
+      'sage-oil', // Eterično ulje žalfije
+      'eucalyptus-oil', // Eterično ulje eukaliptusa
+      'peppermint-oil', // Eterično ulje nane
+      'clove-oil', // Eterično ulje karanfilića
+      'thyme-oil', // Eterično ulje timijana
+      'anise-oil', // Eterično ulje anisa
+      'lemon-oil', // Eterično ulje limuna
+      // Vitamins and nutrients
+      'panthenol', // Pro-Vitamin B5 (0.91%)
+      'urea', // Urea (0.91%)
+      'sweet-almond-oil', // Prunus Amygdalus Dulcis Oil
+      'vitamin-e', // Tocopheryl Acetate
+      'vitamin-a', // Retinyl Palmitate
+      // Base components
+      'aqua',
+      'stearic-acid',
+      'glycerin', // 1.83%
+      'castor-oil', // Ricinus Communis Seed Oil
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax', // Cera Alba
+      // Functional ingredients
+      'triethanolamine',
+      'carbomer',
+      // Preservatives
+      'phenoxyethanol',
+      'sodium-benzoate',
+      'potassium-sorbate'
+    ],
+    usage: 'Nanositi tanak sloj BIOWART melema na čistu i suhu kožu dva do tri puta dnevno ili po potrebi. Pogodan za svakodnevnu upotrebu. Sadržaj: 50ml.',
+    warnings: [
+      'Samo za spoljašnju upotrebu',
+      'Izbjegavati kontakt sa očima',
+      'U slučaju preosjetljivosti ili alergijske reakcije, prekinuti upotrebu i konsultovati se sa liječnikom',
+      'Sadrži alergene: Limonene, Linalool, Eugenol, Citral'
+    ],
+    productFAQ: [
+      {
+        question: 'Kako se koristi BIOWART?',
+        answer: 'Nanositi tanak sloj BIOWART melema na čistu i suhu kožu dva do tri puta dnevno ili po potrebi. Ne ispira se nakon nanošenja.',
+        category: 'usage'
+      },
+      {
+        question: 'Koji su glavni aktivni sastojci u BIOWART proizvodu?',
+        answer: 'BIOWART sadrži 6 ljekovitih biljaka (rus, neven, hajdučka trava, žalfija, kantarion, ivanjsko cvijeće, hrastova kora) i 7 eteričnih ulja (žalfija, eukaliptus, nana, karanfilić, timijan, anis, limun), obogaćen vitaminima A, E i B5.',
+        category: 'ingredients'
+      },
+      {
+        question: 'Da li je BIOWART bezbijedan za upotrebu?',
+        answer: 'Da, BIOWART je EU-kompatibilan kozmetički proizvod koji je prošao sve potrebne testove bezbjednosti. Bez parabena, veštačkih boja i mirisa. Pogodan za svakodnevnu upotrebu.',
+        category: 'safety'
+      },
+      {
+        question: 'Za koje tipove kože je pogodan BIOWART?',
+        answer: 'BIOWART je pogodan za sve tipove kože, uključujući i osjetljivu kožu. Formula je posebno dizajnirana za njegu kože pogođene virusnim bradavicama.',
+        category: 'usage'
+      },
+      {
+        question: 'Kada mogu očekivati rezultate?',
+        answer: 'Rezultati mogu biti individualni. Preporučuje se redovna upotreba 2-3 puta dnevno. Za najbolje rezultate, koristiti kontinuirano prema uputstvu.',
+        category: 'effects'
+      }
+    ]
+  },
+
+  bioroid: {
+    id: 'bioroid',
+    name: 'BIOROID',
+    description: 'Prirodna podrška za ublažavanje iritacije i nelagodnosti kože analnog područja. Smiruje osjećaj svraba, pečenja i nelagodnosti. Podržava regeneraciju osjetljive kože uz održavanje hidratacije. Stvara nježnu zaštitnu barijeru protiv vanjskih faktora. Pogodan za svakodnevnu upotrebu, čak i na osjetljivoj i iritiranoj koži. Bez parabena, veštačkih boja i mirisa - prirodan i bezbijedan izbor za njegu kože.',
+    shortDescription: 'Prirodna podrška za ublažavanje iritacije kože analnog područja',
+    purpose: 'Pomaže u njezi i zaštiti osjetljive kože analnog područja',
+    category: 'skincare',
+    slug: 'bioroid',
+    alternativeSlugs: [],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'BIOROID - Prirodna podrška za njegu analne kože | DERMOTIN',
+    seoDescription: 'BIOROID od DERMOTIN brenda - prirodna formula sa biljnim ekstraktima za njegu osjetljive kože analnog područja. Smiruje iritacije, podržava regeneraciju. Bez parabena. 50ml.',
+    urgencyElements: {
+      limitedStock: 12,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 18,
+        timeFrame: 'zadnja 24h'
+      }
+    },
+    images: {
+      main: '/images/products/bioroid/bioroid-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/bioroid/bioroid-box-only.png',
+        '/images/products/bioroid/bioroid-open-bottle.png',
+        '/images/products/bioroid/bioroid-old-product-image.png'
+      ],
+      thumbnail: '/images/products/bioroid/bioroid-box-only.png',
+      fallback: '/images/products/bioroid/bioroid-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'bioroid-1pak',
+        sku: 'BIOROID',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno 2 sedmice upotrebe',
+        quantity: 1,
+        price: 49.9,
+        currency: 'BAM',
+        discountPrice: 33.9,
+        isDefault: true
+      },
+      {
+        id: 'bioroid-2pak',
+        sku: 'BIOROID',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno mjesec dana upotrebe',
+        quantity: 2,
+        price: 99.8,
+        currency: 'BAM',
+        discountPrice: 59.9
+      },
+      {
+        id: 'bioroid-3pak',
+        sku: 'BIOROID',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 2 mjeseca upotrebe',
+        quantity: 3,
+        price: 149.7,
+        currency: 'BAM',
+        discountPrice: 79.9
+      }
+    ],
+    benefits: [
+      'Smiruje osjećaj svraba, pečenja i nelagodnosti',
+      'Podržava regeneraciju osjetljive kože uz održavanje hidratacije',
+      'Stvara nježnu zaštitnu barijeru protiv vanjskih faktora',
+      'Pogodan za svakodnevnu upotrebu, čak i na osjetljivoj koži',
+      'Bez parabena, veštačkih boja i mirisa',
+      'Prirodan i bezbijedan izbor za njegu kože',
+      'Dugotrajno umirujući i osvježavajući osjećaj',
+      'Sadrži pažljivo odabrane biljne ekstrakte i eterična ulja'
+    ],
+    ingredients: [
+      // Key active herbal extracts - based on BIOROID documentation
+      'achillea-extract', // Hajdučka trava (Achillea millefolium L.)
+      'aesculus-extract', // Divlji kesten (Aesculus hippocastanum L.)
+      'calendula-extract', // Neven (Calendula officinalis L.)
+      'capsella-extract', // Pastirska torbica (Capsella bursa-pastoris L.)
+      'geranium-extract', // Zdravac (Geranium robertianum L.)
+      'chamomile-extract', // Kamilica (Chamomilla recutita L.)
+      // Vitamins and nutrients
+      'panthenol', // Pro-Vitamin B5
+      'vitamin-e', // Tocopheryl Acetate
+      'vitamin-a', // Retinyl Palmitate
+      'sweet-almond-oil', // Prunus amygdalus dulcis oil
+      'menthol', // Menthol for cooling effect
+      // Essential oils blend
+      'lavender-oil', // Lavandula angustifolia oil
+      'tea-tree-oil', // Melaleuca alternifolia leaf oil
+      'patchouli-oil', // Pogostemon cablin leaf oil
+      'clove-oil', // Eugenia caryophyllus leaf oil
+      // Base components
+      'aqua',
+      'alcohol',
+      'stearic-acid',
+      'glycerin',
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax',
+      'urea',
+      // Functional ingredients
+      'triethanolamine',
+      'carbomer',
+      // Preservatives
+      'phenoxyethanol',
+      'ethylhexylglycerin',
+      'potassium-sorbate',
+      // Natural components
+      'limonene'
+    ],
+    usage: 'Nanositi tanak sloj BIOROID kreme dva puta dnevno na čistu i suhu kožu analnog područja. Za najbolje rezultate, nanositi nakon defekacije i svakodnevne higijene. Pogodan za kontinuiranu, dugotrajnu upotrebu bez prekida. Sadržaj: 50ml.',
+    warnings: [
+      'Samo za vanjsku upotrebu',
+      'Izbjegavati kontakt sa očima. Ukoliko dođe do kontakta, temeljno isprati vodom',
+      'Ne koristiti ukoliko ste preosjetljivi na bilo koji od sastojaka',
+      'U slučaju trajne iritacije, prekinuti upotrebu i potražiti liječničku pomoć',
+      'Čuvati van dosega djece',
+      'Čuvati na sobnoj temperaturi'
+    ],
+    productFAQ: [
+      {
+        question: 'Kako se koristi BIOROID?',
+        answer: 'Nanositi tanak sloj BIOROID kreme dva puta dnevno na čistu i suhu kožu analnog područja. Za najbolje rezultate, nanositi nakon defekacije i svakodnevne higijene.',
+        category: 'usage'
+      },
+      {
+        question: 'Koji su glavni aktivni sastojci u BIOROID proizvodu?',
+        answer: 'BIOROID sadrži pažljivo odabrane biljne ekstrakte (hajdučka trava, divlji kesten, neven, pastirska torbica, zdravac, kamilica) i eterična ulja (lavanda, čajno drvo, pačuli, karanfilić), obogaćen vitaminima A, E i B5.',
+        category: 'ingredients'
+      },
+      {
+        question: 'Da li je BIOROID bezbijedan za dugotrajnu upotrebu?',
+        answer: 'Da, BIOROID je kozmetički proizvod na biljnoj osnovi pogodan za kontinuiranu svakodnevnu upotrebu. Bez parabena, veštačkih boja i mirisa.',
+        category: 'safety'
+      },
+      {
+        question: 'Da li se može koristiti na osjetljivoj koži?',
+        answer: 'Da, formula je posebno dizajnirana za nježnu kožu analnog područja i pogodna je za osjetljivu kožu.',
+        category: 'usage'
+      },
+      {
+        question: 'Da li BIOROID zamjenjuje medicinsko liječenje?',
+        answer: 'Ne. BIOROID je kozmetički proizvod, a ne lijek. Za medicinske probleme konsultirajte se sa liječnikom.',
+        category: 'safety'
+      }
+    ],
+    testimonials: [
+      {
+        id: "bioroid_t1",
+        name: "Marija S.",
+        city: "Sarajevo",
+        rating: 5,
+        text: "BIOROID mi je stvarno pomogao sa svakodnevnom nelagodnošću. Prirodni sastojci su mi bili važni, a krema je nježna i efikasna. Koristim je već mjesec dana bez problema.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-15",
+        featured: true,
+        likes: 42
+      },
+      {
+        id: "bioroid_t2",
+        name: "Jelena P.",
+        city: "Tuzla",
+        rating: 5,
+        text: "Kao neko ko ima osjetljivu kožu, BIOROID je bio pravo rješenje. Nema jakih mirisa, ne iritira, a stvarno pomaže. Preporučujem svima koji traže prirodno rješenje.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-10",
+        featured: true,
+        likes: 35
+      },
+      {
+        id: "bioroid_t3",
+        name: "Stefan M.",
+        city: "Banja Luka",
+        rating: 4,
+        text: "Dobra krema za svakodnevnu upotrebu. Smiruje iritacije i ima prijatan osvježavajući osjećaj. Cijena je razumna za kvalitet koji dobijate.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-12",
+        featured: false,
+        likes: 28
+      },
+      {
+        id: "bioroid_t4",
+        name: "Ana T.",
+        city: "Mostar",
+        rating: 5,
+        text: "Prirodni sastojci poput nevena i kamilice čine čuda za osjetljivu kožu. BIOROID je nježan, efikasan i bez neželjenih efekata. Već sam preporučila prijateljicama.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-05",
+        featured: true,
+        likes: 38
       }
     ]
   }

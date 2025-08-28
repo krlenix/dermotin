@@ -24,13 +24,17 @@ export function getAppUrl(): string {
     return process.env.NEXT_PUBLIC_APP_URL
   }
   
+  if (process.env.NEXT_PUBLIC_DOMAIN) {
+    return process.env.NEXT_PUBLIC_DOMAIN
+  }
+  
   // For development, use localhost
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:3000'
   }
   
   // This should not happen in production if environment variables are set correctly
-  throw new Error('Unable to determine app URL. Please set NEXT_PUBLIC_APP_URL environment variable.')
+  throw new Error('Unable to determine app URL. Please set NEXT_PUBLIC_APP_URL or NEXT_PUBLIC_DOMAIN environment variable.')
 }
 
 /**

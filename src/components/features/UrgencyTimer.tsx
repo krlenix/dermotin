@@ -18,8 +18,15 @@ export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
   });
 
   const [isTicking, setIsTicking] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     // Calculate end time (duration hours from now)
     const endTime = new Date();
     endTime.setHours(endTime.getHours() + duration);
@@ -44,9 +51,44 @@ export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [duration]);
+  }, [duration, isClient]);
 
 
+
+  if (!isClient) {
+    return (
+      <div className={`bg-gradient-to-br from-red-50 to-orange-100 rounded-xl p-6 border-2 border-orange-300 shadow-lg ${className}`}>
+        <div className="text-center">
+          {/* Title */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Clock className="h-7 w-7 text-orange-600" />
+            <span className="text-2xl font-bold text-orange-800">{t('urgency.action_expires')}</span>
+          </div>
+
+          {/* Loading placeholder */}
+          <div className="flex justify-center gap-4 mb-6">
+            <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-6 py-4 min-w-[80px] shadow-lg">
+              <div className="text-4xl font-bold font-mono">--</div>
+              <div className="text-sm font-medium mt-1">{t('urgency.hours')}</div>
+            </div>
+            <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-6 py-4 min-w-[80px] shadow-lg">
+              <div className="text-4xl font-bold font-mono">--</div>
+              <div className="text-sm font-medium mt-1">{t('urgency.minutes')}</div>
+            </div>
+            <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-6 py-4 min-w-[80px] shadow-lg">
+              <div className="text-4xl font-bold font-mono">--</div>
+              <div className="text-sm font-medium mt-1">{t('urgency.seconds')}</div>
+            </div>
+          </div>
+
+          {/* Urgency Message */}
+          <div className="text-lg font-bold text-orange-700">
+            {t('urgency.dont_miss')}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`bg-gradient-to-br from-red-50 to-orange-100 rounded-xl p-6 border-2 border-orange-300 shadow-lg ${className}`}>

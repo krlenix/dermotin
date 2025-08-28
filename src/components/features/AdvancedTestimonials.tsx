@@ -65,24 +65,37 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
     return initialScales;
   });
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [likeCounts, setLikeCounts] = useState<Record<string, number>>(() => {
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+
+  // Update like counts when testimonials are loaded
+  useEffect(() => {
     const initialCounts: Record<string, number> = {};
     testimonials.forEach(testimonial => {
-      // Generate consistent like count based on testimonial content
-      let hash = 0;
-      const str = testimonial.id + testimonial.name + testimonial.text;
-      for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) - hash + str.charCodeAt(i)) & 0xffffffff;
+      // Use the likes from testimonial data, or generate a fallback if not available
+      if (testimonial.likes !== undefined) {
+        initialCounts[testimonial.id] = testimonial.likes;
+      } else {
+        // Fallback: Generate consistent like count based on testimonial content
+        let hash = 0;
+        const str = testimonial.id + testimonial.name + testimonial.text;
+        for (let i = 0; i < str.length; i++) {
+          hash = ((hash << 5) - hash + str.charCodeAt(i)) & 0xffffffff;
+        }
+        // Convert hash to a number between 15-45
+        initialCounts[testimonial.id] = Math.abs(hash % 31) + 15;
       }
-      // Convert hash to a number between 15-45
-      initialCounts[testimonial.id] = Math.abs(hash % 31) + 15;
     });
-    return initialCounts;
-  });
+    setLikeCounts(initialCounts);
+  }, [testimonials]);
 
 
 
   const getTimeAgo = (dateString: string) => {
+    if (typeof window === 'undefined') {
+      // Server-side: return a static value to prevent hydration mismatch
+      return t('testimonials_ui.recently');
+    }
+    
     const date = new Date(dateString);
     const now = new Date();
     const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
@@ -362,7 +375,7 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
                   <Star key={star} className="h-6 w-6 fill-current" />
                 ))}
               </div>
-              <span className="text-lg font-medium">4.8/5</span>
+              <span className="text-lg font-medium">{BUSINESS_METRICS.AVERAGE_RATING}/5</span>
             </div>
             <p className="text-gray-600">
               {t('testimonials.social_media_subtitle')}

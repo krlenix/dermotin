@@ -21,14 +21,8 @@ interface PurchaseNotificationsProps {
 
 export function PurchaseNotifications({ }: PurchaseNotificationsProps) {
   const t = useTranslations();
-  const [stockCount, setStockCount] = useState(() => {
-    // Get from session storage or default to 47
-    if (typeof window !== 'undefined') {
-      const stored = sessionStorage.getItem('fungel-stock-count');
-      return stored ? parseInt(stored) : 47;
-    }
-    return 47;
-  });
+  const [isClient, setIsClient] = useState(false);
+  const [stockCount, setStockCount] = useState(47);
 
   // Sample purchase data - this would normally come from your backend
   const samplePurchases: PurchaseNotification[] = useMemo(() => [
@@ -89,15 +83,27 @@ export function PurchaseNotifications({ }: PurchaseNotificationsProps) {
   ], [t]);
 
   useEffect(() => {
-    // Update session storage when stock changes
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('fungel-stock-count', stockCount.toString());
+    setIsClient(true);
+    // Get from session storage when client loads
+    const stored = sessionStorage.getItem('fungel-stock-count');
+    if (stored) {
+      setStockCount(parseInt(stored));
     }
-  }, [stockCount]);
+  }, []);
 
   useEffect(() => {
+    // Update session storage when stock changes
+    if (isClient) {
+      sessionStorage.setItem('fungel-stock-count', stockCount.toString());
+    }
+  }, [stockCount, isClient]);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     const showNotification = () => {
-      const randomNotification = samplePurchases[Math.floor(Math.random() * samplePurchases.length)];
+      const randomIndex = Math.floor(Math.random() * samplePurchases.length);
+      const randomNotification = samplePurchases[randomIndex];
 
       // Show toast notification with shopping cart icon and stock info
       toast.success(
@@ -127,7 +133,7 @@ export function PurchaseNotifications({ }: PurchaseNotificationsProps) {
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [samplePurchases, stockCount, t]);
+  }, [samplePurchases, stockCount, t, isClient]);
 
   // Component now uses toast notifications instead of popup cards
   return null;

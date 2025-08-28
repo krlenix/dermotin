@@ -181,7 +181,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-15",
-        featured: true
+        featured: true,
+        likes: 42
       },
       {
         id: "t2", 
@@ -192,7 +193,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-10",
-        featured: true
+        featured: true,
+        likes: 38
       },
       {
         id: "t3",
@@ -203,7 +205,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-08",
-        featured: true
+        featured: true,
+        likes: 35
       },
       {
         id: "t4",
@@ -214,7 +217,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL", 
         dateAdded: "2024-12-05",
-        featured: false
+        featured: false,
+        likes: 28
       },
       {
         id: "t5",
@@ -225,7 +229,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-03",
-        featured: true
+        featured: true,
+        likes: 31
       },
       {
         id: "t6",
@@ -236,7 +241,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-12-01",
-        featured: false
+        featured: false,
+        likes: 25
       },
       {
         id: "t7",
@@ -247,7 +253,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-11-28",
-        featured: true
+        featured: true,
+        likes: 39
       },
       {
         id: "t8",
@@ -258,7 +265,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "FUNGEL",
         dateAdded: "2024-11-25",
-        featured: false
+        featured: false,
+        likes: 22
       }
     ]
   },
@@ -447,7 +455,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-14",
-        featured: true
+        featured: true,
+        likes: 45
       },
       {
         id: "b2",
@@ -458,7 +467,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-11",
-        featured: true
+        featured: true,
+        likes: 41
       },
       {
         id: "b3",
@@ -469,7 +479,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-09",
-        featured: true
+        featured: true,
+        likes: 37
       },
       {
         id: "b4",
@@ -480,7 +491,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-06",
-        featured: false
+        featured: false,
+        likes: 29
       },
       {
         id: "b5",
@@ -491,7 +503,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-04",
-        featured: true
+        featured: true,
+        likes: 33
       },
       {
         id: "b6",
@@ -502,7 +515,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-12-01",
-        featured: true
+        featured: true,
+        likes: 40
       },
       {
         id: "b7",
@@ -513,7 +527,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-28",
-        featured: false
+        featured: false,
+        likes: 26
       },
       {
         id: "b8",
@@ -524,7 +539,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-25",
-        featured: true
+        featured: true,
+        likes: 36
       },
       {
         id: "b9",
@@ -535,7 +551,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-22",
-        featured: false
+        featured: false,
+        likes: 24
       },
       {
         id: "b10",
@@ -546,7 +563,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-20",
-        featured: true
+        featured: true,
+        likes: 34
       },
       {
         id: "b11",
@@ -557,7 +575,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-18",
-        featured: false
+        featured: false,
+        likes: 27
       },
       {
         id: "b12",
@@ -568,7 +587,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-15",
-        featured: true
+        featured: true,
+        likes: 38
       },
       {
         id: "b13",
@@ -579,7 +599,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-12",
-        featured: false
+        featured: false,
+        likes: 23
       },
       {
         id: "b14",
@@ -590,7 +611,8 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-10",
-        featured: true
+        featured: true,
+        likes: 32
       },
       {
         id: "b15",
@@ -601,7 +623,355 @@ export const PRODUCTS: Record<string, Product> = {
         verified: true,
         productUsed: "BIOMELIS",
         dateAdded: "2024-11-08",
-        featured: false
+        featured: false,
+        likes: 21
+      }
+    ]
+  },
+
+  biowart: {
+    id: 'biowart',
+    name: 'BIOWART',
+    description: 'Prirodna pomoć u borbi protiv virusnih bradavica. Ubrzava proces regeneracije kože pogođene virusnim bradavicama. Pruža zaštitu od iritacija i ubrzava zarastanje kože. Pogodan za svakodnevnu upotrebu, čak i na osetljivoj koži. Bez parabena, veštačkih boja i mirisa, idealan je za prirodnu i bezbednu negu kože.',
+    shortDescription: 'Prirodna pomoć u borbi protiv virusnih bradavica',
+    purpose: 'Podržava regeneraciju kože pogođene virusnim bradavicama',
+    category: 'skincare',
+    slug: 'biowart',
+    alternativeSlugs: [],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'BIOWART - Prirodna pomoć protiv virusnih bradavica | DERMOTIN',
+    seoDescription: 'BIOWART od DERMOTIN brenda - prirodna formula sa 6 biljnih ekstrakata i 7 eteričnih ulja za negu kože pogođene virusnim bradavicama. Bez parabena, pogodan za osetljivu kožu. 50ml.',
+    urgencyElements: {
+      limitedStock: 15,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 23,
+        timeFrame: 'poslednja 24h'
+      }
+    },
+    images: {
+      main: '/images/products/biowart/biowart-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/biowart/biowart-box-only.png',
+        '/images/products/biowart/biowart-open-bottle.png',
+        '/images/products/biowart/biowart-old-product-image.png'
+      ],
+      thumbnail: '/images/products/biowart/biowart-box-only.png',
+      fallback: '/images/products/biowart/biowart-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'biowart-1pak',
+        sku: 'BIOWART',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno 2 nedelje upotrebe',
+        quantity: 1,
+        price: 2390,
+        currency: 'RSD',
+        discountPrice: 1990,
+        isDefault: true
+      },
+      {
+        id: 'biowart-2pak',
+        sku: 'BIOWART',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 2,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 3590
+      },
+      {
+        id: 'biowart-3pak',
+        sku: 'BIOWART',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 2 meseca upotrebe',
+        quantity: 3,
+        price: 7170,
+        currency: 'RSD',
+        discountPrice: 4790
+      }
+    ],
+    benefits: [
+      'Podržava regeneraciju kože pogođene virusnim bradavicama',
+      'Smiruje iritacije i ubrzava zarastanje kože',
+      'Pruža zaštitu od spoljašnjih uticaja',
+      'Pogodan za svakodnevnu upotrebu, čak i na osetljivoj koži',
+      'Bez parabena, veštačkih boja i mirisa',
+      'Idealan za prirodnu i bezbednu negu kože',
+      'Leave-on formula - ne ispira se, deluje kontinuirano',
+      'Sadrži 6 lekovitih biljaka i 7 eteričnih ulja'
+    ],
+    ingredients: [
+      // Key active ingredients first - based on BIOWART documentation
+      'chelidonium-extract', // Rus - primary ingredient for warts (7-8.5%)
+      'calendula-extract', // Neven - highest concentration (7-8.5%)
+      'achillea-extract', // Hajdučka trava (3-4.5%)
+      'salvia-leaf-extract', // Žalfija (3-4.5%)
+      'hypericum-extract', // Kantarion (3-4.5%)
+      'galium-extract', // Ivanjsko cveće (3-4.5%)
+      'quercus-bark-extract', // Hrastova kora (3-4.5%)
+      // Essential oils - 7 different oils
+      'sage-oil', // Eterično ulje žalfije
+      'eucalyptus-oil', // Eterično ulje eukaliptusa
+      'peppermint-oil', // Eterično ulje nane
+      'clove-oil', // Eterično ulje karanfilića
+      'thyme-oil', // Eterično ulje timijana
+      'anise-oil', // Eterično ulje anisa
+      'lemon-oil', // Eterično ulje limuna
+      // Vitamins and nutrients
+      'panthenol', // Pro-Vitamin B5 (0.91%)
+      'urea', // Urea (0.91%)
+      'sweet-almond-oil', // Prunus Amygdalus Dulcis Oil
+      'vitamin-e', // Tocopheryl Acetate
+      'vitamin-a', // Retinyl Palmitate
+      // Base components
+      'aqua',
+      'stearic-acid',
+      'glycerin', // 1.83%
+      'castor-oil', // Ricinus Communis Seed Oil
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax', // Cera Alba
+      // Functional ingredients
+      'triethanolamine',
+      'carbomer',
+      // Preservatives
+      'phenoxyethanol',
+      'sodium-benzoate',
+      'potassium-sorbate'
+    ],
+    usage: 'Nanositi tanak sloj BIOWART melema na čistu i suvu kožu dva do tri puta dnevno ili po potrebi. Pogodan za svakodnevnu upotrebu. Sadržaj: 50ml.',
+    warnings: [
+      'Samo za spoljašnju upotrebu',
+      'Izbegavati kontakt sa očima',
+      'U slučaju preosetljivosti ili alergijske reakcije, prekinuti upotrebu i konsultovati se sa lekarom',
+      'Sadrži alergene: Limonene, Linalool, Eugenol, Citral'
+    ],
+    productFAQ: [
+      {
+        question: 'Kako se koristi BIOWART?',
+        answer: 'Nanositi tanak sloj BIOWART melema na čistu i suvu kožu dva do tri puta dnevno ili po potrebi. Ne ispira se nakon nanošenja.',
+        category: 'usage'
+      },
+      {
+        question: 'Koji su glavni aktivni sastojci u BIOWART proizvodu?',
+        answer: 'BIOWART sadrži 6 lekovitih biljaka (rus, neven, hajdučka trava, žalfija, kantarion, ivanjsko cveće, hrastova kora) i 7 eteričnih ulja (žalfija, eukaliptus, nana, karanfilić, timijan, anis, limun), obogaćen vitaminima A, E i B5.',
+        category: 'ingredients'
+      },
+      {
+        question: 'Da li je BIOWART bezbedan za upotrebu?',
+        answer: 'Da, BIOWART je EU-kompatibilan kozmetički proizvod koji je prošao sve potrebne testove bezbednosti. Bez parabena, veštačkih boja i mirisa. Pogodan za svakodnevnu upotrebu.',
+        category: 'safety'
+      },
+      {
+        question: 'Za koje tipove kože je pogodan BIOWART?',
+        answer: 'BIOWART je pogodan za sve tipove kože, uključujući i osetljivu kožu. Formula je posebno dizajnirana za negu kože pogođene virusnim bradavicama.',
+        category: 'usage'
+      },
+      {
+        question: 'Kada mogu očekivati rezultate?',
+        answer: 'Rezultati mogu biti individualni. Preporučuje se redovna upotreba 2-3 puta dnevno. Za najbolje rezultate, koristiti kontinuirano prema uputstvu.',
+        category: 'effects'
+      }
+    ]
+  },
+
+  bioroid: {
+    id: 'bioroid',
+    name: 'BIOROID',
+    description: 'Prirodna podrška za ublažavanje iritacije i nelagodnosti kože analnog područja. Smiruje osećaj svraba, pečenja i nelagodnosti. Podržava regeneraciju osetljive kože uz održavanje hidratacije. Stvara nežnu zaštitnu barijeru protiv spoljašnjih faktora. Pogodan za svakodnevnu upotrebu, čak i na osetljivoj i iritiranoj koži. Bez parabena, veštačkih boja i mirisa - prirodan i bezbedan izbor za negu kože.',
+    shortDescription: 'Prirodna podrška za ublažavanje iritacije kože analnog područja',
+    purpose: 'Pomaže u nezi i zaštiti osetljive kože analnog područja',
+    category: 'skincare',
+    slug: 'bioroid',
+    alternativeSlugs: [],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'BIOROID - Prirodna podrška za negu analne kože | DERMOTIN',
+    seoDescription: 'BIOROID od DERMOTIN brenda - prirodna formula sa biljnim ekstraktima za negu osetljive kože analnog područja. Smiruje iritacije, podržava regeneraciju. Bez parabena. 50ml.',
+    urgencyElements: {
+      limitedStock: 12,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 18,
+        timeFrame: 'poslednja 24h'
+      }
+    },
+    images: {
+      main: '/images/products/bioroid/bioroid-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/bioroid/bioroid-box-only.png',
+        '/images/products/bioroid/bioroid-open-bottle.png',
+        '/images/products/bioroid/bioroid-old-product-image.png'
+      ],
+      thumbnail: '/images/products/bioroid/bioroid-box-only.png',
+      fallback: '/images/products/bioroid/bioroid-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'bioroid-1pak',
+        sku: 'BIOROID',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno 2 nedelje upotrebe',
+        quantity: 1,
+        price: 2990,
+        currency: 'RSD',
+        discountPrice: 1990,
+        isDefault: true
+      },
+      {
+        id: 'bioroid-2pak',
+        sku: 'BIOROID',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 2,
+        price: 5980,
+        currency: 'RSD',
+        discountPrice: 3590
+      },
+      {
+        id: 'bioroid-3pak',
+        sku: 'BIOROID',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 2 meseca upotrebe',
+        quantity: 3,
+        price: 8970,
+        currency: 'RSD',
+        discountPrice: 4790
+      }
+    ],
+    benefits: [
+      'Smiruje osećaj svraba, pečenja i nelagodnosti',
+      'Podržava regeneraciju osetljive kože uz održavanje hidratacije',
+      'Stvara nežnu zaštitnu barijeru protiv spoljašnjih faktora',
+      'Pogodan za svakodnevnu upotrebu, čak i na osetljivoj koži',
+      'Bez parabena, veštačkih boja i mirisa',
+      'Prirodan i bezbedan izbor za negu kože',
+      'Dugotrajno umirujući i osvežavajući osećaj',
+      'Sadrži pažljivo odabrane biljne ekstrakte i eterična ulja'
+    ],
+    ingredients: [
+      // Key active herbal extracts - based on BIOROID documentation
+      'achillea-extract', // Hajdučka trava (Achillea millefolium L.)
+      'aesculus-extract', // Divlji kesten (Aesculus hippocastanum L.)
+      'calendula-extract', // Neven (Calendula officinalis L.)
+      'capsella-extract', // Pastirska torbica (Capsella bursa-pastoris L.)
+      'geranium-extract', // Zdravac (Geranium robertianum L.)
+      'chamomile-extract', // Kamilica (Chamomilla recutita L.)
+      // Vitamins and nutrients
+      'panthenol', // Pro-Vitamin B5
+      'vitamin-e', // Tocopheryl Acetate
+      'vitamin-a', // Retinyl Palmitate
+      'sweet-almond-oil', // Prunus amygdalus dulcis oil
+      'menthol', // Menthol for cooling effect
+      // Essential oils blend
+      'lavender-oil', // Lavandula angustifolia oil
+      'tea-tree-oil', // Melaleuca alternifolia leaf oil
+      'patchouli-oil', // Pogostemon cablin leaf oil
+      'clove-oil', // Eugenia caryophyllus leaf oil
+      // Base components
+      'aqua',
+      'alcohol',
+      'stearic-acid',
+      'glycerin',
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax',
+      'urea',
+      // Functional ingredients
+      'triethanolamine',
+      'carbomer',
+      // Preservatives
+      'phenoxyethanol',
+      'ethylhexylglycerin',
+      'potassium-sorbate',
+      // Natural components
+      'limonene'
+    ],
+    usage: 'Nanositi tanak sloj BIOROID kreme dva puta dnevno na čistu i suvu kožu analnog područja. Za najbolje rezultate, nanositi nakon defekacije i svakodnevne higijene. Pogodan za kontinuiranu, dugotrajnu upotrebu bez prekida. Sadržaj: 50ml.',
+    warnings: [
+      'Samo za spoljašnju upotrebu',
+      'Izbegavati kontakt sa očima. Ukoliko dođe do kontakta, temeljno isprati vodom',
+      'Ne koristiti ukoliko ste preosetljivi na bilo koji od sastojaka',
+      'U slučaju trajne iritacije, prekinuti upotrebu i potražiti lekarsku pomoć',
+      'Čuvati van dosega dece',
+      'Čuvati na sobnoj temperaturi'
+    ],
+    productFAQ: [
+      {
+        question: 'Kako se koristi BIOROID?',
+        answer: 'Nanositi tanak sloj BIOROID kreme dva puta dnevno na čistu i suvu kožu analnog područja. Za najbolje rezultate, nanositi nakon defekacije i svakodnevne higijene.',
+        category: 'usage'
+      },
+      {
+        question: 'Koji su glavni aktivni sastojci u BIOROID proizvodu?',
+        answer: 'BIOROID sadrži pažljivo odabrane biljne ekstrakte (hajdučka trava, divlji kesten, neven, pastirska torbica, zdravac, kamilica) i eterična ulja (lavanda, čajno drvo, pačuli, karanfilić), obogaćen vitaminima A, E i B5.',
+        category: 'ingredients'
+      },
+      {
+        question: 'Da li je BIOROID bezbedan za dugotrajnu upotrebu?',
+        answer: 'Da, BIOROID je kozmetički proizvod na biljnoj osnovi pogodan za kontinuiranu svakodnevnu upotrebu. Bez parabena, veštačkih boja i mirisa.',
+        category: 'safety'
+      },
+      {
+        question: 'Da li se može koristiti na osetljivoj koži?',
+        answer: 'Da, formula je posebno dizajnirana za nežnu kožu analnog područja i pogodna je za osetljivu kožu.',
+        category: 'usage'
+      },
+      {
+        question: 'Da li BIOROID zamenjuje medicinsko lečenje?',
+        answer: 'Ne. BIOROID je kozmetički proizvod, a ne lek. Za medicinske probleme konsultujte se sa lekarom.',
+        category: 'safety'
+      }
+    ],
+    testimonials: [
+      {
+        id: "bioroid_t1",
+        name: "Marija S.",
+        city: "Beograd",
+        rating: 5,
+        text: "BIOROID mi je stvarno pomogao sa svakodnevnom nelagodnošću. Prirodni sastojci su mi bili važni, a krema je nežna i efikasna. Koristim je već mesec dana bez problema.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-15",
+        featured: true,
+        likes: 42
+      },
+      {
+        id: "bioroid_t2",
+        name: "Jelena P.",
+        city: "Niš",
+        rating: 5,
+        text: "Kao neko ko ima osetljivu kožu, BIOROID je bio pravo rešenje. Nema jakih mirisa, ne iritira, a stvarno pomaže. Preporučujem svima koji traže prirodno rešenje.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-10",
+        featured: true,
+        likes: 35
+      },
+      {
+        id: "bioroid_t3",
+        name: "Stefan M.",
+        city: "Novi Sad",
+        rating: 4,
+        text: "Dobra krema za svakodnevnu upotrebu. Smiruje iritacije i ima prijatan osvežavajući osećaj. Cena je razumna za kvalitet koji dobijate.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-12",
+        featured: false,
+        likes: 28
+      },
+      {
+        id: "bioroid_t4",
+        name: "Ana T.",
+        city: "Subotica",
+        rating: 5,
+        text: "Prirodni sastojci poput nevena i kamilice čine čuda za osetljivu kožu. BIOROID je nežan, efikasan i bez neželjenih efekata. Već sam preporučila prijateljicama.",
+        verified: true,
+        productUsed: "BIOROID",
+        dateAdded: "2024-12-05",
+        featured: true,
+        likes: 38
       }
     ]
   }

@@ -13,6 +13,7 @@ export interface Testimonial {
   productUsed: string;
   dateAdded: string;
   featured?: boolean;
+  likes?: number; // Number of likes for this testimonial
 }
 
 export interface ProductVariant {
