@@ -24,10 +24,13 @@ export function getAppUrl(): string {
     return process.env.NEXT_PUBLIC_APP_URL
   }
   
-  // Fallback for development
-  return process.env.NODE_ENV === 'development' 
-    ? 'http://localhost:3000' 
-    : 'https://dermotin.com'
+  // For development, use localhost
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3000'
+  }
+  
+  // This should not happen in production if environment variables are set correctly
+  throw new Error('Unable to determine app URL. Please set NEXT_PUBLIC_APP_URL environment variable.')
 }
 
 /**

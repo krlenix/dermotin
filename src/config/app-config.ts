@@ -150,9 +150,9 @@ export const API_ENDPOINTS = {
 
 // Social media links
 export const SOCIAL_LINKS = {
-  facebook: 'https://facebook.com/dermotin',
-  instagram: 'https://instagram.com/dermotin',
-  youtube: 'https://youtube.com/@dermotin',
+  facebook: 'https://www.facebook.com/p/Dermotin-61555041459731/',
+  instagram: 'https://www.instagram.com/dermotin.cosmetics/',
+  tiktok: 'https://www.tiktok.com/@dermotin.cosmetics',
 } as const;
 
 // Form field names for consistency
