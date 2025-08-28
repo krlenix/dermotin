@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 
 
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { ProductVariant } from '@/config/products';
 import { CountryConfig, CourierInfo, getAvailableCouriers } from '@/config/countries';
 
@@ -18,7 +17,7 @@ import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
 import { getDefaultCourier } from '@/config/countries';
-import { Package, Truck, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
+import { Truck, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 import { CompactOrderSummary } from './CompactOrderSummary';

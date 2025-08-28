@@ -44,7 +44,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
-  const [pageLoaded, setPageLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [selectedCourier, setSelectedCourier] = useState<CourierInfo>(getDefaultCourier(countryConfig));
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -57,8 +57,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     // Prevent any horizontal scroll during animations
     document.body.style.position = 'relative';
     
-    // Mark page as loaded immediately for faster rendering
-    setPageLoaded(true);
+    // Mark component as mounted after hydration
+    setMounted(true);
     
     return () => {
       document.body.style.maxWidth = '';
@@ -75,7 +75,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial scroll position
+    // Don't check initial scroll position to avoid hydration mismatch
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -100,17 +100,45 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
   // Smooth scroll to quantity selection (Bundle Selector)
   const scrollToQuantitySelection = () => {
-    const bundleSelector = document.getElementById('bundle-selector');
-    if (bundleSelector) {
-      // Calculate offset to show the bundle selector
-      const elementTop = bundleSelector.getBoundingClientRect().top;
-      const offsetPosition = elementTop + window.pageYOffset - 100; // 100px offset for better visibility
-      
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
+    // Use setTimeout to ensure DOM is ready and avoid any timing issues
+    setTimeout(() => {
+      // First try to scroll to the bundle title for precise positioning
+      const bundleTitle = document.getElementById('bundle-title');
+      if (bundleTitle) {
+        // Calculate offset to show the title properly
+        const elementTop = bundleTitle.getBoundingClientRect().top;
+        const offsetPosition = elementTop + window.pageYOffset - 100; // 100px offset for better visibility
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      } else {
+        // Fallback: scroll to the bundle selector container
+        const bundleSelector = document.getElementById('bundle-selector');
+        if (bundleSelector) {
+          const elementTop = bundleSelector.getBoundingClientRect().top;
+          const offsetPosition = elementTop + window.pageYOffset - 100;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        } else {
+          // Final fallback: scroll to the order section
+          const orderSection = document.getElementById('order');
+          if (orderSection) {
+            const elementTop = orderSection.getBoundingClientRect().top;
+            const offsetPosition = elementTop + window.pageYOffset - 100;
+            
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }
+      }
+    }, 100); // Small delay to ensure DOM is ready
   };
 
   // Reusable CTA Button Component
@@ -675,19 +703,19 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         {/* Floating liquid bubbles */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Large slow bubbles - positioned safely within viewport */}
-          <div className={`absolute top-20 left-16 w-32 h-32 bg-brand-green/20 rounded-full blur-xl transition-all duration-1000 ${pageLoaded ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '6s', animationDelay: '0s', maxWidth: 'calc(100vw - 200px)'}}></div>
-          <div className={`absolute top-40 right-16 w-24 h-24 bg-brand-green/15 rounded-full blur-lg transition-all duration-1000 ${pageLoaded ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '8s', animationDelay: '2s', maxWidth: 'calc(100vw - 150px)'}}></div>
-          <div className={`absolute bottom-32 left-20 w-40 h-40 bg-brand-green/10 rounded-full blur-2xl transition-all duration-1000 ${pageLoaded ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '10s', animationDelay: '1s', maxWidth: 'calc(100vw - 220px)'}}></div>
+          <div className={`absolute top-20 left-16 w-32 h-32 bg-brand-green/20 rounded-full blur-xl transition-all duration-1000 ${mounted ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '6s', animationDelay: '0s', maxWidth: 'calc(100vw - 200px)'}}></div>
+          <div className={`absolute top-40 right-16 w-24 h-24 bg-brand-green/15 rounded-full blur-lg transition-all duration-1000 ${mounted ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '8s', animationDelay: '2s', maxWidth: 'calc(100vw - 150px)'}}></div>
+          <div className={`absolute bottom-32 left-20 w-40 h-40 bg-brand-green/10 rounded-full blur-2xl transition-all duration-1000 ${mounted ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '10s', animationDelay: '1s', maxWidth: 'calc(100vw - 220px)'}}></div>
           
           {/* Medium bubbles - positioned safely within viewport */}
-          <div className={`absolute top-32 right-20 w-20 h-20 bg-brand-green/25 rounded-full blur-lg transition-all duration-1000 ${pageLoaded ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '4s', animationDelay: '0s', maxWidth: 'calc(100vw - 120px)'}}></div>
-          <div className={`absolute bottom-40 right-12 w-16 h-16 bg-brand-green/20 rounded-full blur-md transition-all duration-1000 ${pageLoaded ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '5s', animationDelay: '3s', maxWidth: 'calc(100vw - 80px)'}}></div>
-          <div className={`absolute top-1/2 left-12 w-28 h-28 bg-brand-green/15 rounded-full blur-xl transition-all duration-1000 ${pageLoaded ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '7s', animationDelay: '1.5s', maxWidth: 'calc(100vw - 140px)'}}></div>
+          <div className={`absolute top-32 right-20 w-20 h-20 bg-brand-green/25 rounded-full blur-lg transition-all duration-1000 ${mounted ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '4s', animationDelay: '0s', maxWidth: 'calc(100vw - 120px)'}}></div>
+          <div className={`absolute bottom-40 right-12 w-16 h-16 bg-brand-green/20 rounded-full blur-md transition-all duration-1000 ${mounted ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '5s', animationDelay: '3s', maxWidth: 'calc(100vw - 80px)'}}></div>
+          <div className={`absolute top-1/2 left-12 w-28 h-28 bg-brand-green/15 rounded-full blur-xl transition-all duration-1000 ${mounted ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '7s', animationDelay: '1.5s', maxWidth: 'calc(100vw - 140px)'}}></div>
           
           {/* Small fast bubbles - positioned safely within viewport */}
-          <div className={`absolute top-16 left-1/2 w-12 h-12 bg-brand-green/30 rounded-full blur-sm transition-all duration-1000 ${pageLoaded ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '3s', animationDelay: '0s', transform: 'translateX(-50%)', maxWidth: '48px'}}></div>
-          <div className={`absolute bottom-24 right-24 w-8 h-8 bg-brand-green/35 rounded-full blur-sm transition-all duration-1000 ${pageLoaded ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2s', animationDelay: '1s', maxWidth: '32px'}}></div>
-          <div className={`absolute top-2/3 right-16 w-10 h-10 bg-brand-green/25 rounded-full blur-sm transition-all duration-1000 ${pageLoaded ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2.5s', animationDelay: '2s', maxWidth: '40px'}}></div>
+          <div className={`absolute top-16 left-1/2 w-12 h-12 bg-brand-green/30 rounded-full blur-sm transition-all duration-1000 ${mounted ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '3s', animationDelay: '0s', transform: 'translateX(-50%)', maxWidth: '48px'}}></div>
+          <div className={`absolute bottom-24 right-24 w-8 h-8 bg-brand-green/35 rounded-full blur-sm transition-all duration-1000 ${mounted ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2s', animationDelay: '1s', maxWidth: '32px'}}></div>
+          <div className={`absolute top-2/3 right-16 w-10 h-10 bg-brand-green/25 rounded-full blur-sm transition-all duration-1000 ${mounted ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2.5s', animationDelay: '2s', maxWidth: '40px'}}></div>
         </div>
         
         <div className="container mx-auto px-4 text-center relative z-10">

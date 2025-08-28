@@ -66,7 +66,7 @@ export function BundleSelector({
   return (
     <div id="bundle-selector" className={`space-y-4 ${className}`}>
       <div className="text-center mb-4 md:mb-6">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2 py-2 md:py-6">
+        <h3 id="bundle-title" className="text-2xl font-bold text-gray-900 mb-2 py-2 md:py-6">
           {t('bundles.choose_option')}
         </h3>
       </div>

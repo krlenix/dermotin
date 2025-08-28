@@ -73,13 +73,18 @@ export function CompactOrderSummary({
 
         {/* Reselect Button */}
         <Button
+          type="button"
           variant="outline"
           size="sm"
-          onClick={onReselect}
-          className="flex-shrink-0 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white transition-colors"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onReselect();
+          }}
+          className="flex-shrink-0 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-200 group"
         >
-          <Edit3 className="h-3 w-3 mr-1" />
-          <span className="text-xs">{t('order_summary.change')}</span>
+          <Edit3 className="h-3 w-3 mr-1 text-brand-orange group-hover:text-white transition-colors" />
+          <span className="text-xs text-brand-orange group-hover:text-white transition-colors">{t('order_summary.change')}</span>
         </Button>
       </div>
     </div>
