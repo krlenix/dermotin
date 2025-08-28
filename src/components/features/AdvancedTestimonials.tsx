@@ -4,12 +4,13 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { getTestimonialsForCountry, Testimonial } from '@/config/testimonials';
+import { getRandomTestimonialsForCountry, getRandomTestimonialsForProductById, Testimonial } from '@/config/testimonials';
 import { Star, Package, Heart, Share } from 'lucide-react';
 
 interface AdvancedTestimonialsProps {
   countryCode: string;
   className?: string;
+  productId?: string; // Optional: if provided, show only testimonials for this product
 }
 
 // Business metrics - easy to update
@@ -19,13 +20,37 @@ const BUSINESS_METRICS = {
   RECOMMENDATION_RATE: 98
 };
 
-export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimonialsProps) {
+export function AdvancedTestimonials({ countryCode, className, productId }: AdvancedTestimonialsProps) {
   const t = useTranslations();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const testimonials = getTestimonialsForCountry(countryCode);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   
   const [isLoaded, setIsLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Load random testimonials for the country or specific product
+  useEffect(() => {
+    const loadTestimonials = async () => {
+      try {
+        let countryTestimonials: Testimonial[];
+        
+        if (productId) {
+          // Load testimonials for specific product
+          countryTestimonials = await getRandomTestimonialsForProductById(productId, countryCode);
+        } else {
+          // Load testimonials from all products
+          countryTestimonials = await getRandomTestimonialsForCountry(countryCode);
+        }
+        
+        setTestimonials(countryTestimonials);
+      } catch (error) {
+        console.error('Failed to load testimonials:', error);
+        setTestimonials([]);
+      }
+    };
+    
+    loadTestimonials();
+  }, [countryCode, productId]);
   
   // Create infinite loop by duplicating testimonials
   const infiniteTestimonials = [...testimonials, ...testimonials, ...testimonials];
@@ -301,6 +326,26 @@ export function AdvancedTestimonials({ countryCode, className }: AdvancedTestimo
        window.removeEventListener('resize', handleResize);
      };
         }, [updateCardScales, isTransitioning, isMobile, testimonials]);
+
+  // Show loading state or empty state
+  if (testimonials.length === 0) {
+    return (
+      <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
+        <div className="w-full">
+          <div className="text-center mb-8 px-4">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                {t('testimonials.section_title')}
+              </h2>
+              <p className="text-gray-600">
+                {t('testimonials.loading')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>

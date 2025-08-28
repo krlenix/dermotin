@@ -6,18 +6,27 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getProduct, Product } from '@/config/products';
-import { useCurrency } from '@/hooks/useCurrency';
+
 import { useTranslations } from 'next-intl';
 import { Plus, Star, Gift, Sparkles, Check } from 'lucide-react';
+import { CountryConfig, SupportedCurrency } from '@/config/countries';
 
 interface UpsellCrossSellProps {
   mainProductId: string;
   onAddToBundle: (productId: string, price: number) => void;
   className?: string;
+  countryConfig?: CountryConfig;
 }
 
-export function UpsellCrossSell({ mainProductId, onAddToBundle, className }: UpsellCrossSellProps) {
-  const { formatPrice } = useCurrency();
+export function UpsellCrossSell({ mainProductId, onAddToBundle, className, countryConfig }: UpsellCrossSellProps) {
+  // Simple price formatter using the country's currency symbol (no conversion)
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('sr-RS', {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount) + ' ' + (countryConfig?.currencySymbol || 'din');
+  };
   const t = useTranslations();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 

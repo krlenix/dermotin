@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProductVariant } from '@/config/products';
 import { CountryConfig, CourierInfo, getDefaultCourier } from '@/config/countries';
-import { useCurrency } from '@/hooks/useCurrency';
+
 import { useTranslations } from 'next-intl';
 import { CheckCircle } from 'lucide-react';
 
@@ -27,13 +27,30 @@ export function BundleSelector({
   selectedCourier,
   className 
 }: BundleSelectorProps) {
-  const { formatPrice } = useCurrency();
   const t = useTranslations();
+  
+  // Simple price formatter using the country's currency symbol
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('sr-RS', {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount) + ' ' + countryConfig.currencySymbol;
+  };
 
   const getBundleBadge = (index: number) => {
+    // Calculate savings based on actual prices
+    const basePrice = variants[0].discountPrice || variants[0].price;
+    const currentVariant = variants[index];
+    const currentPrice = currentVariant.discountPrice || currentVariant.price;
+    const totalBasePrice = basePrice * (index + 1);
+    const savings = totalBasePrice - currentPrice;
+    
+    if (savings <= 0) return null;
+    
     switch (index) {
-      case 1: return { text: t('bundles.save_amount', { amount: '710' }), color: 'bg-red-500' };
-      case 2: return { text: t('bundles.save_amount', { amount: '2010' }), color: 'bg-red-600' };
+      case 1: return { text: t('bundles.save_amount', { amount: formatPrice(Math.round(savings)) }), color: 'bg-red-500' };
+      case 2: return { text: t('bundles.save_amount', { amount: formatPrice(Math.round(savings)) }), color: 'bg-red-600' };
       default: return null;
     }
   };
@@ -116,18 +133,21 @@ export function BundleSelector({
                       <p className="text-xs sm:text-sm text-gray-600 mb-1">
                         {variant.size}
                       </p>
-                      {index > 0 && (
-                        <p className="text-xs text-green-600 font-medium">
-                          {t('bundles.free_shipping')}
-                        </p>
-                      )}
-                      {index === 0 && (
-                        <p className="text-xs text-gray-500">
-                          {t('bundles.shipping_cost', { 
-                            cost: formatPrice((selectedCourier || getDefaultCourier(countryConfig)).shipping.cost) 
-                          })}
-                        </p>
-                      )}
+                      {(() => {
+                        const orderTotal = variant.discountPrice || variant.price;
+                        const hasFreeShipping = orderTotal >= countryConfig.business.freeShippingThreshold;
+                        return hasFreeShipping ? (
+                          <p className="text-xs text-green-600 font-medium">
+                            {t('bundles.free_shipping')}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-gray-500">
+                            {t('bundles.shipping_cost', { 
+                              cost: formatPrice((selectedCourier || getDefaultCourier(countryConfig)).shipping.cost) 
+                            })}
+                          </p>
+                        );
+                      })()}
                     </div>
                   </div>
 
@@ -140,9 +160,11 @@ export function BundleSelector({
                     <div className="text-lg sm:text-xl font-bold text-brand-orange mb-1">
                       {formatPrice(discountPrice)}
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600">
-                      {formatPrice(pricePerItem)} {t('bundles.per_item')}
-                    </p>
+                    {index > 0 && (
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        {formatPrice(pricePerItem)} {t('bundles.per_item')}
+                      </p>
+                    )}
                   </div>
                 </div>
 

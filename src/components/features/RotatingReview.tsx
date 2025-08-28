@@ -3,22 +3,45 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getTestimonialsForCountry } from '@/config/testimonials';
+import { getRandomTestimonialsForCountry, getRandomTestimonialsForProductById, Testimonial } from '@/config/testimonials';
 
 interface RotatingReviewProps {
   countryCode: string;
   className?: string;
   interval?: number; // in milliseconds
+  productId?: string; // Optional: if provided, show only testimonials for this product
 }
 
-export function RotatingReview({ countryCode, className, interval = 5000 }: RotatingReviewProps) {
+export function RotatingReview({ countryCode, className, interval = 5000, productId }: RotatingReviewProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [animationDirection, setAnimationDirection] = useState<'next' | 'prev'>('next');
   const containerRef = useRef<HTMLDivElement>(null);
+  const [countryTestimonials, setCountryTestimonials] = useState<Testimonial[]>([]);
 
-  // Get testimonials for the country
-  const countryTestimonials = getTestimonialsForCountry(countryCode);
+  // Load random testimonials for the country or specific product
+  useEffect(() => {
+    const loadTestimonials = async () => {
+      try {
+        let testimonials: Testimonial[];
+        
+        if (productId) {
+          // Load testimonials for specific product
+          testimonials = await getRandomTestimonialsForProductById(productId, countryCode);
+        } else {
+          // Load testimonials from all products
+          testimonials = await getRandomTestimonialsForCountry(countryCode);
+        }
+        
+        setCountryTestimonials(testimonials);
+      } catch (error) {
+        console.error('Failed to load testimonials:', error);
+        setCountryTestimonials([]);
+      }
+    };
+    
+    loadTestimonials();
+  }, [countryCode, productId]);
   
   const changeReview = useCallback((newIndex: number, direction: 'next' | 'prev' = 'next') => {
     if (isTransitioning) return;

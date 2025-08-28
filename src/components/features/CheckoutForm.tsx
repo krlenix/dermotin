@@ -12,8 +12,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ProductVariant } from '@/config/products';
-import { CountryConfig, CourierInfo, getAvailableCouriers } from '@/config/countries';
-import { useCurrency } from '@/hooks/useCurrency';
+import { CountryConfig, CourierInfo, getAvailableCouriers, SupportedCurrency } from '@/config/countries';
+
 import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
@@ -49,7 +49,14 @@ export function CheckoutForm({
   onCourierChange
 }: CheckoutFormProps) {
   const t = useTranslations();
-  const { formatPrice } = useCurrency();
+  // Simple price formatter using the country's currency symbol (no conversion)
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('sr-RS', {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount) + ' ' + countryConfig.currencySymbol;
+  };
   const { trackEvent } = usePixelTracking(countryConfig.code);
   
   // Form validation function
@@ -165,12 +172,13 @@ export function CheckoutForm({
   // Use selected courier or fallback to default
   const displayCourier = selectedCourier || getDefaultCourier(countryConfig);
   const availableCouriers = getAvailableCouriers(countryConfig);
-  const showCourierSelection = availableCouriers.length > 1;
+  const showCourierSelection = availableCouriers.length >= 1;
+  const isSingleCourier = availableCouriers.length === 1;
   
   // Calculate shipping cost using selected courier and country threshold
-  const shippingCost = calculateShippingCost(subtotal, displayCourier, countryConfig);
-  const finalTotal = subtotal + shippingCost;
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
+  const shippingCost = hasFreeShipping ? 0 : calculateShippingCost(subtotal, displayCourier, countryConfig);
+  const finalTotal = subtotal + shippingCost;
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -297,10 +305,12 @@ export function CheckoutForm({
               </div>
             </div>
 
-            {/* Courier Selection */}
-            {showCourierSelection && (
-              <div className="space-y-3">
-                <Label className="text-base font-semibold text-gray-900">{t('delivery.select_courier')}</Label>
+                         {/* Courier Selection */}
+             {showCourierSelection && (
+               <div className="space-y-3">
+                 <Label className="text-base font-semibold text-gray-900">
+                   {isSingleCourier ? t('delivery.courier_service') : t('delivery.select_courier')}
+                 </Label>
                 <div className="space-y-2">
                   {availableCouriers.map((courier) => {
                     const isSelected = displayCourier.id === courier.id;
@@ -420,6 +430,7 @@ export function CheckoutForm({
               mainProductId={mainProductId}
               onAddToBundle={onAddToBundle}
               className="mb-6"
+              countryConfig={countryConfig}
             />
 
             {/* Submit Button */}
@@ -443,9 +454,12 @@ export function CheckoutForm({
               </Button>
             </div>
 
-            <p className="text-xs text-gray-500 text-center">
-              {t('order_summary.secure_purchase_guarantee')}
-            </p>
+            <div className="flex items-center justify-center gap-2 p-2 text-center">
+              <Shield className="h-4 w-4 text-green-600" />
+              <span className="text-sm text-gray-600 font-medium">
+                {t('order_summary.secure_purchase_guarantee')}
+              </span>
+            </div>
           </form>
         </CardContent>
       </Card>
@@ -513,18 +527,18 @@ export function CheckoutForm({
           </div>
 
           {/* Trust Indicators */}
-          <div className="grid grid-cols-3 gap-3 mt-5">
-            <div className="text-center p-3 bg-green-50 rounded-lg border border-green-100">
-              <Shield className="h-5 w-5 mx-auto text-green-600 mb-1" />
-              <p className="text-xs font-medium text-green-800">{t('order_summary.secure_purchase')}</p>
+          <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-2 text-gray-600">
+              <Shield className="h-4 w-4 text-green-600" />
+              <span className="text-sm font-medium">{t('order_summary.secure_purchase')}</span>
             </div>
-            <div className="text-center p-3 bg-blue-50 rounded-lg border border-blue-100">
-              <Truck className="h-5 w-5 mx-auto text-blue-600 mb-1" />
-              <p className="text-xs font-medium text-blue-800">{t('order_summary.fast_delivery')}</p>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Truck className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium">{t('order_summary.fast_delivery')}</span>
             </div>
-            <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-100">
-              <Package className="h-5 w-5 mx-auto text-orange-600 mb-1" />
-              <p className="text-xs font-medium text-orange-800">{t('order_summary.quality_guarantee')}</p>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Package className="h-4 w-4 text-orange-600" />
+              <span className="text-sm font-medium">{t('order_summary.quality_guarantee')}</span>
             </div>
           </div>
         </CardContent>

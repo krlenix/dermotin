@@ -22,8 +22,7 @@ import { ComparisonTable } from '@/components/features/ComparisonTable';
 
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
-import { useCurrency } from '@/hooks/useCurrency';
-import { SupportedCurrency } from '@/config/countries';
+
 import { PixelTracker } from '@/components/tracking/PixelTracker';
 import { 
   Star, 
@@ -40,7 +39,7 @@ interface AdvancedLandingPageProps {
 
 export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingPageProps) {
   const t = useTranslations();
-  const { } = useCurrency(countryConfig.currency as SupportedCurrency);
+
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -393,7 +392,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                     ))}
                   </div>
                   <span className="text-sm font-medium">4.97/5</span>
-                  <span className="text-sm text-gray-500">{t('sections.based_on_reviews')}</span>
+                  <span className="text-sm text-gray-500">{t('sections.based_on_reviews', { count: 235 })}</span>
                 </div>
 
                 {/* Sand Timer Countdown */}
@@ -440,7 +439,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
 
               {/* Rotating Testimonial */}
-              <RotatingReview countryCode={countryConfig.locale} />
+              <RotatingReview countryCode={countryConfig.locale} productId={product.id} />
             </div>
           </div>
         </div>
@@ -551,7 +550,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
       {/* Advanced Testimonials */}
       <section id="testimonials">
-        <AdvancedTestimonials countryCode={countryConfig.code} />
+        <AdvancedTestimonials countryCode={countryConfig.code} productId={product.id} />
       </section>
 
       {/* CTA After Testimonials */}

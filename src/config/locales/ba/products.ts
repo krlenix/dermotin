@@ -21,34 +21,34 @@ export const PRODUCTS: Record<string, Product> = {
     variants: [
       {
         id: 'fungel-1pak',
-        sku: 'DERM-FUNGEL-001',
+        sku: 'FUNGEL',
         name: '1 PAKOVANJE (50ml)',
         size: 'Okvirno 2 sedmice upotrebe',
         quantity: 1,
-        price: 1050, // Converted to BAM
+        price: 39.9,
         currency: 'BAM',
-        discountPrice: 945,
+        discountPrice: 33.9,
         isDefault: true
       },
       {
         id: 'fungel-2pak',
-        sku: 'DERM-FUNGEL-001',
+        sku: 'FUNGEL',
         name: '2 PAKOVANJA (100ml)',
         size: 'Okvirno mjesec dana upotrebe',
         quantity: 2,
-        price: 2100,
+        price: 79.8,
         currency: 'BAM',
-        discountPrice: 1645
+        discountPrice: 59.9
       },
       {
         id: 'fungel-3pak',
-        sku: 'DERM-FUNGEL-001',
+        sku: 'FUNGEL',
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 3,
-        price: 3000,
+        price: 119.7,
         currency: 'BAM',
-        discountPrice: 1995
+        discountPrice: 79.9
       }
     ],
     benefits: [
@@ -98,6 +98,14 @@ export const PRODUCTS: Record<string, Product> = {
       'potassium-sorbate'
     ],
     usage: 'Nanositi 2 puta dnevno na problematične dijelove kože ili noktiju. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 2 sedmice redovne upotrebe).',
+    usageSteps: [
+      'Očistite i osušite pogođeno mjesto',
+      'Nanesite tanak sloj FUNGEL-a na problematičnu kožu ili nokte',
+      'Nežno umasirajte dok se potpuno ne upije',
+      'Koristite 2 puta dnevno (ujutru i navečer)',
+      'Ne ispirati nakon nanošenja - ostaviti da djeluje',
+      'Redovno koristiti najmanje 2-4 sedmice za najbolje rezultate'
+    ],
     warnings: [
       'Samo za spoljašnju upotrebu',
       'Oprati ruke nakon upotrebe',
@@ -162,6 +170,74 @@ export const PRODUCTS: Record<string, Product> = {
         answer: "Prirodna formula koja podržava njegu problematične kože. Smiruje iritacije, podržava obnovu kože i pruža dugotrajnu hidrataciju. Sve prirodno, bez štetnih kemikalija!",
         category: "ingredients"
       }
+    ],
+    testimonials: [
+      {
+        id: "ba1",
+        name: "Amela H.",
+        city: "Sarajevo",
+        rating: 5,
+        text: "FUNGEL mi je pomogao kada ništa drugo nije. Imala sam hronične probleme sa kožom i ovaj prirodni proizvod je konačno donio olakšanje. Preporučujem svima koji traže efikasno rešenje.",
+        verified: true,
+        productUsed: "FUNGEL",
+        dateAdded: "2024-12-12",
+        featured: true
+      },
+      {
+        id: "ba2",
+        name: "Emir K.",
+        city: "Tuzla",
+        rating: 5,
+        text: "Kao čovjek koji radi fizički posao, često imam problema sa kožom na rukama. FUNGEL sa čajnim drvetom i origanom je bio prava stvar. Prirodan, bez kemikalija i stvarno efikasan.",
+        verified: true,
+        productUsed: "FUNGEL",
+        dateAdded: "2024-12-09",
+        featured: true
+      },
+      {
+        id: "ba3",
+        name: "Selma B.",
+        city: "Zenica",
+        rating: 5,
+        text: "Moj sin je imao problematičnu kožu oko noktiju. FUNGEL je jedini proizvod koji je stvarno pomogao. Prirodni sastojci su mi bili važni, a rezultati su vidljivi već nakon nedelju dana.",
+        verified: true,
+        productUsed: "FUNGEL",
+        dateAdded: "2024-12-06",
+        featured: true
+      },
+      {
+        id: "ba4",
+        name: "Adnan M.",
+        city: "Banja Luka",
+        rating: 4,
+        text: "Dobar proizvod, radi postupno ali sigurno. Trebalo mi je oko tri sedmice da vidim potpunu promjenu, ali vrijedi čekanja. Cijena je prihvatljiva za kvalitet.",
+        verified: true,
+        productUsed: "FUNGEL",
+        dateAdded: "2024-12-03",
+        featured: false
+      },
+      {
+        id: "ba5",
+        name: "Lejla S.",
+        city: "Mostar",
+        rating: 5,
+        text: "Radim u vlažnoj sredini i često imam problema sa kožom. FUNGEL mi je ne samo riješio problem, već i učinio kožu mekšom i zdravijom. Sada ga koristim preventivno.",
+        verified: true,
+        productUsed: "FUNGEL",
+        dateAdded: "2024-11-30",
+        featured: true
+      },
+      {
+        id: "ba6",
+        name: "Mirsad J.",
+        city: "Bijeljina",
+        rating: 5,
+        text: "Skeptičan sam bio prema prirodnim proizvodima, ali FUNGEL me pozitivno iznenadio. Brzo djeluje, nema neželjenih efekata i stvarno pomaže. Već sam preporučio dvojici prijatelja.",
+        verified: true,
+        productUsed: "FUNGEL",
+        dateAdded: "2024-11-27",
+        featured: false
+      }
     ]
   },
 
@@ -177,7 +253,7 @@ export const PRODUCTS: Record<string, Product> = {
       gallery: [
         '/images/products/biomelis/biomelis-box-only.png',
         '/images/products/biomelis/biomelis-open-bottle.png',
-        '/images/products/biomelis/biomelis-product-image.png'
+        '/images/products/biomelis/biomelis-old-product-image.png'
       ],
       thumbnail: '/images/products/biomelis/biomelis-box-only.png',
       fallback: '/images/products/biomelis/biomelis-box-and-product-mockup.png'
@@ -185,34 +261,34 @@ export const PRODUCTS: Record<string, Product> = {
     variants: [
       {
         id: 'biomelis-1pak',
-        sku: 'DERM-BIOMELIS-001',
+        sku: 'BIOMELIS',
         name: '1 PAKOVANJE (50ml)',
         size: 'Okvirno 2 sedmice upotrebe',
         quantity: 1,
-        price: 1050,
+        price: 39.9,
         currency: 'BAM',
-        discountPrice: 945,
+        discountPrice: 33.9,
         isDefault: true
       },
       {
         id: 'biomelis-2pak',
-        sku: 'DERM-BIOMELIS-001',
+        sku: 'BIOMELIS',
         name: '2 PAKOVANJA (100ml)',
-        size: 'Okvirno mjesec dana upotrebe',
+        size: 'Okvirno mjesec dana upotrebe', 
         quantity: 2,
-        price: 2100,
+        price: 79.8,
         currency: 'BAM',
-        discountPrice: 1645
+        discountPrice: 59.9
       },
       {
         id: 'biomelis-3pak',
-        sku: 'DERM-BIOMELIS-001',
+        sku: 'BIOMELIS',
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 3,
-        price: 3000,
+        price: 119.7,
         currency: 'BAM',
-        discountPrice: 1995
+        discountPrice: 79.9
       }
     ],
     benefits: [
@@ -266,6 +342,14 @@ export const PRODUCTS: Record<string, Product> = {
       'potassium-sorbate'
     ],
     usage: 'Nanositi 2 puta dnevno na pogođene dijelove kože i nežno masirati. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 2 sedmice redovne upotrebe).',
+    usageSteps: [
+      'Očistite kožu blagim sapunom i osušite',
+      'Nanesite malu količinu BIOMELIS-a na pogođeno mjesto',
+      'Nežno umasirajte kružnim pokretima dok se ne upije',
+      'Koristite 2-3 puta dnevno ili prema potrebi',
+      'Za najbolje rezultate koristiti redovno 3-4 sedmice',
+      'Može se koristiti i preventivno na osjetljivim dijelovima kože'
+    ],
     warnings: [
       'Samo za spoljašnju upotrebu',
       'Nanositi samo na zdravu kožu',
@@ -329,6 +413,63 @@ export const PRODUCTS: Record<string, Product> = {
         question: "Šta čini BIOMELIS posebnim?",
         answer: "Prirodna formula koja može da smiri crvenilo, svrab i iritacije. Pruža zaštitu od spoljašnjih uticaja i dugotrajnu hidrataciju. Bez parabena i veštačkih dodataka - čisto prirodno!",
         category: "ingredients"
+      }
+    ],
+    testimonials: [
+      {
+        id: "bab1",
+        name: "Amira S.",
+        city: "Sarajevo",
+        rating: 5,
+        text: "BIOMELIS mi je spasio kožu! Imala sam hronične probleme sa ekcemom i ništa nije pomagalo. Nakon 3 sedmice korišćenja, koža mi je konačno mirna i zdrava. Prirodni sastojci su ono što sam tražila.",
+        verified: true,
+        productUsed: "BIOMELIS",
+        dateAdded: "2024-12-13",
+        featured: true
+      },
+      {
+        id: "bab2",
+        name: "Kemal H.",
+        city: "Tuzla",
+        rating: 5,
+        text: "Kao neko ko se bori sa psorijazom godinama, mogu reći da je BIOMELIS najbolji proizvod koji sam probao. Smiruje svrab i crvenilo, a koža postaje mekša. Preporučujem svima!",
+        verified: true,
+        productUsed: "BIOMELIS",
+        dateAdded: "2024-12-10",
+        featured: true
+      },
+      {
+        id: "bab3",
+        name: "Merima K.",
+        city: "Zenica",
+        rating: 5,
+        text: "Moja kćerka ima atopijski dermatitis i BIOMELIS je jedini proizvod koji joj stvarno pomaže. Prirodan je, bez kemikalija, a rezultati su vidljivi već nakon sedmicu dana korišćenja.",
+        verified: true,
+        productUsed: "BIOMELIS",
+        dateAdded: "2024-12-08",
+        featured: true
+      },
+      {
+        id: "bab4",
+        name: "Haris M.",
+        city: "Mostar",
+        rating: 4,
+        text: "Koristim BIOMELIS već mjesec dana za problematičnu kožu na rukama. Vidim poboljšanje, manje je iritacije i crvenila. Trebalo mi je malo vremena, ali vrijedi.",
+        verified: true,
+        productUsed: "BIOMELIS",
+        dateAdded: "2024-12-05",
+        featured: false
+      },
+      {
+        id: "bab5",
+        name: "Lejla P.",
+        city: "Banja Luka",
+        rating: 5,
+        text: "Imala sam osjetljivu kožu koja je reagovala na sve. BIOMELIS je bio blag i efikasan - konačno proizvod koji ne izaziva dodatne iritacije. Koža mi je sada zdrava i hidratisana.",
+        verified: true,
+        productUsed: "BIOMELIS",
+        dateAdded: "2024-12-02",
+        featured: true
       }
     ]
   }

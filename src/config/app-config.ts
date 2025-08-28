@@ -57,7 +57,7 @@ export const BUSINESS_CONFIG = {
   // Image optimization
   images: {
     quality: 85,
-    formats: ['webp', 'jpg'],
+    formats: ['webp', 'jpg', 'png'],
     sizes: {
       thumbnail: 150,
       small: 300,

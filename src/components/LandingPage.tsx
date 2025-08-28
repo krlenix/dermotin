@@ -14,7 +14,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { Footer } from '@/components/ui/footer';
-import { useCurrency } from '@/hooks/useCurrency';
+
 import { SupportedCurrency } from '@/config/countries';
 import { ShoppingCart, Star, Shield, Truck } from 'lucide-react';
 
@@ -27,7 +27,14 @@ interface LandingPageProps {
 
 export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPageProps) {
   const t = useTranslations();
-  const { formatPrice } = useCurrency(countryConfig.currency as SupportedCurrency);
+  // Simple price formatter using the country's currency symbol (no conversion)
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('sr-RS', {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount) + ' ' + countryConfig.currencySymbol;
+  };
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [quantity, setQuantity] = useState(1);
 

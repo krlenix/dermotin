@@ -80,7 +80,7 @@ export function SocialProof({
               <span className="text-sm font-medium">4.97/5</span>
             </div>
             <Badge variant="secondary">
-              {t('based_on_reviews', { count: 234 })}
+              {t('based_on_reviews', { count: 235 })}
             </Badge>
           </div>
         </Card>

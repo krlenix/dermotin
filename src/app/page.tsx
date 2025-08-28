@@ -1,16 +1,8 @@
-import Link from 'next/link';
-import { getProductsForCountry } from '@/config/products';
-import { getCountryConfig } from '@/config/countries';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
-import { Footer } from '@/components/ui/footer';
-import { CookieConsent } from '@/components/features/CookieConsent';
+import { redirect } from 'next/navigation';
 
 export default async function HomePage() {
-  const countryConfig = getCountryConfig('rs'); // Only Serbian now
-  const products = await getProductsForCountry('rs', 'rs');
+  // Redirect to the default locale (Serbian)
+  redirect('/rs');
 
   return (
     <div className="min-h-screen bg-gray-50">

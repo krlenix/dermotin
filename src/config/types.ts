@@ -1,3 +1,20 @@
+export interface Testimonial {
+  id: string;
+  name: string;
+  city: string;
+  rating: number;
+  text: string;
+  verified: boolean;
+  image?: string; // Customer photo
+  beforeAfter?: {
+    before: string;
+    after: string;
+  };
+  productUsed: string;
+  dateAdded: string;
+  featured?: boolean;
+}
+
 export interface ProductVariant {
   id: string;
   sku: string;
@@ -47,6 +64,7 @@ export interface Product {
   benefits: string[];
   ingredients: string[]; // Ingredient IDs referencing INGREDIENTS config
   usage: string;
+  usageSteps?: string[]; // Step-by-step usage instructions
   warnings: string[];
   slug: string;
   alternativeSlugs: string[]; // For different landing pages
@@ -68,6 +86,7 @@ export interface Product {
   };
   crossSells?: string[]; // Product IDs
   productFAQ?: ProductFAQ[]; // Localized FAQs for this locale
+  testimonials?: Testimonial[]; // Localized testimonials for this product
 }
 
 export const PRODUCT_CATEGORIES = {

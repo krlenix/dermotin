@@ -196,6 +196,7 @@
     "delivery_time": "Vrijeme dostave",
     "reliable_delivery": "Brza i pouzdana dostava izravno na vašu adresu",
     "select_courier": "Odaberite kurirsku službu",
+    "courier_service": "Dostavlja kurirska služba",
     "recommended": "Preporučeno",
     "shipping": "dostava"
   },
@@ -211,7 +212,7 @@
     "contact": "Kontakt"
   },
   "sections": {
-    "based_on_reviews": "Na temelju 234 recenzije",
+    "based_on_reviews": "Na temelju {count} recenzija",
     "detailed_information": "Detaljne informacije",
     "natural_badge": "100% Prirodno",
     "customer_testimonials": "Što kažu naši korisnici",
@@ -225,7 +226,8 @@
   },
   "testimonials": {
     "section_title": "Što kažu naši kupci",
-    "social_media_subtitle": "Pročitajte iskustva naših zadovoljnih kupaca koji dijele svoja mišljenja o našim proizvodima"
+    "social_media_subtitle": "Pročitajte iskustva naših zadovoljnih kupaca koji dijele svoja mišljenja o našim proizvodima",
+    "loading": "Učitavanje recenzija..."
   },
   "footer": {
     "brand_description": "U Dermotinu vjerujemo da je priroda najbolji saveznik vaše kože. Naši proizvodi su pažljivo formulirani koristeći isključivo najkvalitetnije prirodne sastojke kako bi vaša koža bila zdrava, blistava i njegovana na prirodan način.",
@@ -265,7 +267,7 @@
   },
   "bundles": {
     "choose_option": "Odaberite opciju:",
-    "save_amount": "UŠTEDI -{amount}KM",
+    "save_amount": "UŠTEDI -{amount}",
     "biggest_savings": "NAJVEĆA UŠTEDA",
     "best_offer": "LJUDI NAJČEŠĆE KUPUJU",
     "free_shipping": "✓ Besplatna dostava",

@@ -20,14 +20,15 @@ export function useCurrency(defaultCurrency: SupportedCurrency = 'RSD') {
   };
 
   const formatPrice = (amount: number, fromCurrency: SupportedCurrency = 'RSD') => {
-    const convertedAmount = convertCurrency(amount, fromCurrency, currency);
+    // If the amount is already in the correct currency, don't convert
+    const finalAmount = fromCurrency === currency ? amount : convertCurrency(amount, fromCurrency, currency);
     const symbol = getCurrencySymbol(currency);
     
     return new Intl.NumberFormat('sr-RS', {
       style: 'decimal',
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
-    }).format(convertedAmount) + ' ' + symbol;
+    }).format(finalAmount) + ' ' + symbol;
   };
 
   const convertPrice = (amount: number, fromCurrency: SupportedCurrency = 'RSD') => {
