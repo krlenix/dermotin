@@ -46,6 +46,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const [selectedCourier, setSelectedCourier] = useState<CourierInfo>(getDefaultCourier(countryConfig));
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Apply global overflow fix and prevent layout shifts
   useEffect(() => {
@@ -64,6 +65,19 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       document.documentElement.style.maxWidth = '';
       document.body.style.position = '';
     };
+  }, []);
+
+  // Handle scroll for header transparency
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial scroll position
+    
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // CTA Button text - configurable variable
@@ -212,49 +226,73 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         <div className="absolute top-1/2 -left-20 w-96 h-96 bg-brand-green/3 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 right-10 w-64 h-64 bg-brand-orange/2 rounded-full blur-3xl"></div>
       </div>
-      {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-sm border-b z-40">
-        <div className="container mx-auto px-4 py-1.5 md:py-3">
-          <div className="flex items-center justify-between">
+      {/* Header - Fixed on mobile, relative on desktop */}
+      <header className={`md:relative fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b py-1.5 md:py-2' 
+          : 'bg-transparent py-2 md:py-4'
+      }`}>
+        <div className="container mx-auto px-4">
+          <div className="relative flex items-center">
             {/* Navigation Menu - Left side */}
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="hidden md:flex items-center space-x-6 flex-1">
               <a 
                 href="#hero" 
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.home')}
               </a>
               <a 
                 href="#benefits" 
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.benefits')}
               </a>
               <a 
                 href="#testimonials" 
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.testimonials')}
               </a>
               <a 
                 href="#faq" 
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.faq')}
               </a>
               <a 
                 href="#order" 
-                className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors"
+                className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors shadow-lg"
               >
                 {t('navigation.order')}
               </a>
             </nav>
 
             {/* Mobile Menu Button - Left side on mobile */}
-            <div className="md:hidden">
+            <div className="md:hidden flex-1">
               <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-1.5 text-gray-700 hover:text-brand-orange transition-colors"
+                className={`p-1.5 transition-colors ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
                 aria-label={t('ui.toggle_menu')}
               >
                 {mobileMenuOpen ? (
@@ -269,8 +307,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               </button>
             </div>
 
-            {/* Centered Logo */}
-            <div className="flex-1 md:flex-none flex justify-center md:justify-center">
+            {/* Absolutely Centered Logo */}
+            <div className="absolute left-1/2 transform -translate-x-1/2">
               <Image
                 src={countryConfig.logo}
                 alt={t('ui.alt_logo')}
@@ -282,21 +320,25 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
             </div>
 
             {/* Contact Info - Right side */}
-            <div className="hidden md:flex items-center gap-1 text-sm">
+            <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
               <Phone className="h-4 w-4 text-brand-orange" />
               <a 
                 href={`tel:${countryConfig.company.phone}`}
-                className="font-medium text-gray-700 hover:text-brand-orange transition-colors"
+                className={`font-medium transition-colors ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {countryConfig.company.phone}
               </a>
             </div>
 
             {/* Mobile phone - Right side on mobile */}
-            <div className="md:hidden">
+            <div className="md:hidden flex-1 flex justify-end">
               <a 
                 href={`tel:${countryConfig.company.phone}`}
-                className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors"
+                className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
                 aria-label={t('ui.call_us')}
               >
                 <Phone className="h-4 w-4" />
@@ -306,7 +348,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
           {/* Mobile Menu Dropdown */}
           {mobileMenuOpen && (
-            <div className="md:hidden mt-2 pb-2 border-t border-gray-200">
+            <div className={`md:hidden mt-2 pb-2 border-t border-gray-200 ${
+              !isScrolled ? 'bg-white/95 backdrop-blur-md rounded-lg mx-2' : ''
+            }`}>
               <nav className="flex flex-col space-y-2 pt-2">
                 <a 
                   href="#hero" 
@@ -359,7 +403,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="pt-24 md:pt-24 pb-8 md:pb-12 relative overflow-hidden w-full">
+      <section id="hero" className="pt-24 md:pt-8 pb-8 md:pb-12 relative overflow-hidden w-full">
         {/* Clean minimal background */}
         <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
         <div className="container mx-auto px-4 relative">

@@ -43,6 +43,7 @@ export default function HomePage() {
   const t = useTranslations();
   const countryConfig = getCountryConfig(locale);
   const [products, setProducts] = useState<Product[]>([]);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   // Load products for the current locale
   useEffect(() => {
@@ -113,9 +114,13 @@ export default function HomePage() {
 
 
 
-  // Handle scroll animations
+  // Handle scroll animations and header transparency
   useEffect(() => {
-    const animateOnScroll = () => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 50);
+
+      // Animate elements on scroll
       const elements = document.querySelectorAll('.animate-on-scroll, .animate-on-scroll-left, .animate-on-scroll-right');
       elements.forEach(element => {
         const elementTop = element.getBoundingClientRect().top;
@@ -127,57 +132,81 @@ export default function HomePage() {
       });
     };
 
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll(); // Run once on mount
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Run once on mount
     
-    return () => window.removeEventListener('scroll', animateOnScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <div className="min-h-screen bg-white">
       {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-sm border-b z-40">
-        <div className="container mx-auto px-4 py-1.5 md:py-3">
-          <div className="flex items-center justify-between">
+      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b py-1.5 md:py-2' 
+          : 'bg-transparent py-2 md:py-4'
+      }`}>
+        <div className="container mx-auto px-4">
+          <div className="relative flex items-center">
             {/* Navigation Menu - Left side */}
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="hidden md:flex items-center space-x-6 flex-1">
               <Link 
                 href={`/${locale}`} 
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.home')}
               </Link>
               <button 
                 onClick={scrollToProducts}
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.products')}
               </button>
               <button 
                 onClick={scrollToTestimonials}
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.testimonials')}
               </button>
               <Link 
                 href="#faq" 
-                className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors underline-animate"
+                className={`text-sm font-medium transition-colors underline-animate ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {t('navigation.faq')}
               </Link>
               <Link
                 href={`/${locale}/contact`}
-                className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors"
+                className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors shadow-lg"
               >
                 {t('navigation.contact')}
               </Link>
             </nav>
 
             {/* Mobile Menu Button - Left side on mobile */}
-            <div className="md:hidden">
+            <div className="md:hidden flex-1">
               <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-1.5 text-gray-700 hover:text-brand-orange transition-colors"
+                className={`p-1.5 transition-colors ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
                 aria-label={t('ui.toggle_menu')}
               >
                 {isMenuOpen ? (
@@ -192,8 +221,8 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Centered Logo */}
-            <div className="flex-1 md:flex-none flex justify-center md:justify-center">
+            {/* Absolutely Centered Logo */}
+            <div className="absolute left-1/2 transform -translate-x-1/2">
               <Image
                 src={countryConfig.logo}
                 alt={t('ui.alt_logo')}
@@ -205,21 +234,25 @@ export default function HomePage() {
             </div>
 
             {/* Contact Info - Right side */}
-            <div className="hidden md:flex items-center gap-1 text-sm">
+            <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
               <Phone className="h-4 w-4 text-brand-orange" />
               <a 
                 href={`tel:${countryConfig.company.phone}`}
-                className="font-medium text-gray-700 hover:text-brand-orange transition-colors"
+                className={`font-medium transition-colors ${
+                  isScrolled 
+                    ? 'text-gray-700 hover:text-brand-orange' 
+                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                }`}
               >
                 {countryConfig.company.phone}
               </a>
             </div>
 
             {/* Mobile phone - Right side on mobile */}
-            <div className="md:hidden">
+            <div className="md:hidden flex-1 flex justify-end">
               <a 
                 href={`tel:${countryConfig.company.phone}`}
-                className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors"
+                className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
                 aria-label={t('ui.call_us')}
               >
                 <Phone className="h-4 w-4" />
@@ -229,7 +262,9 @@ export default function HomePage() {
 
           {/* Mobile Menu Dropdown */}
           {isMenuOpen && (
-            <div className="md:hidden mt-2 pb-2 border-t border-gray-200">
+            <div className={`md:hidden mt-2 pb-2 border-t border-gray-200 ${
+              !isScrolled ? 'bg-white/95 backdrop-blur-md rounded-lg mx-2' : ''
+            }`}>
               <nav className="flex flex-col space-y-2 pt-2">
                 <Link 
                   href={`/${locale}`} 
