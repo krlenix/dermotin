@@ -35,7 +35,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
 
   useEffect(() => {
     // Initialize Meta Pixel
-    if (pixelConfig.meta.enabled && pixelConfig.meta.pixelId !== 'YOUR_META_PIXEL_ID_RS') {
+    if (pixelConfig.meta.enabled && pixelConfig.meta.pixelId) {
       if (typeof window !== 'undefined' && window.fbq) {
         window.fbq('init', pixelConfig.meta.pixelId);
         window.fbq('track', META_EVENTS.PAGE_VIEW);
@@ -43,7 +43,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
     }
 
     // Initialize TikTok Pixel
-    if (pixelConfig.tiktok.enabled && pixelConfig.tiktok.pixelId !== 'YOUR_TIKTOK_PIXEL_ID_RS') {
+    if (pixelConfig.tiktok.enabled && pixelConfig.tiktok.pixelId) {
       if (typeof window !== 'undefined' && window.ttq) {
         window.ttq.load(pixelConfig.tiktok.pixelId);
         window.ttq.page();
@@ -54,7 +54,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
   return (
     <>
       {/* Meta Pixel Script */}
-      {pixelConfig.meta.enabled && pixelConfig.meta.pixelId !== 'YOUR_META_PIXEL_ID_RS' && (
+      {pixelConfig.meta.enabled && pixelConfig.meta.pixelId && (
         <>
           <Script
             id="meta-pixel"
@@ -86,7 +86,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       )}
 
       {/* TikTok Pixel Script */}
-      {pixelConfig.tiktok.enabled && pixelConfig.tiktok.pixelId !== 'YOUR_TIKTOK_PIXEL_ID_RS' && (
+      {pixelConfig.tiktok.enabled && pixelConfig.tiktok.pixelId && (
         <Script
           id="tiktok-pixel"
           strategy="afterInteractive"
@@ -113,7 +113,7 @@ export function usePixelTracking(countryCode: string) {
     if (typeof window === 'undefined') return;
 
     // Track Meta Pixel event
-    if (pixelConfig.meta.enabled && window.fbq && pixelConfig.meta.pixelId !== 'YOUR_META_PIXEL_ID_RS') {
+    if (pixelConfig.meta.enabled && window.fbq && pixelConfig.meta.pixelId) {
       let metaEvent: string;
       
       switch (eventType) {
@@ -141,7 +141,7 @@ export function usePixelTracking(countryCode: string) {
     }
 
     // Track TikTok Pixel event
-    if (pixelConfig.tiktok.enabled && window.ttq && pixelConfig.tiktok.pixelId !== 'YOUR_TIKTOK_PIXEL_ID_RS') {
+    if (pixelConfig.tiktok.enabled && window.ttq && pixelConfig.tiktok.pixelId) {
       let tiktokEvent: string;
       
       switch (eventType) {

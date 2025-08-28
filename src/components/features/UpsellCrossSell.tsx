@@ -9,7 +9,7 @@ import { getProduct, Product } from '@/config/products';
 
 import { useTranslations } from 'next-intl';
 import { Plus, Star, Gift, Sparkles, Check } from 'lucide-react';
-import { CountryConfig, SupportedCurrency } from '@/config/countries';
+import { CountryConfig } from '@/config/countries';
 
 interface UpsellCrossSellProps {
   mainProductId: string;

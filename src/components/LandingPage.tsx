@@ -15,7 +15,7 @@ import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { Footer } from '@/components/ui/footer';
 
-import { SupportedCurrency } from '@/config/countries';
+
 import { ShoppingCart, Star, Shield, Truck } from 'lucide-react';
 
 interface LandingPageProps {

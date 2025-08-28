@@ -267,25 +267,44 @@ The project shows excellent configuration management with most values properly e
 - Minor terminology preferences not followed
 
 ### Environment Variables Setup
-Create a `.env.local` file with:
+Copy `.env.example` to `.env.local` and update with your actual values:
+```bash
+cp .env.example .env.local
+```
+
+The `.env.example` file contains:
 ```bash
 # Domain Configuration
 NEXT_PUBLIC_DOMAIN=dermotin.com
 NEXT_PUBLIC_APP_URL=https://dermotin.com
 
 # Tracking Pixels - Serbia
-NEXT_PUBLIC_META_PIXEL_RS=your_meta_pixel_id
-NEXT_PUBLIC_TIKTOK_PIXEL_RS=your_tiktok_pixel_id
+NEXT_PUBLIC_META_PIXEL_RS=your_actual_meta_pixel_id
+NEXT_PUBLIC_TIKTOK_PIXEL_RS=your_actual_tiktok_pixel_id
 
 # Tracking Pixels - Bosnia
-NEXT_PUBLIC_META_PIXEL_BA=your_meta_pixel_id_ba
-NEXT_PUBLIC_TIKTOK_PIXEL_BA=your_tiktok_pixel_id_ba
+NEXT_PUBLIC_META_PIXEL_BA=your_actual_meta_pixel_id_ba
+NEXT_PUBLIC_TIKTOK_PIXEL_BA=your_actual_tiktok_pixel_id_ba
+
+# Tracking Pixels - Bulgaria (example for future expansion)
+NEXT_PUBLIC_META_PIXEL_BG=your_actual_meta_pixel_id_bg
+NEXT_PUBLIC_TIKTOK_PIXEL_BG=your_actual_tiktok_pixel_id_bg
+
+# Tracking Pixels - Romania (example for future expansion)
+NEXT_PUBLIC_META_PIXEL_RO=your_actual_meta_pixel_id_ro
+NEXT_PUBLIC_TIKTOK_PIXEL_RO=your_actual_tiktok_pixel_id_ro
+
+# Add more countries as needed following the pattern:
+# NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}=pixel_id
+# NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}=pixel_id
 
 # Social Media (Optional)
 NEXT_PUBLIC_FACEBOOK_URL=https://facebook.com/dermotin
 NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/dermotin
 NEXT_PUBLIC_YOUTUBE_URL=https://youtube.com/@dermotin
 ```
+
+**Modular Design**: The pixel system automatically works with any country code (RS, BA, BG, RO, HR, etc.) - just add the environment variables following the pattern above.
 
 ## Next Steps
 - [x] Complete hardcoded values audit

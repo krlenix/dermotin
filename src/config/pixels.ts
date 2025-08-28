@@ -1,6 +1,6 @@
 /**
  * Pixel tracking configuration for Meta and TikTok
- * Easily editable pixel codes organized by country
+ * Uses environment variables for pixel IDs
  */
 
 export interface PixelConfig {
@@ -18,38 +18,42 @@ export interface CountryPixelConfig {
   [countryCode: string]: PixelConfig;
 }
 
-// Pixel configuration by country - EASILY EDITABLE
-export const PIXEL_CONFIG: CountryPixelConfig = {
-  // Serbia
-  rs: {
-    meta: {
-      pixelId: '12345', // Replace with actual Meta Pixel ID for Serbia
-      enabled: true,
-    },
-    tiktok: {
-      pixelId: '54321', // Replace with actual TikTok Pixel ID for Serbia
-      enabled: true,
-    },
-  },
+// Get pixel configuration for a specific country from environment variables
+function getPixelConfigForCountry(countryCode: string): PixelConfig {
+  const upperCountryCode = countryCode.toUpperCase();
   
-  // Bosnia and Herzegovina
-  ba: {
+  const metaPixelId = process.env[`NEXT_PUBLIC_META_PIXEL_${upperCountryCode}`] || '';
+  const tiktokPixelId = process.env[`NEXT_PUBLIC_TIKTOK_PIXEL_${upperCountryCode}`] || '';
+  
+  // Check if pixel ID is valid (not empty and not a placeholder)
+  const isValidMetaPixel = metaPixelId && !metaPixelId.startsWith('your_meta_pixel_id');
+  const isValidTiktokPixel = tiktokPixelId && !tiktokPixelId.startsWith('your_tiktok_pixel_id');
+  
+  return {
     meta: {
-      pixelId: 'YOUR_META_PIXEL_ID_BA', // Replace with actual Meta Pixel ID for Bosnia
-      enabled: true,
+      pixelId: metaPixelId,
+      enabled: !!isValidMetaPixel,
     },
     tiktok: {
-      pixelId: 'YOUR_TIKTOK_PIXEL_ID_BA', // Replace with actual TikTok Pixel ID for Bosnia
-      enabled: true,
+      pixelId: tiktokPixelId,
+      enabled: !!isValidTiktokPixel,
     },
-  },
-};
+  };
+}
+
+// Cache for pixel configurations to avoid repeated environment variable lookups
+const pixelConfigCache: CountryPixelConfig = {};
 
 /**
  * Get pixel configuration for a specific country
  */
 export function getPixelConfig(countryCode: string): PixelConfig {
-  return PIXEL_CONFIG[countryCode] || PIXEL_CONFIG.rs;
+  // Use cache to avoid repeated environment variable lookups
+  if (!pixelConfigCache[countryCode]) {
+    pixelConfigCache[countryCode] = getPixelConfigForCountry(countryCode);
+  }
+  
+  return pixelConfigCache[countryCode];
 }
 
 /**

@@ -25,43 +25,69 @@ This guide explains how to configure and use Meta (Facebook) and TikTok pixel tr
 
 ## 🔧 Configuration
 
-### 1. Update Pixel IDs
+### 1. Set Environment Variables
 
-Edit `src/config/pixels.ts` and replace placeholder pixel IDs with your actual IDs:
+Create a `.env.local` file in your project root with your actual pixel IDs:
 
-```typescript
-export const PIXEL_CONFIG: CountryPixelConfig = {
-  // Serbia
-  rs: {
-    meta: {
-      pixelId: 'YOUR_ACTUAL_META_PIXEL_ID_FOR_SERBIA', // ← Replace this
-      enabled: true,
-    },
-    tiktok: {
-      pixelId: 'YOUR_ACTUAL_TIKTOK_PIXEL_ID_FOR_SERBIA', // ← Replace this
-      enabled: true,
-    },
-  },
-  
-  // Add more countries as needed...
-};
+```bash
+# Domain Configuration
+NEXT_PUBLIC_DOMAIN=dermotin.com
+NEXT_PUBLIC_APP_URL=https://dermotin.com
+
+# Tracking Pixels - Serbia
+NEXT_PUBLIC_META_PIXEL_RS=your_actual_meta_pixel_id
+NEXT_PUBLIC_TIKTOK_PIXEL_RS=your_actual_tiktok_pixel_id
+
+# Tracking Pixels - Bosnia
+NEXT_PUBLIC_META_PIXEL_BA=your_actual_meta_pixel_id_ba
+NEXT_PUBLIC_TIKTOK_PIXEL_BA=your_actual_tiktok_pixel_id_ba
+
+# Tracking Pixels - Bulgaria (example for future expansion)
+NEXT_PUBLIC_META_PIXEL_BG=your_actual_meta_pixel_id_bg
+NEXT_PUBLIC_TIKTOK_PIXEL_BG=your_actual_tiktok_pixel_id_bg
+
+# Add more countries as needed following the pattern:
+# NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}=pixel_id
+# NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}=pixel_id
+
+# Social Media (Optional)
+NEXT_PUBLIC_FACEBOOK_URL=https://facebook.com/dermotin
+NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/dermotin
+NEXT_PUBLIC_YOUTUBE_URL=https://youtube.com/@dermotin
 ```
+
+**Important**: 
+- Replace the placeholder values with your actual pixel IDs
+- The system automatically enables/disables pixels based on whether valid IDs are provided
+- **Scalable Design**: Add any country by following the pattern `NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}` and `NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}`
+- Country codes are automatically converted to uppercase (e.g., `rs` → `RS`, `bg` → `BG`)
 
 ### 2. Enable/Disable Tracking
 
-You can enable or disable tracking per platform and per country:
+Tracking is automatically enabled/disabled based on environment variables:
 
-```typescript
-rs: {
-  meta: {
-    pixelId: 'YOUR_PIXEL_ID',
-    enabled: false, // ← Disable Meta tracking for Serbia
-  },
-  tiktok: {
-    pixelId: 'YOUR_PIXEL_ID',
-    enabled: true,  // ← Keep TikTok tracking enabled
-  },
-},
+- **Enabled**: When a valid pixel ID is provided (not empty or placeholder text)
+- **Disabled**: When no pixel ID is provided or placeholder text is used
+
+To disable tracking for a specific platform/country:
+- Remove the environment variable, or
+- Set it to an empty string, or  
+- Leave it as the placeholder value
+
+```bash
+# Disable Meta pixel for Serbia (remove or comment out)
+# NEXT_PUBLIC_META_PIXEL_RS=
+
+# Keep TikTok pixel enabled for Serbia
+NEXT_PUBLIC_TIKTOK_PIXEL_RS=your_actual_tiktok_pixel_id
+
+# Example: Adding support for Bulgaria
+NEXT_PUBLIC_META_PIXEL_BG=your_bulgaria_meta_pixel_id
+NEXT_PUBLIC_TIKTOK_PIXEL_BG=your_bulgaria_tiktok_pixel_id
+
+# Example: Adding support for Croatia
+NEXT_PUBLIC_META_PIXEL_HR=your_croatia_meta_pixel_id
+NEXT_PUBLIC_TIKTOK_PIXEL_HR=your_croatia_tiktok_pixel_id
 ```
 
 ## 📊 Events Tracked
@@ -189,10 +215,11 @@ ttq.track('ViewContent') // Test manual event
 ## 🛠 Troubleshooting
 
 ### Pixels Not Loading
-1. Check if pixel IDs are correctly set in `src/config/pixels.ts`
-2. Ensure pixel IDs don't contain placeholder text
-3. Verify `enabled: true` for the country/platform
-4. Check browser console for JavaScript errors
+1. Check if pixel IDs are correctly set in `.env.local`
+2. Ensure pixel IDs don't contain placeholder text (e.g., 'your_meta_pixel_id')
+3. Verify environment variables are properly loaded (check `process.env.NEXT_PUBLIC_META_PIXEL_RS`)
+4. Restart your development server after changing environment variables
+5. Check browser console for JavaScript errors
 
 ### Events Not Firing
 1. Verify the component has access to `countryConfig.code`
@@ -201,9 +228,11 @@ ttq.track('ViewContent') // Test manual event
 4. Test with browser developer tools
 
 ### Country-Specific Issues
-1. Verify country code matches the keys in `PIXEL_CONFIG`
-2. Check if fallback to `default` configuration is working
+1. Verify country code matches the environment variable pattern (`NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}`)
+2. Check if the country code is being converted to uppercase correctly
 3. Ensure country configuration is passed correctly to components
+4. Verify environment variables exist for the specific country (e.g., `NEXT_PUBLIC_META_PIXEL_BG` for Bulgaria)
+5. **Adding New Countries**: Simply add the environment variables following the pattern - no code changes needed!
 
 ## 📝 Event Data Structure
 

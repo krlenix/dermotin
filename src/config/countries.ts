@@ -237,8 +237,8 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       consumerProtectionLaw: 'Zakona o zaštiti potrošača BiH',
       dataProtectionLaw: 'Zakona o zaštiti ličnih podataka BiH',
       obligationsLaw: 'Zakona o obligacionim odnosima BiH',
-      ministryWebsite: 'https://example.ba',
-      disputeResolutionListUrl: 'https://example.ba/disputes'
+      ministryWebsite: 'https://www.vijeceministara.gov.ba',
+      disputeResolutionListUrl: 'https://www.parlament.ba'
     }
   }
 };

@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ProductVariant } from '@/config/products';
-import { CountryConfig, CourierInfo, getAvailableCouriers, SupportedCurrency } from '@/config/countries';
+import { CountryConfig, CourierInfo, getAvailableCouriers } from '@/config/countries';
 
 import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
