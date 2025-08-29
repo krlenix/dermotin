@@ -425,14 +425,14 @@ export function CheckoutForm({
             {/* Payment Method */}
             <div className="space-y-4">
               <Label className="text-base font-semibold text-gray-900">{t('checkout.payment_method')}</Label>
-              <div className="p-4 border rounded-lg bg-green-50 border-green-200">
+              <div className="p-4 border rounded-lg bg-secondary/10 border-secondary/20">
                 <div className="flex items-center gap-3">
-                  <Banknote className="h-6 w-6 text-green-600" />
+                  <Banknote className="h-6 w-6 text-secondary" />
                   <div className="flex-1">
-                    <p className="font-medium text-green-800">{t('checkout.cod')}</p>
-                    <p className="text-sm text-green-600">{t('payment_cod.description')}</p>
+                    <p className="font-medium text-secondary">{t('checkout.cod')}</p>
+                    <p className="text-sm text-secondary/80">{t('payment_cod.description')}</p>
                   </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">{t('payment_cod.selected')}</Badge>
+                  <Badge variant="secondary" className="bg-secondary/20 text-secondary">{t('payment_cod.selected')}</Badge>
                 </div>
               </div>
             </div>
@@ -450,7 +450,7 @@ export function CheckoutForm({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-brand-green hover:bg-green-600 text-white font-bold py-6 px-8 text-xl rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 border-2 border-green-400/30 hover:border-green-300/50 transform hover:-translate-y-1 hover:scale-[1.02] group sword-shine focus:outline-none focus:ring-4 focus:ring-green-300/50"
+                className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold py-6 px-8 text-xl rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 border-2 border-secondary/30 hover:border-secondary/50 transform hover:-translate-y-1 hover:scale-[1.02] group sword-shine focus:outline-none focus:ring-4 focus:ring-secondary/50"
                 size="lg"
               >
                 <span className="relative z-10">

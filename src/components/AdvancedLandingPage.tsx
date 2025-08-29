@@ -147,7 +147,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     <Button 
       onClick={scrollToCheckout}
       size={size}
-      className={`bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${showPulse ? 'animate-pulse' : ''} ${className}`}
+      className={`bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${showPulse ? 'animate-pulse' : ''} ${className}`}
     >
       {ctaButtonText}
     </Button>
@@ -496,8 +496,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               {/* Key Benefits */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {product.benefits.slice(0, 4).map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2 p-3 bg-secondary/10 border border-secondary/20 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-secondary flex-shrink-0" />
                     <span className="text-sm font-medium">{benefit}</span>
                   </div>
                 ))}

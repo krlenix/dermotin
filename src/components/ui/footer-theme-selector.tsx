@@ -116,7 +116,7 @@ export function FooterThemeSelector({ className = '' }: FooterThemeSelectorProps
               <div className="flex items-center justify-between w-full">
                 <ThemePreview themeName={themeConfig.name} />
                 {theme === themeConfig.name && (
-                  <Check className="w-4 h-4 text-green-400 ml-2 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-primary ml-2 flex-shrink-0" />
                 )}
               </div>
             </DropdownMenuItem>
