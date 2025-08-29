@@ -4,6 +4,7 @@ import { getMessages } from 'next-intl/server';
 import { Montserrat, Playfair_Display } from "next/font/google";
 import { getCountryConfig } from '@/config/countries';
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -42,10 +43,28 @@ export default async function RootLayout({
   return (
     <html lang={countryConfig.locale} dir="ltr">
       <body className={`${montserrat.variable} ${playfairDisplay.variable} font-montserrat antialiased bg-background text-foreground`}>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-        <Toaster />
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="default"
+          enableSystem={false}
+          themes={[
+            'default',
+            'yellow-black',
+            'orange-black',
+            'natural',
+            'neutral',
+            'light-blue',
+            'neon',
+            'sunset',
+            'forest',
+            'ocean'
+          ]}
+        >
+          <NextIntlClientProvider messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

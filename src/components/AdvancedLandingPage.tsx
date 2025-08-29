@@ -19,6 +19,7 @@ import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials
 import { RotatingReview } from '@/components/features/RotatingReview';
 import { Footer } from '@/components/ui/footer';
 import { ComparisonTable } from '@/components/features/ComparisonTable';
+import { ThemeSelector } from '@/components/ui/theme-selector';
 
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
@@ -146,7 +147,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     <Button 
       onClick={scrollToCheckout}
       size={size}
-      className={`bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${showPulse ? 'animate-pulse' : ''} ${className}`}
+      className={`bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${showPulse ? 'animate-pulse' : ''} ${className}`}
     >
       {ctaButtonText}
     </Button>
@@ -363,18 +364,21 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
             </div>
 
             {/* Contact Info - Right side */}
-            <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
-              <Phone className="h-4 w-4 text-brand-orange" />
-              <a 
-                href={`tel:${countryConfig.company.phone}`}
-                className={`font-medium transition-colors ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-brand-orange' 
-                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                }`}
-              >
-                {countryConfig.company.phone}
-              </a>
+            <div className="hidden md:flex items-center gap-4 text-sm flex-1 justify-end">
+              <ThemeSelector showLabel={false} />
+              <div className="flex items-center gap-1">
+                <Phone className="h-4 w-4 text-brand-orange" />
+                <a 
+                  href={`tel:${countryConfig.company.phone}`}
+                  className={`font-medium transition-colors ${
+                    isScrolled 
+                      ? 'text-gray-700 hover:text-brand-orange' 
+                      : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                  }`}
+                >
+                  {countryConfig.company.phone}
+                </a>
+              </div>
             </div>
 
             {/* Mobile phone - Right side on mobile */}
@@ -430,7 +434,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 >
                   {t('navigation.order')}
                 </a>
-                <div className="px-2 py-1 border-t border-gray-200 mt-2 pt-3">
+                <div className="px-2 py-1 border-t border-gray-200 mt-2 pt-3 space-y-3">
+                  <div className="flex justify-center">
+                    <ThemeSelector showLabel={false} />
+                  </div>
                   <a 
                     href={`tel:${countryConfig.company.phone}`}
                     className="flex items-center gap-2 text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors"
@@ -489,8 +496,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               {/* Key Benefits */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {product.benefits.slice(0, 4).map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2 p-3 bg-secondary/10 border border-secondary/20 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-secondary flex-shrink-0" />
                     <span className="text-sm font-medium">{benefit}</span>
                   </div>
                 ))}

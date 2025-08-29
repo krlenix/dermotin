@@ -6,6 +6,7 @@ import { CountryConfig } from '@/config/countries';
 import { Phone, Mail, FileText, Building2, MapPin, Hash } from 'lucide-react';
 import Image from 'next/image';
 import { LegalDocumentModal } from '@/components/features/LegalDocumentModal';
+import { FooterThemeSelector } from '@/components/ui/footer-theme-selector';
 
 interface FooterProps {
   countryConfig: CountryConfig;
@@ -147,11 +148,17 @@ export function Footer({ countryConfig, locale = 'rs' }: FooterProps) {
         </div>
         
         <div className="border-t border-gray-700 mt-8 pt-8">
-          {/* Copyright */}
-          <div className="text-center">
-            <p className="text-sm text-gray-400">
-              © 2024 {countryConfig.company.name}. {t('footer.all_rights_reserved')}
-            </p>
+          {/* Theme Selector and Copyright */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Theme Selector */}
+            <FooterThemeSelector />
+            
+            {/* Copyright */}
+            <div className="text-center md:text-right">
+              <p className="text-sm text-gray-400">
+                © 2024 {countryConfig.company.name}. {t('footer.all_rights_reserved')}
+              </p>
+            </div>
           </div>
         </div>
       </div>

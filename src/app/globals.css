@@ -2,17 +2,18 @@
 @import "react-phone-number-input/style.css";
 @import "../styles/wheel-animations.css";
 
-@theme inline {
+/* Base theme variables - Default Theme */
+:root, [data-theme="default"] {
   --color-background: 0 0% 100%;
   --color-foreground: 240 10% 3.9%;
   --color-card: 0 0% 100%;
   --color-card-foreground: 240 10% 3.9%;
   --color-popover: 0 0% 100%;
   --color-popover-foreground: 240 10% 3.9%;
-  --color-primary: 240 9% 9%;
+  --color-primary: 18 100% 60%;
   --color-primary-foreground: 0 0% 98%;
-  --color-secondary: 240 4.8% 95.9%;
-  --color-secondary-foreground: 240 5.9% 10%;
+  --color-secondary: 162 25% 55%;
+  --color-secondary-foreground: 0 0% 98%;
   --color-muted: 240 4.8% 95.9%;
   --color-muted-foreground: 240 3.8% 46.1%;
   --color-accent: 240 4.8% 95.9%;
@@ -21,10 +22,235 @@
   --color-destructive-foreground: 0 0% 98%;
   --color-border: 240 5.9% 90%;
   --color-input: 240 5.9% 90%;
-  --color-ring: 240 10% 3.9%;
+  --color-ring: 18 100% 60%;
   --color-brand-orange: #FF6B35;
   --color-brand-green: #608E7E;
   --radius: 0.5rem;
+}
+
+/* Yellow & Black Theme */
+[data-theme="yellow-black"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 0% 10%;
+  --color-card: 60 100% 97%;
+  --color-card-foreground: 0 0% 10%;
+  --color-popover: 60 100% 97%;
+  --color-popover-foreground: 0 0% 10%;
+  --color-primary: 0 0% 10%;
+  --color-primary-foreground: 51 100% 50%;
+  --color-secondary: 51 100% 50%;
+  --color-secondary-foreground: 0 0% 10%;
+  --color-muted: 60 30% 96%;
+  --color-muted-foreground: 0 0% 40%;
+  --color-accent: 60 100% 88%;
+  --color-accent-foreground: 0 0% 10%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 60 30% 85%;
+  --color-input: 60 30% 85%;
+  --color-ring: 0 0% 10%;
+  --color-brand-orange: #FFD700;
+  --color-brand-green: #1A1A1A;
+}
+
+/* Orange & Black Theme */
+[data-theme="orange-black"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 0% 4%;
+  --color-card: 24 100% 97%;
+  --color-card-foreground: 0 0% 4%;
+  --color-popover: 24 100% 97%;
+  --color-popover-foreground: 0 0% 4%;
+  --color-primary: 0 0% 4%;
+  --color-primary-foreground: 16 100% 50%;
+  --color-secondary: 16 100% 50%;
+  --color-secondary-foreground: 0 0% 4%;
+  --color-muted: 24 30% 96%;
+  --color-muted-foreground: 0 0% 40%;
+  --color-accent: 24 100% 94%;
+  --color-accent-foreground: 0 0% 4%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 24 30% 85%;
+  --color-input: 24 30% 85%;
+  --color-ring: 0 0% 4%;
+  --color-brand-orange: #FF4500;
+  --color-brand-green: #0A0A0A;
+}
+
+/* Natural Theme */
+[data-theme="natural"] {
+  --color-background: 30 20% 98%;
+  --color-foreground: 25 25% 25%;
+  --color-card: 60 20% 95%;
+  --color-card-foreground: 25 25% 25%;
+  --color-popover: 60 20% 95%;
+  --color-popover-foreground: 25 25% 25%;
+  --color-primary: 25 60% 35%;
+  --color-primary-foreground: 30 20% 98%;
+  --color-secondary: 120 60% 35%;
+  --color-secondary-foreground: 30 20% 98%;
+  --color-muted: 60 20% 90%;
+  --color-muted-foreground: 25 15% 45%;
+  --color-accent: 60 30% 88%;
+  --color-accent-foreground: 25 25% 25%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 60 20% 80%;
+  --color-input: 60 20% 80%;
+  --color-ring: 25 60% 35%;
+  --color-brand-orange: #8B4513;
+  --color-brand-green: #228B22;
+}
+
+/* Neutral Theme */
+[data-theme="neutral"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 220 9% 46%;
+  --color-card: 220 13% 98%;
+  --color-card-foreground: 220 9% 46%;
+  --color-popover: 220 13% 98%;
+  --color-popover-foreground: 220 9% 46%;
+  --color-primary: 220 14% 42%;
+  --color-primary-foreground: 220 13% 98%;
+  --color-secondary: 220 14% 32%;
+  --color-secondary-foreground: 220 13% 98%;
+  --color-muted: 220 13% 95%;
+  --color-muted-foreground: 220 9% 46%;
+  --color-accent: 220 13% 91%;
+  --color-accent-foreground: 220 14% 32%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 220 13% 85%;
+  --color-input: 220 13% 85%;
+  --color-ring: 220 14% 42%;
+  --color-brand-orange: #6B7280;
+  --color-brand-green: #374151;
+}
+
+/* Light Blue Theme */
+[data-theme="light-blue"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 222 84% 5%;
+  --color-card: 214 100% 97%;
+  --color-card-foreground: 222 84% 5%;
+  --color-popover: 214 100% 97%;
+  --color-popover-foreground: 222 84% 5%;
+  --color-primary: 221 83% 53%;
+  --color-primary-foreground: 214 100% 97%;
+  --color-secondary: 224 76% 48%;
+  --color-secondary-foreground: 214 100% 97%;
+  --color-muted: 214 32% 95%;
+  --color-muted-foreground: 215 16% 47%;
+  --color-accent: 214 100% 92%;
+  --color-accent-foreground: 222 84% 5%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 214 32% 85%;
+  --color-input: 214 32% 85%;
+  --color-ring: 221 83% 53%;
+  --color-brand-orange: #3B82F6;
+  --color-brand-green: #1E40AF;
+}
+
+/* Neon Theme */
+[data-theme="neon"] {
+  --color-background: 0 0% 3%;
+  --color-foreground: 120 100% 50%;
+  --color-card: 0 0% 8%;
+  --color-card-foreground: 120 100% 50%;
+  --color-popover: 0 0% 8%;
+  --color-popover-foreground: 120 100% 50%;
+  --color-primary: 120 100% 50%;
+  --color-primary-foreground: 0 0% 3%;
+  --color-secondary: 300 100% 50%;
+  --color-secondary-foreground: 0 0% 3%;
+  --color-muted: 0 0% 15%;
+  --color-muted-foreground: 120 50% 70%;
+  --color-accent: 180 100% 50%;
+  --color-accent-foreground: 0 0% 3%;
+  --color-destructive: 0 100% 50%;
+  --color-destructive-foreground: 0 0% 3%;
+  --color-border: 0 0% 20%;
+  --color-input: 0 0% 20%;
+  --color-ring: 120 100% 50%;
+  --color-brand-orange: #00FF00;
+  --color-brand-green: #FF00FF;
+}
+
+/* Sunset Theme */
+[data-theme="sunset"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 60% 60%;
+  --color-card: 54 100% 95%;
+  --color-card-foreground: 0 60% 60%;
+  --color-popover: 54 100% 95%;
+  --color-popover-foreground: 0 60% 60%;
+  --color-primary: 0 67% 70%;
+  --color-primary-foreground: 54 100% 95%;
+  --color-secondary: 174 44% 51%;
+  --color-secondary-foreground: 54 100% 95%;
+  --color-muted: 54 50% 90%;
+  --color-muted-foreground: 0 30% 50%;
+  --color-accent: 54 100% 70%;
+  --color-accent-foreground: 0 60% 60%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 54 50% 80%;
+  --color-input: 54 50% 80%;
+  --color-ring: 0 67% 70%;
+  --color-brand-orange: #FF6B6B;
+  --color-brand-green: #4ECDC4;
+}
+
+/* Forest Theme */
+[data-theme="forest"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 100 50% 15%;
+  --color-card: 120 25% 95%;
+  --color-card-foreground: 100 50% 15%;
+  --color-popover: 120 25% 95%;
+  --color-popover-foreground: 100 50% 15%;
+  --color-primary: 100 65% 20%;
+  --color-primary-foreground: 120 25% 95%;
+  --color-secondary: 140 35% 35%;
+  --color-secondary-foreground: 120 25% 95%;
+  --color-muted: 120 25% 90%;
+  --color-muted-foreground: 120 15% 40%;
+  --color-accent: 120 60% 75%;
+  --color-accent-foreground: 100 50% 15%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 120 25% 80%;
+  --color-input: 120 25% 80%;
+  --color-ring: 100 65% 20%;
+  --color-brand-orange: #2D5016;
+  --color-brand-green: #355E3B;
+}
+
+/* Ocean Theme */
+[data-theme="ocean"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 200 100% 29%;
+  --color-card: 195 53% 95%;
+  --color-card-foreground: 200 100% 29%;
+  --color-popover: 195 53% 95%;
+  --color-popover-foreground: 200 100% 29%;
+  --color-primary: 200 100% 29%;
+  --color-primary-foreground: 195 53% 95%;
+  --color-secondary: 207 44% 49%;
+  --color-secondary-foreground: 195 53% 95%;
+  --color-muted: 195 25% 90%;
+  --color-muted-foreground: 200 50% 40%;
+  --color-accent: 195 53% 79%;
+  --color-accent-foreground: 200 100% 29%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 195 25% 80%;
+  --color-input: 195 25% 80%;
+  --color-ring: 200 100% 29%;
+  --color-brand-orange: #006994;
+  --color-brand-green: #4682B4;
 }
 
 /* Define CSS variables for compatibility */
@@ -48,6 +274,8 @@
   --border: var(--color-border);
   --input: var(--color-input);
   --ring: var(--color-ring);
+  --brand-orange: var(--color-brand-orange);
+  --brand-green: var(--color-brand-green);
 }
 
 @layer base {
@@ -65,12 +293,7 @@
   }
 }
 
-/* Custom brand colors */
-:root {
-  --brand-orange: #FF6B35;
-  --brand-green: #608E7E;
-}
-
+/* Theme-aware brand color utilities */
 .text-brand-orange {
   color: var(--brand-orange);
 }
@@ -83,8 +306,101 @@
   border-color: var(--brand-orange);
 }
 
+.text-brand-green {
+  color: var(--brand-green);
+}
+
+.bg-brand-green {
+  background-color: var(--brand-green);
+}
+
+.border-brand-green {
+  border-color: var(--brand-green);
+}
+
+/* Brand color opacity variations */
+.bg-brand-orange\/2 {
+  background-color: color-mix(in srgb, var(--brand-orange) 2%, transparent);
+}
+
+.bg-brand-orange\/3 {
+  background-color: color-mix(in srgb, var(--brand-orange) 3%, transparent);
+}
+
+.bg-brand-orange\/10 {
+  background-color: color-mix(in srgb, var(--brand-orange) 10%, transparent);
+}
+
+.bg-brand-orange\/20 {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
+}
+
+.bg-brand-orange\/30 {
+  background-color: color-mix(in srgb, var(--brand-orange) 30%, transparent);
+}
+
+.bg-brand-green\/3 {
+  background-color: color-mix(in srgb, var(--brand-green) 3%, transparent);
+}
+
+.bg-brand-green\/5 {
+  background-color: color-mix(in srgb, var(--brand-green) 5%, transparent);
+}
+
+.bg-brand-green\/10 {
+  background-color: color-mix(in srgb, var(--brand-green) 10%, transparent);
+}
+
+.bg-brand-green\/15 {
+  background-color: color-mix(in srgb, var(--brand-green) 15%, transparent);
+}
+
+.bg-brand-green\/20 {
+  background-color: color-mix(in srgb, var(--brand-green) 20%, transparent);
+}
+
+.bg-brand-green\/25 {
+  background-color: color-mix(in srgb, var(--brand-green) 25%, transparent);
+}
+
+.bg-brand-green\/30 {
+  background-color: color-mix(in srgb, var(--brand-green) 30%, transparent);
+}
+
+.bg-brand-green\/35 {
+  background-color: color-mix(in srgb, var(--brand-green) 35%, transparent);
+}
+
+.border-brand-orange\/30 {
+  border-color: color-mix(in srgb, var(--brand-orange) 30%, transparent);
+}
+
 .hover\:bg-brand-orange\/90:hover {
-  background-color: rgb(255 107 53 / 0.9);
+  background-color: color-mix(in srgb, var(--brand-orange) 90%, transparent);
+}
+
+.hover\:bg-brand-orange\/80:hover {
+  background-color: color-mix(in srgb, var(--brand-orange) 80%, transparent);
+}
+
+.hover\:bg-brand-orange\/50:hover {
+  background-color: color-mix(in srgb, var(--brand-orange) 50%, transparent);
+}
+
+.hover\:bg-brand-orange\/20:hover {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
+}
+
+.hover\:text-brand-orange\/80:hover {
+  color: color-mix(in srgb, var(--brand-orange) 80%, transparent);
+}
+
+.group-active\/thumb\:bg-brand-orange\/20:is(.group\/thumb:active *) {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
+}
+
+.group-active\/thumb-mobile\:bg-brand-orange\/20:is(.group\/thumb-mobile:active *) {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
 }
 
 .focus\:ring-brand-orange:focus {

@@ -14,6 +14,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { Footer } from '@/components/ui/footer';
+import { ThemeSelector } from '@/components/ui/theme-selector';
 
 
 import { ShoppingCart, Star, Shield, Truck } from 'lucide-react';
@@ -60,6 +61,7 @@ export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPa
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-brand-green">{t('ui.alt_logo')}</h1>
             <div className="flex items-center gap-4">
+              <ThemeSelector className="hidden md:flex" />
               <span className="text-sm font-medium text-gray-600">
                 {countryConfig.currencySymbol}
               </span>
@@ -190,7 +192,7 @@ export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPa
           <h2 className="text-2xl font-bold text-center mb-8">{t('product.benefits')}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {product.benefits.map((benefit, index) => (
-              <div key={index} className="text-center p-4 border rounded-lg bg-green-50 border-green-200">
+              <div key={index} className="text-center p-4 border rounded-lg bg-secondary/10 border-secondary/20">
                 <div className="w-12 h-12 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Star className="h-6 w-6 text-brand-orange" />
                 </div>
