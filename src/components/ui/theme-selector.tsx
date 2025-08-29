@@ -25,7 +25,7 @@ export function ThemeSelector({
   showLabel = true, 
   variant = 'default' 
 }: ThemeSelectorProps) {
-  const { theme, setTheme, themes: availableThemes } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const allThemes = getAllThemes();
 

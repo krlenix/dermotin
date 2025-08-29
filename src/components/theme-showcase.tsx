@@ -6,14 +6,14 @@ import { getAllThemes } from '@/config/themes';
 import { ThemePreviewCard, ThemeSelector } from '@/components/ui/theme-selector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
 import { Star, Heart, ShoppingCart, Palette, Sparkles } from 'lucide-react';
 
 export function ThemeShowcase() {
   const { theme, setTheme } = useTheme();
   const allThemes = getAllThemes();
 
-  const DemoCard = ({ title, description, icon: Icon }: { title: string; description: string; icon: any }) => (
+  const DemoCard = ({ title, description, icon: Icon }: { title: string; description: string; icon: React.ComponentType<{ className?: string }> }) => (
     <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       <CardHeader>
         <div className="flex items-center gap-2">
