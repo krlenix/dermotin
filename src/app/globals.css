@@ -36,10 +36,10 @@
   --color-card-foreground: 0 0% 10%;
   --color-popover: 60 100% 97%;
   --color-popover-foreground: 0 0% 10%;
-  --color-primary: 51 100% 50%;
-  --color-primary-foreground: 0 0% 0%;
-  --color-secondary: 0 0% 10%;
-  --color-secondary-foreground: 60 100% 95%;
+  --color-primary: 0 0% 10%;
+  --color-primary-foreground: 51 100% 50%;
+  --color-secondary: 51 100% 50%;
+  --color-secondary-foreground: 0 0% 10%;
   --color-muted: 60 30% 96%;
   --color-muted-foreground: 0 0% 40%;
   --color-accent: 60 100% 88%;
@@ -48,7 +48,7 @@
   --color-destructive-foreground: 0 0% 98%;
   --color-border: 60 30% 85%;
   --color-input: 60 30% 85%;
-  --color-ring: 51 100% 50%;
+  --color-ring: 0 0% 10%;
   --color-brand-orange: #FFD700;
   --color-brand-green: #1A1A1A;
 }
@@ -61,10 +61,10 @@
   --color-card-foreground: 0 0% 4%;
   --color-popover: 24 100% 97%;
   --color-popover-foreground: 0 0% 4%;
-  --color-primary: 16 100% 50%;
-  --color-primary-foreground: 0 0% 98%;
-  --color-secondary: 0 0% 4%;
-  --color-secondary-foreground: 24 100% 95%;
+  --color-primary: 0 0% 4%;
+  --color-primary-foreground: 16 100% 50%;
+  --color-secondary: 16 100% 50%;
+  --color-secondary-foreground: 0 0% 4%;
   --color-muted: 24 30% 96%;
   --color-muted-foreground: 0 0% 40%;
   --color-accent: 24 100% 94%;
@@ -73,7 +73,7 @@
   --color-destructive-foreground: 0 0% 98%;
   --color-border: 24 30% 85%;
   --color-input: 24 30% 85%;
-  --color-ring: 16 100% 50%;
+  --color-ring: 0 0% 4%;
   --color-brand-orange: #FF4500;
   --color-brand-green: #0A0A0A;
 }
