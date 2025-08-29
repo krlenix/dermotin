@@ -14,6 +14,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { Footer } from '@/components/ui/footer';
+import { ThemeSelector } from '@/components/ui/theme-selector';
 
 
 import { ShoppingCart, Star, Shield, Truck } from 'lucide-react';
@@ -60,6 +61,7 @@ export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPa
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-brand-green">{t('ui.alt_logo')}</h1>
             <div className="flex items-center gap-4">
+              <ThemeSelector className="hidden md:flex" />
               <span className="text-sm font-medium text-gray-600">
                 {countryConfig.currencySymbol}
               </span>

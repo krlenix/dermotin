@@ -3,16 +3,17 @@
 @import "../styles/wheel-animations.css";
 
 @theme inline {
+  /* Default Theme */
   --color-background: 0 0% 100%;
   --color-foreground: 240 10% 3.9%;
   --color-card: 0 0% 100%;
   --color-card-foreground: 240 10% 3.9%;
   --color-popover: 0 0% 100%;
   --color-popover-foreground: 240 10% 3.9%;
-  --color-primary: 240 9% 9%;
+  --color-primary: 18 100% 60%;
   --color-primary-foreground: 0 0% 98%;
-  --color-secondary: 240 4.8% 95.9%;
-  --color-secondary-foreground: 240 5.9% 10%;
+  --color-secondary: 162 25% 55%;
+  --color-secondary-foreground: 0 0% 98%;
   --color-muted: 240 4.8% 95.9%;
   --color-muted-foreground: 240 3.8% 46.1%;
   --color-accent: 240 4.8% 95.9%;
@@ -21,10 +22,217 @@
   --color-destructive-foreground: 0 0% 98%;
   --color-border: 240 5.9% 90%;
   --color-input: 240 5.9% 90%;
-  --color-ring: 240 10% 3.9%;
+  --color-ring: 18 100% 60%;
   --color-brand-orange: #FF6B35;
   --color-brand-green: #608E7E;
   --radius: 0.5rem;
+}
+
+/* Yellow & Black Theme */
+[data-theme="yellow-black"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 0% 10%;
+  --color-card: 60 100% 97%;
+  --color-card-foreground: 0 0% 10%;
+  --color-popover: 60 100% 97%;
+  --color-popover-foreground: 0 0% 10%;
+  --color-primary: 51 100% 50%;
+  --color-primary-foreground: 0 0% 0%;
+  --color-secondary: 0 0% 10%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 60 30% 96%;
+  --color-muted-foreground: 0 0% 40%;
+  --color-accent: 60 100% 88%;
+  --color-accent-foreground: 0 0% 10%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 60 30% 85%;
+  --color-input: 60 30% 85%;
+  --color-ring: 51 100% 50%;
+}
+
+/* Orange & Black Theme */
+[data-theme="orange-black"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 0% 4%;
+  --color-card: 24 100% 97%;
+  --color-card-foreground: 0 0% 4%;
+  --color-popover: 24 100% 97%;
+  --color-popover-foreground: 0 0% 4%;
+  --color-primary: 16 100% 50%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 0 0% 4%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 24 30% 96%;
+  --color-muted-foreground: 0 0% 40%;
+  --color-accent: 24 100% 94%;
+  --color-accent-foreground: 0 0% 4%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 24 30% 85%;
+  --color-input: 24 30% 85%;
+  --color-ring: 16 100% 50%;
+}
+
+/* Natural Theme */
+[data-theme="natural"] {
+  --color-background: 30 20% 98%;
+  --color-foreground: 25 25% 25%;
+  --color-card: 60 20% 95%;
+  --color-card-foreground: 25 25% 25%;
+  --color-popover: 60 20% 95%;
+  --color-popover-foreground: 25 25% 25%;
+  --color-primary: 25 60% 35%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 120 60% 35%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 60 20% 90%;
+  --color-muted-foreground: 25 15% 45%;
+  --color-accent: 60 30% 88%;
+  --color-accent-foreground: 25 25% 25%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 60 20% 80%;
+  --color-input: 60 20% 80%;
+  --color-ring: 25 60% 35%;
+}
+
+/* Neutral Theme */
+[data-theme="neutral"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 220 9% 46%;
+  --color-card: 220 13% 98%;
+  --color-card-foreground: 220 9% 46%;
+  --color-popover: 220 13% 98%;
+  --color-popover-foreground: 220 9% 46%;
+  --color-primary: 220 14% 42%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 220 14% 32%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 220 13% 95%;
+  --color-muted-foreground: 220 9% 46%;
+  --color-accent: 220 13% 91%;
+  --color-accent-foreground: 220 14% 32%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 220 13% 85%;
+  --color-input: 220 13% 85%;
+  --color-ring: 220 14% 42%;
+}
+
+/* Light Blue Theme */
+[data-theme="light-blue"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 222 84% 5%;
+  --color-card: 214 100% 97%;
+  --color-card-foreground: 222 84% 5%;
+  --color-popover: 214 100% 97%;
+  --color-popover-foreground: 222 84% 5%;
+  --color-primary: 221 83% 53%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 224 76% 48%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 214 32% 95%;
+  --color-muted-foreground: 215 16% 47%;
+  --color-accent: 214 100% 92%;
+  --color-accent-foreground: 222 84% 5%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 214 32% 85%;
+  --color-input: 214 32% 85%;
+  --color-ring: 221 83% 53%;
+}
+
+/* Neon Theme */
+[data-theme="neon"] {
+  --color-background: 0 0% 3%;
+  --color-foreground: 120 100% 50%;
+  --color-card: 0 0% 8%;
+  --color-card-foreground: 120 100% 50%;
+  --color-popover: 0 0% 8%;
+  --color-popover-foreground: 120 100% 50%;
+  --color-primary: 120 100% 50%;
+  --color-primary-foreground: 0 0% 0%;
+  --color-secondary: 300 100% 50%;
+  --color-secondary-foreground: 0 0% 0%;
+  --color-muted: 0 0% 15%;
+  --color-muted-foreground: 120 50% 70%;
+  --color-accent: 180 100% 50%;
+  --color-accent-foreground: 0 0% 0%;
+  --color-destructive: 0 100% 50%;
+  --color-destructive-foreground: 0 0% 0%;
+  --color-border: 0 0% 20%;
+  --color-input: 0 0% 20%;
+  --color-ring: 120 100% 50%;
+}
+
+/* Sunset Theme */
+[data-theme="sunset"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 0 60% 60%;
+  --color-card: 54 100% 95%;
+  --color-card-foreground: 0 60% 60%;
+  --color-popover: 54 100% 95%;
+  --color-popover-foreground: 0 60% 60%;
+  --color-primary: 0 67% 70%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 174 44% 51%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 54 50% 90%;
+  --color-muted-foreground: 0 30% 50%;
+  --color-accent: 54 100% 70%;
+  --color-accent-foreground: 0 60% 60%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 54 50% 80%;
+  --color-input: 54 50% 80%;
+  --color-ring: 0 67% 70%;
+}
+
+/* Forest Theme */
+[data-theme="forest"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 100 50% 15%;
+  --color-card: 120 25% 95%;
+  --color-card-foreground: 100 50% 15%;
+  --color-popover: 120 25% 95%;
+  --color-popover-foreground: 100 50% 15%;
+  --color-primary: 100 65% 20%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 140 35% 35%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 120 25% 90%;
+  --color-muted-foreground: 120 15% 40%;
+  --color-accent: 120 60% 75%;
+  --color-accent-foreground: 100 50% 15%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 120 25% 80%;
+  --color-input: 120 25% 80%;
+  --color-ring: 100 65% 20%;
+}
+
+/* Ocean Theme */
+[data-theme="ocean"] {
+  --color-background: 0 0% 100%;
+  --color-foreground: 200 100% 29%;
+  --color-card: 195 53% 95%;
+  --color-card-foreground: 200 100% 29%;
+  --color-popover: 195 53% 95%;
+  --color-popover-foreground: 200 100% 29%;
+  --color-primary: 200 100% 29%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-secondary: 207 44% 49%;
+  --color-secondary-foreground: 0 0% 98%;
+  --color-muted: 195 25% 90%;
+  --color-muted-foreground: 200 50% 40%;
+  --color-accent: 195 53% 79%;
+  --color-accent-foreground: 200 100% 29%;
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 0 0% 98%;
+  --color-border: 195 25% 80%;
+  --color-input: 195 25% 80%;
+  --color-ring: 200 100% 29%;
 }
 
 /* Define CSS variables for compatibility */
