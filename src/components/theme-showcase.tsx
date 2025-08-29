@@ -6,7 +6,7 @@ import { getAllThemes } from '@/config/themes';
 import { ThemePreviewCard, ThemeSelector } from '@/components/ui/theme-selector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
+import { ThemeInstructions } from '@/components/ui/theme-instructions';
 import { Star, Heart, ShoppingCart, Palette, Sparkles } from 'lucide-react';
 
 export function ThemeShowcase() {
@@ -58,8 +58,13 @@ export function ThemeShowcase() {
           <p className="text-xl text-muted-foreground mb-6">
             Choose from {allThemes.length} beautiful themes to customize your experience
           </p>
-          <div className="flex justify-center">
+          <div className="flex justify-center mb-8">
             <ThemeSelector />
+          </div>
+          
+          {/* Instructions */}
+          <div className="max-w-md mx-auto mb-8">
+            <ThemeInstructions />
           </div>
         </div>
 
