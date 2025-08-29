@@ -2,8 +2,8 @@
 @import "react-phone-number-input/style.css";
 @import "../styles/wheel-animations.css";
 
-@theme inline {
-  /* Default Theme */
+/* Base theme variables - Default Theme */
+:root, [data-theme="default"] {
   --color-background: 0 0% 100%;
   --color-foreground: 240 10% 3.9%;
   --color-card: 0 0% 100%;
@@ -49,6 +49,8 @@
   --color-border: 60 30% 85%;
   --color-input: 60 30% 85%;
   --color-ring: 51 100% 50%;
+  --color-brand-orange: #FFD700;
+  --color-brand-green: #1A1A1A;
 }
 
 /* Orange & Black Theme */
@@ -72,6 +74,8 @@
   --color-border: 24 30% 85%;
   --color-input: 24 30% 85%;
   --color-ring: 16 100% 50%;
+  --color-brand-orange: #FF4500;
+  --color-brand-green: #0A0A0A;
 }
 
 /* Natural Theme */
@@ -95,6 +99,8 @@
   --color-border: 60 20% 80%;
   --color-input: 60 20% 80%;
   --color-ring: 25 60% 35%;
+  --color-brand-orange: #8B4513;
+  --color-brand-green: #228B22;
 }
 
 /* Neutral Theme */
@@ -118,6 +124,8 @@
   --color-border: 220 13% 85%;
   --color-input: 220 13% 85%;
   --color-ring: 220 14% 42%;
+  --color-brand-orange: #6B7280;
+  --color-brand-green: #374151;
 }
 
 /* Light Blue Theme */
@@ -141,6 +149,8 @@
   --color-border: 214 32% 85%;
   --color-input: 214 32% 85%;
   --color-ring: 221 83% 53%;
+  --color-brand-orange: #3B82F6;
+  --color-brand-green: #1E40AF;
 }
 
 /* Neon Theme */
@@ -164,6 +174,8 @@
   --color-border: 0 0% 20%;
   --color-input: 0 0% 20%;
   --color-ring: 120 100% 50%;
+  --color-brand-orange: #00FF00;
+  --color-brand-green: #FF00FF;
 }
 
 /* Sunset Theme */
@@ -187,6 +199,8 @@
   --color-border: 54 50% 80%;
   --color-input: 54 50% 80%;
   --color-ring: 0 67% 70%;
+  --color-brand-orange: #FF6B6B;
+  --color-brand-green: #4ECDC4;
 }
 
 /* Forest Theme */
@@ -210,6 +224,8 @@
   --color-border: 120 25% 80%;
   --color-input: 120 25% 80%;
   --color-ring: 100 65% 20%;
+  --color-brand-orange: #2D5016;
+  --color-brand-green: #355E3B;
 }
 
 /* Ocean Theme */
@@ -233,6 +249,8 @@
   --color-border: 195 25% 80%;
   --color-input: 195 25% 80%;
   --color-ring: 200 100% 29%;
+  --color-brand-orange: #006994;
+  --color-brand-green: #4682B4;
 }
 
 /* Define CSS variables for compatibility */
@@ -256,6 +274,8 @@
   --border: var(--color-border);
   --input: var(--color-input);
   --ring: var(--color-ring);
+  --brand-orange: var(--color-brand-orange);
+  --brand-green: var(--color-brand-green);
 }
 
 @layer base {
@@ -273,12 +293,7 @@
   }
 }
 
-/* Custom brand colors */
-:root {
-  --brand-orange: #FF6B35;
-  --brand-green: #608E7E;
-}
-
+/* Theme-aware brand color utilities */
 .text-brand-orange {
   color: var(--brand-orange);
 }
@@ -291,8 +306,101 @@
   border-color: var(--brand-orange);
 }
 
+.text-brand-green {
+  color: var(--brand-green);
+}
+
+.bg-brand-green {
+  background-color: var(--brand-green);
+}
+
+.border-brand-green {
+  border-color: var(--brand-green);
+}
+
+/* Brand color opacity variations */
+.bg-brand-orange\/2 {
+  background-color: color-mix(in srgb, var(--brand-orange) 2%, transparent);
+}
+
+.bg-brand-orange\/3 {
+  background-color: color-mix(in srgb, var(--brand-orange) 3%, transparent);
+}
+
+.bg-brand-orange\/10 {
+  background-color: color-mix(in srgb, var(--brand-orange) 10%, transparent);
+}
+
+.bg-brand-orange\/20 {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
+}
+
+.bg-brand-orange\/30 {
+  background-color: color-mix(in srgb, var(--brand-orange) 30%, transparent);
+}
+
+.bg-brand-green\/3 {
+  background-color: color-mix(in srgb, var(--brand-green) 3%, transparent);
+}
+
+.bg-brand-green\/5 {
+  background-color: color-mix(in srgb, var(--brand-green) 5%, transparent);
+}
+
+.bg-brand-green\/10 {
+  background-color: color-mix(in srgb, var(--brand-green) 10%, transparent);
+}
+
+.bg-brand-green\/15 {
+  background-color: color-mix(in srgb, var(--brand-green) 15%, transparent);
+}
+
+.bg-brand-green\/20 {
+  background-color: color-mix(in srgb, var(--brand-green) 20%, transparent);
+}
+
+.bg-brand-green\/25 {
+  background-color: color-mix(in srgb, var(--brand-green) 25%, transparent);
+}
+
+.bg-brand-green\/30 {
+  background-color: color-mix(in srgb, var(--brand-green) 30%, transparent);
+}
+
+.bg-brand-green\/35 {
+  background-color: color-mix(in srgb, var(--brand-green) 35%, transparent);
+}
+
+.border-brand-orange\/30 {
+  border-color: color-mix(in srgb, var(--brand-orange) 30%, transparent);
+}
+
 .hover\:bg-brand-orange\/90:hover {
-  background-color: rgb(255 107 53 / 0.9);
+  background-color: color-mix(in srgb, var(--brand-orange) 90%, transparent);
+}
+
+.hover\:bg-brand-orange\/80:hover {
+  background-color: color-mix(in srgb, var(--brand-orange) 80%, transparent);
+}
+
+.hover\:bg-brand-orange\/50:hover {
+  background-color: color-mix(in srgb, var(--brand-orange) 50%, transparent);
+}
+
+.hover\:bg-brand-orange\/20:hover {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
+}
+
+.hover\:text-brand-orange\/80:hover {
+  color: color-mix(in srgb, var(--brand-orange) 80%, transparent);
+}
+
+.group-active\/thumb\:bg-brand-orange\/20:is(.group\/thumb:active *) {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
+}
+
+.group-active\/thumb-mobile\:bg-brand-orange\/20:is(.group\/thumb-mobile:active *) {
+  background-color: color-mix(in srgb, var(--brand-orange) 20%, transparent);
 }
 
 .focus\:ring-brand-orange:focus {
