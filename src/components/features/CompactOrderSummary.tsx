@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { ProductVariant } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { useTranslations } from 'next-intl';
@@ -72,20 +71,18 @@ export function CompactOrderSummary({
         </div>
 
         {/* Reselect Button */}
-        <Button
+        <button
           type="button"
-          variant="outline"
-          size="sm"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             onReselect();
           }}
-          className="flex-shrink-0 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-200 group"
+          className="flex-shrink-0 h-8 px-3 rounded-md border border-brand-orange bg-white text-brand-orange hover:bg-gray-100 hover:text-brand-orange transition-all duration-200 text-xs font-medium inline-flex items-center justify-center gap-1.5 group"
         >
-          <Edit3 className="h-3 w-3 mr-1 text-brand-orange group-hover:text-white transition-colors" />
-          <span className="text-xs text-brand-orange group-hover:text-white transition-colors">{t('order_summary.change')}</span>
-        </Button>
+          <Edit3 className="h-3 w-3 text-brand-orange group-hover:text-brand-orange transition-colors" />
+          <span className="text-brand-orange group-hover:text-brand-orange transition-colors">{t('order_summary.change')}</span>
+        </button>
       </div>
     </div>
   );
