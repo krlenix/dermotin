@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ interface BundleSelectorProps {
   countryConfig: CountryConfig;
   selectedCourier?: CourierInfo;
   className?: string;
+  triggerShake?: boolean; // New prop to trigger shake animation
 }
 
 export function BundleSelector({ 
@@ -25,9 +27,20 @@ export function BundleSelector({
   onVariantChange, 
   countryConfig,
   selectedCourier,
-  className 
+  className,
+  triggerShake = false
 }: BundleSelectorProps) {
   const t = useTranslations();
+  const [isShaking, setIsShaking] = useState(false);
+  
+  // Trigger shake animation when triggerShake changes
+  useEffect(() => {
+    if (triggerShake) {
+      setIsShaking(true);
+      const timer = setTimeout(() => setIsShaking(false), 600); // Shake duration
+      return () => clearTimeout(timer);
+    }
+  }, [triggerShake]);
   
   // Simple price formatter using the country's currency symbol
   const formatPrice = (amount: number) => {
@@ -64,14 +77,19 @@ export function BundleSelector({
   };
 
   return (
-    <div id="bundle-selector" className={`space-y-4 ${className}`}>
+    <div 
+      id="bundle-selector" 
+      className={`space-y-4 ${className} w-full max-w-full overflow-hidden ${
+        isShaking ? 'animate-shake' : ''
+      }`}
+    >
       <div className="text-center mb-4 md:mb-6">
         <h3 id="bundle-title" className="text-2xl font-bold text-gray-900 mb-2 py-2 md:py-6">
           {t('bundles.choose_option')}
         </h3>
       </div>
 
-      <div className="space-y-6 overflow-visible mt-4">
+      <div className="space-y-6 overflow-visible mt-4 w-full">
         {variants.filter((_, index) => index < 3).map((variant, index) => {
           const isSelected = selectedVariant.id === variant.id;
           const badge = getBundleBadge(index);
@@ -84,7 +102,7 @@ export function BundleSelector({
           return (
             <Card 
               key={variant.id}
-              className={`relative cursor-pointer transition-all duration-200 overflow-visible ${
+              className={`relative cursor-pointer transition-all duration-200 overflow-visible w-full ${
                 isSelected 
                   ? 'border-2 border-brand-orange bg-orange-50/30' 
                   : 'border border-gray-200 hover:border-gray-300 bg-white'
@@ -94,7 +112,7 @@ export function BundleSelector({
               {/* Highlight Badge */}
               {highlight && (
                 <div className="absolute -top-3 left-4 z-10">
-                  <Badge className={`${index === 1 ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800 border-2 border-green-300 rounded-full shadow-md'} px-4 py-1 text-sm font-bold`}>
+                  <Badge className={`${index === 1 ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800 border-2 border-green-300 rounded-full shadow-md'} px-4 py-1 text-sm font-bold max-w-full`}>
                     {highlight}
                   </Badge>
                 </div>

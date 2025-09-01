@@ -47,6 +47,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [mounted, setMounted] = useState(false);
   const [selectedCourier, setSelectedCourier] = useState<CourierInfo>(getDefaultCourier(countryConfig));
   const [isScrolled, setIsScrolled] = useState(false);
+  const [triggerBundleShake, setTriggerBundleShake] = useState(false);
 
   // Apply global overflow fix and prevent layout shifts
   useEffect(() => {
@@ -100,6 +101,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
   // Smooth scroll to quantity selection (Bundle Selector)
   const scrollToQuantitySelection = () => {
+    // Trigger shake animation
+    setTriggerBundleShake(true);
+    
     // Use setTimeout to ensure DOM is ready and avoid any timing issues
     setTimeout(() => {
       // First try to scroll to the bundle title for precise positioning
@@ -139,6 +143,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         }
       }
     }, 100); // Small delay to ensure DOM is ready
+    
+    // Reset shake trigger after animation
+    setTimeout(() => setTriggerBundleShake(false), 700);
   };
 
   // Reusable CTA Button Component
@@ -247,7 +254,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative w-full" style={{maxWidth: '100vw'}}>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative w-full overflow-x-hidden" style={{maxWidth: '100vw'}}>
       {/* Pixel Tracking */}
       <PixelTracker countryCode={countryConfig.code} />
       
@@ -594,6 +601,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   onVariantChange={setSelectedVariant}
                   countryConfig={countryConfig}
                   selectedCourier={selectedCourier}
+                  triggerShake={triggerBundleShake}
                 />
               </div>
 

@@ -18,9 +18,17 @@ export function RotatingReview({ countryCode, className, interval = 5000, produc
   const [animationDirection, setAnimationDirection] = useState<'next' | 'prev'>('next');
   const containerRef = useRef<HTMLDivElement>(null);
   const [countryTestimonials, setCountryTestimonials] = useState<Testimonial[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  // Mark component as mounted to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load random testimonials for the country or specific product
   useEffect(() => {
+    if (!mounted) return;
+    
     const loadTestimonials = async () => {
       try {
         let testimonials: Testimonial[];
@@ -41,7 +49,7 @@ export function RotatingReview({ countryCode, className, interval = 5000, produc
     };
     
     loadTestimonials();
-  }, [countryCode, productId]);
+  }, [countryCode, productId, mounted]);
   
   const changeReview = useCallback((newIndex: number, direction: 'next' | 'prev' = 'next') => {
     if (isTransitioning) return;
@@ -69,17 +77,19 @@ export function RotatingReview({ countryCode, className, interval = 5000, produc
   
   // Auto-rotation effect
   useEffect(() => {
-    if (countryTestimonials.length <= 1) return;
+    if (!mounted || countryTestimonials.length <= 1) return;
 
     const timer = setInterval(() => {
       goToNext();
     }, interval);
 
     return () => clearInterval(timer);
-  }, [countryTestimonials.length, interval, currentIndex, goToNext]);
+  }, [countryTestimonials.length, interval, currentIndex, goToNext, mounted]);
 
   // Touch/swipe support for mobile
   useEffect(() => {
+    if (!mounted) return;
+    
     const container = containerRef.current;
     if (!container) return;
 
@@ -129,9 +139,32 @@ export function RotatingReview({ countryCode, className, interval = 5000, produc
       container.removeEventListener('touchmove', handleTouchMove);
       container.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [goToNext, goToPrev, isTransitioning]);
+  }, [goToNext, goToPrev, isTransitioning, mounted]);
 
-  if (!countryTestimonials.length) return null;
+  // Don't render anything until mounted to prevent hydration mismatch
+  if (!mounted || !countryTestimonials.length) {
+    return (
+      <div className={`bg-white/70 p-4 rounded-lg border border-gray-200 overflow-hidden ${className}`}>
+        <div className="animate-pulse">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex text-yellow-400">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star key={star} className="h-4 w-4 text-gray-300" />
+              ))}
+            </div>
+          </div>
+          <div className="h-4 bg-gray-200 rounded mb-2"></div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
+            <div className="space-y-1">
+              <div className="h-3 bg-gray-200 rounded w-16"></div>
+              <div className="h-2 bg-gray-200 rounded w-12"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const currentReview = countryTestimonials[currentIndex];
 
