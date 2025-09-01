@@ -296,7 +296,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
             {/* Navigation Menu - Left side */}
             <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 flex-1 overflow-hidden">
               <a 
-                href="#hero" 
+                href="/" 
                 className={`text-sm font-medium transition-colors underline-animate ${
                   isScrolled 
                     ? 'text-gray-700 hover:text-brand-orange' 
@@ -412,7 +412,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
             }`}>
               <nav className="flex flex-col space-y-2 pt-2">
                 <a 
-                  href="#hero" 
+                  href="/" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors px-2 py-1"
                 >

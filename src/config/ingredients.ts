@@ -413,5 +413,70 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     description: 'Prirodna komponenta eteričnih ulja, daje prijatan miris i ima blago antiseptičko dejstvo',
     bulgarianDescription: 'Естествена съставка на етеричните масла, придава приятен аромат и има слабо антисептично действие',
     category: 'other'
+  },
+
+  // BIOMELIS KAPI-specific ingredients
+  'milk-thistle-extract': {
+    id: 'milk-thistle-extract',
+    inciName: 'Silybum Marianum Fruit Extract',
+    serbianName: 'Ekstrakt ploda badelja',
+    bulgarianName: 'Екстракт от плод на бодлив магарешки трън',
+    description: 'Zahvaljujući sadržaju silimarina, badel ispolja regenerativno delovanje na hepatocite, deluje kao hepatoprotektiv i doprinosi zdravlju jetre',
+    bulgarianDescription: 'Благодарение на съдържанието на силимарин, бодливият магарешки трън проявява регенеративно действие върху хепатоцитите, действа като хепатопротектив',
+    category: 'herbal_extract'
+  },
+  'nettle-leaf-extract': {
+    id: 'nettle-leaf-extract',
+    inciName: 'Urtica Dioica Leaf Extract',
+    serbianName: 'Ekstrakt lista koprive',
+    bulgarianName: 'Екстракт от листа на коприва',
+    description: 'Tradicionalno se koristi za podršku zdravlja jetre i žlezuda, bogat je mineralima i vitaminima',
+    bulgarianDescription: 'Традиционно се използва за подкрепа на здравето на черния дроб и жлъчката, богат е на минерали и витамини',
+    category: 'herbal_extract'
+  },
+  'dandelion-root-extract': {
+    id: 'dandelion-root-extract',
+    inciName: 'Taraxacum Officinale Root Extract',
+    serbianName: 'Ekstrakt korena maslačka',
+    bulgarianName: 'Екстракт от корен на глухарче',
+    description: 'Maslačak doprinosi normalnoj funkciji žlezuda i jetre, tradicionalno se koristi za podršku digestivnog sistema',
+    bulgarianDescription: 'Глухарчето допринася за нормалната функция на жлъчката и черния дроб, традиционно се използва за подкрепа на храносмилателната система',
+    category: 'herbal_extract'
+  },
+  'burdock-root-extract': {
+    id: 'burdock-root-extract',
+    inciName: 'Arctium Lappa Root Extract',
+    serbianName: 'Ekstrakt korena čička',
+    bulgarianName: 'Екстракт от корен на репей',
+    description: 'Čičak poboljšava varenje i podstiče metabolizam masti i glukoze, tradicionalno se koristi za detoksifikaciju',
+    bulgarianDescription: 'Репеят подобрява храносмилането и стимулира метаболизма на мазнините и глюкозата, традиционно се използва за детоксикация',
+    category: 'herbal_extract'
+  },
+  'burdock-herb-extract': {
+    id: 'burdock-herb-extract',
+    inciName: 'Arctium Lappa Herb Extract',
+    serbianName: 'Ekstrakt herbe rastavića',
+    bulgarianName: 'Екстракт от билка репей',
+    description: 'Rastić ima zaštitni efekat na hepatocite, podržava zdravlje jetre i pomaže u regeneraciji',
+    bulgarianDescription: 'Репеят има защитен ефект върху хепатоцитите, подкрепя здравето на черния дроб и помага в регенерацията',
+    category: 'herbal_extract'
+  },
+  'woodruff-herb-extract': {
+    id: 'woodruff-herb-extract',
+    inciName: 'Galium Odoratum Herb Extract',
+    serbianName: 'Ekstrakt herbe lazarkinje',
+    bulgarianName: 'Екстракт от билка мирисливо подмаренче',
+    description: 'Lazarkinja povoljno utiče na proces varenja, tradicionalno se koristi za podršku digestivnog sistema',
+    bulgarianDescription: 'Мирисливото подмаренче благоприятно влияе на процеса на храносмилане, традиционно се използва за подкрепа на храносмилателната система',
+    category: 'herbal_extract'
+  },
+  'ethanol': {
+    id: 'ethanol',
+    inciName: 'Ethanol',
+    serbianName: 'Etanol',
+    bulgarianName: 'Етанол',
+    description: 'Prirodni konzervans i ekstraktni rastvarač, omogućava ekstrakciju aktivnih komponenti iz lekovitih biljaka',
+    bulgarianDescription: 'Естествен консервант и екстрактен разтворител, позволява екстракция на активни компоненти от лечебни растения',
+    category: 'base_component'
   }
 };

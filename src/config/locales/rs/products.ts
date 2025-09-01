@@ -974,5 +974,229 @@ export const PRODUCTS: Record<string, Product> = {
         likes: 38
       }
     ]
+  },
+
+  biomelis_kapi: {
+    id: 'biomelis_kapi',
+    name: 'BIOMELIS KAPI',
+    description: 'Dodatak ishrani na bazi vodeno-etanolnih ekstrakata ploda badelja, lista koprive, korena maslačka, korena čička, herbe rastavića i herbe lazarkinje. Zahvaljujući sadržaju silimarina, badel ispolja regenerativno delovanje na hepatocite, deluje kao hepatoprotektiv i doprinosi zdravlju jetre. Maslačak doprinosi normalnoj funkciji žlezuda i jetre.',
+    shortDescription: 'Prirodni dodatak ishrani za podršku zdravlja jetre - 50ml',
+    purpose: 'Podržava normalnu funkciju jetre i žlezuda',
+    category: 'supplements',
+    images: {
+      main: '/images/products/biomelis-kapi/biomelis-kapi-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/biomelis-kapi/biomelis-kapi-box-only.png',
+        '/images/products/biomelis-kapi/biomelis-kapi-open-bottle.png',
+        '/images/products/biomelis-kapi/biomelis-kapi-old-product-image.png'
+      ],
+      thumbnail: '/images/products/biomelis-kapi/biomelis-kapi-box-only.png',
+      fallback: '/images/products/biomelis-kapi/biomelis-kapi-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'biomelis-kapi-1pak',
+        sku: 'BIOMELIS_KAPI',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 1,
+        price: 2390,
+        currency: 'RSD',
+        discountPrice: 1890,
+        isDefault: true
+      },
+      {
+        id: 'biomelis-kapi-2pak',
+        sku: 'BIOMELIS_KAPI',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno 2 meseca upotrebe',
+        quantity: 2,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 3590
+      },
+      {
+        id: 'biomelis-kapi-3pak',
+        sku: 'BIOMELIS_KAPI',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 3 meseca upotrebe',
+        quantity: 3,
+        price: 7170,
+        currency: 'RSD',
+        discountPrice: 4790
+      }
+    ],
+    benefits: [
+      'Zahvaljujući sadržaju silimarina, badel ispolja regenerativno delovanje na hepatocite',
+      'Deluje kao hepatoprotektiv i doprinosi zdravlju jetre',
+      'Maslačak doprinosi normalnoj funkciji žlezuda i jetre',
+      'Rastić ima zaštitni efekat na hepatocite',
+      'Čičak poboljšava varenje i podstiče metabolizam masti i glukoze',
+      'Lazarkinja povoljno utiče na proces varenja',
+      'Prirodni vodeno-etanolni ekstrakti lekovitih biljaka',
+      'Energetska vrednost dnevnog unosa manja od 50 kJ (12 kcal)'
+    ],
+    ingredients: [
+      // Active herbal extracts - based on official document
+      'milk-thistle-extract', // Badel (Silybum marianum) - hepatoprotective
+      'nettle-leaf-extract', // Kopriva (Urtica dioica) - liver support
+      'dandelion-root-extract', // Maslačak (Taraxacum officinale) - gallbladder & liver
+      'burdock-root-extract', // Čičak (Arctium lappa) - digestion & metabolism
+      'burdock-herb-extract', // Rastić (Arctium lappa herba) - hepatocyte protection
+      'woodruff-herb-extract', // Lazarkinja (Galium odoratum) - digestion support
+      // Base components
+      'aqua',
+      'ethanol', // Ethanol for extraction
+      'glycerin'
+    ],
+    usage: 'Odrasli, 3 puta dnevno po 40 kapi, rastvoreno u malo vode. Dnevni unos: 120 kapi (4ml). Sadržaj: 50ml (dovoljno za mesec dana redovne upotrebe).',
+    usageSteps: [
+      'Uzimati 3 puta dnevno po 40 kapi',
+      'Rastvoriti kapi u malo vode',
+      'Najbolje uzimati pre obroka',
+      'Redovno koristiti najmanje mesec dana za najbolje rezultate',
+      'Ne prekoračiti preporučenu dnevnu dozu',
+      'Kombinovati sa uravnoteženom ishranom'
+    ],
+    warnings: [
+      'Dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu',
+      'Čuvati van domašaja dece',
+      'Proizvod čuvati dobro zatvoren u originalnom pakovanju, na suvom, tamnom i hladnom mestu',
+      'Proizvod nije namenjen osobama preosetljivim na bilo koji sastojak',
+      'Nije namenjen trudnicama, dojiljama i osobama mlađim od 18 godina',
+      'Takođe, osobama kojima se preporučuje redukovan unos tečnosti (teška srčana ili bubrežna bolest)',
+      'Ne preporučuje se istovremena primena sa diureticima',
+      'Primena proizvoda mogu da prate blagi i prolazni simptomi poremećaja funkcije gastrointestinalnog trakta',
+      'Moguća je pojava kožnih reakcija',
+      'Proizvod sadrži alkohol'
+    ],
+    slug: 'biomelis-kapi',
+    alternativeSlugs: ['biomelis-drops', 'jetra-kapi', 'hepatoprotektiv'],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'BIOMELIS KAPI - Prirodni dodatak ishrani za zdravlje jetre | DERMOTIN',
+    seoDescription: 'BIOMELIS KAPI od DERMOTIN brenda - dodatak ishrani sa ekstraktima badelja, koprive, maslačka. Hepatoprotektiv za podršku zdravlja jetre. Silimarin, prirodni sastojci. 50ml.',
+    urgencyElements: {
+      limitedStock: 25,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 67,
+        timeFrame: 'poslednja 24h'
+      }
+    },
+    productFAQ: [
+      {
+        question: "Kako se koriste BIOMELIS KAPI?",
+        answer: "Vrlo jednostavno! Uzimati 3 puta dnevno po 40 kapi, rastvoreno u malo vode. Najbolje je uzimati pre obroka. Jedna bočica od 50ml traje oko mesec dana pri redovnoj upotrebi.",
+        category: "usage"
+      },
+      {
+        question: "Kada ću videti prve rezultate?",
+        answer: "Budite realni - pravi rezultati se vide nakon mesec dana redovne upotrebe. Jetra je organ koji se polako regeneriše, pa budite strpljivi i ne očekujte čuda preko noći!",
+        category: "effects"
+      },
+      {
+        question: "Da li su BIOMELIS KAPI prirodne?",
+        answer: "Da! Dodatak ishrani na bazi vodeno-etanolnih ekstrakata lekovitih biljaka: badel, kopriva, maslačak, čičak, rastić i lazarkinja. Sve prirodno, bez veštačkih dodataka.",
+        category: "ingredients"
+      },
+      {
+        question: "Da li je bezbedno za dugotrajnu upotrebu?",
+        answer: "BIOMELIS KAPI su dodatak ishrani kategorizovan od strane Farmaceutskog fakulteta. Pogodan za redovnu upotrebu, ali uvek pratite preporučenu dozu i konsultujte se sa lekarom.",
+        category: "safety"
+      },
+      {
+        question: "Ko ne sme da koristi BIOMELIS KAPI?",
+        answer: "Proizvod nije namenjen trudnicama, dojiljama, osobama mlađim od 18 godina, kao ni osobama sa teškom srčanom ili bubrežnom bolešću. Takođe, ne preporučuje se istovremena primena sa diureticima.",
+        category: "safety"
+      },
+      {
+        question: "Kako da čuvam BIOMELIS KAPI?",
+        answer: "Čuvajte dobro zatvoreno u originalnom pakovanju, na suvom, tamnom i hladnom mestu, daleko od dece. Proizvod sadrži alkohol kao prirodni konzervans.",
+        category: "storage"
+      },
+      {
+        question: "Mogu li da koristim BIOMELIS KAPI sa drugim lekovima?",
+        answer: "Ako uzimate lekove, posebno diuretike, konsultujte se sa lekarom pre upotrebe. BIOMELIS KAPI su dodatak ishrani, a ne lek.",
+        category: "usage"
+      },
+      {
+        question: "Šta čini BIOMELIS KAPI tako efikasnim?",
+        answer: "Silimarin iz badelja deluje hepatoprotektivno, maslačak podržava funkciju jetre i žlezuda, a čičak poboljšava varenje i metabolizam. Sve prirodno, naučno potvrđeno!",
+        category: "ingredients"
+      }
+    ],
+    testimonials: [
+      {
+        id: "bk1",
+        name: "Milica R.",
+        city: "Beograd",
+        rating: 5,
+        text: "BIOMELIS KAPI mi je pomogao nakon što sam imala problema sa jetrom. Prirodni sastojci su mi bili važni, a rezultati su vidljivi već nakon mesec dana korišćenja. Preporučujem svima!",
+        verified: true,
+        productUsed: "BIOMELIS KAPI",
+        dateAdded: "2024-12-14",
+        featured: true,
+        likes: 43
+      },
+      {
+        id: "bk2",
+        name: "Petar M.",
+        city: "Novi Sad",
+        rating: 5,
+        text: "Kao neko ko voli da uživa u hrani, BIOMELIS KAPI mi pomaže da se osećam bolje. Badel i maslačak su poznati po tome što pomažu jetri. Prirodno i efikasno!",
+        verified: true,
+        productUsed: "BIOMELIS KAPI",
+        dateAdded: "2024-12-11",
+        likes: 39
+      },
+      {
+        id: "bk3",
+        name: "Ana S.",
+        city: "Kragujevac",
+        rating: 5,
+        text: "Moj muž ima problema sa varenjem i BIOMELIS KAPI su stvarno pomogle. Čičak poboljšava varenje, a lazarkinja takođe pomaže. Prirodni pristup koji funkcioniše.",
+        verified: true,
+        productUsed: "BIOMELIS KAPI",
+        dateAdded: "2024-12-09",
+        featured: true,
+        likes: 36
+      },
+      {
+        id: "bk4",
+        name: "Marko J.",
+        city: "Niš",
+        rating: 4,
+        text: "Koristim BIOMELIS KAPI već dva meseca. Osećam se bolje, varenje mi je poboljšano. Trebalo mi je malo vremena da vidim rezultate, ali vredi čekanja.",
+        verified: true,
+        productUsed: "BIOMELIS KAPI",
+        dateAdded: "2024-12-06",
+        featured: false,
+        likes: 31
+      },
+      {
+        id: "bk5",
+        name: "Dragana P.",
+        city: "Subotica",
+        rating: 5,
+        text: "Kao farmaceut, cenim što su BIOMELIS KAPI kategorizovane od strane Farmaceutskog fakulteta. Silimarin iz badelja je naučno potvrđen hepatoprotektiv. Kvalitetan proizvod!",
+        verified: true,
+        productUsed: "BIOMELIS KAPI",
+        dateAdded: "2024-12-04",
+        featured: true,
+        likes: 41
+      },
+      {
+        id: "bk6",
+        name: "Stefan T.",
+        city: "Čačak",
+        rating: 5,
+        text: "Imao sam problema sa jetrom zbog nezdravog načina života. BIOMELIS KAPI su mi pomogle da se osećam bolje. Sada vodim računa o ishrani i redovno uzimam kapi.",
+        verified: true,
+        productUsed: "BIOMELIS KAPI",
+        dateAdded: "2024-12-01",
+        featured: false,
+        likes: 28
+      }
+    ]
   }
 };
