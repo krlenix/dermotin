@@ -319,8 +319,8 @@ export function CheckoutForm({
 
                          {/* Courier Selection */}
              {showCourierSelection && (
-               <div className="space-y-3">
-                 <Label className="text-base font-semibold text-gray-900">
+               <div className="space-y-2 sm:space-y-3">
+                 <Label className="text-sm sm:text-base font-semibold text-gray-900">
                    {isSingleCourier ? t('delivery.courier_service') : t('delivery.select_courier')}
                  </Label>
                 <div className="space-y-2">
@@ -332,7 +332,7 @@ export function CheckoutForm({
                         key={courier.id}
                         onClick={() => onCourierChange?.(courier)}
                         className={`
-                          relative flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all
+                          relative flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg cursor-pointer transition-all
                           ${isSelected 
                             ? 'border-blue-500 bg-blue-50' 
                             : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
@@ -343,7 +343,7 @@ export function CheckoutForm({
                         {courier.isDefault && (
                           <Badge 
                             variant="secondary" 
-                            className={`absolute -top-2 -right-2 text-xs z-10 ${
+                            className={`absolute -top-1 sm:-top-2 -right-1 sm:-right-2 text-xs z-10 ${
                               isSelected ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-gray-100 text-gray-500 border-gray-200'
                             }`}
                           >
@@ -352,25 +352,25 @@ export function CheckoutForm({
                         )}
                         {/* Selection Indicator */}
                         <div className={`
-                          w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
+                          w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center transition-all
                           ${isSelected 
                             ? 'border-blue-500 bg-blue-500' 
                             : 'border-gray-300 bg-white'
                           }
                         `}>
                           {isSelected && (
-                            <Check className="w-3 h-3 text-white" />
+                            <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                           )}
                         </div>
                         
                         {/* Courier Logo */}
-                        <div className="w-8 h-8 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded shadow-sm flex items-center justify-center">
                           <Image
                             src={courier.logo}
                             alt={courier.name}
                             width={24}
                             height={24}
-                            className={`w-6 h-6 object-contain ${
+                            className={`w-4 h-4 sm:w-6 sm:h-6 object-contain ${
                               isSelected ? 'opacity-100' : 'opacity-60'
                             }`}
                           />
@@ -378,21 +378,20 @@ export function CheckoutForm({
                         
                         {/* Courier Info */}
                         <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className={`text-sm font-medium ${
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <span className={`text-xs sm:text-sm font-medium ${
                               isSelected ? 'text-blue-900' : 'text-gray-600'
                             }`}>
                               {courier.name}
                             </span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className={`text-xs ${
-                              isSelected ? 'text-blue-600' : 'text-gray-400'
-                            }`}>
-                              {courier.deliveryTime}
-                            </span>
-                            <span className="text-xs text-gray-400">•</span>
-                            {hasFreeShipping ? (
+                                                     <div className="flex items-center gap-1 sm:gap-2">
+                             <span className={`text-xs ${
+                               isSelected ? 'text-blue-600' : 'text-gray-400'
+                             }`}>
+                               {courier.deliveryTime}
+                             </span>
+                             {hasFreeShipping ? (
                               <Badge 
                                 variant="secondary" 
                                 className={`text-xs ${
@@ -412,7 +411,7 @@ export function CheckoutForm({
                         </div>
                         
                         {/* Truck Icon */}
-                        <Truck className={`h-4 w-4 ${
+                        <Truck className={`h-3 w-3 sm:h-4 sm:w-4 ${
                           isSelected ? 'text-blue-500' : 'text-gray-300'
                         }`} />
                       </div>
@@ -423,16 +422,18 @@ export function CheckoutForm({
             )}
 
             {/* Payment Method */}
-            <div className="space-y-4">
-              <Label className="text-base font-semibold text-gray-900">{t('checkout.payment_method')}</Label>
-              <div className="p-4 border rounded-lg bg-green-50 border-green-200">
-                <div className="flex items-center gap-3">
-                  <Banknote className="h-6 w-6 text-green-600" />
-                  <div className="flex-1">
-                    <p className="font-medium text-green-800">{t('checkout.cod')}</p>
-                    <p className="text-sm text-green-600">{t('payment_cod.description')}</p>
+            <div className="space-y-2 sm:space-y-4">
+              <Label className="text-sm sm:text-base font-semibold text-gray-900">{t('checkout.payment_method')}</Label>
+              <div className="p-3 sm:p-4 border rounded-lg bg-green-50 border-green-200">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Banknote className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                    <div className="flex-1">
+                      <p className="font-medium text-green-800 text-sm sm:text-base">{t('checkout.cod')}</p>
+                      <p className="text-xs sm:text-sm text-green-600">{t('payment_cod.description')}</p>
+                    </div>
                   </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">{t('payment_cod.selected')}</Badge>
+                  
                 </div>
               </div>
             </div>

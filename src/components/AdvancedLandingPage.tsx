@@ -82,7 +82,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   }, []);
 
   // CTA Button text - configurable variable
-  const ctaButtonText = t('common.order_now'); // "Naruči odmah" - can be changed to other translations
+  const ctaButtonText = t('common.order_now'); // "Naruči odmah po akcijskoj ceni"
 
   // Smooth scroll to delivery form (Podaci za dostavu)
   const scrollToCheckout = () => {
@@ -153,9 +153,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     <Button 
       onClick={scrollToCheckout}
       size={size}
-      className={`bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${showPulse ? 'animate-pulse' : ''} ${className}`}
+      className={`bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${showPulse ? 'animate-pulse' : ''} ${className} text-center whitespace-normal break-words max-w-full`}
     >
-      {ctaButtonText}
+      <span className="text-sm sm:text-base lg:text-lg leading-tight">{ctaButtonText}</span>
     </Button>
   );
 
@@ -253,6 +253,15 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
 
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
+        <div className="animate-pulse text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative w-full overflow-x-hidden" style={{maxWidth: '100vw'}}>
       {/* Pixel Tracking */}
@@ -282,10 +291,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
           ? 'bg-white/95 backdrop-blur-md shadow-sm border-b py-1.5 md:py-2' 
           : 'bg-transparent py-2 md:py-4'
       }`}>
-        <div className="container mx-auto px-4">
-          <div className="relative flex items-center">
+        <div className="container mx-auto px-4 overflow-hidden">
+          <div className="relative flex items-center w-full">
             {/* Navigation Menu - Left side */}
-            <nav className="hidden md:flex items-center space-x-6 flex-1">
+            <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 flex-1 overflow-hidden">
               <a 
                 href="#hero" 
                 className={`text-sm font-medium transition-colors underline-animate ${
@@ -328,7 +337,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               </a>
               <a 
                 href="#order" 
-                className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors shadow-lg"
+                className="bg-brand-orange text-white px-3 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors shadow-lg whitespace-nowrap"
               >
                 {t('navigation.order')}
               </a>
@@ -433,7 +442,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 <a 
                   href="#order" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors text-center mx-2"
+                  className="bg-brand-orange text-white px-3 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors text-center mx-2 whitespace-nowrap"
                 >
                   {t('navigation.order')}
                 </a>
@@ -592,9 +601,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
-            <div id="order" className="grid lg:grid-cols-2 gap-8">
+            <div id="order" className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 w-full overflow-hidden">
               {/* Bundle Selection */}
-              <div className="lg:sticky lg:top-12 lg:self-start">
+              <div className="w-full overflow-hidden lg:sticky lg:top-12 lg:self-start">
                 <BundleSelector
                   variants={product.variants}
                   selectedVariant={selectedVariant}
@@ -619,8 +628,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   onCourierChange={setSelectedCourier}
                   onReselect={scrollToQuantitySelection}
                 />
-                
-
               </div>
             </div>
           </div>

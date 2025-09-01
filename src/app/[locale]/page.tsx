@@ -146,10 +146,10 @@ export default function HomePage() {
           ? 'bg-white/95 backdrop-blur-md shadow-sm border-b py-1.5 md:py-2' 
           : 'bg-transparent py-2 md:py-4'
       }`}>
-        <div className="container mx-auto px-4">
-          <div className="relative flex items-center">
+        <div className="container mx-auto px-4 overflow-hidden">
+          <div className="relative flex items-center w-full">
             {/* Navigation Menu - Left side */}
-            <nav className="hidden md:flex items-center space-x-6 flex-1">
+            <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 flex-1 overflow-hidden">
               <Link 
                 href={`/${locale}`} 
                 className={`text-sm font-medium transition-colors underline-animate ${
@@ -192,7 +192,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href={`/${locale}/contact`}
-                className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors shadow-lg"
+                className="bg-brand-orange text-white px-3 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors shadow-lg whitespace-nowrap"
               >
                 {t('navigation.contact')}
               </Link>
@@ -301,7 +301,7 @@ export default function HomePage() {
                 <Link
                   href={`/${locale}/contact`}
                   onClick={() => setIsMenuOpen(false)}
-                  className="bg-brand-orange text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors text-center mx-2"
+                  className="bg-brand-orange text-white px-3 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors text-center mx-2 whitespace-nowrap"
                 >
                   {t('navigation.contact')}
                 </Link>

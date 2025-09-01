@@ -38,51 +38,55 @@ export function CompactOrderSummary({
   const subtotal = orderTotal + bundleTotal;
 
   return (
-    <div className={`bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4 ${className}`}>
-      <div className="flex items-center justify-between gap-3">
-        {/* Product Info */}
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <Package className="h-5 w-5 text-brand-orange flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-900 text-sm truncate">
-              {productName}
+    <div className={`bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4 md:hidden ${className}`}>
+      <div className="space-y-3">
+        {/* Product Info and Price Row */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <Package className="h-5 w-5 text-brand-orange flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-gray-900 text-sm">
+                {productName}
+              </p>
+              <p className="text-xs text-gray-600">
+                {selectedVariant.name}
+              </p>
+              {Object.keys(bundleItems).length > 0 && (
+                <p className="text-xs text-green-600">
+                  +{Object.keys(bundleItems).length} {t('order_summary.additional_items')}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Price */}
+          <div className="text-right flex-shrink-0">
+            <p className="font-bold text-lg text-brand-orange">
+              {formatPrice(subtotal)}
             </p>
-            <p className="text-xs text-gray-600 truncate">
-              {selectedVariant.name}
-            </p>
-            {Object.keys(bundleItems).length > 0 && (
-              <p className="text-xs text-green-600">
-                +{Object.keys(bundleItems).length} {t('order_summary.additional_items')}
+            {selectedVariant.discountPrice && (
+              <p className="text-xs text-gray-500 line-through">
+                {formatPrice(selectedVariant.price + bundleTotal)}
               </p>
             )}
           </div>
         </div>
 
-        {/* Price */}
-        <div className="text-right flex-shrink-0">
-          <p className="font-bold text-lg text-brand-orange">
-            {formatPrice(subtotal)}
-          </p>
-          {selectedVariant.discountPrice && (
-            <p className="text-xs text-gray-500 line-through">
-              {formatPrice(selectedVariant.price + bundleTotal)}
-            </p>
-          )}
+        {/* Button Row */}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onReselect();
+            }}
+            className="w-full sm:w-auto h-8 px-3 rounded-md border border-brand-orange bg-white text-brand-orange hover:bg-gray-100 hover:text-brand-orange transition-all duration-200 text-xs font-medium inline-flex items-center justify-center gap-1.5 group"
+          >
+            <Edit3 className="h-3 w-3 text-brand-orange group-hover:text-brand-orange transition-colors" />
+            <span className="text-brand-orange group-hover:text-brand-orange transition-colors">{t('order_summary.change')}</span>
+          </button>
         </div>
-
-        {/* Reselect Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onReselect();
-          }}
-          className="flex-shrink-0 h-8 px-3 rounded-md border border-brand-orange bg-white text-brand-orange hover:bg-gray-100 hover:text-brand-orange transition-all duration-200 text-xs font-medium inline-flex items-center justify-center gap-1.5 group"
-        >
-          <Edit3 className="h-3 w-3 text-brand-orange group-hover:text-brand-orange transition-colors" />
-          <span className="text-brand-orange group-hover:text-brand-orange transition-colors">{t('order_summary.change')}</span>
-        </button>
       </div>
     </div>
   );
