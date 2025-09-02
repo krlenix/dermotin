@@ -467,7 +467,11 @@ export default function HomePage() {
                     <div className="relative w-full h-full flex items-center justify-center">
                       <ProductImageHover
                         mainImage={product.images.main}
-                        hoverImage={product.images.gallery[product.images.gallery.length - 1] || product.images.main}
+                        hoverImage={
+                          product.images.gallery && product.images.gallery.length > 0 
+                            ? product.images.gallery[product.images.gallery.length - 1] 
+                            : product.images.main
+                        }
                         productName={product.name}
                         width={300}
                         height={300}

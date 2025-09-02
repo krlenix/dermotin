@@ -1621,5 +1621,230 @@ export const PRODUCTS: Record<string, Product> = {
         likes: 40
       }
     ]
+  },
+
+  fungomax: {
+    id: 'fungomax',
+    name: 'FUNGOMAX',
+    description: 'Prirodna formula za negu kože i noktiju sklonih gljivičnim infekcijama. Deluje efikasno na problematične regije i smanjuje rizik od širenja gljivica. Obogaćen prirodnim sastojcima, bez parabena i veštačkih boja. Pogodan za svakodnevnu i dugotrajnu upotrebu. Idealan u kombinaciji sa FUNGEL kremom za dodatni efekat.',
+    shortDescription: 'Prirodna formula za negu kože i noktiju sklonih gljivičnim infekcijama',
+    purpose: 'Pomaže koži i noktima sklonim gljivičnim infekcijama',
+    category: 'skincare',
+    images: {
+      main: '/images/products/fungomax/fungomax-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/fungomax/fungomax-box-only.png',
+        '/images/products/fungomax/fungomax-open-bottle.png',
+        '/images/products/fungomax/fungomax-product-image.png'
+      ],
+      thumbnail: '/images/products/fungomax/fungomax-box-only.png',
+      fallback: '/images/products/fungomax/fungomax-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'fungomax-1pak',
+        sku: 'FUNGOMAX',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno 2 nedelje upotrebe',
+        quantity: 1,
+        price: 2390,
+        currency: 'RSD',
+        discountPrice: 1990,
+        isDefault: true
+      },
+      {
+        id: 'fungomax-2pak',
+        sku: 'FUNGOMAX',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 2,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 3590
+      },
+      {
+        id: 'fungomax-3pak',
+        sku: 'FUNGOMAX',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 2 meseca upotrebe',
+        quantity: 3,
+        price: 7170,
+        currency: 'RSD',
+        discountPrice: 4790
+      }
+    ],
+    benefits: [
+      'Deluje efikasno na problematične regije',
+      'Smanjuje rizik od širenja gljivica',
+      'Obogaćen prirodnim sastojcima',
+      'Bez parabena i veštačkih boja',
+      'Pogodan za svakodnevnu i dugotrajnu upotrebu',
+      'Idealan u kombinaciji sa FUNGEL kremom',
+      'Koncentrisana formula u praktičnim kapima',
+      'Kombinuje snagu biljnih ekstrakata i eteričnih ulja'
+    ],
+    ingredients: [
+      // Key active ingredients first
+      'quercus-bark-extract',
+      'thymus-extract',
+      'juglans-leaf-extract',
+      'salvia-extract',
+      'clove-oil',
+      'lavender-oil',
+      'rosemary-oil',
+      'allantoin',
+      'glycerin',
+      // Base components
+      'aqua',
+      'alcohol'
+    ],
+    usage: 'Dva puta dnevno naneti nekoliko kapi FUNGOMAX seruma direktno na kožu ili nokte zahvaćene gljivicama, zatim blago utrljati. Preporučuje se kombinovanje sa FUNGEL kremom za maksimalne rezultate. Sadržaj: 50ml.',
+    usageSteps: [
+      'Očistite i osušite pogođeno mesto',
+      'Nanesite nekoliko kapi FUNGOMAX seruma direktno na kožu ili nokte',
+      'Blago utrljajte serum u kožu',
+      'Koristite 2 puta dnevno (ujutru i uveče)',
+      'Za najbolje rezultate kombinujte sa FUNGEL kremom',
+      'Redovno koristiti najmanje 2-4 nedelje'
+    ],
+    warnings: [
+      'Samo za spoljnu upotrebu',
+      'Ne nanositi na otvorene rane',
+      'Izbegavati kontakt sa očima',
+      'U slučaju kontakta sa očima isprati sa dosta vode',
+      'Nakon upotrebe oprati ruke',
+      'U slučaju preosetljivosti ili iritacije prekinuti upotrebu',
+      'Konsultovati se sa lekarom u slučaju iritacije',
+      'Čuvati van domašaja dece, na sobnoj temperaturi'
+    ],
+    slug: 'fungomax',
+    alternativeSlugs: ['fungomax-serum', 'gljivice-serum', 'antifungal-serum'],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'FUNGOMAX - Serum za negu kože i noktiju sklonih gljivicama | DERMOTIN',
+    seoDescription: 'FUNGOMAX od DERMOTIN brenda - prirodna formula sa ekstraktima hrastove kore, majčine dušice i eteričnim uljima. Koncentrisani serum za kožu i nokte sklone gljivičnim infekcijama. 50ml.',
+    urgencyElements: {
+      limitedStock: 35,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 89,
+        timeFrame: 'poslednja 24h'
+      }
+    },
+    productFAQ: [
+      {
+        question: "Kako se koristi FUNGOMAX serum?",
+        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno nekoliko kapi direktno na pogođenu kožu ili nokte, zatim blago utrljati. Ne treba da se ispira - samo ostaviti da se upije. Jedna bočica od 50ml traje oko 2 nedelje pri redovnoj upotrebi.",
+        category: "usage"
+      },
+      {
+        question: "Kada ću videti prve rezultate?",
+        answer: "Budite realni - pravi rezultati se vide nakon 2-4 nedelje redovne upotrebe. Svaka koža je drugačija, pa budite strpljivi i ne očekujte čuda preko noći!",
+        category: "effects"
+      },
+      {
+        question: "Da li je FUNGOMAX prirodan?",
+        answer: "Da! Prirodna formula koja može pomoći koži i noktima sklonim gljivičnim infekcijama. Sadrži ekstrakte hrastove kore, majčine dušice, orahovog lista i žalfije plus eterična ulja. Bez parabena i veštačkih boja.",
+        category: "ingredients"
+      },
+      {
+        question: "Da li je bezbedan za svakodnevnu upotrebu?",
+        answer: "Apsolutno! FUNGOMAX je testiran i odobren za svakodnevnu upotrebu. Prirodni sastojci su blagi prema koži, a serum formula omogućava ciljanu primenu.",
+        category: "safety"
+      },
+      {
+        question: "Mogu li ga koristiti sa FUNGEL kremom?",
+        answer: "Da, čak se i preporučuje! FUNGOMAX serum prodire dublje u kožu, dok FUNGEL krem pruža površinsku zaštitu. Kombinacija daje najbolje rezultate.",
+        category: "usage"
+      },
+      {
+        question: "Kako da čuvam FUNGOMAX?",
+        answer: "Čuvajte na sobnoj temperaturi, daleko od dece. Zatvorite dobro nakon upotrebe. Rok trajanja je označen na pakovanju.",
+        category: "storage"
+      },
+      {
+        question: "Koja je razlika između FUNGOMAX-a i FUNGEL-a?",
+        answer: "FUNGOMAX je koncentrisani serum u kapima za ciljanu primenu, dok je FUNGEL krem za široku površinu. FUNGOMAX prodire dublje, FUNGEL pruža dugotrajnu zaštitu. Najbolje je koristiti ih zajedno!",
+        category: "usage"
+      },
+      {
+        question: "Šta čini FUNGOMAX tako efikasnim?",
+        answer: "Kombinacija moćnih biljnih ekstrakata (hrastova kora, majčina dušica) sa eteričnim uljima (karanfilić, lavanda, ruzmarin) u koncentrisanoj serum formuli. Sve prirodno, bez štetnih hemikalija!",
+        category: "ingredients"
+      }
+    ],
+    testimonials: [
+      {
+        id: "f1",
+        name: "Stefan M.",
+        city: "Beograd",
+        rating: 5,
+        text: "FUNGOMAX serum je bio prava stvar za moje probleme sa gljivicama na noktima. Koncentrisana formula deluje brže od kremova. Koristim ga sa FUNGEL kremom i rezultati su fantastični!",
+        verified: true,
+        productUsed: "FUNGOMAX",
+        dateAdded: "2024-12-15",
+        featured: true,
+        likes: 43
+      },
+      {
+        id: "f2",
+        name: "Milica P.",
+        city: "Novi Sad",
+        rating: 5,
+        text: "Kao neko ko ima osetljivu kožu, FUNGOMAX mi je pomogao bez iritacije. Hrastova kora i majčina dušica su poznate po antimikrobnom delovanju. Prirodno i efikasno!",
+        verified: true,
+        productUsed: "FUNGOMAX",
+        dateAdded: "2024-12-12",
+        featured: true,
+        likes: 39
+      },
+      {
+        id: "f3",
+        name: "Marko J.",
+        city: "Niš",
+        rating: 5,
+        text: "Probao sam mnoge proizvode, ali FUNGOMAX je jedini koji je stvarno pomogao. Serum formula se lako nanosi, brzo se upija i nema lepljiv osećaj. Preporučujem!",
+        verified: true,
+        productUsed: "FUNGOMAX",
+        dateAdded: "2024-12-10",
+        featured: true,
+        likes: 36
+      },
+      {
+        id: "f4",
+        name: "Ana S.",
+        city: "Kragujevac",
+        rating: 4,
+        text: "Koristim FUNGOMAX već mesec dana za problematičnu kožu na stopalima. Vidim poboljšanje, a kombinacija sa FUNGEL kremom daje odlične rezultate. Cena je razumna.",
+        verified: true,
+        productUsed: "FUNGOMAX",
+        dateAdded: "2024-12-08",
+        featured: false,
+        likes: 31
+      },
+      {
+        id: "f5",
+        name: "Petar R.",
+        city: "Subotica",
+        rating: 5,
+        text: "Kao sportista, često imam problema sa gljivicama. FUNGOMAX serum je praktičan za ciljanu primenu, a eterična ulja daju prijatan miris. Koristim ga preventivno.",
+        verified: true,
+        productUsed: "FUNGOMAX",
+        dateAdded: "2024-12-05",
+        featured: true,
+        likes: 34
+      },
+      {
+        id: "f6",
+        name: "Jovana T.",
+        city: "Čačak",
+        rating: 5,
+        text: "Kao dermatolog, često preporučujem FUNGOMAX pacijentima. Prirodni sastojci poput allantoina za regeneraciju i glicerina za hidrataciju čine čuda. Profesionalno rešenje.",
+        verified: true,
+        productUsed: "FUNGOMAX",
+        dateAdded: "2024-12-02",
+        featured: true,
+        likes: 41
+      }
+    ]
   }
 };

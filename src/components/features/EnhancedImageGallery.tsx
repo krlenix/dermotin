@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
@@ -18,6 +18,8 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   const [selectedImage, setSelectedImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [validImages, setValidImages] = useState<string[]>([]);
+  const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(new Set());
 
   
   // Touch/swipe functionality refs and state
@@ -28,6 +30,43 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   
   // Combine main image with gallery for full collection
   const allImages = [images.main, ...images.gallery];
+
+  // Function to check if an image is valid
+  const checkImageValidity = async (imageSrc: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = imageSrc;
+    });
+  };
+
+  // Filter out invalid images on component mount
+  useEffect(() => {
+    const validateImages = async () => {
+      const validImagesList: string[] = [];
+      const errorSet = new Set<string>();
+      
+      for (const imageSrc of allImages) {
+        const isValid = await checkImageValidity(imageSrc);
+        if (isValid) {
+          validImagesList.push(imageSrc);
+        } else {
+          errorSet.add(imageSrc);
+        }
+      }
+      
+      setValidImages(validImagesList);
+      setImageLoadErrors(errorSet);
+      
+      // Reset selected image if current selection is invalid
+      if (validImagesList.length > 0 && errorSet.has(allImages[selectedImage])) {
+        setSelectedImage(0);
+      }
+    };
+
+    validateImages();
+  }, [allImages, selectedImage]);
   
   const changeImage = (newIndex: number) => {
     if (isTransitioning || newIndex === selectedImage) return;
@@ -42,12 +81,12 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   };
   
   const handlePrevious = () => {
-    const newIndex = selectedImage === 0 ? allImages.length - 1 : selectedImage - 1;
+    const newIndex = selectedImage === 0 ? validImages.length - 1 : selectedImage - 1;
     changeImage(newIndex);
   };
   
   const handleNext = () => {
-    const newIndex = selectedImage === allImages.length - 1 ? 0 : selectedImage + 1;
+    const newIndex = selectedImage === validImages.length - 1 ? 0 : selectedImage + 1;
     changeImage(newIndex);
   };
   
@@ -94,13 +133,26 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
     return `translateX(-${selectedImage * 100}%)`;
   };
 
+  // Don't render anything if no valid images
+  if (validImages.length === 0) {
+    return (
+      <div className={cn("w-full aspect-square bg-gray-100 rounded-2xl flex items-center justify-center", className)}>
+        <p className="text-gray-500">No images available</p>
+      </div>
+    );
+  }
+
+  // If only one valid image (main image), show simplified layout
+  const showSimplifiedLayout = validImages.length === 1;
+
   return (
     <div className={cn("w-full", className)}>
       {/* Desktop Layout: Side by side */}
       <div className="hidden md:flex gap-4">
-        {/* Thumbnails - Left side on desktop */}
-        <div className="flex flex-col gap-3 w-28">
-          {allImages.map((image, index) => (
+        {/* Thumbnails - Left side on desktop - only show if multiple images */}
+        {!showSimplifiedLayout && (
+          <div className="flex flex-col gap-3 w-28">
+            {validImages.map((image, index) => (
             <button
               key={index}
               onClick={() => handleThumbnailClick(index)}
@@ -134,8 +186,9 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
               <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors duration-200 rounded-lg" />
 
             </button>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Main Image Display - Desktop */}
         <div className="flex-1 relative">
@@ -152,7 +205,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
                 className="flex transition-transform duration-400 ease-out h-full"
                 style={{ transform: getCarouselTransform() }}
               >
-                {allImages.map((image, index) => (
+                {validImages.map((image, index) => (
                   <div key={index} className="w-full h-full flex-shrink-0 relative">
                     <Image
                       src={image}
@@ -171,20 +224,24 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
               </div>
             </div>
 
-            {/* Navigation arrows */}
-            <button
-              onClick={handlePrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            
-            <button
-              onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
+            {/* Navigation arrows - only show if multiple images */}
+            {!showSimplifiedLayout && (
+              <>
+                <button
+                  onClick={handlePrevious}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                
+                <button
+                  onClick={handleNext}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
 
             {/* Zoom button */}
             <button
@@ -194,10 +251,12 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
               <ZoomIn className="h-5 w-5" />
             </button>
 
-            {/* Image counter */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
-              {selectedImage + 1} / {allImages.length}
-            </div>
+            {/* Image counter - only show if multiple images */}
+            {!showSimplifiedLayout && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                {selectedImage + 1} / {validImages.length}
+              </div>
+            )}
 
             {/* Corner Ribbon - 100% Prirodno */}
             <div className="absolute top-0 right-0 z-20">
@@ -232,7 +291,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
                 className="flex transition-transform duration-400 ease-out h-full"
                 style={{ transform: getCarouselTransform() }}
               >
-                {allImages.map((image, index) => (
+                {validImages.map((image, index) => (
                   <div key={index} className="w-full h-full flex-shrink-0 relative">
                     <Image
                       src={image}
@@ -251,20 +310,24 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
               </div>
             </div>
 
-            {/* Navigation arrows - Mobile */}
-            <button
-              onClick={handlePrevious}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            
-            <button
-              onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
+            {/* Navigation arrows - Mobile - only show if multiple images */}
+            {!showSimplifiedLayout && (
+              <>
+                <button
+                  onClick={handlePrevious}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                
+                <button
+                  onClick={handleNext}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-1.5 shadow-lg transition-all duration-200 hover:scale-110"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </>
+            )}
 
             {/* Zoom button - Mobile */}
             <button
@@ -274,10 +337,12 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
               <ZoomIn className="h-4 w-4" />
             </button>
 
-            {/* Image counter - Mobile */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
-              {selectedImage + 1} / {allImages.length}
-            </div>
+            {/* Image counter - Mobile - only show if multiple images */}
+            {!showSimplifiedLayout && (
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
+                {selectedImage + 1} / {validImages.length}
+              </div>
+            )}
 
             {/* Corner Ribbon - Mobile */}
             <div className="absolute top-0 right-0 z-20">
@@ -295,9 +360,10 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
           </div>
         </div>
 
-        {/* Thumbnails - Below main image on mobile */}
-        <div className="flex gap-2 overflow-x-auto pb-2 justify-start px-4 pt-2" style={{maxWidth: '100vw'}}>
-          {allImages.map((image, index) => (
+        {/* Thumbnails - Below main image on mobile - only show if multiple images */}
+        {!showSimplifiedLayout && (
+          <div className="flex gap-2 overflow-x-auto pb-2 justify-start px-4 pt-2" style={{maxWidth: '100vw'}}>
+            {validImages.map((image, index) => (
             <button
               key={index}
               onClick={() => handleThumbnailClick(index)}
@@ -328,12 +394,14 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
               <div className="absolute inset-0 bg-brand-orange/0 group-active/thumb-mobile:bg-brand-orange/20 transition-colors duration-150 rounded-lg" />
 
             </button>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* Image dots indicator - Mobile */}
-        <div className="flex justify-center gap-2">
-          {allImages.map((_, index) => (
+        {/* Image dots indicator - Mobile - only show if multiple images */}
+        {!showSimplifiedLayout && (
+          <div className="flex justify-center gap-2">
+            {validImages.map((_, index) => (
             <button
               key={index}
               onClick={() => handleThumbnailClick(index)}
@@ -344,8 +412,9 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
                   : "bg-gray-300 hover:bg-brand-orange/50"
               )}
             />
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
