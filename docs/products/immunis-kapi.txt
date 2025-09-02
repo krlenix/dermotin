@@ -1,0 +1,173 @@
+IMMUNIS Kapi
+Prirodna podrška imunitetu tokom cele godine.
+* Ehinacea i kopriva aktiviraju odbrambene mehanizme.
+* Majčina dušica i maslina štite disajne puteve i imaju antiseptičko dejstvo.
+* Lavanda pomaže opuštanju i kvalitetnijem snu.
+* Bez parabena, veštačkih boja i mirisa – čista moć odabranog bilja.
+
+IMMUNIS KAPI – sinergija vodeno-etanolnih biljnih ekstrakata za:
+* Jačanje prirodne odbrambene sposobnosti organizma (ehinacea, kopriva)
+* Antiseptičku i antivirusnu podršku (majčina dušica, maslina)
+* Očuvanje zdravlja gornjih disajnih puteva i lakše disanje (timol iz majčine dušice)
+* Antioksidativnu zaštitu i detoks efekat (list oraha, kopriva)
+* Blagu relaksaciju i bolji san zahvaljujući lavandi
+Preporučena upotreba: Odrasli: 3 puta dnevno do 40 kapi razmućenih u malo vode, posle obroka. (Nemojte prelaziti 120 kapi dnevno.)
+Moćni aktivni sastojci
+* Echinacea purpurea (koren) – 30 ml/100 ml: doprinosi funkciji imunog sistema.
+* Urtica dioica (list koprive) – 15 ml/100 ml: bogata mineralima; podržava vitalnost i cirkulaciju.
+* Juglans regia (list oraha) – 15 ml/100 ml: tanini pružaju adstringentnu i antioksidativnu zaštitu.
+* Thymus serpyllum (herba majčine dušice) – 15 ml/100 ml: etarska ulja (timol, karvakrol) štite respiratorni trakt.
+* Olea europaea (list masline) – 15 ml/100 ml: oleuropein doprinosi otpornosti na spoljašnje agense.
+* Lavandula angustifolia (cvet lavande) – 10 ml/100 ml: prirodna pomoć pri opuštanju i boljem snu.
+Sastav (po porciji – do 40 kapi): Vodeno-etanolni ekstrakti navedenih biljaka (DER 1:3–1:4) u 40 % v/v etanolu. Proizvod sadrži alkohol 31,9 % v/v (≈ 0,19 g etanola po porciji). Energetska vrednost: < 50 kJ (12 kcal) dnevno.
+Napomene:
+* Dodatak ishrani nije zamena za raznovrsnu i uravnoteženu ishranu.
+* Nije namenjeno osobama mlađim od 18 godina, trudnicama i dojiljama.
+* Izbegavati ako ste preosetljivi na biljke iz familije Asteraceae ili druge sastojke; konsultujte lekara kod autoimunih oboljenja ili terapije imunosupresivima.
+* Ne prekoračujte preporučenu dnevnu dozu.
+* Čuvati van domašaja dece, u originalnom pakovanju, na tamnom i suvom mestu do 25 °C.
+And add your text and check this text above if okay
+
+
+# IMMUNIS KAPI - Marketing Text Analysis & Recommendations
+
+## ✅ APPROVED TEXT (Your current version with minor corrections)
+
+**IMMUNIS Kapi**  
+**Prirodna podrška imunitetu** tokom cele godine.
+
+* Ehinacea i kopriva **aktiviraju odbrambene mehanizme**.
+* Majčina dušica i maslina **štite disajne puteve** i imaju antiseptičko dejstvo.
+* Lavanda pomaže **opuštanju** i kvalitetnijem snu.
+* **Bez parabena**, veštačkih boja i mirisa – čista moć odabranog bilja.
+
+**IMMUNIS KAPI** – sinergija vodeno-etanolnih biljnih ekstrakata za:
+* **Jačanje prirodne odbrambene sposobnosti** organizma (ehinacea, kopriva)
+* **Antiseptičku i antivirusnu podršku** (majčina dušica, maslina)
+* **Očuvanje zdravlja gornjih disajnih puteva** i lakše disanje (timol iz majčine dušice)
+* **Antioksidativnu zaštitu** i detoks efekat (list oraha, kopriva)
+* **Blagu relaksaciju i bolji san** zahvaljujući lavandi
+
+**Preporučena upotreba:** Odrasli: 3 puta dnevno do **40 kapi** razmućenih u malo vode, posle obroka.
+
+**Moćni aktivni sastojci**
+* **Echinacea purpurea (koren) – 30 ml/100 ml:** doprinosi funkciji imunog sistema.
+* **Urtica dioica (list koprive) – 15 ml/100 ml:** bogata mineralima; podržava vitalnost i cirkulaciju.
+* **Juglans regia (list oraha) – 15 ml/100 ml:** tanini pružaju adstringentnu i antioksidativnu zaštitu.
+* **Thymus serpyllum (herba majčine dušice) – 15 ml/100 ml:** etarska ulja (timol, karvakrol) štite respiratorni trakt.
+* **Olea europaea (list masline) – 15 ml/100 ml:** oleuropein doprinosi otpornosti na spoljašnje agense.
+* **Lavandula angustifolia (cvet lavande) – 10 ml/100 ml:** prirodna pomoć pri opuštanju i boljem snu.
+
+**Sastav (po porciji – do 40 kapi):** Vodeno-etanolni ekstrakti navedenih biljaka (DER 1:3–1:4) u 40% v/v etanolu. 
+
+**Napomene:**
+* Dodatak ishrani nije zamena za raznovrsnu i uravnoteženu ishranu.
+* Nije namenjeno osobama mlađim od 18 godina, trudnicama i dojiljama.
+* Proizvod sadrži alkohol.
+* Ne prekoračujte preporučenu dnevnu dozu.
+* Čuvati van domašaja dece, u originalnom pakovanju, na tamnom i suvom mestu do 25°C.
+
+---
+
+## 🔴 CORRECTIONS NEEDED
+
+### **Critical Issues to Fix:**
+
+1. **Remove alcohol content details**: 
+   - ❌ Remove: "Proizvod sadrži alkohol **31,9 % v/v** (≈ 0,19 g etanola po porciji)"
+   - ✅ Keep simple: "Proizvod sadrži alkohol"
+
+2. **Remove caloric information**: 
+   - ❌ Remove: "Energetska vrednost: < 50 kJ (12 kcal) dnevno"
+
+3. **Remove maximum daily dose mention**:
+   - ❌ Remove: "(Nemojte prelaziti *120 kapi* dnevno.)"
+
+4. **Simplify warnings section**:
+   - ❌ Remove: "Izbegavati ako ste preosetljivi na biljke iz familije Asteraceae ili druge sastojke; konsultujte lekara kod autoimunih oboljenja ili terapije imunosupresivima"
+   - ✅ Add: "Konsultujte lekara pre upotrebe u slučaju postojanja zdravstvenih problema"
+
+---
+
+## 📋 ADDITIONAL REQUIRED WARNINGS (Based on Faculty Document)
+
+Add these important warnings that were missing:
+
+* **Nije preporučeno za osobe sa smanjenim dnevnim unosom tečnosti**
+* **Izbegavati kod progresivnih sistemskih poremećaja, autoimunskih oboljenja, imunodeficijencije**
+* **Upotreba lavande može izazvati pospanost - izbegavati vožnju i rad sa mašinama**
+* **Mogući su blagi gastrointestinalni simptomi**
+
+---
+
+## 🎯 ENHANCED MARKETING VERSION
+
+**IMMUNIS KAPI**  
+**Prirodna podrška imunitetu kroz celu godinu**
+
+**Stručno mišljenje Farmaceutskog fakulteta Univerziteta u Beogradu potvrđuje:**
+Sinergistički efekat odabranih biljnih ekstrakata za jačanje prirodne odbrane organizma.
+
+### **Što čini IMMUNIS KAPI jedinstvenim:**
+* **Ehinacea (30%) + Kopriva (15%)** – snažan duo za aktivaciju odbrambenih mehanizama
+* **Majčina dušica (15%) + Maslina (15%)** – prirodna antiseptička i antivirusna zaštita disajnih puteva  
+* **Lavanda (10%)** – za prirodno opuštanje i kvalitetniji odmor
+* **Orah (15%)** – antioksidativna zaštita i detoksifikacija
+
+### **Naučno potvrđeni benefiti:**
+✓ **Jačanje imuniteta** kroz sinergiju tradicionalnih lekovitih biljaka  
+✓ **Podrška respiratornom sistemu** i zdravlju gornjih disajnih puteva  
+✓ **Antioksidativna zaštita** od spoljašnjih štetnih faktora  
+✓ **Prirodno opuštanje** i poboljšanje kvaliteta sna  
+✓ **Čista formula** bez parabena, veštačkih boja i mirisa  
+
+### **Preporučena upotreba:**
+**Odrasli:** 3 puta dnevno do 40 kapi rastvorenih u malo vode, posle obroka
+
+### **Premium kvalitet:**
+* Vodeno-etanolni ekstrakti (DER 1:3-1:4) u 40% etanolu
+* Tamno staklena bočica sa kapaljkom za optimalnu dozu
+* Kontrolisana proizvodnja prema najvišim standardima
+
+### **Aktivni sastojci u 100ml:**
+* **Echinacea purpurea** (koren) - 30ml
+* **Urtica dioica** (list koprive) - 15ml  
+* **Juglans regia** (list oraha) - 15ml
+* **Thymus serpyllum** (majčina dušica) - 15ml
+* **Olea europaea** (list masline) - 15ml
+* **Lavandula angustifolia** (cvet) - 10ml
+
+---
+
+## ⚠️ MANDATORY LEGAL WARNINGS
+
+**Važne napomene:**
+* Dodatak ishrani nije zamena za raznovrsnu i uravnoteženu ishranu
+* Nije namenjeno trudnicama, dojiljama i osobama mlađim od 18 godina
+* Proizvod sadrži alkohol
+* Konsultujte lekara pre upotrebe kod zdravstvenih problema
+* Ne prekoračiti preporučenu dnevnu dozu
+* Čuvati van domašaja dece, na temperaturi do 25°C
+
+**Proizvođač:** Bio-Teo Centar d.o.o.  
+**Nosilac upisa:** Clicky d.o.o. Belgrade
+
+---
+
+## 📊 REGULATORY COMPLIANCE SUMMARY
+
+✅ **Compliant Claims:**
+- Dietary supplement categorization
+- Natural ingredient focus  
+- Traditional use references
+- Support/contribution language
+- Faculty expertise mention (without direct endorsement)
+
+❌ **Avoid These Claims:**
+- Disease treatment/cure claims
+- Specific medical condition treatment
+- Therapeutic terminology  
+- Direct medical efficacy statements
+- Quantified effectiveness claims
+
+The text is overall well-structured and compliant with dietary supplement regulations when the suggested corrections are implemented.

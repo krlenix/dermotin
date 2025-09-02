@@ -9,7 +9,7 @@ This directory contains all images used on the homepage. All images are now cent
 - `hero-bg.jpg` - Hero background image
 
 ### Before/After Section
-- `video-image.webp` - Main before/after comparison image (woman touching neck)
+- `banner-image.jpg` - Main before/after comparison image (woman touching neck)
 - `before-after-comparison.jpg` - Additional comparison image
 
 ### Natural Science Section

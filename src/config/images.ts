@@ -4,7 +4,7 @@ export const HOMEPAGE_IMAGES = {
     background: "/images/main/hero-bg.jpg"
   },
   beforeAfter: {
-    main: "/images/main/video-image.webp",
+    main: "/images/main/banner-image.jpg",
     comparison: "/images/main/before-after-comparison.jpg"
   },
   naturalScience: {

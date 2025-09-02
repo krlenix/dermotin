@@ -1198,5 +1198,428 @@ export const PRODUCTS: Record<string, Product> = {
         likes: 28
       }
     ]
+  },
+
+  bioroid_kapi: {
+    id: 'bioroid_kapi',
+    name: 'BIOROID KAPI',
+    description: 'Prirodno olakšanje za hemoroide i analnu nelagodu. Hajdučka trava, neven i hrastova kora ublažavaju upalu i krvarenje. Čičak i kleka doprinose boljoj cirkulaciji i smanjenju otoka. Maslačak pomaže detoksikaciji i oporavku tkiva. Bez parabena, veštačkih boja i mirisa – čista biljna snaga, spremna za svakodnevnu upotrebu.',
+    shortDescription: 'Prirodni dodatak ishrani za podršku kod hemoroida - 50ml',
+    purpose: 'Podržava ublažavanje nelagodnosti kod hemoroida i analne iritacije',
+    category: 'supplements',
+    images: {
+      main: '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/bioroid-kapi/bioroid-kapi-box-only.png',
+        '/images/products/bioroid-kapi/bioroid-kapi-open-bottle.png',
+        '/images/products/bioroid-kapi/bioroid-kapi-old-product-image.png'
+      ],
+      thumbnail: '/images/products/bioroid-kapi/bioroid-kapi-box-only.png',
+      fallback: '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'bioroid-kapi-1pak',
+        sku: 'BIOROID_KAPI',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 1,
+        price: 2390,
+        currency: 'RSD',
+        discountPrice: 1890,
+        isDefault: true
+      },
+      {
+        id: 'bioroid-kapi-2pak',
+        sku: 'BIOROID_KAPI',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno 2 meseca upotrebe',
+        quantity: 2,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 3590
+      },
+      {
+        id: 'bioroid-kapi-3pak',
+        sku: 'BIOROID_KAPI',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 3 meseca upotrebe',
+        quantity: 3,
+        price: 7170,
+        currency: 'RSD',
+        discountPrice: 4790
+      }
+    ],
+    benefits: [
+      'Hajdučka trava, neven i hrastova kora ublažavaju upalu i krvarenje',
+      'Čičak i kleka doprinose boljoj cirkulaciji i smanjenju otoka',
+      'Maslačak pomaže detoksikaciji i oporavku tkiva',
+      'Smanjuje otok, bol, svrab i krvarenje kod hemoroida',
+      'Umiruje upalu i iritaciju analne sluzokože',
+      'Astringentna i antiseptička zaštita zahvaljujući taninima hrastove kore',
+      'Podržava cirkulaciju i jačanje vena',
+      'Bez parabena, veštačkih boja i mirisa'
+    ],
+    ingredients: [
+      // Active herbal extracts - based on BIOROID KAPI documentation
+      'achillea-extract', // Hajdučka trava (Achillea millefolium) - 25ml/100ml
+      'arctium-root-extract', // Čičak korijen (Arctium lappa) - 20ml/100ml
+      'calendula-extract', // Neven (Calendula officinalis) - 15ml/100ml
+      'quercus-bark-extract', // Hrastova kora (Quercus robur) - 15ml/100ml
+      'dandelion-root-extract', // Maslačak (Taraxacum officinale) - 15ml/100ml
+      'juniper-fruit-extract', // Kleka plod (Juniperus communis) - 10ml/100ml
+      // Base components
+      'aqua',
+      'ethanol', // 40% v/v ethanol for extraction
+      'glycerin'
+    ],
+    usage: 'Odrasli: 3 puta dnevno do 40 kapi razblaženih u malo vode, posle obroka. Ne prelaziti ukupno 120 kapi dnevno. Sadržaj: 50ml (dovoljno za mesec dana redovne upotrebe).',
+    usageSteps: [
+      'Uzimati 3 puta dnevno po do 40 kapi',
+      'Razblažiti kapi u malo vode',
+      'Najbolje uzimati posle obroka',
+      'Ne prekoračiti 120 kapi dnevno',
+      'Redovno koristiti najmanje mesec dana za najbolje rezultate',
+      'Kombinovati sa uravnoteženom ishranom'
+    ],
+    warnings: [
+      'Dodatak ishrani nije zamena za raznovrsnu i uravnoteženu ishranu',
+      'Nije namenjen osobama mlađim od 18 godina, trudnicama ni dojiljama',
+      'Ne koristiti kod preosetljivosti na sastojke (posebno biljke porodice Asteraceae)',
+      'Izbegavati kod oboljenja žučnih puteva',
+      'Izbegavati istovremeno sa diureticima',
+      'Ne prekoračiti preporučenu dnevnu dozu',
+      'Čuvati van dohvata dece, u originalnom pakovanju, na tamnom i suvom mestu do 25°C',
+      'Proizvod sadrži alkohol 37% v/v'
+    ],
+    slug: 'bioroid-kapi',
+    alternativeSlugs: ['bioroid-drops', 'hemoroidi-kapi', 'analna-nelagoda'],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'BIOROID KAPI - Prirodni dodatak ishrani za hemoroide | DERMOTIN',
+    seoDescription: 'BIOROID KAPI od DERMOTIN brenda - dodatak ishrani sa ekstraktima hajdučke trave, nevena, hrastove kore. Prirodna podrška kod hemoroida i analne nelagode. 50ml.',
+    urgencyElements: {
+      limitedStock: 18,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 34,
+        timeFrame: 'poslednja 24h'
+      }
+    },
+    productFAQ: [
+      {
+        question: "Kako se koriste BIOROID KAPI?",
+        answer: "Vrlo jednostavno! Uzimati 3 puta dnevno po do 40 kapi, razblaženo u malo vode, posle obroka. Ne prelaziti 120 kapi dnevno. Jedna bočica od 50ml traje oko mesec dana pri redovnoj upotrebi.",
+        category: "usage"
+      },
+      {
+        question: "Kada ću videti prve rezultate?",
+        answer: "Budite realni - pravi rezultati se vide nakon 2-3 nedelje redovne upotrebe. Svaki organizam je drugačiji, pa budite strpljivi i ne očekujte čuda preko noći!",
+        category: "effects"
+      },
+      {
+        question: "Da li su BIOROID KAPI prirodne?",
+        answer: "Da! Dodatak ishrani na bazi vodeno-etanolnih ekstrakata šest lekovitih biljaka: hajdučka trava, čičak, neven, hrastova kora, maslačak i kleka. Sve prirodno, bez veštačkih dodataka.",
+        category: "ingredients"
+      },
+      {
+        question: "Da li je bezbedno za dugotrajnu upotrebu?",
+        answer: "BIOROID KAPI su dodatak ishrani kategorizovan od strane Farmaceutskog fakulteta. Pogodan za redovnu upotrebu, ali uvek pratite preporučenu dozu i konsultujte se sa lekarom.",
+        category: "safety"
+      },
+      {
+        question: "Ko ne sme da koristi BIOROID KAPI?",
+        answer: "Proizvod nije namenjen trudnicama, dojiljama, osobama mlađim od 18 godina. Ne koristiti kod preosetljivosti na biljke porodice Asteraceae ili oboljenja žučnih puteva.",
+        category: "safety"
+      },
+      {
+        question: "Kako da čuvam BIOROID KAPI?",
+        answer: "Čuvajte dobro zatvoreno u originalnom pakovanju, na tamnom i suvom mestu do 25°C, daleko od dece. Proizvod sadrži alkohol kao prirodni konzervans.",
+        category: "storage"
+      },
+      {
+        question: "Mogu li da koristim BIOROID KAPI sa drugim lekovima?",
+        answer: "Ako uzimate lekove, posebno diuretike, konsultujte se sa lekarom pre upotrebe. BIOROID KAPI su dodatak ishrani, a ne lek.",
+        category: "usage"
+      },
+      {
+        question: "Šta čini BIOROID KAPI tako efikasnim?",
+        answer: "Hajdučka trava i hrastova kora deluju astringentno, neven podržava regeneraciju, čičak poboljšava cirkulaciju, a maslačak pomaže detoksikaciji. Sinergijski efekat šest biljaka!",
+        category: "ingredients"
+      }
+    ],
+    testimonials: [
+      {
+        id: "brk1",
+        name: "Marko P.",
+        city: "Beograd",
+        rating: 5,
+        text: "BIOROID KAPI mi je stvarno pomogao sa hroničnim problemima. Hajdučka trava i hrastova kora su poznate po astringentnom delovanju. Nakon mesec dana korišćenja osećam značajno olakšanje.",
+        verified: true,
+        productUsed: "BIOROID KAPI",
+        dateAdded: "2024-12-15",
+        featured: true,
+        likes: 41
+      },
+      {
+        id: "brk2",
+        name: "Stefan M.",
+        city: "Novi Sad",
+        rating: 5,
+        text: "Kao neko ko se bori sa ovim problemom godinama, mogu reći da je BIOROID KAPI najbolji prirodni proizvod koji sam probao. Neven i čičak stvarno pomažu cirkulaciji.",
+        verified: true,
+        productUsed: "BIOROID KAPI",
+        dateAdded: "2024-12-12",
+        featured: true,
+        likes: 38
+      },
+      {
+        id: "brk3",
+        name: "Miloš R.",
+        city: "Kragujevac",
+        rating: 4,
+        text: "Koristim BIOROID KAPI već dva meseca. Vidim poboljšanje, manje je nelagodnosti i krvarenja. Trebalo mi je malo vremena da vidim rezultate, ali vredi čekanja.",
+        verified: true,
+        productUsed: "BIOROID KAPI",
+        dateAdded: "2024-12-08",
+        featured: false,
+        likes: 32
+      },
+      {
+        id: "brk4",
+        name: "Aleksandar T.",
+        city: "Niš",
+        rating: 5,
+        text: "Prirodni sastojci poput maslačka za detoksikaciju i kleke za cirkulaciju čine čuda. BIOROID KAPI je nežan, efikasan i bez neželjenih efekata. Već sam preporučio prijateljima.",
+        verified: true,
+        productUsed: "BIOROID KAPI",
+        dateAdded: "2024-12-05",
+        featured: true,
+        likes: 35
+      },
+      {
+        id: "brk5",
+        name: "Dragan S.",
+        city: "Subotica",
+        rating: 5,
+        text: "Kao farmaceut, cenim što su BIOROID KAPI kategorizovane od strane Farmaceutskog fakulteta. Tanini iz hrastove kore su naučno potvrđeni za astringentno delovanje. Kvalitetan proizvod!",
+        verified: true,
+        productUsed: "BIOROID KAPI",
+        dateAdded: "2024-12-02",
+        featured: true,
+        likes: 39
+      }
+    ]
+  },
+
+  immunis_kapi: {
+    id: 'immunis_kapi',
+    name: 'IMMUNIS KAPI',
+    description: 'Prirodna podrška imunitetu tokom cele godine. Ehinacea i kopriva aktiviraju odbrambene mehanizme. Majčina dušica i maslina štite disajne puteve i imaju antiseptičko dejstvo. Lavanda pomaže opuštanju i kvalitetnijem snu. Bez parabena, veštačkih boja i mirisa – čista moć odabranog bilja.',
+    shortDescription: 'Prirodni dodatak ishrani za podršku imuniteta - 50ml',
+    purpose: 'Podržava prirodnu odbrambenu sposobnost organizma',
+    category: 'supplements',
+    images: {
+      main: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png',
+      gallery: [
+        '/images/products/immunis-kapi/immunis-kapi-box-only.png',
+        '/images/products/immunis-kapi/immunis-kapi-open-bottle.png',
+        '/images/products/immunis-kapi/immunis-kapi-old-product-image.png'
+      ],
+      thumbnail: '/images/products/immunis-kapi/immunis-kapi-box-only.png',
+      fallback: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'immunis-kapi-1pak',
+        sku: 'IMMUNIS_KAPI',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 1,
+        price: 2390,
+        currency: 'RSD',
+        discountPrice: 1890,
+        isDefault: true
+      },
+      {
+        id: 'immunis-kapi-2pak',
+        sku: 'IMMUNIS_KAPI',
+        name: '2 PAKOVANJA (100ml)',
+        size: 'Okvirno 2 meseca upotrebe',
+        quantity: 2,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 3590
+      },
+      {
+        id: 'immunis-kapi-3pak',
+        sku: 'IMMUNIS_KAPI',
+        name: '3 PAKOVANJA (150ml)',
+        size: 'Okvirno 3 meseca upotrebe',
+        quantity: 3,
+        price: 7170,
+        currency: 'RSD',
+        discountPrice: 4790
+      }
+    ],
+    benefits: [
+      'Ehinacea i kopriva aktiviraju odbrambene mehanizme',
+      'Majčina dušica i maslina štite disajne puteve',
+      'Antiseptička i antivirusna podrška',
+      'Očuvanje zdravlja gornjih disajnih puteva i lakše disanje',
+      'Antioksidativna zaštita i detoks efekat',
+      'Blaga relaksacija i bolji san zahvaljujući lavandi',
+      'Prirodni vodeno-etanolni ekstrakti lekovitih biljaka',
+      'Bez parabena, veštačkih boja i mirisa'
+    ],
+    ingredients: [
+      // Active herbal extracts - based on IMMUNIS KAPI documentation
+      'echinacea-root-extract', // Ehinacea (Echinacea purpurea) - 30ml/100ml
+      'nettle-leaf-extract', // Kopriva (Urtica dioica) - 15ml/100ml
+      'walnut-leaf-extract', // List oraha (Juglans regia) - 15ml/100ml
+      'thyme-herb-extract', // Majčina dušica (Thymus serpyllum) - 15ml/100ml
+      'olive-leaf-extract', // List masline (Olea europaea) - 15ml/100ml
+      'lavender-flower-extract', // Lavanda (Lavandula angustifolia) - 10ml/100ml
+      // Base components
+      'aqua',
+      'ethanol', // 40% v/v ethanol for extraction
+      'glycerin'
+    ],
+    usage: 'Odrasli: 3 puta dnevno do 40 kapi razmućenih u malo vode, posle obroka. Nemojte prelaziti 120 kapi dnevno. Sadržaj: 50ml (dovoljno za mesec dana redovne upotrebe).',
+    usageSteps: [
+      'Uzimati 3 puta dnevno po do 40 kapi',
+      'Razmutiti kapi u malo vode',
+      'Najbolje uzimati posle obroka',
+      'Ne prekoračiti 120 kapi dnevno',
+      'Redovno koristiti najmanje mesec dana za najbolje rezultate',
+      'Kombinovati sa uravnoteženom ishranom'
+    ],
+    warnings: [
+      'Dodatak ishrani nije zamena za raznovrsnu i uravnoteženu ishranu',
+      'Nije namenjen osobama mlađim od 18 godina, trudnicama i dojiljama',
+      'Izbegavati ako ste preosetljivi na biljke iz familije Asteraceae ili druge sastojke',
+      'Konsultovati lekara kod autoimunih oboljenja ili terapije imunosupresivima',
+      'Nije preporučeno za osobe sa smanjenim dnevnim unosom tečnosti',
+      'Upotreba lavande može izazvati pospanost - izbegavati vožnju i rad sa mašinama',
+      'Ne prekoračiti preporučenu dnevnu dozu',
+      'Čuvati van domašaja dece, u originalnom pakovanju, na tamnom i suvom mestu do 25°C',
+      'Proizvod sadrži alkohol'
+    ],
+    slug: 'immunis-kapi',
+    alternativeSlugs: ['immunis-drops', 'imunitet-kapi', 'ehinacea-kapi'],
+    availableCountries: ['rs', 'ba'],
+    seoTitle: 'IMMUNIS KAPI - Prirodni dodatak ishrani za imunitet | DERMOTIN',
+    seoDescription: 'IMMUNIS KAPI od DERMOTIN brenda - dodatak ishrani sa ekstraktima ehinacee, koprive, majčine dušice. Prirodna podrška imunitetu i disajnim putevima. 50ml.',
+    urgencyElements: {
+      limitedStock: 22,
+      limitedTime: '24h',
+      socialProof: {
+        recentPurchases: 45,
+        timeFrame: 'poslednja 24h'
+      }
+    },
+    productFAQ: [
+      {
+        question: "Kako se koriste IMMUNIS KAPI?",
+        answer: "Vrlo jednostavno! Uzimati 3 puta dnevno po do 40 kapi, razmućeno u malo vode, posle obroka. Ne prelaziti 120 kapi dnevno. Jedna bočica od 50ml traje oko mesec dana pri redovnoj upotrebi.",
+        category: "usage"
+      },
+      {
+        question: "Kada ću videti prve rezultate?",
+        answer: "Budite realni - imunitet se jača postupno. Prvi efekti se mogu osetiti nakon 2-3 nedelje redovne upotrebe, a puni benefiti nakon mesec dana korišćenja.",
+        category: "effects"
+      },
+      {
+        question: "Da li su IMMUNIS KAPI prirodne?",
+        answer: "Da! Dodatak ishrani na bazi vodeno-etanolnih ekstrakata šest lekovitih biljaka: ehinacea, kopriva, orah, majčina dušica, maslina i lavanda. Sve prirodno, bez veštačkih dodataka.",
+        category: "ingredients"
+      },
+      {
+        question: "Da li je bezbedno za dugotrajnu upotrebu?",
+        answer: "IMMUNIS KAPI su dodatak ishrani kategorizovan od strane Farmaceutskog fakulteta. Pogodan za redovnu upotrebu, ali uvek pratite preporučenu dozu i konsultujte se sa lekarom.",
+        category: "safety"
+      },
+      {
+        question: "Ko ne sme da koristi IMMUNIS KAPI?",
+        answer: "Proizvod nije namenjen trudnicama, dojiljama, osobama mlađim od 18 godina. Izbegavati kod autoimunih oboljenja, alergije na Asteraceae ili terapije imunosupresivima.",
+        category: "safety"
+      },
+      {
+        question: "Kako da čuvam IMMUNIS KAPI?",
+        answer: "Čuvajte dobro zatvoreno u originalnom pakovanju, na tamnom i suvom mestu do 25°C, daleko od dece. Proizvod sadrži alkohol kao prirodni konzervans.",
+        category: "storage"
+      },
+      {
+        question: "Da li mogu da vozim nakon uzimanja?",
+        answer: "Pažnja! Lavanda može izazvati pospanost. Sačekajte najmanje sat vremena pre vožnje ili rada sa mašinama nakon uzimanja kapi.",
+        category: "usage"
+      },
+      {
+        question: "Šta čini IMMUNIS KAPI tako efikasnim?",
+        answer: "Ehinacea jača imunitet, kopriva je bogata mineralima, majčina dušica štiti disajne puteve, maslina pruža antioksidativnu zaštitu, a lavanda pomaže opuštanju. Sinergijski efekat!",
+        category: "ingredients"
+      }
+    ],
+    testimonials: [
+      {
+        id: "imk1",
+        name: "Jovana M.",
+        city: "Beograd",
+        rating: 5,
+        text: "IMMUNIS KAPI mi je pomogao da prođem zimu bez čestih prehlada. Ehinacea i kopriva stvarno jačaju imunitet. Koristim ih već tri meseca i osećam se mnogo bolje.",
+        verified: true,
+        productUsed: "IMMUNIS KAPI",
+        dateAdded: "2024-12-14",
+        featured: true,
+        likes: 42
+      },
+      {
+        id: "imk2",
+        name: "Nemanja S.",
+        city: "Novi Sad",
+        rating: 5,
+        text: "Kao neko ko često putuje, IMMUNIS KAPI su mi postale nezamenljive. Majčina dušica štiti disajne puteve, a lavanda pomaže da se opustim. Prirodno i efikasno!",
+        verified: true,
+        productUsed: "IMMUNIS KAPI",
+        dateAdded: "2024-12-11",
+        featured: true,
+        likes: 39
+      },
+      {
+        id: "imk3",
+        name: "Ana P.",
+        city: "Kragujevac",
+        rating: 4,
+        text: "Koristim IMMUNIS KAPI već mesec dana za jačanje imuniteta. Vidim da se ređe razboljevam, a san mi je bolji zahvaljujući lavandi. Preporučujem!",
+        verified: true,
+        productUsed: "IMMUNIS KAPI",
+        dateAdded: "2024-12-08",
+        featured: false,
+        likes: 33
+      },
+      {
+        id: "imk4",
+        name: "Miloš T.",
+        city: "Niš",
+        rating: 5,
+        text: "Prirodni sastojci poput lista masline za antioksidativnu zaštitu i oraha za detoks čine čuda. IMMUNIS KAPI su nežne, efikasne i bez neželjenih efekata.",
+        verified: true,
+        productUsed: "IMMUNIS KAPI",
+        dateAdded: "2024-12-05",
+        featured: true,
+        likes: 36
+      },
+      {
+        id: "imk5",
+        name: "Marija R.",
+        city: "Subotica",
+        rating: 5,
+        text: "Kao apotekar, cenim što su IMMUNIS KAPI kategorizovane od strane Farmaceutskog fakulteta. Ehinacea je naučno potvrđena za jačanje imuniteta. Kvalitetan proizvod!",
+        verified: true,
+        productUsed: "IMMUNIS KAPI",
+        dateAdded: "2024-12-02",
+        featured: true,
+        likes: 40
+      }
+    ]
   }
 };
