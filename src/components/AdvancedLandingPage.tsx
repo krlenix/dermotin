@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Product } from '@/config/products';
 import { CountryConfig, getDefaultCourier, CourierInfo } from '@/config/countries';
@@ -295,7 +296,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
           <div className="relative flex items-center w-full">
             {/* Navigation Menu - Left side */}
             <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 flex-1 overflow-hidden">
-              <a 
+              <Link 
                 href="/" 
                 className={`text-sm font-medium transition-colors underline-animate ${
                   isScrolled 
@@ -304,7 +305,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 }`}
               >
                 {t('navigation.home')}
-              </a>
+              </Link>
               <a 
                 href="#benefits" 
                 className={`text-sm font-medium transition-colors underline-animate ${
@@ -411,13 +412,13 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               !isScrolled ? 'bg-white/95 backdrop-blur-md rounded-lg mx-2' : ''
             }`}>
               <nav className="flex flex-col space-y-2 pt-2">
-                <a 
+                <Link 
                   href="/" 
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors px-2 py-1"
                 >
                   {t('navigation.home')}
-                </a>
+                </Link>
                 <a 
                   href="#benefits" 
                   onClick={() => setMobileMenuOpen(false)}
