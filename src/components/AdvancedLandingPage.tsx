@@ -69,6 +69,36 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     };
   }, []);
 
+  // Add preload links for critical images
+  useEffect(() => {
+    if (typeof window !== 'undefined' && mounted) {
+      // Preload main product image
+      const preloadLink = document.createElement('link');
+      preloadLink.rel = 'preload';
+      preloadLink.as = 'image';
+      preloadLink.href = product.images.main;
+      preloadLink.type = 'image/webp';
+      document.head.appendChild(preloadLink);
+
+      // Preload logo
+      const logoPreloadLink = document.createElement('link');
+      logoPreloadLink.rel = 'preload';
+      logoPreloadLink.as = 'image';
+      logoPreloadLink.href = countryConfig.logo;
+      document.head.appendChild(logoPreloadLink);
+
+      return () => {
+        // Clean up preload links
+        if (preloadLink.parentNode) {
+          preloadLink.parentNode.removeChild(preloadLink);
+        }
+        if (logoPreloadLink.parentNode) {
+          logoPreloadLink.parentNode.removeChild(logoPreloadLink);
+        }
+      };
+    }
+  }, [mounted, product.images.main, countryConfig.logo]);
+
   // Handle scroll for header transparency
   useEffect(() => {
     const handleScroll = () => {
@@ -258,7 +288,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Loading...</div>
+        <div className="animate-pulse text-gray-500">Učitavanje...</div>
       </div>
     );
   }
@@ -474,6 +504,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 images={product.images}
                 productName={product.name}
                 className="w-full"
+                priority={true}
               />
             </div>
 

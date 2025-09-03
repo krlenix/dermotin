@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
@@ -12,14 +12,17 @@ interface ImageGalleryProps {
   };
   productName: string;
   className?: string;
+  priority?: boolean;
 }
 
-export function EnhancedImageGallery({ images, productName, className }: ImageGalleryProps) {
+export function EnhancedImageGallery({ images, productName, className, priority = false }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [validImages, setValidImages] = useState<string[]>([]);
+  const [validImages, setValidImages] = useState<string[]>(priority ? [images.main] : []);
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(new Set());
+  const [imagesPreloaded, setImagesPreloaded] = useState(priority);
+  const [isLoading, setIsLoading] = useState(!priority);
 
   
   // Touch/swipe functionality refs and state
@@ -28,8 +31,8 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   const isDragging = useRef<boolean>(false);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   
-  // Combine main image with gallery for full collection
-  const allImages = [images.main, ...images.gallery];
+  // Memoize allImages to prevent recreation on every render
+  const allImages = useMemo(() => [images.main, ...images.gallery], [images.main, images.gallery]);
 
   // Function to check if an image is valid
   const checkImageValidity = async (imageSrc: string): Promise<boolean> => {
@@ -44,20 +47,41 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
   // Filter out invalid images on component mount
   useEffect(() => {
     const validateImages = async () => {
+      setIsLoading(true);
       const validImagesList: string[] = [];
       const errorSet = new Set<string>();
       
-      for (const imageSrc of allImages) {
-        const isValid = await checkImageValidity(imageSrc);
-        if (isValid) {
-          validImagesList.push(imageSrc);
-        } else {
-          errorSet.add(imageSrc);
+      // If priority is true, start with main image and preload others
+      if (priority) {
+        // Main image is already in validImages from initial state
+        validImagesList.push(images.main);
+        
+        // Preload gallery images in background
+        for (const imageSrc of images.gallery) {
+          const isValid = await checkImageValidity(imageSrc);
+          if (isValid) {
+            validImagesList.push(imageSrc);
+          } else {
+            errorSet.add(imageSrc);
+          }
         }
+        setValidImages(validImagesList);
+        setImagesPreloaded(true);
+      } else {
+        // Standard validation for all images
+        for (const imageSrc of allImages) {
+          const isValid = await checkImageValidity(imageSrc);
+          if (isValid) {
+            validImagesList.push(imageSrc);
+          } else {
+            errorSet.add(imageSrc);
+          }
+        }
+        setValidImages(validImagesList);
       }
       
-      setValidImages(validImagesList);
       setImageLoadErrors(errorSet);
+      setIsLoading(false);
       
       // Reset selected image if current selection is invalid
       if (validImagesList.length > 0 && errorSet.has(allImages[selectedImage])) {
@@ -66,7 +90,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
     };
 
     validateImages();
-  }, [allImages, selectedImage]);
+  }, [images.main, images.gallery, priority]); // Removed allImages and selectedImage from dependencies
   
   const changeImage = (newIndex: number) => {
     if (isTransitioning || newIndex === selectedImage) return;
@@ -135,9 +159,74 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
 
   // Don't render anything if no valid images
   if (validImages.length === 0) {
+    // If priority is true, show loading state instead of "No images available"
+    if (priority) {
+      return (
+        <div className={cn("w-full aspect-square bg-gray-100 rounded-2xl flex items-center justify-center", className)}>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange mx-auto mb-2"></div>
+            <p className="text-gray-500 text-sm">Učitavanje slika...</p>
+          </div>
+        </div>
+      );
+    }
+    
     return (
       <div className={cn("w-full aspect-square bg-gray-100 rounded-2xl flex items-center justify-center", className)}>
         <p className="text-gray-500">No images available</p>
+      </div>
+    );
+  }
+
+  // If priority is true and we're still loading, show loading overlay
+  if (priority && isLoading && validImages.length === 1) {
+    return (
+      <div className={cn("w-full", className)}>
+        <div className="hidden md:flex gap-4">
+          {/* Main Image Display with Loading */}
+          <div className="flex-1 relative">
+            <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange mx-auto mb-2"></div>
+                  <p className="text-gray-500 text-sm">Učitavanje galerije...</p>
+                </div>
+              </div>
+              <Image
+                src={validImages[0]}
+                alt={`${productName} - Main Image`}
+                fill
+                className="object-cover"
+                priority
+                loading="eager"
+                sizes="50vw"
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Mobile Layout with Loading */}
+        <div className="md:hidden space-y-6">
+          <div className="relative mt-0">
+            <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange mx-auto mb-2"></div>
+                  <p className="text-gray-500 text-sm">Učitavanje galerije...</p>
+                </div>
+              </div>
+              <Image
+                src={validImages[0]}
+                alt={`${productName} - Main Image`}
+                fill
+                className="object-cover"
+                priority
+                loading="eager"
+                sizes="100vw"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -217,6 +306,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
                         selectedImage === index ? "hover:scale-105" : ""
                       )}
                       priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
                       sizes="50vw"
                     />
                   </div>
@@ -303,6 +393,7 @@ export function EnhancedImageGallery({ images, productName, className }: ImageGa
                         selectedImage === index ? "hover:scale-105" : ""
                       )}
                       priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
                       sizes="100vw"
                     />
                   </div>
