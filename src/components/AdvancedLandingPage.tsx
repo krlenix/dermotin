@@ -463,7 +463,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="pt-24 md:pt-8 pb-8 md:pb-12 relative overflow-hidden w-full">
+      <section id="hero" className="pt-16 md:pt-6 pb-8 md:pb-12 relative overflow-hidden w-full">
         {/* Clean minimal background */}
         <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
         <div className="container mx-auto px-4 relative">
