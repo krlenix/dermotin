@@ -93,6 +93,7 @@ function getCurrentDomain(req: NextRequest): string {
 }
 
 async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, currentDomain: string) {
+  console.log(`🔧 Loading webhook config for country: ${countryCode}`);
   const countryConfig = getCountryConfig(countryCode);
   
   // Check if webhooks are configured for this country
@@ -102,6 +103,12 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
   }
   
   const webhookConfig = countryConfig.webhooks.orders;
+  console.log(`🔧 Webhook config loaded:`, {
+    url: webhookConfig.url ? `${webhookConfig.url.substring(0, 50)}...` : 'NOT SET',
+    authMethod: webhookConfig.authMethod,
+    hasSecret: !!webhookConfig.webhookSecret,
+    hasApiKey: !!webhookConfig.apiKey
+  });
   
   // Skip if webhook URL is not configured
   if (!webhookConfig.url) {
@@ -139,7 +146,21 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
   }
 
   try {
+    console.log(`📤 Webhook URL for ${countryCode}:`, webhookConfig.url);
+    console.log(`📤 Webhook headers for ${countryCode}:`, JSON.stringify(headers, null, 2));
     console.log(`📤 Webhook payload for ${countryCode}:`, JSON.stringify(webhookData, null, 2));
+    
+    // Validate payload structure before sending
+    console.log(`🔍 Payload validation check for ${countryCode}:`);
+    console.log(`  - order_id: ${webhookData.order_id} (length: ${webhookData.order_id?.length})`);
+    console.log(`  - currency: ${webhookData.currency} (length: ${webhookData.currency?.length})`);
+    console.log(`  - financial_status: ${webhookData.financial_status}`);
+    console.log(`  - customer.email: ${webhookData.customer?.email}`);
+    console.log(`  - billing_address.name: ${webhookData.billing_address?.name}`);
+    console.log(`  - billing_address.address1: ${webhookData.billing_address?.address1}`);
+    console.log(`  - billing_address.city: ${webhookData.billing_address?.city}`);
+    console.log(`  - billing_address.country_code: ${webhookData.billing_address?.country_code} (length: ${webhookData.billing_address?.country_code?.length})`);
+    console.log(`  - line_items count: ${webhookData.line_items?.length}`);
     
     const response = await fetch(webhookConfig.url, {
       method: 'POST',
@@ -148,18 +169,41 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
     });
 
     console.log(`📥 Webhook response status for ${countryCode}: ${response.status}`);
+    console.log(`📥 Webhook response headers for ${countryCode}:`, JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2));
 
-    const result = await response.json();
-    console.log(`📥 Webhook response body for ${countryCode}:`, result);
+    let result;
+    const responseText = await response.text();
+    console.log(`📥 Webhook raw response for ${countryCode}:`, responseText);
+    
+    try {
+      result = JSON.parse(responseText);
+      console.log(`📥 Webhook parsed response for ${countryCode}:`, result);
+    } catch (parseError) {
+      console.log(`⚠️ Webhook response is not valid JSON for ${countryCode}:`, parseError);
+      result = { error: 'Invalid JSON response', raw: responseText };
+    }
 
     if (!response.ok) {
-      throw new Error(result.error || `Webhook failed with status ${response.status}`);
+      console.error(`❌ Webhook failed with status ${response.status} for ${countryCode}. Response:`, result);
+      
+      // Log specific validation errors if it's a 422
+      if (response.status === 422 && result.errors) {
+        console.error(`🚨 Laravel validation errors for ${countryCode}:`);
+        Object.entries(result.errors).forEach(([field, messages]) => {
+          console.error(`  - ${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`);
+        });
+      }
+      
+      throw new Error(result.error || result.message || `Webhook failed with status ${response.status}`);
     }
 
     console.log(`✅ Order webhook sent successfully for ${countryCode}`);
     return result;
   } catch (error) {
     console.error(`❌ Failed to send order webhook for ${countryCode}:`, error);
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.error(`🌐 Network error - check if webhook URL is accessible: ${webhookConfig.url}`);
+    }
     throw error;
   }
 }
@@ -186,25 +230,25 @@ export async function POST(request: NextRequest) {
     const bundleTotal = orderData.bundleItems ? Object.values(orderData.bundleItems).reduce((sum, price) => sum + price, 0) : 0;
     const mainProductPrice = orderData.subtotal - bundleTotal;
     
-    // Prepare webhook payload similar to your original example
+    // Prepare webhook payload to match Laravel controller validation
     const webhookPayload: WebhookPayload = {
       order_id: orderId,
       created_at: dayjs().tz(countryConfig.timezone).toISOString(),
-      currency: countryConfig.currency,
+      currency: countryConfig.currency, // Should be RSD or BAM (3 chars)
       total_price: orderData.totalPrice,
-      financial_status: 'pending',
+      financial_status: 'pending', // Laravel expects 'pending' or 'paid'
       customer: {
         email: orderData.customerEmail,
         phone: orderData.customerPhone,
         note: ''
       },
       billing_address: {
-        name: orderData.customerName,
-        address1: orderData.customerAddress,
+        name: orderData.customerName, // Required by Laravel validation
+        address1: orderData.customerAddress, // Required by Laravel validation
         address2: '',
-        city: orderData.customerCity,
+        city: orderData.customerCity, // Required by Laravel validation
         zip: orderData.customerPostalCode || '',
-        country_code: countryConfig.code.toUpperCase(),
+        country_code: countryConfig.code.toUpperCase(), // Should be RS or BA (2 chars)
         phone: orderData.customerPhone
       },
       shipping_address: {
@@ -222,7 +266,7 @@ export async function POST(request: NextRequest) {
           name: orderData.productName,
           quantity: orderData.quantity,
           price: mainProductPrice,
-          discount: 0,
+          discount: 0
         }
       ],
       shipping: {
