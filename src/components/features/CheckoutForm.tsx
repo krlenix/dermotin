@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 
 import { Badge } from '@/components/ui/badge';
 import { ProductVariant } from '@/config/products';
-import { CountryConfig, CourierInfo, getAvailableCouriers } from '@/config/countries';
+import { CountryConfig, CourierInfo, getAvailableCouriers, COUNTRIES } from '@/config/countries';
 
 import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
@@ -177,6 +177,9 @@ export function CheckoutForm({
   const showCourierSelection = availableCouriers.length >= 1;
   const isSingleCourier = availableCouriers.length === 1;
   
+  // Get supported countries for phone input (only countries we have configured)
+  const supportedCountries = Object.keys(COUNTRIES).map(code => code.toUpperCase()) as Array<'RS' | 'BA'>;
+  
   // Calculate shipping cost using selected courier and country threshold
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
   const shippingCost = hasFreeShipping ? 0 : calculateShippingCost(subtotal, displayCourier, countryConfig);
@@ -241,6 +244,8 @@ export function CheckoutForm({
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value || '')}
                   placeholder="Enter phone number"
+                  defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA'}
+                  countries={supportedCountries}
                   className={`focus:ring-brand-orange focus:border-brand-orange ${
                     formErrors.phone ? 'border-red-500' : ''
                   }`}

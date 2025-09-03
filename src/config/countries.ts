@@ -16,6 +16,7 @@ export interface CountryConfig {
   timezone: string;
   business: BusinessInfo;
   legal: LegalInfo;
+  webhooks: WebhookConfig;
 }
 
 export interface CompanyInfo {
@@ -61,6 +62,15 @@ export interface LegalInfo {
   obligationsLaw: string;
   ministryWebsite: string;
   disputeResolutionListUrl: string;
+}
+
+export interface WebhookConfig {
+  orders: {
+    url: string;
+    authMethod: 'signature' | 'api-key';
+    apiKey?: string;
+    webhookSecret?: string;
+  };
 }
 
 export interface CourierInfo {
@@ -171,6 +181,13 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       obligationsLaw: 'Zakona o obligacionim odnosima',
       ministryWebsite: 'https://mtt.gov.rs/tekst/2306/zastita-potrosaca.php',
       disputeResolutionListUrl: 'https://mtt.gov.rs/extfile/sr/33309/ha12.pdf'
+    },
+    webhooks: {
+      orders: {
+        url: process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL || '',
+        authMethod: 'signature',
+        webhookSecret: process.env.RS_ORDER_WEBHOOK_SECRET || ''
+      }
     }
   },
 
@@ -239,6 +256,13 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       obligationsLaw: 'Zakona o obligacionim odnosima BiH',
       ministryWebsite: 'https://www.vijeceministara.gov.ba',
       disputeResolutionListUrl: 'https://www.parlament.ba'
+    },
+    webhooks: {
+      orders: {
+        url: process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL || '',
+        authMethod: 'signature',
+        webhookSecret: process.env.BA_ORDER_WEBHOOK_SECRET || ''
+      }
     }
   }
 };

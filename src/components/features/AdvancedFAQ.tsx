@@ -56,7 +56,6 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
     }
   };
   
-  console.log('FAQ Debug - translations object:', translations);
   
   // Use product-specific FAQs if product is provided, otherwise use general FAQs
   const faqItems = product 

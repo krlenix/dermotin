@@ -190,7 +190,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     </Button>
   );
 
-  const handleOrderSubmit = (orderData: Record<string, unknown>) => {
+  const handleOrderSubmit = async (orderData: Record<string, unknown>) => {
     console.log('Order submitted:', orderData);
     console.log('Bundle items:', bundleItems);
     
@@ -204,8 +204,11 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       customerPostalCode: orderData.postalCode as string,
       productName: product.name,
       productVariant: selectedVariant.name,
-      quantity: 1,
+      productSku: selectedVariant.sku,
+      quantity: selectedVariant.quantity || 1,
       totalPrice: orderData.orderTotal as number,
+      subtotal: orderData.subtotal as number,
+      shippingCost: orderData.shippingCost as number,
       currency: countryConfig.currencySymbol,
       courierName: selectedCourier.name,
       deliveryTime: selectedCourier.deliveryTime,
@@ -214,28 +217,46 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       locale: countryConfig.code
     };
 
-    // Store order data in session storage immediately
-    const orderForThankYou = {
-      ...apiOrderData,
-      orderId: `ORDER_${crypto.randomUUID().slice(0, 8).toUpperCase()}` // Generate temporary ID
-    };
-    
-    sessionStorage.setItem('completedOrder', JSON.stringify(orderForThankYou));
-    
-    // INSTANT redirect using Next.js router for faster navigation
-    window.location.replace(`/rs/thank-you`);
-    
-    // Submit order to API in the background (fire and forget)
-    fetch('/api/orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(apiOrderData),
-    }).catch(error => {
-      console.error('Order submission error (background):', error);
-      // Error handling can be done on the thank you page if needed
-    });
+    try {
+      console.log('🚀 Submitting order to API...');
+      
+      // Submit order to API and WAIT for response
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiOrderData),
+      });
+
+      const result = await response.json();
+      console.log('📥 Order API response:', result);
+
+      if (!response.ok || !result.success) {
+        // Show error to user - don't redirect
+        console.error('❌ Order submission failed:', result);
+        alert(`Order submission failed: ${result.error || 'Unknown error'}`);
+        return;
+      }
+
+      console.log('✅ Order submitted successfully, webhook status:', result.webhookStatus);
+
+      // Store order data in session storage with the real order ID
+      const orderForThankYou = {
+        ...apiOrderData,
+        orderId: result.orderId
+      };
+      
+      sessionStorage.setItem('completedOrder', JSON.stringify(orderForThankYou));
+      
+      // Only redirect if webhook was successful
+      console.log('🎉 Redirecting to thank you page...');
+      window.location.replace(`/${countryConfig.code}/thank-you`);
+      
+    } catch (error) {
+      console.error('❌ Order submission error:', error);
+      alert('Order submission failed. Please try again.');
+    }
   };
 
   const handleAddToBundle = (productId: string, price: number) => {

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Script from 'next/script';
-import { getPixelConfig, META_EVENTS, TIKTOK_EVENTS } from '@/config/pixels';
+import { getPixelConfigTest, META_EVENTS, TIKTOK_EVENTS } from '@/config/pixels-test';
 
 interface PixelTrackerProps {
   countryCode: string;
@@ -31,9 +31,18 @@ declare global {
  * PixelTracker component that loads Meta and TikTok pixels based on country configuration
  */
 export function PixelTracker({ countryCode }: PixelTrackerProps) {
-  const pixelConfig = getPixelConfig(countryCode);
+  // Use test config temporarily to verify pixel loading works
+  const pixelConfig = getPixelConfigTest(countryCode);
+  // const pixelConfig = getPixelConfig(countryCode);
+  
+  // Use ref to prevent multiple initializations
+  const initializedRef = useRef(false);
 
   useEffect(() => {
+    // Prevent multiple initializations
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+    
     // Initialize Meta Pixel
     if (pixelConfig.meta.enabled && pixelConfig.meta.pixelId) {
       if (typeof window !== 'undefined' && window.fbq) {
@@ -49,7 +58,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
         window.ttq.page();
       }
     }
-  }, [pixelConfig, countryCode]);
+  }, [pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId]);
 
   return (
     <>
@@ -107,7 +116,9 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
  * Hook to track events on both Meta and TikTok pixels
  */
 export function usePixelTracking(countryCode: string) {
-  const pixelConfig = getPixelConfig(countryCode);
+  // Use test config temporarily
+  const pixelConfig = getPixelConfigTest(countryCode);
+  // const pixelConfig = getPixelConfig(countryCode);
 
   const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart', eventData?: Record<string, unknown>) => {
     if (typeof window === 'undefined') return;
@@ -149,7 +160,7 @@ export function usePixelTracking(countryCode: string) {
           tiktokEvent = TIKTOK_EVENTS.INITIATE_CHECKOUT;
           break;
         case 'purchase':
-          tiktokEvent = TIKTOK_EVENTS.PURCHASE;
+          tiktokEvent = TIKTOK_EVENTS.PURCHASE; // This is 'CompletePayment' for TikTok
           break;
         case 'view_content':
           tiktokEvent = TIKTOK_EVENTS.VIEW_CONTENT;

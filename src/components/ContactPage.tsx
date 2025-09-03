@@ -110,11 +110,25 @@ export default function ContactPage({ locale }: ContactPageProps) {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would typically send the form data to your API
-      console.log('Form submitted:', formData);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          country: locale,
+          locale: locale
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit contact form');
+      }
+
+      console.log('Contact form submitted successfully:', result);
       
       setSubmitStatus('success');
       setFormData({
