@@ -851,7 +851,7 @@ export const PRODUCTS: Record<string, Product> = {
     variants: [
       {
         id: 'biomelis-kapi-1pak',
-        sku: 'BIOMELIS_KAPI',
+        sku: 'BIOMELIS-KAPI',
         name: '1 PAKOVANJE (50ml)',
         size: 'Okvirno mjesec dana upotrebe',
         quantity: 1,
@@ -862,7 +862,7 @@ export const PRODUCTS: Record<string, Product> = {
       },
       {
         id: 'biomelis-kapi-2pak',
-        sku: 'BIOMELIS_KAPI',
+        sku: 'BIOMELIS-KAPI',
         name: '2 PAKOVANJA (100ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 2,
@@ -872,7 +872,7 @@ export const PRODUCTS: Record<string, Product> = {
       },
       {
         id: 'biomelis-kapi-3pak',
-        sku: 'BIOMELIS_KAPI',
+        sku: 'BIOMELIS-KAPI',
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 3 mjeseca upotrebe',
         quantity: 3,
@@ -1064,7 +1064,7 @@ export const PRODUCTS: Record<string, Product> = {
     variants: [
       {
         id: 'bioroid-kapi-1pak',
-        sku: 'BIOROID_KAPI',
+        sku: 'BIOROID-KAPI',
         name: '1 PAKOVANJE (50ml)',
         size: 'Okvirno mjesec dana upotrebe',
         quantity: 1,
@@ -1075,7 +1075,7 @@ export const PRODUCTS: Record<string, Product> = {
       },
       {
         id: 'bioroid-kapi-2pak',
-        sku: 'BIOROID_KAPI',
+        sku: 'BIOROID-KAPI',
         name: '2 PAKOVANJA (100ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 2,
@@ -1085,7 +1085,7 @@ export const PRODUCTS: Record<string, Product> = {
       },
       {
         id: 'bioroid-kapi-3pak',
-        sku: 'BIOROID_KAPI',
+        sku: 'BIOROID-KAPI',
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 3 mjeseca upotrebe',
         quantity: 3,
@@ -1275,7 +1275,7 @@ export const PRODUCTS: Record<string, Product> = {
     variants: [
       {
         id: 'immunis-kapi-1pak',
-        sku: 'IMMUNIS_KAPI',
+        sku: 'IMMUNIS-KAPI',
         name: '1 PAKOVANJE (50ml)',
         size: 'Okvirno mjesec dana upotrebe',
         quantity: 1,
@@ -1286,7 +1286,7 @@ export const PRODUCTS: Record<string, Product> = {
       },
       {
         id: 'immunis-kapi-2pak',
-        sku: 'IMMUNIS_KAPI',
+        sku: 'IMMUNIS-KAPI',
         name: '2 PAKOVANJA (100ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 2,
@@ -1296,7 +1296,7 @@ export const PRODUCTS: Record<string, Product> = {
       },
       {
         id: 'immunis-kapi-3pak',
-        sku: 'IMMUNIS_KAPI',
+        sku: 'IMMUNIS-KAPI',
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 3 mjeseca upotrebe',
         quantity: 3,
