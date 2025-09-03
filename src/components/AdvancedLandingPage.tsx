@@ -43,6 +43,7 @@ import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 
 import { PixelTracker } from '@/components/tracking/PixelTracker';
+import { toast } from 'sonner';
 import { 
   Star, 
   ShieldCheck,
@@ -265,8 +266,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       if (!response.ok || !result.success) {
         // Show error to user - don't redirect
         console.error('❌ Order submission failed:', result);
-        alert(`Order submission failed: ${result.error || 'Unknown error'}`);
-        return;
+        toast.error(`${t('validation.order_submission_failed') || 'Order submission failed'}: ${result.error || 'Unknown error'}`);
+        throw new Error(result.error || 'Order submission failed');
       }
 
       console.log('✅ Order submitted successfully, webhook status:', result.webhookStatus);
@@ -285,7 +286,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       
     } catch (error) {
       console.error('❌ Order submission error:', error);
-      alert('Order submission failed. Please try again.');
+      toast.error(t('validation.order_submission_failed') || 'Order submission failed. Please try again.');
+      throw error; // Re-throw to let CheckoutForm handle the loading state
     }
   };
 

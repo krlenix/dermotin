@@ -22,13 +22,14 @@ import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 import { CompactOrderSummary } from './CompactOrderSummary';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
+import { toast } from 'sonner';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
   countryConfig: CountryConfig;
   productName: string;
   bundleItems?: {[key: string]: number};
-  onOrderSubmit: (orderData: Record<string, unknown>) => void;
+  onOrderSubmit: (orderData: Record<string, unknown>) => Promise<void>;
   className?: string;
   mainProductId: string;
   onAddToBundle: (productId: string, price: number) => void;
@@ -146,15 +147,14 @@ export function CheckoutForm({
     e.preventDefault();
     
     if (!validateForm()) {
-      setIsSubmitting(false);
       return;
     }
     
     setIsSubmitting(true);
     
-    // Simulate order processing
-    setTimeout(() => {
-      onOrderSubmit({
+    try {
+      // Call onOrderSubmit and wait for it to complete
+      await onOrderSubmit({
         ...formData,
         variant: selectedVariant,
         bundleItems: bundleItems,
@@ -163,8 +163,13 @@ export function CheckoutForm({
         subtotal: subtotal,
         shippingCost: shippingCost
       });
+      // Don't reset isSubmitting here - let the parent handle it or redirect will happen
+    } catch (error) {
+      // Only reset loading state if there's an error
       setIsSubmitting(false);
-    }, 2000);
+      console.error('Form submission error:', error);
+      toast.error(t('validation.order_submission_failed') || 'Order submission failed. Please try again.');
+    }
   };
 
   const orderTotal = selectedVariant.discountPrice || selectedVariant.price;

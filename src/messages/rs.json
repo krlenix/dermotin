@@ -175,7 +175,8 @@
     "surname_min_length": "Prezime mora imati najmanje 2 karaktera",
     "phone_invalid": "Neispravna format telefona",
     "address_min_length": "Adresa mora imati najmanje 5 karaktera",
-    "city_min_length": "Mesto mora imati najmanje 2 karaktera"
+    "city_min_length": "Mesto mora imati najmanje 2 karaktera",
+    "order_submission_failed": "Slanje porudžbine neuspešno"
   },
   "checkout": {
     "title": "Završi kupovinu",
