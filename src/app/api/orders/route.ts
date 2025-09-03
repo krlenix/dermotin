@@ -214,9 +214,17 @@ export async function POST(request: NextRequest) {
     
     // Get current domain early in the handler
     const currentDomain = getCurrentDomain(request);
+    console.log('🌐 Current domain:', currentDomain);
 
     const orderData: Omit<OrderData, 'orderId'> = await request.json();
     console.log('📦 Received order data:', orderData);
+    
+    // Debug environment variables
+    console.log('🔧 Environment variables check:');
+    console.log('  - NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL:', process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL || 'NOT SET');
+    console.log('  - RS_ORDER_WEBHOOK_SECRET:', process.env.RS_ORDER_WEBHOOK_SECRET ? 'SET' : 'NOT SET');
+    console.log('  - NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL:', process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL || 'NOT SET');
+    console.log('  - BA_ORDER_WEBHOOK_SECRET:', process.env.BA_ORDER_WEBHOOK_SECRET ? 'SET' : 'NOT SET');
     
     // Generate order ID
     const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -302,6 +310,8 @@ export async function POST(request: NextRequest) {
 
     // Send to webhook
     try {
+      console.log('🚀 Attempting to send webhook for locale:', orderData.locale);
+      console.log('🚀 Using domain:', currentDomain);
       webhookResult = await sendToWebhook(webhookPayload, orderData.locale, currentDomain);
       webhookStatus = 'success';
       console.log('✅ Order sent to webhook successfully:', webhookResult);
