@@ -65,7 +65,8 @@ interface WebhookPayload {
     sku: string;
     name: string;
     quantity: number;
-    price: number;
+    price: number; // per unit price
+    item_total_price: number; // total price for this line item (price * quantity)
     discount: number;
   }>;
   shipping: {
@@ -319,7 +320,8 @@ export async function POST(request: NextRequest) {
           sku: orderData.productSku || 'UNKNOWN',
           name: orderData.productName,
           quantity: orderData.quantity,
-          price: mainProductPrice,
+          price: mainProductPrice / orderData.quantity, // per unit price
+          item_total_price: mainProductPrice, // total price for this line item
           discount: 0 // Use 0 instead of null for Laravel validation
         }
       ],
@@ -338,12 +340,14 @@ export async function POST(request: NextRequest) {
 
     // Add bundle items if present
     if (orderData.bundleItems && Object.keys(orderData.bundleItems).length > 0) {
-      Object.entries(orderData.bundleItems).forEach(([productId, price]) => {
+      Object.entries(orderData.bundleItems).forEach(([productId, totalPrice]) => {
+        const bundleQuantity = 1; // Bundle items typically have quantity 1
         webhookPayload.line_items.push({
           sku: productId,
           name: `Bundle Item - ${productId}`,
-          quantity: 1,
-          price: price,
+          quantity: bundleQuantity,
+          price: totalPrice / bundleQuantity, // per unit price (same as total since qty=1)
+          item_total_price: totalPrice, // total price for this line item
           discount: 0
         });
       });
