@@ -450,7 +450,7 @@ export default function HomePage() {
               {products.map((product, index) => (
                 <Card 
                   key={product.id} 
-                  className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group animate-slideInScale bg-white relative"
+                  className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group animate-slideInScale bg-white relative p-0"
                   style={{animationDelay: `${index * 0.1}s`}}
                 >
                   {/* Bestseller Badge */}
@@ -460,7 +460,7 @@ export default function HomePage() {
                     </div>
                   )}
                   
-                  <div className="aspect-square relative bg-gradient-to-br from-gray-50 to-white p-6 overflow-hidden">
+                  <div className="aspect-square relative bg-gradient-to-br from-gray-50 to-white p-0 overflow-hidden">
                     {/* Background decoration */}
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-green/5 to-brand-orange/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     
@@ -478,8 +478,6 @@ export default function HomePage() {
                         className="w-full h-full"
                       />
                     </div>
-                    
-
                   </div>
                   
                   <CardContent className="p-6 text-center relative">
