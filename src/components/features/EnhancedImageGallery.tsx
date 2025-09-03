@@ -234,21 +234,19 @@ export function EnhancedImageGallery({ images, productName, className, priority 
               )}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <Image
-                src={image}
-                alt={`${productName} ${index + 1}`}
-                fill
-                className={cn(
-                  "object-cover transition-all duration-300",
-                  "group-hover/thumb:scale-110 group-hover/thumb:brightness-110",
-                  selectedImage === index ? "scale-105" : "scale-100"
-                )}
-                sizes="112px"
-                quality={60}
-                loading="lazy"
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-              />
+                                                           <Image
+                  src={image}
+                  alt={`${productName} ${index + 1}`}
+                  fill
+                  className={cn(
+                    "object-cover transition-all duration-300",
+                    "group-hover/thumb:scale-110 group-hover/thumb:brightness-110",
+                    selectedImage === index ? "scale-105" : "scale-100"
+                  )}
+                  sizes="112px"
+                  quality={60}
+                  loading="lazy"
+                />
               {/* Active indicator with pulse */}
               {selectedImage === index && (
                 <div className="absolute inset-0 bg-brand-orange/10 border border-brand-orange/30 rounded-lg animate-pulse" />
@@ -267,7 +265,7 @@ export function EnhancedImageGallery({ images, productName, className, priority 
         <div className="flex-1 relative">
           <div 
             ref={imageContainerRef}
-            className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group"
+            className="relative aspect-square bg-gray-100 rounded-2xl shadow-2xl overflow-hidden group"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -279,23 +277,21 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                 style={{ transform: getCarouselTransform() }}
               >
                 {validImages.map((image, index) => (
-                  <div key={index} className="w-full h-full flex-shrink-0 relative">
-                    <Image
-                      src={image}
-                      alt={`${productName} - Image ${index + 1}`}
-                      fill
-                      className={cn(
-                        "object-cover",
-                        isZoomed && selectedImage === index ? "scale-150" : "scale-100",
-                        selectedImage === index ? "hover:scale-105" : ""
-                      )}
-                      priority={index === 0}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      quality={index === 0 ? 90 : 75}
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                    />
+                  <div key={index} className="w-full h-full flex-shrink-0 relative bg-gray-100">
+                                         <Image
+                       src={image}
+                       alt={`${productName} - Image ${index + 1}`}
+                       fill
+                       className={cn(
+                         "object-cover",
+                         isZoomed && selectedImage === index ? "scale-150" : "scale-100",
+                         selectedImage === index ? "hover:scale-105" : ""
+                       )}
+                       priority={index === 0}
+                       loading={index === 0 ? "eager" : "lazy"}
+                       sizes="(max-width: 768px) 100vw, 50vw"
+                       quality={index === 0 ? 90 : 75}
+                     />
                   </div>
                 ))}
               </div>
@@ -357,7 +353,7 @@ export function EnhancedImageGallery({ images, productName, className, priority 
         {/* Main Image Display - Mobile */}
         <div className="relative mt-0">
           <div 
-            className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden group"
+            className="relative aspect-square bg-gray-100 rounded-2xl shadow-2xl overflow-hidden group"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -369,23 +365,21 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                 style={{ transform: getCarouselTransform() }}
               >
                 {validImages.map((image, index) => (
-                  <div key={index} className="w-full h-full flex-shrink-0 relative">
-                    <Image
-                      src={image}
-                      alt={`${productName} - Image ${index + 1}`}
-                      fill
-                      className={cn(
-                        "object-cover",
-                        isZoomed && selectedImage === index ? "scale-150" : "scale-100",
-                        selectedImage === index ? "hover:scale-105" : ""
-                      )}
-                      priority={index === 0}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      sizes="100vw"
-                      quality={index === 0 ? 90 : 75}
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                    />
+                  <div key={index} className="w-full h-full flex-shrink-0 relative bg-gray-100">
+                                         <Image
+                       src={image}
+                       alt={`${productName} - Image ${index + 1}`}
+                       fill
+                       className={cn(
+                         "object-cover",
+                         isZoomed && selectedImage === index ? "scale-150" : "scale-100",
+                         selectedImage === index ? "hover:scale-105" : ""
+                       )}
+                       priority={index === 0}
+                       loading={index === 0 ? "eager" : "lazy"}
+                       sizes="100vw"
+                       quality={index === 0 ? 90 : 75}
+                     />
                   </div>
                 ))}
               </div>
@@ -456,21 +450,19 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                   : "border-gray-200 hover:border-brand-orange/50"
               )}
             >
-              <Image
-                src={image}
-                alt={`${productName} ${index + 1}`}
-                fill
-                className={cn(
-                  "object-cover transition-all duration-300",
-                  "group-hover/thumb-mobile:scale-110 group-hover/thumb-mobile:brightness-110",
-                  selectedImage === index ? "scale-105" : "scale-100"
-                )}
-                sizes="64px"
-                quality={50}
-                loading="lazy"
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-              />
+                                                           <Image
+                  src={image}
+                  alt={`${productName} ${index + 1}`}
+                  fill
+                  className={cn(
+                    "object-cover transition-all duration-300",
+                    "group-hover/thumb-mobile:scale-110 group-hover/thumb-mobile:brightness-110",
+                    selectedImage === index ? "scale-105" : "scale-100"
+                  )}
+                  sizes="64px"
+                  quality={50}
+                  loading="lazy"
+                />
               {/* Active indicator with pulse */}
               {selectedImage === index && (
                 <div className="absolute inset-0 bg-brand-orange/10 border border-brand-orange/30 rounded-lg animate-pulse" />
