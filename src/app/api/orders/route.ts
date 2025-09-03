@@ -81,30 +81,55 @@ interface WebhookPayload {
   };
 }
 
-// Function to get current domain from request
+// Function to get domain for X-Shop-Domain header (always use NEXT_PUBLIC_DOMAIN)
 function getCurrentDomain(req: NextRequest): string {
   const host = req.headers.get('host');
+  const envDomain = process.env.NEXT_PUBLIC_DOMAIN;
+  
+  console.log(`🌐 Host header from request: "${host}"`);
+  console.log(`🌐 NEXT_PUBLIC_DOMAIN env var: "${envDomain}"`);
+  
+  // Always prioritize NEXT_PUBLIC_DOMAIN for X-Shop-Domain header
+  if (envDomain) {
+    console.log(`🌐 Using NEXT_PUBLIC_DOMAIN: "${envDomain}"`);
+    return envDomain;
+  }
+  
+  // Fallback to host header if NEXT_PUBLIC_DOMAIN is not set
   if (host) {
+    console.log(`🌐 Fallback to host header: "${host}"`);
     return host;
   }
   
-  // Fallback to environment variable or localhost
-  return process.env.NEXT_PUBLIC_DOMAIN || 'localhost';
+  // Last resort fallback
+  console.log(`🌐 Using last resort fallback: "localhost"`);
+  return 'localhost';
 }
 
 async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, currentDomain: string) {
+  console.log(`🔧 ===== WEBHOOK FUNCTION CALLED =====`);
   console.log(`🔧 Loading webhook config for country: ${countryCode}`);
   const countryConfig = getCountryConfig(countryCode);
+  
+  console.log(`🔧 Country config loaded:`, {
+    code: countryConfig.code,
+    name: countryConfig.name,
+    hasWebhooks: !!countryConfig.webhooks
+  });
   
   // Check if webhooks are configured for this country
   if (!countryConfig.webhooks || !countryConfig.webhooks.orders) {
     console.log(`❌ No webhook configuration found for country ${countryCode}`);
+    console.log(`❌ countryConfig.webhooks:`, countryConfig.webhooks);
     return null;
   }
   
   const webhookConfig = countryConfig.webhooks.orders;
+  console.log(`🔧 Raw webhook config:`, webhookConfig);
+  console.log(`🔧 Webhook URL from config:`, webhookConfig.url);
   console.log(`🔧 Webhook config loaded:`, {
-    url: webhookConfig.url ? `${webhookConfig.url.substring(0, 50)}...` : 'NOT SET',
+    url: webhookConfig.url || 'NOT SET',
+    urlLength: webhookConfig.url?.length || 0,
     authMethod: webhookConfig.authMethod,
     hasSecret: !!webhookConfig.webhookSecret,
     hasApiKey: !!webhookConfig.apiKey
@@ -113,8 +138,12 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
   // Skip if webhook URL is not configured
   if (!webhookConfig.url) {
     console.log(`❌ Order webhook URL not configured for country ${countryCode}, skipping...`);
+    console.log(`❌ Webhook URL is: "${webhookConfig.url}"`);
     return null;
   }
+  
+  console.log(`🚀 ===== PROCEEDING TO SEND WEBHOOK =====`);
+  console.log(`🚀 Target URL: ${webhookConfig.url}`);
 
   console.log(`🚀 Sending order webhook for country ${countryCode} to: ${webhookConfig.url}`);
 
@@ -125,6 +154,9 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
     'X-Auth-Method': webhookConfig.authMethod,
     'X-Webhook-Type': 'order'
   };
+  
+  console.log(`📤 X-Shop-Domain header being sent: "${currentDomain}"`);
+  console.log(`📤 All headers being sent:`, headers);
 
   if (webhookConfig.authMethod === 'signature' && webhookConfig.webhookSecret) {
     // Create HMAC signature
