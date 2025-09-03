@@ -88,14 +88,7 @@ function replacePlaceholders(template: string, faqContent: Record<string, unknow
     return template || '';
   }
 
-  // Debug logging to help identify placeholder issues
-  if (template.includes('{freeShippingThreshold}')) {
-    console.log('FAQ Debug - Replacing freeShippingThreshold:', {
-      template,
-      freeShippingThreshold: (faqContent as Record<string, Record<string, unknown>>)?.delivery?.freeShippingThreshold,
-      delivery: faqContent?.delivery
-    });
-  }
+
 
   try {
     const content = faqContent as Record<string, Record<string, unknown>>;

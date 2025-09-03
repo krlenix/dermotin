@@ -108,45 +108,24 @@ function getCurrentDomain(req: NextRequest): string {
 }
 
 async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, currentDomain: string) {
-  console.log(`🔧 ===== WEBHOOK FUNCTION CALLED =====`);
-  console.log(`🔧 Loading webhook config for country: ${countryCode}`);
+
   const countryConfig = getCountryConfig(countryCode);
   
-  console.log(`🔧 Country config loaded:`, {
-    code: countryConfig.code,
-    name: countryConfig.name,
-    hasWebhooks: !!countryConfig.webhooks
-  });
+
   
   // Check if webhooks are configured for this country
   if (!countryConfig.webhooks || !countryConfig.webhooks.orders) {
-    console.log(`❌ No webhook configuration found for country ${countryCode}`);
-    console.log(`❌ countryConfig.webhooks:`, countryConfig.webhooks);
+    
     return null;
   }
   
   const webhookConfig = countryConfig.webhooks.orders;
-  console.log(`🔧 Raw webhook config:`, webhookConfig);
-  console.log(`🔧 Webhook URL from config:`, webhookConfig.url);
-  console.log(`🔧 Webhook config loaded:`, {
-    url: webhookConfig.url || 'NOT SET',
-    urlLength: webhookConfig.url?.length || 0,
-    authMethod: webhookConfig.authMethod,
-    hasSecret: !!webhookConfig.webhookSecret,
-    hasApiKey: !!webhookConfig.apiKey
-  });
+
   
   // Skip if webhook URL is not configured
   if (!webhookConfig.url) {
-    console.log(`❌ Order webhook URL not configured for country ${countryCode}, skipping...`);
-    console.log(`❌ Webhook URL is: "${webhookConfig.url}"`);
     return null;
   }
-  
-  console.log(`🚀 ===== PROCEEDING TO SEND WEBHOOK =====`);
-  console.log(`🚀 Target URL: ${webhookConfig.url}`);
-
-  console.log(`🚀 Sending order webhook for country ${countryCode} to: ${webhookConfig.url}`);
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -156,8 +135,7 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
     'X-Webhook-Type': 'order'
   };
   
-  console.log(`📤 X-Shop-Domain header being sent: "${currentDomain}"`);
-  console.log(`📤 All headers being sent:`, headers);
+
 
   if (webhookConfig.authMethod === 'signature' && webhookConfig.webhookSecret) {
     // Create HMAC signature
@@ -171,11 +149,11 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
     headers['X-Webhook-Signature'] = signature;
     headers['X-Webhook-Timestamp'] = timestamp.toString();
     
-    console.log(`🔐 Using signature authentication for ${countryCode}`);
+    // Using signature authentication
   } else if (webhookConfig.authMethod === 'api-key' && webhookConfig.apiKey) {
     // Use API key
     headers['X-API-Key'] = webhookConfig.apiKey;
-    console.log(`🔑 Using API key authentication for ${countryCode}`);
+    // Using API key authentication
   }
 
   try {
@@ -183,17 +161,7 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
     console.log(`📤 Webhook headers for ${countryCode}:`, JSON.stringify(headers, null, 2));
     console.log(`📤 Webhook payload for ${countryCode}:`, JSON.stringify(webhookData, null, 2));
     
-    // Validate payload structure before sending
-    console.log(`🔍 Payload validation check for ${countryCode}:`);
-    console.log(`  - order_id: ${webhookData.order_id} (length: ${webhookData.order_id?.length})`);
-    console.log(`  - currency: ${webhookData.currency} (length: ${webhookData.currency?.length})`);
-    console.log(`  - financial_status: ${webhookData.financial_status}`);
-    console.log(`  - customer.email: ${webhookData.customer?.email}`);
-    console.log(`  - billing_address.name: ${webhookData.billing_address?.name}`);
-    console.log(`  - billing_address.address1: ${webhookData.billing_address?.address1}`);
-    console.log(`  - billing_address.city: ${webhookData.billing_address?.city}`);
-    console.log(`  - billing_address.country_code: ${webhookData.billing_address?.country_code} (length: ${webhookData.billing_address?.country_code?.length})`);
-    console.log(`  - line_items count: ${webhookData.line_items?.length}`);
+
     
     const response = await fetch(webhookConfig.url, {
       method: 'POST',
@@ -201,77 +169,37 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
       body: JSON.stringify(webhookData)
     });
 
-    console.log(`📥 Webhook response status for ${countryCode}: ${response.status}`);
-    console.log(`📥 Webhook response headers for ${countryCode}:`, JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2));
-
     let result;
     const responseText = await response.text();
-    console.log(`📥 Webhook raw response for ${countryCode}:`, responseText);
     
     try {
       result = JSON.parse(responseText);
-      console.log(`📥 Webhook parsed response for ${countryCode}:`, result);
-    } catch (parseError) {
-      console.log(`⚠️ Webhook response is not valid JSON for ${countryCode}:`, parseError);
+    } catch {
       result = { error: 'Invalid JSON response', raw: responseText };
     }
 
     if (!response.ok) {
-      console.error(`❌ Webhook failed with status ${response.status} for ${countryCode}. Response:`, result);
-      
-      // Log specific validation errors if it's a 422
-      if (response.status === 422 && result.errors) {
-        console.error(`🚨 Laravel validation errors for ${countryCode}:`);
-        Object.entries(result.errors).forEach(([field, messages]) => {
-          console.error(`  - ${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`);
-        });
-      }
-      
       throw new Error(result.error || result.message || `Webhook failed with status ${response.status}`);
     }
 
-    console.log(`✅ Order webhook sent successfully for ${countryCode}`);
     return result;
   } catch (error) {
-    console.error(`❌ Failed to send order webhook for ${countryCode}:`, error);
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      console.error(`🌐 Network error - check if webhook URL is accessible: ${webhookConfig.url}`);
-    }
     throw error;
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('📦 Order API called');
-    
     // Get current domain early in the handler
     const currentDomain = getCurrentDomain(request);
-    console.log('🌐 Current domain:', currentDomain);
 
     const orderData: Omit<OrderData, 'orderId'> = await request.json();
-    console.log('📦 Received order data:', orderData);
-    
-    // Debug email field specifically
-    console.log('📧 Email validation check:');
-    console.log('  - customerEmail from form:', `"${orderData.customerEmail}"`);
-    console.log('  - customerEmail length:', orderData.customerEmail?.length || 0);
-    console.log('  - customerEmail is empty:', !orderData.customerEmail || orderData.customerEmail === '');
-    
-    // Debug environment variables
-    console.log('🔧 Environment variables check:');
-    console.log('  - NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL:', process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL || 'NOT SET');
-    console.log('  - RS_ORDER_WEBHOOK_SECRET:', process.env.RS_ORDER_WEBHOOK_SECRET ? 'SET' : 'NOT SET');
-    console.log('  - NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL:', process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL || 'NOT SET');
-    console.log('  - BA_ORDER_WEBHOOK_SECRET:', process.env.BA_ORDER_WEBHOOK_SECRET ? 'SET' : 'NOT SET');
     
     // Generate order ID
     const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    console.log('🆔 Generated order ID:', orderId);
     
     // Get country configuration
     const countryConfig = getCountryConfig(orderData.locale);
-    console.log('🌍 Country config loaded for:', orderData.locale);
 
     // Calculate individual product price (subtotal minus bundle items)
     const bundleTotal = orderData.bundleItems ? Object.values(orderData.bundleItems).reduce((sum, price) => sum + price, 0) : 0;
@@ -280,11 +208,6 @@ export async function POST(request: NextRequest) {
     // Prepare webhook payload to match Laravel controller validation
     const currentDate = dayjs().tz(countryConfig.timezone);
     const formattedDate = currentDate.format('YYYY-MM-DD HH:mm:ss');
-    console.log('📅 Date debugging:');
-    console.log('  - Current dayjs():', dayjs().toString());
-    console.log('  - Timezone:', countryConfig.timezone);
-    console.log('  - Current date in timezone:', currentDate.toString());
-    console.log('  - Formatted date:', formattedDate);
     
     const webhookPayload: WebhookPayload = {
       order_id: orderId,

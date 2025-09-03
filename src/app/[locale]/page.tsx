@@ -330,23 +330,16 @@ export default function HomePage() {
 
       {/* Hero Section - Enhanced with Modern Design */}
       <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 overflow-hidden">
-        {/* Dynamic Background Elements */}
+        {/* Simplified Background Elements - Optimized for LCP */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-r from-brand-green/15 to-emerald-300/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-56 h-56 bg-gradient-to-r from-brand-orange/15 to-orange-300/10 rounded-full blur-2xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-gradient-to-r from-blue-200/20 to-cyan-200/15 rounded-full blur-xl animate-bounce delay-500"></div>
-          <div className="absolute bottom-1/4 right-1/3 w-24 h-24 bg-gradient-to-r from-green-300/20 to-emerald-300/15 rounded-full blur-lg animate-ping delay-700"></div>
-          
-          {/* Floating particles */}
-          <div className="absolute top-1/3 left-1/2 w-2 h-2 bg-brand-orange/30 rounded-full animate-float delay-200"></div>
-          <div className="absolute top-2/3 right-1/4 w-3 h-3 bg-brand-green/25 rounded-full animate-float delay-1500"></div>
-          <div className="absolute top-1/4 right-1/2 w-1 h-1 bg-emerald-400/40 rounded-full animate-ping delay-800"></div>
+          <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-r from-brand-green/10 to-emerald-300/5 rounded-full blur-3xl opacity-50"></div>
+          <div className="absolute bottom-20 left-20 w-56 h-56 bg-gradient-to-r from-brand-orange/10 to-orange-300/5 rounded-full blur-2xl opacity-50"></div>
         </div>
         
         <div className="container mx-auto px-4 pt-20 md:pt-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
-            {/* Left Content - Enhanced with better animations */}
-            <div className="space-y-8 lg:pr-8 animate-fadeInLeft">
+            {/* Left Content - Optimized for LCP */}
+            <div className="space-y-8 lg:pr-8">
               {/* Badge */}
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-green/10 to-emerald-100/50 border border-brand-green/20 rounded-full text-sm font-medium text-brand-green animate-fadeInUp">
                 <Sparkles className="w-4 h-4 mr-2" />
@@ -398,8 +391,8 @@ export default function HomePage() {
               </div>
             </div>
             
-            {/* Right Image - Enhanced with better effects */}
-            <div className="relative lg:h-[700px] animate-fadeInRight">
+            {/* Right Image - Optimized for LCP */}
+            <div className="relative lg:h-[700px]">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-green-100/30 rounded-3xl animate-float"></div>
               <div className="relative h-full flex items-center justify-center p-6">
                 <div className="relative group">
@@ -419,6 +412,13 @@ export default function HomePage() {
                       width={600}
                       height={700}
                       className="object-cover w-full h-full max-w-xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
+                      priority
+                      loading="eager"
+                      fetchPriority="high"
+                      quality={95}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                     />
                     
                     {/* Overlay effect on hover */}
@@ -653,6 +653,11 @@ export default function HomePage() {
                     width={600}
                     height={400}
                     className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
+                    quality={85}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   />
 
                 </div>
@@ -680,6 +685,11 @@ export default function HomePage() {
                      width={500}
                      height={500}
                      className="object-cover w-full h-full"
+                     loading="lazy"
+                     quality={80}
+                     sizes="(max-width: 768px) 100vw, 50vw"
+                     placeholder="blur"
+                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                    />
                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                      <div className="text-center text-white">

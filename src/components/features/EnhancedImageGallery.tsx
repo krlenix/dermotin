@@ -81,7 +81,7 @@ export function EnhancedImageGallery({ images, productName, className, priority 
     };
 
     validateImages();
-  }, [images.main, images.gallery, priority]); // Removed allImages and selectedImage from dependencies
+  }, [images.main, images.gallery, priority, allImages, selectedImage]);
   
   const changeImage = (newIndex: number) => {
     if (isTransitioning || newIndex === selectedImage) return;
@@ -153,11 +153,8 @@ export function EnhancedImageGallery({ images, productName, className, priority 
     // If priority is true, show loading state instead of "No images available"
     if (priority) {
       return (
-        <div className={cn("w-full aspect-square bg-gray-100 rounded-2xl flex items-center justify-center", className)}>
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange mx-auto mb-2"></div>
-            <p className="text-gray-500 text-sm">Učitavanje slika...</p>
-          </div>
+        <div className={cn("w-full aspect-square bg-gray-100 rounded-2xl", className)}>
+          {/* Minimal loading state for better LCP */}
         </div>
       );
     }
@@ -173,16 +170,12 @@ export function EnhancedImageGallery({ images, productName, className, priority 
   if (priority && isLoading && validImages.length === 1) {
     return (
       <div className={cn("w-full", className)}>
-        <div className="hidden md:flex gap-4">
-          {/* Main Image Display with Loading */}
-          <div className="flex-1 relative">
-            <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange mx-auto mb-2"></div>
-                  <p className="text-gray-500 text-sm">Učitavanje galerije...</p>
-                </div>
-              </div>
+                  <div className="hidden md:flex gap-4">
+            {/* Main Image Display with Loading */}
+            <div className="flex-1 relative">
+              <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden">
+                {/* Minimal loading overlay for better LCP */}
+                <div className="absolute inset-0 bg-white/60 z-10"></div>
               <Image
                 src={validImages[0]}
                 alt={`${productName} - Main Image`}
@@ -200,12 +193,8 @@ export function EnhancedImageGallery({ images, productName, className, priority 
         <div className="md:hidden space-y-6">
           <div className="relative mt-0">
             <div className="relative aspect-square bg-white rounded-2xl shadow-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange mx-auto mb-2"></div>
-                  <p className="text-gray-500 text-sm">Učitavanje galerije...</p>
-                </div>
-              </div>
+              {/* Minimal loading overlay for better LCP */}
+              <div className="absolute inset-0 bg-white/60 z-10"></div>
               <Image
                 src={validImages[0]}
                 alt={`${productName} - Main Image`}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Script from 'next/script';
-import { getPixelConfigTest, META_EVENTS, TIKTOK_EVENTS } from '@/config/pixels-test';
+import { getPixelConfig, META_EVENTS, TIKTOK_EVENTS } from '@/config/pixels';
 
 interface PixelTrackerProps {
   countryCode: string;
@@ -31,9 +31,7 @@ declare global {
  * PixelTracker component that loads Meta and TikTok pixels based on country configuration
  */
 export function PixelTracker({ countryCode }: PixelTrackerProps) {
-  // Use test config temporarily to verify pixel loading works
-  const pixelConfig = getPixelConfigTest(countryCode);
-  // const pixelConfig = getPixelConfig(countryCode);
+  const pixelConfig = getPixelConfig(countryCode);
   
   // Use ref to prevent multiple initializations
   const initializedRef = useRef(false);
@@ -116,9 +114,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
  * Hook to track events on both Meta and TikTok pixels
  */
 export function usePixelTracking(countryCode: string) {
-  // Use test config temporarily
-  const pixelConfig = getPixelConfigTest(countryCode);
-  // const pixelConfig = getPixelConfig(countryCode);
+  const pixelConfig = getPixelConfig(countryCode);
 
   const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart', eventData?: Record<string, unknown>) => {
     if (typeof window === 'undefined') return;

@@ -63,7 +63,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  // Removed mounted state for immediate rendering
   const [selectedCourier, setSelectedCourier] = useState<CourierInfo>(getDefaultCourier(countryConfig));
   const [isScrolled, setIsScrolled] = useState(false);
   const [triggerBundleShake, setTriggerBundleShake] = useState(false);
@@ -77,8 +77,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     // Prevent any horizontal scroll during animations
     document.body.style.position = 'relative';
     
-    // Mark component as mounted after hydration
-    setMounted(true);
+    // Removed mounted state for immediate rendering
     
     return () => {
       document.body.style.maxWidth = '';
@@ -87,23 +86,36 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     };
   }, []);
 
-  // Add preload links for critical images
+  // Add preload links for critical images with high priority
   useEffect(() => {
-    if (typeof window !== 'undefined' && mounted) {
-      // Preload main product image
+    if (typeof window !== 'undefined') {
+      // Preload main product image with highest priority
       const preloadLink = document.createElement('link');
       preloadLink.rel = 'preload';
       preloadLink.as = 'image';
       preloadLink.href = product.images.main;
       preloadLink.type = 'image/webp';
+      preloadLink.fetchPriority = 'high';
       document.head.appendChild(preloadLink);
 
-      // Preload logo
+      // Preload logo with high priority
       const logoPreloadLink = document.createElement('link');
       logoPreloadLink.rel = 'preload';
       logoPreloadLink.as = 'image';
       logoPreloadLink.href = countryConfig.logo;
+      logoPreloadLink.fetchPriority = 'high';
       document.head.appendChild(logoPreloadLink);
+
+      // Preload first gallery image if available
+      if (product.images.gallery && product.images.gallery.length > 0) {
+        const galleryPreloadLink = document.createElement('link');
+        galleryPreloadLink.rel = 'preload';
+        galleryPreloadLink.as = 'image';
+        galleryPreloadLink.href = product.images.gallery[0];
+        galleryPreloadLink.type = 'image/webp';
+        galleryPreloadLink.fetchPriority = 'high';
+        document.head.appendChild(galleryPreloadLink);
+      }
 
       return () => {
         // Clean up preload links
@@ -115,7 +127,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         }
       };
     }
-  }, [mounted, product.images.main, countryConfig.logo]);
+  }, [product.images.main, product.images.gallery, countryConfig.logo]);
 
   // Handle scroll for header transparency
   useEffect(() => {
@@ -323,14 +335,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
 
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Učitavanje...</div>
-      </div>
-    );
-  }
+  // Remove loading state for immediate page render - better LCP
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white relative w-full overflow-x-hidden" style={{maxWidth: '100vw'}}>
@@ -349,11 +354,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         />
       </div> */}
       
-      {/* Decorative background elements */}
+      {/* Simplified background elements - Optimized for LCP */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-20 w-80 h-80 bg-brand-orange/3 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 -left-20 w-96 h-96 bg-brand-green/3 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 right-10 w-64 h-64 bg-brand-orange/2 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -right-20 w-80 h-80 bg-brand-orange/2 rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute top-1/2 -left-20 w-96 h-96 bg-brand-green/2 rounded-full blur-3xl opacity-50"></div>
       </div>
       {/* Header - Fixed on mobile, relative on desktop */}
       <header className={`md:relative fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
@@ -445,6 +449,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 height={40}
                 className="h-7 md:h-10 w-auto"
                 priority
+                loading="eager"
+                fetchPriority="high"
+                quality={95}
+                sizes="150px"
               />
             </div>
 
@@ -531,10 +539,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section - Optimized for LCP */}
       <section id="hero" className="pt-16 md:pt-6 pb-8 md:pb-12 relative overflow-hidden w-full">
-        {/* Clean minimal background */}
-        <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div>
+        {/* Minimal background for faster LCP */}
+        <div className="absolute inset-0 bg-white/60"></div>
         <div className="container mx-auto px-4 relative">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             {/* Product Images */}
@@ -786,22 +794,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
       {/* Final CTA Before Footer */}
       <section className="relative py-16 bg-gradient-to-br from-gray-50 to-green-50 overflow-hidden w-full">
-        {/* Floating liquid bubbles */}
+        {/* Simplified background elements - Optimized for performance */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Large slow bubbles - positioned safely within viewport */}
-          <div className={`absolute top-20 left-16 w-32 h-32 bg-brand-green/20 rounded-full blur-xl transition-all duration-1000 ${mounted ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '6s', animationDelay: '0s', maxWidth: 'calc(100vw - 200px)'}}></div>
-          <div className={`absolute top-40 right-16 w-24 h-24 bg-brand-green/15 rounded-full blur-lg transition-all duration-1000 ${mounted ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '8s', animationDelay: '2s', maxWidth: 'calc(100vw - 150px)'}}></div>
-          <div className={`absolute bottom-32 left-20 w-40 h-40 bg-brand-green/10 rounded-full blur-2xl transition-all duration-1000 ${mounted ? 'animate-bounce' : 'opacity-50'}`} style={{animationDuration: '10s', animationDelay: '1s', maxWidth: 'calc(100vw - 220px)'}}></div>
-          
-          {/* Medium bubbles - positioned safely within viewport */}
-          <div className={`absolute top-32 right-20 w-20 h-20 bg-brand-green/25 rounded-full blur-lg transition-all duration-1000 ${mounted ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '4s', animationDelay: '0s', maxWidth: 'calc(100vw - 120px)'}}></div>
-          <div className={`absolute bottom-40 right-12 w-16 h-16 bg-brand-green/20 rounded-full blur-md transition-all duration-1000 ${mounted ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '5s', animationDelay: '3s', maxWidth: 'calc(100vw - 80px)'}}></div>
-          <div className={`absolute top-1/2 left-12 w-28 h-28 bg-brand-green/15 rounded-full blur-xl transition-all duration-1000 ${mounted ? 'animate-pulse' : 'opacity-50'}`} style={{animationDuration: '7s', animationDelay: '1.5s', maxWidth: 'calc(100vw - 140px)'}}></div>
-          
-          {/* Small fast bubbles - positioned safely within viewport */}
-          <div className={`absolute top-16 left-1/2 w-12 h-12 bg-brand-green/30 rounded-full blur-sm transition-all duration-1000 ${mounted ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '3s', animationDelay: '0s', transform: 'translateX(-50%)', maxWidth: '48px'}}></div>
-          <div className={`absolute bottom-24 right-24 w-8 h-8 bg-brand-green/35 rounded-full blur-sm transition-all duration-1000 ${mounted ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2s', animationDelay: '1s', maxWidth: '32px'}}></div>
-          <div className={`absolute top-2/3 right-16 w-10 h-10 bg-brand-green/25 rounded-full blur-sm transition-all duration-1000 ${mounted ? 'animate-ping' : 'opacity-50'}`} style={{animationDuration: '2.5s', animationDelay: '2s', maxWidth: '40px'}}></div>
+          <div className="absolute top-20 left-16 w-32 h-32 bg-brand-green/10 rounded-full blur-xl opacity-50"></div>
+          <div className="absolute bottom-32 right-20 w-24 h-24 bg-brand-green/8 rounded-full blur-lg opacity-40"></div>
         </div>
         
         <div className="container mx-auto px-4 text-center relative z-10">

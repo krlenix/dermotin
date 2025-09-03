@@ -14,6 +14,7 @@ const montserrat = Montserrat({
   display: 'swap',
   preload: true,
   fallback: ['system-ui', 'arial'],
+  adjustFontFallback: false,
 });
 
 const playfairDisplay = Playfair_Display({
@@ -47,28 +48,27 @@ export default async function RootLayout({
   return (
     <html lang={countryConfig.locale} dir="ltr">
       <head>
-        {/* Resource hints for better performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-        
-        {/* Google Fonts preconnect for Next.js optimization */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        
-        {/* Preload critical resources */}
+        {/* Preload critical resources with high priority */}
         <link
           rel="preload"
           href="/images/main/hero-image.webp"
           as="image"
           type="image/webp"
+          fetchPriority="high"
         />
         <link
           rel="preload"
           href="/images/main/logo.png"
           as="image"
           type="image/png"
+          fetchPriority="high"
+        />
+        
+        {/* Preload critical CSS for faster rendering */}
+        <link
+          rel="preload"
+          href="/_next/static/css/app/layout.css"
+          as="style"
         />
         
         {/* Viewport and performance meta tags */}
