@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import { getPixelConfig, META_EVENTS, TIKTOK_EVENTS } from '@/config/pixels';
 
@@ -31,14 +31,22 @@ declare global {
  * PixelTracker component that loads Meta and TikTok pixels based on country configuration
  */
 export function PixelTracker({ countryCode }: PixelTrackerProps) {
-  const pixelConfig = getPixelConfig(countryCode);
-  
-  // Use ref to prevent multiple initializations
+  // Fix hydration by only rendering on client side
+  const [isClient, setIsClient] = useState(false);
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    // Prevent multiple initializations
-    if (initializedRef.current) return;
+    setIsClient(true);
+  }, []);
+
+  // Only get pixel config on client side to avoid hydration mismatch
+  const pixelConfig = isClient ? getPixelConfig(countryCode) : { meta: { enabled: false, pixelId: '' }, tiktok: { enabled: false, pixelId: '' } };
+  
+
+
+  useEffect(() => {
+    // Only initialize on client side and when pixel config is available
+    if (!isClient || initializedRef.current) return;
     initializedRef.current = true;
     
     // Initialize Meta Pixel
@@ -56,7 +64,12 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
         window.ttq.page();
       }
     }
-  }, [pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId]);
+  }, [isClient, pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId]);
+
+  // Don't render anything on server side to prevent hydration mismatch
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <>

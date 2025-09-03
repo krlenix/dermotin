@@ -64,26 +64,26 @@ export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
         </div>
 
         {/* Large Time Display */}
-        <div className="flex justify-center gap-4 mb-6 flex-wrap">
+        <div className="flex justify-center gap-2 sm:gap-4 mb-6 flex-nowrap overflow-hidden">
           {mounted && timeLeft.hours > 0 && (
-            <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-6 py-4 min-w-[80px] shadow-lg">
-              <div className="text-4xl font-bold font-mono">
+            <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-2 sm:px-6 py-3 sm:py-4 min-w-[60px] sm:min-w-[80px] shadow-lg flex-shrink-0">
+              <div className="text-2xl sm:text-4xl font-bold font-mono">
                 {mounted ? timeLeft.hours.toString().padStart(2, '0') : '--'}
               </div>
-              <div className="text-sm font-medium mt-1">{t('urgency.hours')}</div>
+              <div className="text-xs sm:text-sm font-medium mt-1">{t('urgency.hours')}</div>
             </div>
           )}
-          <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-6 py-4 min-w-[80px] shadow-lg">
-            <div className="text-4xl font-bold font-mono">
+          <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-2 sm:px-6 py-3 sm:py-4 min-w-[60px] sm:min-w-[80px] shadow-lg flex-shrink-0">
+            <div className="text-2xl sm:text-4xl font-bold font-mono">
               {mounted ? timeLeft.minutes.toString().padStart(2, '0') : '--'}
             </div>
-            <div className="text-sm font-medium mt-1">{t('urgency.minutes')}</div>
+            <div className="text-xs sm:text-sm font-medium mt-1">{t('urgency.minutes')}</div>
           </div>
-          <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-6 py-4 min-w-[80px] shadow-lg">
-            <div className="text-4xl font-bold font-mono">
+          <div className="bg-gradient-to-b from-orange-500 to-red-500 text-white rounded-xl px-2 sm:px-6 py-3 sm:py-4 min-w-[60px] sm:min-w-[80px] shadow-lg flex-shrink-0">
+            <div className="text-2xl sm:text-4xl font-bold font-mono">
               {mounted ? timeLeft.seconds.toString().padStart(2, '0') : '--'}
             </div>
-            <div className="text-sm font-medium mt-1">{t('urgency.seconds')}</div>
+            <div className="text-xs sm:text-sm font-medium mt-1">{t('urgency.seconds')}</div>
           </div>
         </div>
 
