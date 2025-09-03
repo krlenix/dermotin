@@ -251,6 +251,12 @@ export async function POST(request: NextRequest) {
     const orderData: Omit<OrderData, 'orderId'> = await request.json();
     console.log('📦 Received order data:', orderData);
     
+    // Debug email field specifically
+    console.log('📧 Email validation check:');
+    console.log('  - customerEmail from form:', `"${orderData.customerEmail}"`);
+    console.log('  - customerEmail length:', orderData.customerEmail?.length || 0);
+    console.log('  - customerEmail is empty:', !orderData.customerEmail || orderData.customerEmail === '');
+    
     // Debug environment variables
     console.log('🔧 Environment variables check:');
     console.log('  - NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL:', process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL || 'NOT SET');
@@ -271,14 +277,22 @@ export async function POST(request: NextRequest) {
     const mainProductPrice = orderData.subtotal - bundleTotal;
     
     // Prepare webhook payload to match Laravel controller validation
+    const currentDate = dayjs().tz(countryConfig.timezone);
+    const formattedDate = currentDate.format('YYYY-MM-DD HH:mm:ss');
+    console.log('📅 Date debugging:');
+    console.log('  - Current dayjs():', dayjs().toString());
+    console.log('  - Timezone:', countryConfig.timezone);
+    console.log('  - Current date in timezone:', currentDate.toString());
+    console.log('  - Formatted date:', formattedDate);
+    
     const webhookPayload: WebhookPayload = {
       order_id: orderId,
-      created_at: dayjs().tz(countryConfig.timezone).toISOString(),
+      created_at: formattedDate, // Laravel date format
       currency: countryConfig.currency, // Should be RSD or BAM (3 chars)
       total_price: orderData.totalPrice,
       financial_status: 'pending', // Laravel expects 'pending' or 'paid'
       customer: {
-        email: orderData.customerEmail,
+        email: orderData.customerEmail || 'noreply@example.com', // Ensure email is not empty
         phone: orderData.customerPhone,
         note: ''
       },
@@ -306,7 +320,7 @@ export async function POST(request: NextRequest) {
           name: orderData.productName,
           quantity: orderData.quantity,
           price: mainProductPrice,
-          discount: 0
+          discount: 0 // Use 0 instead of null for Laravel validation
         }
       ],
       shipping: {
