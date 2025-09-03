@@ -477,7 +477,10 @@ export default function HomePage() {
                       <ProductImageHover
                         mainImage={product.images.main}
                         hoverImage={
-                          product.images.gallery && product.images.gallery.length > 0 
+                          product.images.gallery && 
+                          product.images.gallery.length > 0 && 
+                          product.images.gallery[product.images.gallery.length - 1] &&
+                          product.images.gallery[product.images.gallery.length - 1].trim() !== ''
                             ? product.images.gallery[product.images.gallery.length - 1] 
                             : product.images.main
                         }

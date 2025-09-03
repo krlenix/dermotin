@@ -280,9 +280,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       
       sessionStorage.setItem('completedOrder', JSON.stringify(orderForThankYou));
       
-      // Only redirect if webhook was successful
-      console.log('🎉 Redirecting to thank you page...');
-      window.location.replace(`/${countryConfig.code}/thank-you`);
+      // Return success result
+      return { success: true, orderId: result.orderId };
       
     } catch (error) {
       console.error('❌ Order submission error:', error);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface ProductImageHoverProps {
@@ -21,9 +21,45 @@ export function ProductImageHover({
   className = ''
 }: ProductImageHoverProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [validHoverImage, setValidHoverImage] = useState<string>(mainImage);
+  const [isValidatingHover, setIsValidatingHover] = useState(false);
+  
+  // Validate hover image on mount and when hoverImage changes
+  useEffect(() => {
+    const validateHoverImage = async () => {
+      // If hover image is the same as main image, no need to validate
+      if (hoverImage === mainImage) {
+        setValidHoverImage(mainImage);
+        return;
+      }
+      
+      setIsValidatingHover(true);
+      
+      try {
+        // Create a new image to test if the hover image loads
+        const img = new window.Image();
+        
+        const isValid = await new Promise<boolean>((resolve) => {
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = hoverImage;
+        });
+        
+        // Use hover image if valid, otherwise fall back to main image
+        setValidHoverImage(isValid ? hoverImage : mainImage);
+      } catch (error) {
+        // On any error, fall back to main image
+        setValidHoverImage(mainImage);
+      } finally {
+        setIsValidatingHover(false);
+      }
+    };
+    
+    validateHoverImage();
+  }, [hoverImage, mainImage]);
   
   // Check if we have different images for hover effect
-  const hasDifferentImages = mainImage !== hoverImage;
+  const hasDifferentImages = mainImage !== validHoverImage && !isValidatingHover;
 
   return (
     <div 
@@ -46,7 +82,7 @@ export function ProductImageHover({
           
           {/* Hover Image */}
           <Image
-            src={hoverImage}
+            src={validHoverImage}
             alt={`${productName} - hover view`}
             width={width}
             height={height}

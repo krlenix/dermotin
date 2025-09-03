@@ -17,19 +17,20 @@ import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
 import { getDefaultCourier } from '@/config/countries';
-import { Truck, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
+import { Truck, Banknote, Shield, Phone, MapPin, User, Check, Package } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 import { CompactOrderSummary } from './CompactOrderSummary';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
 import { toast } from 'sonner';
+import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
   countryConfig: CountryConfig;
   productName: string;
   bundleItems?: {[key: string]: number};
-  onOrderSubmit: (orderData: Record<string, unknown>) => Promise<void>;
+  onOrderSubmit: (orderData: Record<string, unknown>) => Promise<{ success: boolean; orderId?: string; error?: string }>;
   className?: string;
   mainProductId: string;
   onAddToBundle: (productId: string, price: number) => void;
@@ -95,6 +96,9 @@ export function CheckoutForm({
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dialogType, setDialogType] = useState<CheckoutDialogType>(null);
+  const [dialogError, setDialogError] = useState<string>('');
+  const [orderResult, setOrderResult] = useState<{orderId?: string; customerName?: string; totalPrice?: number; currency?: string}>({});
   const [hasStartedCheckout, setHasStartedCheckout] = useState(false);
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -151,10 +155,11 @@ export function CheckoutForm({
     }
     
     setIsSubmitting(true);
+    setDialogType('loading');
     
     try {
-      // Call onOrderSubmit and wait for it to complete
-      await onOrderSubmit({
+      // Prepare order data
+      const orderData = {
         ...formData,
         variant: selectedVariant,
         bundleItems: bundleItems,
@@ -162,13 +167,52 @@ export function CheckoutForm({
         orderTotal: finalTotal,
         subtotal: subtotal,
         shippingCost: shippingCost
-      });
-      // Don't reset isSubmitting here - let the parent handle it or redirect will happen
+      };
+
+      // Call onOrderSubmit and wait for result
+      const result = await onOrderSubmit(orderData);
+      
+      if (result.success) {
+        // Set success dialog data
+        setOrderResult({
+          orderId: result.orderId,
+          customerName: `${formData.firstName} ${formData.lastName}`,
+          totalPrice: finalTotal,
+          currency: countryConfig.currencySymbol
+        });
+        setDialogType('success');
+        
+        // Auto-close success dialog and redirect after 3 seconds
+        setTimeout(() => {
+          setDialogType(null);
+          // Redirect to thank you page
+          window.location.replace(`/${countryConfig.code}/thank-you`);
+        }, 3000);
+      } else {
+        // Show error dialog
+        setDialogError(result.error || t('validation.order_submission_failed'));
+        setDialogType('error');
+        setIsSubmitting(false);
+      }
     } catch (error) {
-      // Only reset loading state if there's an error
+      // Show error dialog
+      setDialogError(error instanceof Error ? error.message : t('validation.order_submission_failed'));
+      setDialogType('error');
       setIsSubmitting(false);
       console.error('Form submission error:', error);
-      toast.error(t('validation.order_submission_failed') || 'Order submission failed. Please try again.');
+    }
+  };
+
+  const handleDialogClose = () => {
+    const currentDialogType = dialogType;
+    setDialogType(null);
+    setDialogError('');
+    
+    if (currentDialogType === 'error') {
+      setIsSubmitting(false);
+    } else if (currentDialogType === 'success') {
+      // If user manually closes success dialog, redirect immediately
+      window.location.replace(`/${countryConfig.code}/thank-you`);
     }
   };
 
@@ -572,6 +616,16 @@ export function CheckoutForm({
         </CardContent>
       </Card>
       */}
+
+      {/* Checkout Dialog */}
+      <CheckoutDialog
+        type={dialogType}
+        isOpen={dialogType !== null}
+        onClose={handleDialogClose}
+        errorMessage={dialogError}
+        countryConfig={countryConfig}
+        orderData={orderResult}
+      />
     </div>
   );
 }

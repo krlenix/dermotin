@@ -178,6 +178,23 @@
     "city_min_length": "Mesto mora imati najmanje 2 karaktera",
     "order_submission_failed": "Slanje porudžbine neuspešno"
   },
+  "checkout_dialog": {
+    "processing_order": "Obrađujemo vašu porudžbinu",
+    "processing_message": "Molimo sačekajte dok obrađujemo vašu porudžbinu",
+    "please_wait": "Ovo može potrajati nekoliko sekundi...",
+    "order_confirmed": "Porudžbina je potvrđena!",
+    "success_message": "Vaša porudžbina je uspešno poslata. Uskoro ćete biti preusmereni na stranicu za potvrdu.",
+    "order_number": "Broj porudžbine",
+    "customer": "Kupac",
+    "continue": "Nastavi",
+    "order_failed": "Porudžbina neuspešna",
+    "error_occurred": "Dogodila se greška prilikom slanja porudžbine",
+    "need_help": "Potrebna vam je pomoć?",
+    "contact_email": "Email",
+    "contact_phone": "Telefon",
+    "try_again": "Pokušaj ponovo",
+    "contact_support": "Kontaktiraj podršku"
+  },
   "checkout": {
     "title": "Završi kupovinu",
     "billing_info": "Podaci za naplatu",
