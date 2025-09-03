@@ -14,12 +14,30 @@ import { CheckoutForm } from '@/components/features/CheckoutForm';
 import { UrgencyTimer } from '@/components/features/UrgencyTimer';
 import { CookieConsent } from '@/components/features/CookieConsent';
 
-import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
-import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials';
-// import { PurchaseNotifications } from '@/components/features/PurchaseNotifications';
-import { RotatingReview } from '@/components/features/RotatingReview';
+import dynamic from 'next/dynamic';
+
+// Lazy load heavy components
+const AdvancedFAQ = dynamic(() => import('@/components/features/AdvancedFAQ').then(mod => ({ default: mod.AdvancedFAQ })), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-96 rounded-lg"></div>,
+  ssr: false
+});
+
+const AdvancedTestimonials = dynamic(() => import('@/components/features/AdvancedTestimonials').then(mod => ({ default: mod.AdvancedTestimonials })), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-lg"></div>,
+  ssr: false
+});
+
+const RotatingReview = dynamic(() => import('@/components/features/RotatingReview').then(mod => ({ default: mod.RotatingReview })), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-32 rounded-lg"></div>,
+  ssr: false
+});
+
+const ComparisonTable = dynamic(() => import('@/components/features/ComparisonTable').then(mod => ({ default: mod.ComparisonTable })), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-80 rounded-lg"></div>,
+  ssr: false
+});
+
 import { Footer } from '@/components/ui/footer';
-import { ComparisonTable } from '@/components/features/ComparisonTable';
 
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';

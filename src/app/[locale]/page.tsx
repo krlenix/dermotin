@@ -12,11 +12,19 @@ import { Button } from '@/components/ui/button';
 
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { Footer } from '@/components/ui/footer';
-import { AdvancedTestimonials } from '@/components/features/AdvancedTestimonials';
+import dynamic from 'next/dynamic';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
 
+// Lazy load heavy components for better performance
+const AdvancedTestimonials = dynamic(() => import('@/components/features/AdvancedTestimonials').then(mod => ({ default: mod.AdvancedTestimonials })), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-lg"></div>,
+  ssr: false
+});
 
-import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
+const AdvancedFAQ = dynamic(() => import('@/components/features/AdvancedFAQ').then(mod => ({ default: mod.AdvancedFAQ })), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-96 rounded-lg"></div>,
+  ssr: false
+});
 // import { WheelPopup } from '@/components/wheel-of-fortune/WheelPopup';
 // import { WheelOfFortune } from '@/components/wheel-of-fortune/WheelOfFortune';
 // import { WHEEL_CONFIG, POPUP_CONFIG } from '@/config/wheel';

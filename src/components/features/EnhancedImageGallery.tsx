@@ -20,8 +20,6 @@ export function EnhancedImageGallery({ images, productName, className, priority 
   const [isZoomed, setIsZoomed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [validImages, setValidImages] = useState<string[]>(priority ? [images.main] : []);
-  const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(new Set());
-  const [imagesPreloaded, setImagesPreloaded] = useState(priority);
   const [isLoading, setIsLoading] = useState(!priority);
 
   
@@ -49,7 +47,6 @@ export function EnhancedImageGallery({ images, productName, className, priority 
     const validateImages = async () => {
       setIsLoading(true);
       const validImagesList: string[] = [];
-      const errorSet = new Set<string>();
       
       // If priority is true, start with main image and preload others
       if (priority) {
@@ -61,30 +58,24 @@ export function EnhancedImageGallery({ images, productName, className, priority 
           const isValid = await checkImageValidity(imageSrc);
           if (isValid) {
             validImagesList.push(imageSrc);
-          } else {
-            errorSet.add(imageSrc);
           }
         }
         setValidImages(validImagesList);
-        setImagesPreloaded(true);
       } else {
         // Standard validation for all images
         for (const imageSrc of allImages) {
           const isValid = await checkImageValidity(imageSrc);
           if (isValid) {
             validImagesList.push(imageSrc);
-          } else {
-            errorSet.add(imageSrc);
           }
         }
         setValidImages(validImagesList);
       }
       
-      setImageLoadErrors(errorSet);
       setIsLoading(false);
       
-      // Reset selected image if current selection is invalid
-      if (validImagesList.length > 0 && errorSet.has(allImages[selectedImage])) {
+      // Reset selected image if current selection is invalid and we have valid images
+      if (validImagesList.length > 0 && selectedImage >= validImagesList.length) {
         setSelectedImage(0);
       }
     };
@@ -264,6 +255,10 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                   selectedImage === index ? "scale-105" : "scale-100"
                 )}
                 sizes="112px"
+                quality={60}
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
               />
               {/* Active indicator with pulse */}
               {selectedImage === index && (
@@ -307,7 +302,10 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                       )}
                       priority={index === 0}
                       loading={index === 0 ? "eager" : "lazy"}
-                      sizes="50vw"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      quality={index === 0 ? 90 : 75}
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                     />
                   </div>
                 ))}
@@ -395,6 +393,9 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                       priority={index === 0}
                       loading={index === 0 ? "eager" : "lazy"}
                       sizes="100vw"
+                      quality={index === 0 ? 90 : 75}
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                     />
                   </div>
                 ))}
@@ -476,6 +477,10 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                   selectedImage === index ? "scale-105" : "scale-100"
                 )}
                 sizes="64px"
+                quality={50}
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
               />
               {/* Active indicator with pulse */}
               {selectedImage === index && (
