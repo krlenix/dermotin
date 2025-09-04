@@ -1,6 +1,7 @@
 export const HOMEPAGE_IMAGES = {
   hero: {
     main: "/images/main/hero-image.webp",
+    mobile: "/images/main/mobile-hero-image.png", // 👈 SET YOUR MOBILE HERO IMAGE HERE
     background: "/images/main/hero-bg.jpg"
   },
   beforeAfter: {

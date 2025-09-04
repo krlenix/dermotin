@@ -54,7 +54,7 @@ export function CountriesHeader() {
   }, [countries.length]);
 
   return (
-    <section className="py-6 bg-gradient-to-r from-brand-green/5 to-emerald-50 border-y border-brand-green/10">
+    <section className="sm:mt-0 py-6 bg-gradient-to-r from-brand-green/5 to-emerald-50 border-y border-brand-green/10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-center gap-6">
           <div className="flex items-center gap-2 text-brand-green">

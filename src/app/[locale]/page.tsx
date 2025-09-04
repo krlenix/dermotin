@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { getProductsForCountry, Product } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
 import { HOMEPAGE_IMAGES } from '@/config/images';
@@ -31,7 +32,7 @@ const AdvancedFAQ = dynamic(() => import('@/components/features/AdvancedFAQ').th
 // import { WheelPopup } from '@/components/wheel-of-fortune/WheelPopup';
 // import { WheelOfFortune } from '@/components/wheel-of-fortune/WheelOfFortune';
 // import { WHEEL_CONFIG, POPUP_CONFIG } from '@/config/wheel';
-import { useParams } from 'next/navigation';
+
 import { 
   Shield, 
   Truck, 
@@ -47,6 +48,12 @@ import {
 // Homepage statistics are now available through translations
 // Access via: t('homepage.stats_customers'), t('homepage.stats_rating'), etc.
 
+// Hero Images Configuration - Simple mobile/desktop setup
+const HERO_IMAGES = {
+  mobile: HOMEPAGE_IMAGES.hero.mobile, // Mobile hero image from config
+  desktop: HOMEPAGE_IMAGES.hero.main // Desktop hero image from config
+};
+
 export default function HomePage() {
   const params = useParams();
   const locale = params.locale as string;
@@ -54,6 +61,25 @@ export default function HomePage() {
   const countryConfig = getCountryConfig(locale);
   const [products, setProducts] = useState<Product[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
+  
+  // Screen size detection for responsive images
+  const [isMobile, setIsMobile] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+  
+  // Get the appropriate image source based on screen size
+  // Ensure we use mobile image on mobile devices
+  const currentImageSrc = isClient && isMobile ? HERO_IMAGES.mobile : HERO_IMAGES.desktop;
   
   // Load products for the current locale
   useEffect(() => {
@@ -181,6 +207,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      
       {/* Fixed Header */}
       <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled 
@@ -425,28 +452,48 @@ export default function HomePage() {
             </div>
             
             {/* Right Image - Optimized for LCP */}
-            <div className="relative w-full max-w-full">
-              {/* Background overlay - behind image on desktop */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-green-100/30 rounded-3xl animate-float lg:z-0"></div>
+            <div className="flex justify-center lg:block lg:relative lg:w-full lg:max-w-full lg:overflow-visible">
               
-              <div className="relative h-full flex items-center justify-center p-4 md:p-6 max-w-full lg:h-[600px] lg:z-10">
-                <div className="relative group w-full max-w-full lg:max-w-[500px] lg:z-20">
-                  {/* Enhanced background glow effect */}
+              {/* Mobile: Just the image with rounded corners */}
+              <div className="lg:hidden pb-8">
+                <Image
+                  src={currentImageSrc}
+                  alt={t('homepage.natural_beauty_alt')}
+                  width={1200}
+                  height={1400}
+                  className="object-contain w-full max-w-lg h-auto rounded-2xl"
+                  priority
+                  loading="eager"
+                  fetchPriority="high"
+                  quality={100}
+                  sizes="90vw"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                />
+              </div>
+
+              {/* Desktop: Full layout with effects */}
+              <div className="hidden lg:block relative h-auto flex items-center justify-center p-4 md:p-6 max-w-full lg:z-10">
+                <div className="relative group w-auto lg:w-full lg:max-w-[500px] lg:z-20 flex justify-center">
+                  {/* Background overlay - desktop only */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-green-100/30 rounded-3xl animate-float lg:z-0"></div>
+                  
+                  {/* Enhanced background glow effect - desktop only */}
                   <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-r from-brand-green/20 via-transparent to-brand-orange/20 rounded-3xl blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
                   
-                  {/* Additional floating particles - hidden on mobile for cleaner look */}
-                  <div className="hidden md:block absolute -top-4 -left-4 w-8 h-8 bg-brand-green/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.2s'}}></div>
-                  <div className="hidden md:block absolute -bottom-4 -right-4 w-6 h-6 bg-brand-orange/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.4s'}}></div>
-                  <div className="hidden md:block absolute top-1/2 -right-6 w-4 h-4 bg-brand-green/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.6s'}}></div>
+                  {/* Floating particles - desktop only */}
+                  <div className="absolute -top-4 -left-4 w-8 h-8 bg-brand-green/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.2s'}}></div>
+                  <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-brand-orange/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.4s'}}></div>
+                  <div className="absolute top-1/2 -right-6 w-4 h-4 bg-brand-green/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.6s'}}></div>
                   
-                  {/* Main image with enhanced hover effects */}
-                  <div className="relative transition-all duration-700 max-w-full rounded-2xl lg:z-30">
+                  {/* Desktop image with effects */}
+                  <div className="relative overflow-visible transition-all duration-700 rounded-2xl lg:z-30 w-full h-auto">
                     <Image
-                      src={HOMEPAGE_IMAGES.hero.main}
+                      src={currentImageSrc}
                       alt={t('homepage.natural_beauty_alt')}
-                      width={800}
-                      height={900}
-                      className="object-contain w-full h-auto max-w-full transition-all duration-700 group-hover:scale-[1.02] rounded-2xl relative lg:z-40"
+                      width={1200}
+                      height={1400}
+                      className="object-contain w-full h-auto transition-all duration-700 group-hover:scale-[1.02] rounded-2xl relative lg:z-40"
                       priority
                       loading="eager"
                       fetchPriority="high"
