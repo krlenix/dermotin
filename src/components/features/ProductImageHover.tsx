@@ -47,7 +47,7 @@ export function ProductImageHover({
         
         // Use hover image if valid, otherwise fall back to main image
         setValidHoverImage(isValid ? hoverImage : mainImage);
-      } catch (error) {
+      } catch {
         // On any error, fall back to main image
         setValidHoverImage(mainImage);
       } finally {

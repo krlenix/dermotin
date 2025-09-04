@@ -40,7 +40,6 @@ import {
   CheckCircle,
   ArrowRight,
   Sparkles,
-  Zap,
   ShieldCheck,
   Phone
 } from 'lucide-react';

@@ -17,12 +17,11 @@ import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
 import { getDefaultCourier } from '@/config/countries';
-import { Truck, Banknote, Shield, Phone, MapPin, User, Check, Package } from 'lucide-react';
+import { Truck, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 import { CompactOrderSummary } from './CompactOrderSummary';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
-import { toast } from 'sonner';
 import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 
 interface CheckoutFormProps {

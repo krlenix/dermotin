@@ -23,11 +23,6 @@ export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
   const [isTicking, setIsTicking] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Check if UrgencyTimer is enabled for current locale
-  if (!isComponentEnabled('urgencyTimer', locale)) {
-    return null;
-  }
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -60,6 +55,11 @@ export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
 
     return () => clearInterval(timer);
   }, [duration, mounted]);
+
+  // Check if UrgencyTimer is enabled for current locale
+  if (!isComponentEnabled('urgencyTimer', locale)) {
+    return null;
+  }
 
   // Always render the same structure to prevent hydration mismatch
   return (
