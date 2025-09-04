@@ -315,6 +315,46 @@ summary,
   animation: shake 0.4s ease-in-out;
 }
 
+/* Hand-drawn underline animation */
+@keyframes drawLine {
+  0% {
+    stroke-dashoffset: 200;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hand-drawn-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.hand-drawn-underline svg {
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  overflow: visible;
+}
+
+.hand-drawn-underline svg path {
+  stroke: #FF6B35;
+  stroke-width: 4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  filter: drop-shadow(0 1px 2px rgba(255, 107, 53, 0.3));
+}
+
+.hand-drawn-underline.animate svg path {
+  animation: drawLine 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: 0.1s;
+}
+
 /* Prevent grid overflow on mobile */
 @media (max-width: 1024px) {
   #order {

@@ -8,7 +8,7 @@ export const HOMEPAGE_IMAGES = {
     comparison: "/images/main/before-after-comparison.jpg"
   },
   naturalScience: {
-    main: "/images/main/third-image.webp",
+    main: "/images/main/third-image.jpg",
     background: "/images/main/natural-science-bg.jpg"
   },
   trust: {

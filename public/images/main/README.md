@@ -13,7 +13,7 @@ This directory contains all images used on the homepage. All images are now cent
 - `before-after-comparison.jpg` - Additional comparison image
 
 ### Natural Science Section
-- `third-image.webp` - Main natural science image (woman in fur coat with product)
+- `third-image.jpg` - Main natural science image (woman in fur coat with product)
 - `natural-science-bg.jpg` - Natural science background image
 
 ## Localization

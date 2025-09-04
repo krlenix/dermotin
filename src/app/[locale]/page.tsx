@@ -12,9 +12,11 @@ import { Button } from '@/components/ui/button';
 import { PixelTracker } from '@/components/tracking/PixelTracker';
 
 import { CookieConsent } from '@/components/features/CookieConsent';
+import { CountriesHeader } from '@/components/features/CountriesHeader';
 import { Footer } from '@/components/ui/footer';
 import dynamic from 'next/dynamic';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
+import EnhancedImageEffect from '@/components/features/EnhancedImageEffect';
 
 // Lazy load heavy components for better performance
 const AdvancedTestimonials = dynamic(() => import('@/components/features/AdvancedTestimonials').then(mod => ({ default: mod.AdvancedTestimonials })), {
@@ -68,6 +70,37 @@ export default function HomePage() {
     
     loadProducts();
   }, [locale]);
+
+  // Trigger underline animation when element comes into view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Add animate class to the specific element that's in view
+            entry.target.classList.add('animate');
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    // Wait for elements to be rendered
+    const timer = setTimeout(() => {
+      const underlineElements = document.querySelectorAll('.hand-drawn-underline');
+      underlineElements.forEach((element) => {
+        observer.observe(element);
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      const underlineElements = document.querySelectorAll('.hand-drawn-underline');
+      underlineElements.forEach((element) => {
+        observer.unobserve(element);
+      });
+    };
+  }, []);
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -406,24 +439,28 @@ export default function HomePage() {
                   <div className="absolute top-1/2 -right-6 w-4 h-4 bg-brand-green/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.6s'}}></div>
                   
                   {/* Main image with enhanced hover effects */}
-                  <div className="relative overflow-hidden rounded-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-700">
+                  <div className="relative overflow-visible shadow-2xl group-hover:shadow-3xl transition-all duration-700">
                     <Image
                       src={HOMEPAGE_IMAGES.hero.main}
                       alt={t('homepage.natural_beauty_alt')}
-                      width={600}
-                      height={700}
-                      className="object-cover w-full h-full max-w-xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
+                      width={1000}
+                      height={1100}
+                      className="object-cover w-full h-full max-w-4xl rounded-2xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
                       priority
                       loading="eager"
                       fetchPriority="high"
                       quality={95}
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      sizes="(max-width: 768px) 100vw, 70vw"
                       placeholder="blur"
                       blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
+                      style={{
+                        minWidth: '400px',
+                        minHeight: '500px'
+                      }}
                     />
                     
                     {/* Overlay effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
                     
                     {/* Sparkle effect */}
                     <div className="absolute top-4 right-4 w-6 h-6 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-0 group-hover:scale-100">
@@ -436,6 +473,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Countries Header Section */}
+      <CountriesHeader />
 
       <main className="bg-white">
 
@@ -600,7 +640,19 @@ export default function HomePage() {
                 </div>
                 
                 <h2 className="text-3xl md:text-5xl font-bold text-gray-900">
-                  {t('homepage.before_after_title')}
+                  <span className="hand-drawn-underline">
+                    70% kupaca
+                    <svg viewBox="0 0 100 15" preserveAspectRatio="none">
+                      <path d="M1,12 Q8,3 18,8 Q25,2 35,7 Q42,4 50,9 Q58,3 68,8 Q75,5 85,10 Q92,6 99,12" />
+                    </svg>
+                  </span>
+                  {' '}izvrši ponovnu kupovinu u roku od{' '}
+                  <span className="hand-drawn-underline">
+                    20 dana
+                    <svg viewBox="0 0 100 15" preserveAspectRatio="none">
+                      <path d="M1,12 Q8,3 18,8 Q25,2 35,7 Q42,4 50,9 Q58,3 68,8 Q75,5 85,10 Q92,6 99,12" />
+                    </svg>
+                  </span>
                 </h2>
                 <p className="text-xl text-gray-600 leading-relaxed">
                   {t('homepage.before_after_subtitle')}
@@ -682,26 +734,28 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="relative">
-                <div className="aspect-square bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden">
-                                     <Image
-                     src={HOMEPAGE_IMAGES.naturalScience.main}
-                     alt={t('homepage.nature_science_alt')}
-                     width={500}
-                     height={500}
-                     className="object-cover w-full h-full"
-                     loading="lazy"
-                     quality={80}
-                     sizes="(max-width: 768px) 100vw, 50vw"
-                     placeholder="blur"
-                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
-                   />
-                   <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                     <div className="text-center text-white">
-                       <Leaf className="w-20 h-20 mx-auto mb-4" />
-                       <p className="text-xl font-bold">{t('homepage.nature_science_text')}</p>
-                     </div>
-                   </div>
-                </div>
+                <EnhancedImageEffect
+                  src={HOMEPAGE_IMAGES.naturalScience.main}
+                  alt={t('homepage.nature_science_alt')}
+                  width={500}
+                  height={500}
+                  className="aspect-square bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl"
+                  effectType="parallax"
+                  scrollEffect={true}
+                  hoverEffect={true}
+                  quality={80}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
+                  overlayContent={
+                    <div className="flex items-center justify-center">
+                      <div className="text-center text-white">
+                        <Leaf className="w-20 h-20 mx-auto mb-4" />
+                        <p className="text-xl font-bold">{t('homepage.nature_science_text')}</p>
+                      </div>
+                    </div>
+                  }
+                />
               </div>
               
               <div className="space-y-6">
@@ -715,21 +769,18 @@ export default function HomePage() {
                    {t('homepage.natural_science_subtitle')}
                  </p>
                 
-                <div className="grid md:grid-cols-2 gap-4">
-                                     <div className="flex items-start gap-3">
-                     <Zap className="h-5 w-5 text-brand-orange mt-1" />
-                     <div>
-                       <h4 className="font-semibold text-gray-900">{t('homepage.fast_absorption')}</h4>
-                       <p className="text-sm text-gray-600">{t('homepage.fast_absorption_desc')}</p>
-                     </div>
-                   </div>
-                   <div className="flex items-start gap-3">
-                     <ShieldCheck className="h-5 w-5 text-brand-green mt-1" />
-                     <div>
-                       <h4 className="font-semibold text-gray-900">{t('homepage.safe_formula')}</h4>
-                       <p className="text-sm text-gray-600">{t('homepage.safe_formula_desc')}</p>
-                     </div>
-                   </div>
+                <div className="w-full bg-gray-50 rounded-lg p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="bg-brand-green/10 p-3 rounded-full">
+                        <ShieldCheck className="h-6 w-6 text-brand-green" />
+                      </div>
+                    </div>
+                    <div className="text-left">
+                      <h4 className="font-semibold text-gray-900 text-lg">{t('homepage.fast_absorption')}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{t('guarantee.description')}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
