@@ -303,7 +303,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Order processing failed - webhook error',
+          error: 'Processing error',
           details: webhookError,
           webhookStatus,
           orderId
@@ -336,7 +336,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Failed to process order',
+        error: 'Order processing error',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }

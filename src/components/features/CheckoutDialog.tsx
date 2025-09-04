@@ -199,7 +199,7 @@ export function CheckoutDialog({
       
       {/* Dialog content */}
       <div 
-        className="relative z-10 w-full max-w-md mx-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-6 animate-in fade-in-0 zoom-in-95 duration-200"
+        className="relative z-10 w-[90%] max-w-md mx-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-6 animate-in fade-in-0 zoom-in-95 duration-200"
         style={{
           backgroundColor: '#ffffff',
           border: '1px solid #e5e7eb',

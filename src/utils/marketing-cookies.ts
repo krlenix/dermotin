@@ -1,5 +1,3 @@
-'use client';
-
 export interface MarketingParams {
   campaign_id: string | null;
   adset_id: string | null;
