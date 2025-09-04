@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { Clock } from 'lucide-react';
+import { isComponentEnabled } from '@/config/constants';
 
 interface UrgencyTimerProps {
   duration: number; // Duration in hours
@@ -11,6 +13,7 @@ interface UrgencyTimerProps {
 
 export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
   const t = useTranslations();
+  const locale = useLocale();
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
     minutes: 0,
@@ -19,6 +22,11 @@ export function UrgencyTimer({ duration, className }: UrgencyTimerProps) {
 
   const [isTicking, setIsTicking] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Check if UrgencyTimer is enabled for current locale
+  if (!isComponentEnabled('urgencyTimer', locale)) {
+    return null;
+  }
 
   useEffect(() => {
     setMounted(true);

@@ -74,6 +74,39 @@ export const BUSINESS_CONFIG = {
   }
 } as const;
 
+// Feature Flags Configuration
+export const FEATURE_FLAGS = {
+  // Component visibility by locale
+  components: {
+    urgencyTimer: {
+      enabled: {
+        rs: false,  // Disabled for RS locale
+        ba: true,   // Enabled for BA locale
+      }
+    },
+    // Add more component feature flags here as needed
+    // Example:
+    // wheelOfFortune: {
+    //   enabled: {
+    //     rs: true,
+    //     ba: true,
+    //   }
+    // }
+  }
+} as const;
+
+// Helper function to check if a component is enabled for a specific locale
+export function isComponentEnabled(component: keyof typeof FEATURE_FLAGS.components, locale: string): boolean {
+  const componentConfig = FEATURE_FLAGS.components[component];
+  if (!componentConfig || !componentConfig.enabled) {
+    return true; // Default to enabled if not configured
+  }
+  
+  // Check if the locale is specifically configured
+  const localeEnabled = componentConfig.enabled[locale as keyof typeof componentConfig.enabled];
+  return localeEnabled !== undefined ? localeEnabled : true; // Default to enabled if locale not found
+}
+
 // Dynamic configuration functions
 export function getShippingInfo(countryCode: string) {
   const countryConfig = getCountryConfig(countryCode);

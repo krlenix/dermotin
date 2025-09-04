@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Product } from '@/config/products';
 import { CountryConfig, getDefaultCourier, CourierInfo } from '@/config/countries';
 
@@ -13,6 +13,7 @@ import { BundleSelector } from '@/components/features/BundleSelector';
 import { CheckoutForm } from '@/components/features/CheckoutForm';
 import { UrgencyTimer } from '@/components/features/UrgencyTimer';
 import { CookieConsent } from '@/components/features/CookieConsent';
+import { isComponentEnabled } from '@/config/constants';
 
 import dynamic from 'next/dynamic';
 
@@ -59,6 +60,7 @@ interface AdvancedLandingPageProps {
 
 export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingPageProps) {
   const t = useTranslations();
+  const locale = useLocale();
 
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
@@ -579,7 +581,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 </div>
 
                 {/* Sand Timer Countdown */}
-                <UrgencyTimer duration={24} />
+                {isComponentEnabled('urgencyTimer', locale) && (
+                  <UrgencyTimer duration={24} />
+                )}
               </div>
 
               {/* Key Benefits */}

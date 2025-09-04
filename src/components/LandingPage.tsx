@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Product } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { Footer } from '@/components/ui/footer';
-
+import { isComponentEnabled } from '@/config/constants';
 
 import { ShoppingCart, Star, Shield, Truck } from 'lucide-react';
 
@@ -27,6 +27,7 @@ interface LandingPageProps {
 
 export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPageProps) {
   const t = useTranslations();
+  const currentLocale = useLocale();
   // Simple price formatter using the country's currency symbol (no conversion)
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('sr-RS', {
@@ -86,7 +87,7 @@ export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPa
 
             {/* Urgency Elements */}
             <div className="space-y-4">
-              {product.urgencyElements.limitedTime && (
+              {product.urgencyElements.limitedTime && isComponentEnabled('urgencyTimer', currentLocale) && (
                 <UrgencyTimer duration={24} />
               )}
               {product.urgencyElements.limitedStock && (

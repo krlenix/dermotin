@@ -24,7 +24,9 @@ export {
   API_ENDPOINTS, 
   SOCIAL_LINKS, 
   UI_CONFIG,
-  BUSINESS_CONFIG
+  BUSINESS_CONFIG,
+  FEATURE_FLAGS,
+  isComponentEnabled
 } from './app-config';
 
 // Payment methods
