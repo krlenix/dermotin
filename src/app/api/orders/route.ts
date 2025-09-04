@@ -4,6 +4,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
+import { getMarketingCookiesFromHeaders } from '@/utils/marketing-cookies';
 
 // Configure dayjs with timezone support
 dayjs.extend(utc);
@@ -193,6 +194,11 @@ export async function POST(request: NextRequest) {
     // Get current domain early in the handler
     const currentDomain = getCurrentDomain(request);
 
+    // Get marketing parameters from cookies
+    const cookieHeader = request.headers.get('cookie');
+    const marketingParams = getMarketingCookiesFromHeaders(cookieHeader);
+    console.log('📊 Marketing parameters from cookies:', marketingParams);
+
     const orderData: Omit<OrderData, 'orderId'> = await request.json();
     
     // Generate order ID
@@ -254,10 +260,10 @@ export async function POST(request: NextRequest) {
       },
       discount_codes: [],
       marketing: {
-        campaign_id: null,
-        adset_id: null,
-        ad_id: null,
-        medium: 'website'
+        campaign_id: marketingParams.campaign_id,
+        adset_id: marketingParams.adset_id,
+        ad_id: marketingParams.ad_id,
+        medium: marketingParams.medium
       }
     };
 

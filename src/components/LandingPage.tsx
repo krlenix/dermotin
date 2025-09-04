@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Product } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
@@ -11,6 +11,8 @@ import { UrgencyTimer } from '@/components/features/UrgencyTimer';
 import { SocialProof } from '@/components/features/SocialProof';
 import { StockIndicator } from '@/components/features/StockIndicator';
 import { CookieConsent } from '@/components/features/CookieConsent';
+import { useMarketingTracking } from '@/hooks/useMarketingTracking';
+import { MarketingDebug } from '@/components/features/MarketingDebug';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { Footer } from '@/components/ui/footer';
@@ -28,6 +30,17 @@ interface LandingPageProps {
 export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPageProps) {
   const t = useTranslations();
   const currentLocale = useLocale();
+
+  // Initialize marketing tracking
+  const { marketingParams, hasMarketingData } = useMarketingTracking();
+  
+  // Log marketing data for debugging
+  useEffect(() => {
+    if (hasMarketingData) {
+      console.log('📊 Marketing tracking active:', marketingParams);
+    }
+  }, [marketingParams, hasMarketingData]);
+
   // Simple price formatter using the country's currency symbol (no conversion)
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('sr-RS', {
@@ -213,6 +226,9 @@ export function LandingPage({ product, countryConfig, locale = 'rs' }: LandingPa
 
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />
+
+      {/* Marketing Debug Component (development only) */}
+      <MarketingDebug isDevelopment={process.env.NODE_ENV === 'development'} />
     </div>
   );
 }

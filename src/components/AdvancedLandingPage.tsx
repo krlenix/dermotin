@@ -44,6 +44,8 @@ import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 
 import { PixelTracker } from '@/components/tracking/PixelTracker';
+import { useMarketingTracking } from '@/hooks/useMarketingTracking';
+import { MarketingDebug } from '@/components/features/MarketingDebug';
 import { toast } from 'sonner';
 import { 
   Star, 
@@ -61,6 +63,16 @@ interface AdvancedLandingPageProps {
 export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingPageProps) {
   const t = useTranslations();
   const locale = useLocale();
+
+  // Initialize marketing tracking
+  const { marketingParams, hasMarketingData } = useMarketingTracking();
+  
+  // Log marketing data for debugging
+  useEffect(() => {
+    if (hasMarketingData) {
+      console.log('📊 Marketing tracking active:', marketingParams);
+    }
+  }, [marketingParams, hasMarketingData]);
 
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
@@ -850,6 +862,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
           </div>
         </div>
       )}
+
+      {/* Marketing Debug Component (development only) */}
+      <MarketingDebug isDevelopment={process.env.NODE_ENV === 'development'} />
     </div>
   );
 }

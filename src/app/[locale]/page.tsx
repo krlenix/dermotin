@@ -370,7 +370,7 @@ export default function HomePage() {
         </div>
         
         <div className="container mx-auto px-4 pt-20 md:pt-24">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center min-h-[80vh] max-w-full overflow-hidden">
             {/* Left Content - Optimized for LCP */}
             <div className="space-y-8 lg:pr-8">
               {/* Badge */}
@@ -425,31 +425,33 @@ export default function HomePage() {
             </div>
             
             {/* Right Image - Optimized for LCP */}
-            <div className="relative lg:h-[700px]">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-green-100/30 rounded-3xl animate-float"></div>
-              <div className="relative h-full flex items-center justify-center p-6">
-                <div className="relative group">
+            <div className="relative w-full max-w-full">
+              {/* Background overlay - behind image on desktop */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-green-100/30 rounded-3xl animate-float lg:z-0"></div>
+              
+              <div className="relative h-full flex items-center justify-center p-4 md:p-6 max-w-full lg:h-[600px] lg:z-10">
+                <div className="relative group w-full max-w-full lg:max-w-[500px] lg:z-20">
                   {/* Enhanced background glow effect */}
-                  <div className="absolute -inset-8 bg-gradient-to-r from-brand-green/20 via-transparent to-brand-orange/20 rounded-3xl blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
+                  <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-r from-brand-green/20 via-transparent to-brand-orange/20 rounded-3xl blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
                   
-                  {/* Additional floating particles */}
-                  <div className="absolute -top-4 -left-4 w-8 h-8 bg-brand-green/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.2s'}}></div>
-                  <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-brand-orange/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.4s'}}></div>
-                  <div className="absolute top-1/2 -right-6 w-4 h-4 bg-brand-green/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.6s'}}></div>
+                  {/* Additional floating particles - hidden on mobile for cleaner look */}
+                  <div className="hidden md:block absolute -top-4 -left-4 w-8 h-8 bg-brand-green/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.2s'}}></div>
+                  <div className="hidden md:block absolute -bottom-4 -right-4 w-6 h-6 bg-brand-orange/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.4s'}}></div>
+                  <div className="hidden md:block absolute top-1/2 -right-6 w-4 h-4 bg-brand-green/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.6s'}}></div>
                   
                   {/* Main image with enhanced hover effects */}
-                  <div className="relative overflow-visible shadow-2xl group-hover:shadow-3xl transition-all duration-700">
+                  <div className="relative transition-all duration-700 max-w-full rounded-2xl lg:z-30">
                     <Image
                       src={HOMEPAGE_IMAGES.hero.main}
                       alt={t('homepage.natural_beauty_alt')}
-                      width={1000}
-                      height={1100}
-                      className="object-cover w-full h-full max-w-4xl rounded-2xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
+                      width={800}
+                      height={900}
+                      className="object-contain w-full h-auto max-w-full transition-all duration-700 group-hover:scale-[1.02] rounded-2xl relative lg:z-40"
                       priority
                       loading="eager"
                       fetchPriority="high"
-                      quality={95}
-                      sizes="(max-width: 768px) 100vw, 70vw"
+                      quality={100}
+                      sizes="(max-width: 768px) 90vw, (max-width: 1024px) 50vw, 500px"
                       placeholder="blur"
                       blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
                       style={{
