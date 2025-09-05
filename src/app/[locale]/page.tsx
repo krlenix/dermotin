@@ -399,7 +399,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 pt-20 md:pt-24">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center min-h-[80vh] max-w-full overflow-hidden">
             {/* Left Content - Optimized for LCP */}
-            <div className="space-y-8 lg:pr-8">
+            <div className="space-y-8 lg:pr-8 text-center lg:text-left">
               {/* Badge */}
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-green/10 to-emerald-100/50 border border-brand-green/20 rounded-full text-sm font-medium text-brand-green animate-fadeInUp">
                 <Sparkles className="w-4 h-4 mr-2" />
@@ -411,13 +411,13 @@ export default function HomePage() {
                   {t('homepage.hero_title')}
                 </h1>
                 
-                <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-lg animate-fadeInUp" style={{animationDelay: '0.2s'}}>
+                <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
                   {t('homepage.hero_subtitle')}
                 </p>
 
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
+              <div className="flex flex-col sm:flex-row gap-4 animate-fadeInUp justify-center lg:justify-start" style={{animationDelay: '0.4s'}}>
                 <Button 
                   size="lg" 
                   onClick={scrollToProducts}
@@ -435,7 +435,7 @@ export default function HomePage() {
               </div>
 
               {/* Trust indicators */}
-              <div className="flex flex-wrap items-center gap-6 pt-4 animate-fadeInUp" style={{animationDelay: '0.5s'}}>
+              <div className="flex flex-wrap items-center gap-6 pt-4 animate-fadeInUp justify-center lg:justify-start" style={{animationDelay: '0.5s'}}>
                 <div className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-brand-green" />
                   <span className="text-sm text-gray-600">{t('homepage.trust_dermatologically_tested')}</span>
@@ -648,7 +648,7 @@ export default function HomePage() {
         {/* Trust Badges Section */}
         <section className="py-8 bg-gradient-to-r from-gray-50 to-white border-y border-gray-100">
           <div className="container mx-auto px-4">
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 lg:gap-12">
               <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
                 <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
                   <Shield className="w-5 h-5 text-brand-green" />
