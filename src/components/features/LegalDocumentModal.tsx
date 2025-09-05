@@ -41,10 +41,12 @@ export function LegalDocumentModal({
         throw new Error('Failed to load document');
       }
       
-      const template = await response.text();
+      const data = await response.json();
+      const template = data.content;
+      const dynamicDomain = data.domain;
       
-      // Process placeholders
-      const processedContent = processTemplate(template, countryConfig);
+      // Process placeholders with dynamic domain
+      const processedContent = processTemplate(template, countryConfig, dynamicDomain);
       setContent(processedContent);
     } catch (error) {
       console.error('Error loading legal document:', error);
@@ -60,18 +62,15 @@ export function LegalDocumentModal({
     }
   }, [isOpen, documentType, loadDocument]);
 
-  const processTemplate = (template: string, config: CountryConfig): string => {
+  const processTemplate = (template: string, config: CountryConfig, dynamicDomain?: string): string => {
     let processed = template;
 
-    // Get the correct website domain - prioritize environment variable
-    const websiteDomain = process.env.NEXT_PUBLIC_DOMAIN?.replace(/^https?:\/\//, '') || 
-                         process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, '') || 
-                         config.company.website;
+    // Use dynamic domain from URL if available, otherwise fallback to config
+    const websiteDomain = dynamicDomain || config.company.website;
     
     // Debug logging - remove this after testing
     console.log('Legal Document Debug:', {
-      NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
-      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      dynamicDomain,
       configWebsite: config.company.website,
       finalWebsiteDomain: websiteDomain
     });

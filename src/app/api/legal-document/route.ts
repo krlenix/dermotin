@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { getWebsiteDomainFromRequest } from '@/lib/utils';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -18,9 +19,16 @@ export async function GET(request: NextRequest) {
     // Check if file exists and read it
     const content = await fs.readFile(filePath, 'utf-8');
     
-    return new NextResponse(content, {
+    // Get the dynamic domain from the request
+    const dynamicDomain = getWebsiteDomainFromRequest(request);
+    
+    // Return both content and domain for client-side processing
+    return NextResponse.json({
+      content,
+      domain: dynamicDomain
+    }, {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Type': 'application/json; charset=utf-8',
       },
     });
   } catch (error) {

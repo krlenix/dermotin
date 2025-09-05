@@ -83,7 +83,7 @@ interface WebhookPayload {
   };
 }
 
-// Function to get domain for X-Shop-Domain header (always use NEXT_PUBLIC_DOMAIN)
+// Function to get domain for X-Shop-Domain header (prioritize dynamic URL detection)
 function getCurrentDomain(req: NextRequest): string {
   const host = req.headers.get('host');
   const envDomain = process.env.NEXT_PUBLIC_DOMAIN;
@@ -91,16 +91,16 @@ function getCurrentDomain(req: NextRequest): string {
   console.log(`🌐 Host header from request: "${host}"`);
   console.log(`🌐 NEXT_PUBLIC_DOMAIN env var: "${envDomain}"`);
   
-  // Always prioritize NEXT_PUBLIC_DOMAIN for X-Shop-Domain header
-  if (envDomain) {
-    console.log(`🌐 Using NEXT_PUBLIC_DOMAIN: "${envDomain}"`);
-    return envDomain;
+  // Prioritize host header from request (dynamic URL detection)
+  if (host) {
+    console.log(`🌐 Using dynamic host header: "${host}"`);
+    return host;
   }
   
-  // Fallback to host header if NEXT_PUBLIC_DOMAIN is not set
-  if (host) {
-    console.log(`🌐 Fallback to host header: "${host}"`);
-    return host;
+  // Fallback to environment variable if no host header
+  if (envDomain) {
+    console.log(`🌐 Fallback to NEXT_PUBLIC_DOMAIN: "${envDomain}"`);
+    return envDomain;
   }
   
   // Last resort fallback
