@@ -30,6 +30,9 @@ export const metadata: Metadata = {
   title: "DERMOTIN - Prirodni proizvodi za zdravu kožu",
   description: "DERMOTIN - Otkrijte našu ekskluzivnu kolekciju dermatoloških proizvoda za zdravu i negovanu kožu.",
   keywords: "dermotin, kozmetika, nega kože, prirodni proizvodi, antifungal",
+  icons: {
+    icon: "/images/main/favicon.png",
+  },
   openGraph: {
     title: "DERMOTIN - Prirodni proizvodi za zdravu kožu",
     description: "Otkrijte našu ekskluzivnu kolekciju dermatoloških proizvoda za zdravu i negovanu kožu.",
