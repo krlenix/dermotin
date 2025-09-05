@@ -4,16 +4,16 @@ export const PRODUCTS: Record<string, Product> = {
   fungel: {
     id: 'fungel',
     name: 'FUNGEL',
-    description: 'Prirodna formula koja podržava negu problematične kože. Smiruje iritacije i podržava obnovu oštećene kože. Pruža hidrataciju i pomaže u održavanju zdravlja kože. Pogodan za svakodnevnu upotrebu, čak i na osetljivoj koži. Bez parabena, veštačkih boja i mirisa, idealan je za prirodnu i bezbednu negu kože.',
-    shortDescription: 'Prirodna formula za podršku u borbi protiv gljivičnih infekcija',
+    description: 'Namenjena borbi protiv gljivičnih infekcija na stopalima i noktima. Pomaže u smanjenju neprijatnih simptoma kao što su zadebljali i žuti nokti, svrab, crvenilo i perutanje kože. Redovnom upotrebom doprinosi zdravijem izgledu kože i noktiju, sprečavajući ponovno širenje infekcije.',
+    shortDescription: 'Blistavi nokti i koža stopala',
     purpose: 'Pomaže problematičnoj koži i noktima u borbi protiv gljivičnih infekcija',
     category: 'skincare',
     images: {
-      main: '/images/products/fungel/fungel-box-and-product-mockup.png',
+      main: '/images/products/fungel/fungel-old-product-image.png',
       gallery: [
         '/images/products/fungel/fungel-box-only.png',
         '/images/products/fungel/fungel-open-bottle.png',
-        '/images/products/fungel/fungel-old-product-image.png'
+        '/images/products/fungel/fungel-box-and-product-mockup.png'
       ],
       thumbnail: '/images/products/fungel/fungel-box-only.png',
       fallback: '/images/products/fungel/fungel-box-and-product-mockup.png'
@@ -274,16 +274,16 @@ export const PRODUCTS: Record<string, Product> = {
   biomelis: {
     id: 'biomelis',
     name: 'BIOMELIS',
-    description: 'Prirodna formula koja podržava negu osetljive kože. Smiruje crvenilo, svrab i iritacije, dok podržava regeneraciju oštećene kože. Pruža zaštitu od spoljašnjih uticaja i doprinosi dugotrajnoj hidrataciji. Pogodan je za svakodnevnu upotrebu, čak i za najosetljiviju kožu. Bez parabena, veštačkih boja i mirisa, ovaj melem je idealan izbor za prirodnu i bezbednu negu kože.',
-    shortDescription: 'Prirodna formula za podršku u borbi protiv ekcema i psorijaze - 50ml',
+    description: 'Ublažava tegobe izazvane ekcemima i psorijazom. Njegova biljna formula neguje kožu, smanjuje upalu i osećaj svraba. Pogodan je za svakodnevnu upotrebu i doprinosi obnavljanju prirodne barijere kože.',
+    shortDescription: 'Umirujuća nega za osetljivu kožu',
     purpose: 'Pomaže osetljivoj koži u borbi protiv ekcema i psorijaze',
     category: 'skincare',
     images: {
-      main: '/images/products/biomelis/biomelis-box-and-product-mockup.png',
+      main: '/images/products/biomelis/biomelis-old-product-image.png',
       gallery: [
         '/images/products/biomelis/biomelis-box-only.png',
         '/images/products/biomelis/biomelis-open-bottle.png',
-        '/images/products/biomelis/biomelis-old-product-image.png'
+        '/images/products/biomelis/biomelis-box-and-product-mockup.png'
       ],
       thumbnail: '/images/products/biomelis/biomelis-box-only.png',
       fallback: '/images/products/biomelis/biomelis-box-and-product-mockup.png'
@@ -632,8 +632,8 @@ export const PRODUCTS: Record<string, Product> = {
   biowart: {
     id: 'biowart',
     name: 'BIOWART',
-    description: 'Prirodna pomoć u borbi protiv virusnih bradavica. Ubrzava proces regeneracije kože pogođene virusnim bradavicama. Pruža zaštitu od iritacija i ubrzava zarastanje kože. Pogodan za svakodnevnu upotrebu, čak i na osetljivoj koži. Bez parabena, veštačkih boja i mirisa, idealan je za prirodnu i bezbednu negu kože.',
-    shortDescription: 'Prirodna pomoć u borbi protiv virusnih bradavica',
+    description: 'Prirodna pomoć kod uklanjanja virusnih bradavica. Deluje lokalno, ubrzava povlačenje promena i regeneraciju kože. Redovnom primenom smanjuje rizik od ponovnog pojavljivanja bradavica.',
+    shortDescription: 'Biljna formula za ciljanu negu kože',
     purpose: 'Podržava regeneraciju kože pogođene virusnim bradavicama',
     category: 'skincare',
     slug: 'biowart',
@@ -650,11 +650,11 @@ export const PRODUCTS: Record<string, Product> = {
       }
     },
     images: {
-      main: '/images/products/biowart/biowart-box-and-product-mockup.png',
+      main: '/images/products/biowart/biowart-old-product-image.png',
       gallery: [
         '/images/products/biowart/biowart-box-only.png',
         '/images/products/biowart/biowart-open-bottle.png',
-        '/images/products/biowart/biowart-old-product-image.png'
+        '/images/products/biowart/biowart-box-and-product-mockup.png'
       ],
       thumbnail: '/images/products/biowart/biowart-box-only.png',
       fallback: '/images/products/biowart/biowart-box-and-product-mockup.png'
@@ -780,8 +780,8 @@ export const PRODUCTS: Record<string, Product> = {
   bioroid: {
     id: 'bioroid',
     name: 'BIOROID',
-    description: 'Prirodna podrška za ublažavanje iritacije i nelagodnosti kože analnog područja. Smiruje osećaj svraba, pečenja i nelagodnosti. Podržava regeneraciju osetljive kože uz održavanje hidratacije. Stvara nežnu zaštitnu barijeru protiv spoljašnjih faktora. Pogodan za svakodnevnu upotrebu, čak i na osetljivoj i iritiranoj koži. Bez parabena, veštačkih boja i mirisa - prirodan i bezbedan izbor za negu kože.',
-    shortDescription: 'Prirodna podrška za ublažavanje iritacije kože analnog područja',
+    description: 'Može da pruža olakšanje kod bola, svraba i peckanja izazvanih hemoroidima. Zahvaljujući biljnim ekstraktima pomaže u smanjenju otoka i iritacije. Redovna upotreba doprinosi regeneraciji tkiva i boljoj udobnosti tokom dana.',
+    shortDescription: 'Blaga podrška osetljivim regijama',
     purpose: 'Pomaže u nezi i zaštiti osetljive kože analnog područja',
     category: 'skincare',
     slug: 'bioroid',
@@ -798,11 +798,11 @@ export const PRODUCTS: Record<string, Product> = {
       }
     },
     images: {
-      main: '/images/products/bioroid/bioroid-box-and-product-mockup.png',
+      main: '/images/products/bioroid/bioroid-old-product-image.png',
       gallery: [
         '/images/products/bioroid/bioroid-box-only.png',
         '/images/products/bioroid/bioroid-open-bottle.png',
-        '/images/products/bioroid/bioroid-old-product-image.png'
+        '/images/products/bioroid/bioroid-box-and-product-mockup.png'
       ],
       thumbnail: '/images/products/bioroid/bioroid-box-only.png',
       fallback: '/images/products/bioroid/bioroid-box-and-product-mockup.png'
@@ -979,8 +979,8 @@ export const PRODUCTS: Record<string, Product> = {
   biomelis_kapi: {
     id: 'biomelis_kapi',
     name: 'BIOMELIS KAPI',
-    description: 'Dodatak ishrani na bazi vodeno-etanolnih ekstrakata ploda badelja, lista koprive, korena maslačka, korena čička, herbe rastavića i herbe lazarkinje. Zahvaljujući sadržaju silimarina, badel ispolja regenerativno delovanje na hepatocite, deluje kao hepatoprotektiv i doprinosi zdravlju jetre. Maslačak doprinosi normalnoj funkciji žlezuda i jetre.',
-    shortDescription: 'Prirodni dodatak ishrani za podršku zdravlja jetre - 50ml',
+    description: 'Podržavaju prirodne procese detoksikacije u organizmu. Pomažu boljoj funkciji jetre i bubrega, podstičući izbacivanje toksina. Redovnim korišćenjem doprinose jačanju imuniteta i osećaju vitalnosti.',
+    shortDescription: 'Prirodna biljna kombinacija',
     purpose: 'Podržava normalnu funkciju jetre i žlezuda',
     category: 'supplements',
     images: {
@@ -1203,8 +1203,8 @@ export const PRODUCTS: Record<string, Product> = {
   bioroid_kapi: {
     id: 'bioroid_kapi',
     name: 'BIOROID KAPI',
-    description: 'Prirodno olakšanje za hemoroide i analnu nelagodu. Hajdučka trava, neven i hrastova kora ublažavaju upalu i krvarenje. Čičak i kleka doprinose boljoj cirkulaciji i smanjenju otoka. Maslačak pomaže detoksikaciji i oporavku tkiva. Bez parabena, veštačkih boja i mirisa – čista biljna snaga, spremna za svakodnevnu upotrebu.',
-    shortDescription: 'Prirodni dodatak ishrani za podršku kod hemoroida - 50ml',
+    description: 'Namenjene ublažavanju unutrašnjih tegoba izazvanih hemoroidima. Pomažu u smanjenju upale i jačanju krvnih sudova. Njihova prirodna formula doprinosi olakšanju i podržava normalnu cirkulaciju.',
+    shortDescription: 'Tradicionalna biljna formula',
     purpose: 'Podržava ublažavanje nelagodnosti kod hemoroida i analne iritacije',
     category: 'supplements',
     images: {
@@ -1414,8 +1414,8 @@ export const PRODUCTS: Record<string, Product> = {
   immunis_kapi: {
     id: 'immunis_kapi',
     name: 'IMMUNIS KAPI',
-    description: 'Prirodna podrška imunitetu tokom cele godine. Ehinacea i kopriva aktiviraju odbrambene mehanizme. Majčina dušica i maslina štite disajne puteve i imaju antiseptičko dejstvo. Lavanda pomaže opuštanju i kvalitetnijem snu. Bez parabena, veštačkih boja i mirisa – čista moć odabranog bilja.',
-    shortDescription: 'Prirodni dodatak ishrani za podršku imuniteta - 50ml',
+    description: 'Jačaju prirodni odbrambeni sistem organizma. Sadrže pažljivo odabrane biljne sastojke koji pomažu u povećanju otpornosti na infekcije. Pogodne su za preventivnu upotrebu u periodima oslabljenog imuniteta.',
+    shortDescription: 'Biljna podrška organizmu',
     purpose: 'Podržava prirodnu odbrambenu sposobnost organizma',
     category: 'supplements',
     images: {
@@ -1626,8 +1626,8 @@ export const PRODUCTS: Record<string, Product> = {
   fungomax: {
     id: 'fungomax',
     name: 'FUNGOMAX',
-    description: 'Prirodna formula za negu kože i noktiju sklonih gljivičnim infekcijama. Deluje efikasno na problematične regije i smanjuje rizik od širenja gljivica. Obogaćen prirodnim sastojcima, bez parabena i veštačkih boja. Pogodan za svakodnevnu i dugotrajnu upotrebu. Idealan u kombinaciji sa FUNGEL kremom za dodatni efekat.',
-    shortDescription: 'Prirodna formula za negu kože i noktiju sklonih gljivičnim infekcijama',
+    description: 'Deluje dubinski na gljivične infekcije noktiju i kože stopala. Prodire u nokatnu ploču i pomaže u njenom jačanju i obnavljanju. Dugotrajnom upotrebom obezbeđuje zaštitu i zdrav izgled noktiju.',
+    shortDescription: 'Intenzivna nega noktiju i stopala',
     purpose: 'Pomaže koži i noktima sklonim gljivičnim infekcijama',
     category: 'skincare',
     images: {

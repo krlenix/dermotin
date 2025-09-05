@@ -577,8 +577,11 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 <h1 className="text-4xl font-bold text-gray-900 mb-3">
                   {product.name}
                 </h1>
-                <p className="text-xl text-gray-600 mb-4">
+                <p className="text-xl font-medium text-gray-700 mb-3">
                   {product.shortDescription}
+                </p>
+                <p className="text-lg text-gray-600 mb-4">
+                  {product.description}
                 </p>
                 
                 {/* Star Rating */}

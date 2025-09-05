@@ -42,10 +42,13 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
           countryTestimonials = await getRandomTestimonialsForCountry(countryCode);
         }
         
+        console.log('Loaded testimonials:', countryTestimonials.length, 'for product:', productId, 'country:', countryCode);
         setTestimonials(countryTestimonials);
+        setIsLoaded(true);
       } catch (error) {
         console.error('Failed to load testimonials:', error);
         setTestimonials([]);
+        setIsLoaded(true);
       }
     };
     
@@ -341,6 +344,23 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
         }, [updateCardScales, isTransitioning, isMobile, testimonials]);
 
   // Show loading state or empty state
+  if (!isLoaded) {
+    return (
+      <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
+        <div className="w-full">
+          <div className="text-center mb-8 px-4">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                {t('testimonials.section_title')}
+              </h2>
+              <div className="animate-pulse bg-gray-200 h-4 w-48 mx-auto rounded"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (testimonials.length === 0) {
     return (
       <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
@@ -351,7 +371,7 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
                 {t('testimonials.section_title')}
               </h2>
               <p className="text-gray-600">
-                {t('testimonials.loading')}
+                No testimonials available for this product.
               </p>
             </div>
           </div>
