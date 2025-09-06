@@ -114,6 +114,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
             }}
           />
           <noscript>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               height="1"
               width="1"
@@ -215,9 +216,23 @@ export function usePixelTracking(countryCode: string) {
 }
 
 // Global window interface extensions
+interface FacebookPixel {
+  (command: 'init', pixelId: string): void;
+  (command: 'track', eventName: string, eventData?: Record<string, unknown>): void;
+  (command: 'trackCustom', eventName: string, eventData?: Record<string, unknown>): void;
+  loaded?: boolean;
+  queue?: unknown[];
+}
+
+interface TikTokPixel {
+  load: (pixelId: string) => void;
+  page: () => void;
+  track: (eventName: string, eventData?: Record<string, unknown>) => void;
+}
+
 declare global {
   interface Window {
-    fbq: any;
-    ttq: any;
+    fbq: FacebookPixel;
+    ttq: TikTokPixel;
   }
 }
