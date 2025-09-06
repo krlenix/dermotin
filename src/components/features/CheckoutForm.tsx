@@ -172,6 +172,25 @@ export function CheckoutForm({
       const result = await onOrderSubmit(orderData);
       
       if (result.success) {
+        // Track Purchase event immediately after successful order submission
+        const purchaseEventData = {
+          content_name: productName,
+          content_category: 'Product',
+          content_ids: [selectedVariant.id || 'main-product'],
+          contents: [{
+            id: selectedVariant.id || 'main-product',
+            quantity: selectedVariant.quantity || 1,
+            item_price: finalTotal
+          }],
+          currency: countryConfig.currency || 'RSD',
+          value: finalTotal,
+          order_id: result.orderId,
+          num_items: selectedVariant.quantity || 1
+        };
+        
+        // Fire Purchase event for both Meta and TikTok
+        trackEvent('purchase', purchaseEventData);
+        
         // Set success dialog data
         setOrderResult({
           orderId: result.orderId,

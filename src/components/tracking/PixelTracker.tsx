@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Script from 'next/script';
 import { getPixelConfig, META_EVENTS, TIKTOK_EVENTS } from '@/config/pixels';
 
@@ -8,63 +8,80 @@ interface PixelTrackerProps {
   countryCode: string;
 }
 
-// Declare global types for pixel functions
-declare global {
-  interface Window {
-    fbq: {
-      (command: string, ...args: unknown[]): void;
-      callMethod?: (...args: unknown[]) => void;
-      queue?: unknown[];
-      push?: (args: unknown[]) => void;
-      loaded?: boolean;
-      version?: string;
-    };
-    ttq: {
-      load: (pixelId: string) => void;
-      page: () => void;
-      track: (event: string, data?: Record<string, unknown>) => void;
-    };
-  }
-}
-
-/**
- * PixelTracker component that loads Meta and TikTok pixels based on country configuration
- */
 export function PixelTracker({ countryCode }: PixelTrackerProps) {
-  // Fix hydration by only rendering on client side
   const [isClient, setIsClient] = useState(false);
   const initializedRef = useRef(false);
+  const pixelConfig = getPixelConfig(countryCode);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Only get pixel config on client side to avoid hydration mismatch
-  const pixelConfig = isClient ? getPixelConfig(countryCode) : { meta: { enabled: false, pixelId: '' }, tiktok: { enabled: false, pixelId: '' } };
-  
-
-
   useEffect(() => {
     // Only initialize on client side and when pixel config is available
     if (!isClient || initializedRef.current) return;
-    initializedRef.current = true;
+    
+    let metaInitialized = false;
+    let tiktokInitialized = false;
     
     // Initialize Meta Pixel
-    if (pixelConfig.meta.enabled && pixelConfig.meta.pixelId) {
+    const initMetaPixel = () => {
+      if (metaInitialized || !pixelConfig.meta.enabled || !pixelConfig.meta.pixelId) return;
+      
       if (typeof window !== 'undefined' && window.fbq) {
         window.fbq('init', pixelConfig.meta.pixelId);
         window.fbq('track', META_EVENTS.PAGE_VIEW);
+        metaInitialized = true;
       }
-    }
-
+    };
+    
     // Initialize TikTok Pixel
-    if (pixelConfig.tiktok.enabled && pixelConfig.tiktok.pixelId) {
+    const initTikTokPixel = () => {
+      if (tiktokInitialized || !pixelConfig.tiktok.enabled || !pixelConfig.tiktok.pixelId) return;
+      
       if (typeof window !== 'undefined' && window.ttq) {
         window.ttq.load(pixelConfig.tiktok.pixelId);
         window.ttq.page();
+        tiktokInitialized = true;
       }
+    };
+    
+    // Event listeners for script load events
+    const handleMetaPixelLoaded = () => {
+      setTimeout(initMetaPixel, 100); // Small delay to ensure script is fully ready
+    };
+    
+    const handleTikTokPixelLoaded = () => {
+      setTimeout(initTikTokPixel, 100); // Small delay to ensure script is fully ready
+    };
+    
+    // Add event listeners
+    if (typeof window !== 'undefined') {
+      window.addEventListener('metaPixelLoaded', handleMetaPixelLoaded);
+      window.addEventListener('tiktokPixelLoaded', handleTikTokPixelLoaded);
     }
-  }, [isClient, pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId]);
+    
+    // Try immediate initialization (in case scripts are already loaded)
+    setTimeout(() => {
+      initMetaPixel();
+      initTikTokPixel();
+    }, 500);
+    
+    // Cleanup function
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('metaPixelLoaded', handleMetaPixelLoaded);
+        window.removeEventListener('tiktokPixelLoaded', handleTikTokPixelLoaded);
+      }
+    };
+  }, [isClient, pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId, countryCode]);
+  
+  // Mark as initialized after first render
+  useEffect(() => {
+    if (isClient) {
+      initializedRef.current = true;
+    }
+  }, [isClient]);
 
   // Don't render anything on server side to prevent hydration mismatch
   if (!isClient) {
@@ -79,6 +96,10 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
           <Script
             id="meta-pixel"
             strategy="afterInteractive"
+            onLoad={() => {
+              // Trigger a custom event to notify that the script is ready
+              window.dispatchEvent(new CustomEvent('metaPixelLoaded'));
+            }}
             dangerouslySetInnerHTML={{
               __html: `
                 !function(f,b,e,v,n,t,s)
@@ -93,13 +114,12 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
             }}
           />
           <noscript>
-            <div
-              style={{ 
-                display: 'none',
-                backgroundImage: `url(https://www.facebook.com/tr?id=${pixelConfig.meta.pixelId}&ev=PageView&noscript=1)`,
-                width: '1px',
-                height: '1px'
-              }}
+            <img
+              height="1"
+              width="1"
+              style={{ display: 'none' }}
+              src={`https://www.facebook.com/tr?id=${pixelConfig.meta.pixelId}&ev=PageView&noscript=1`}
+              alt=""
             />
           </noscript>
         </>
@@ -110,6 +130,10 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
         <Script
           id="tiktok-pixel"
           strategy="afterInteractive"
+          onLoad={() => {
+            // Trigger a custom event to notify that the script is ready
+            window.dispatchEvent(new CustomEvent('tiktokPixelLoaded'));
+          }}
           dangerouslySetInnerHTML={{
             __html: `
               !function (w, d, t) {
@@ -123,9 +147,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
   );
 }
 
-/**
- * Hook to track events on both Meta and TikTok pixels
- */
+// Hook for tracking events
 export function usePixelTracking(countryCode: string) {
   const pixelConfig = getPixelConfig(countryCode);
 
@@ -150,9 +172,9 @@ export function usePixelTracking(countryCode: string) {
           metaEvent = META_EVENTS.ADD_TO_CART;
           break;
         default:
-          return;
+          metaEvent = META_EVENTS.PAGE_VIEW;
       }
-
+      
       if (eventData) {
         window.fbq('track', metaEvent, eventData);
       } else {
@@ -178,9 +200,9 @@ export function usePixelTracking(countryCode: string) {
           tiktokEvent = TIKTOK_EVENTS.ADD_TO_CART;
           break;
         default:
-          return;
+          tiktokEvent = TIKTOK_EVENTS.PAGE_VIEW;
       }
-
+      
       if (eventData) {
         window.ttq.track(tiktokEvent, eventData);
       } else {
@@ -190,4 +212,12 @@ export function usePixelTracking(countryCode: string) {
   };
 
   return { trackEvent };
+}
+
+// Global window interface extensions
+declare global {
+  interface Window {
+    fbq: any;
+    ttq: any;
+  }
 }

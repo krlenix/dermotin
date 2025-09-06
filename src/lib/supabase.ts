@@ -8,6 +8,21 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cC
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Database types
+export interface LineItem {
+  sku: string;
+  name: string;
+  quantity: number;
+  price: number;
+  item_total_price: number;
+  discount: number;
+}
+
+export interface DiscountCode {
+  code: string;
+  amount: number;
+  type: 'percentage' | 'fixed';
+}
+
 export interface OrderRecord {
   id?: number;
   order_id: string;
@@ -39,12 +54,12 @@ export interface OrderRecord {
   marketing_adset_id?: string;
   marketing_ad_id?: string;
   marketing_medium?: string;
-  line_items: any[];
-  discount_codes: any[];
+  line_items: LineItem[];
+  discount_codes: DiscountCode[];
   locale: string;
   domain?: string;
   webhook_received_at?: string;
-  raw_webhook_data?: any;
+  raw_webhook_data?: Record<string, unknown>;
 }
 
 // Service class for order operations
@@ -221,8 +236,54 @@ export class OrderService {
   }
 }
 
+// Webhook payload interface
+export interface WebhookPayload {
+  order_id: string;
+  created_at?: string;
+  currency: string;
+  total_price: number;
+  financial_status: string;
+  customer?: {
+    email?: string;
+    phone?: string;
+    note?: string;
+  };
+  billing_address?: {
+    name: string;
+    address1: string;
+    address2?: string;
+    city: string;
+    zip?: string;
+    country_code: string;
+    phone?: string;
+  };
+  shipping_address?: {
+    name: string;
+    address1: string;
+    address2?: string;
+    city: string;
+    zip?: string;
+    country_code: string;
+    phone?: string;
+  };
+  line_items?: LineItem[];
+  shipping?: {
+    price: number;
+    method?: string;
+  };
+  discount_codes?: DiscountCode[];
+  marketing?: {
+    campaign_id?: string | null;
+    adset_id?: string | null;
+    ad_id?: string | null;
+    medium?: string;
+  };
+  locale?: string;
+  domain?: string;
+}
+
 // Helper function to convert webhook payload to database record
-export function webhookToOrderRecord(webhookPayload: any, locale?: string, domain?: string): Omit<OrderRecord, 'id' | 'created_at' | 'updated_at' | 'webhook_received_at'> {
+export function webhookToOrderRecord(webhookPayload: WebhookPayload, locale?: string, domain?: string): Omit<OrderRecord, 'id' | 'created_at' | 'updated_at' | 'webhook_received_at'> {
   return {
     order_id: webhookPayload.order_id,
     currency: webhookPayload.currency,
@@ -235,21 +296,21 @@ export function webhookToOrderRecord(webhookPayload: any, locale?: string, domai
     customer_note: webhookPayload.customer?.note,
     
     // Billing address
-    billing_name: webhookPayload.billing_address?.name,
-    billing_address1: webhookPayload.billing_address?.address1,
+    billing_name: webhookPayload.billing_address?.name || '',
+    billing_address1: webhookPayload.billing_address?.address1 || '',
     billing_address2: webhookPayload.billing_address?.address2,
-    billing_city: webhookPayload.billing_address?.city,
+    billing_city: webhookPayload.billing_address?.city || '',
     billing_zip: webhookPayload.billing_address?.zip,
-    billing_country_code: webhookPayload.billing_address?.country_code,
+    billing_country_code: webhookPayload.billing_address?.country_code || '',
     billing_phone: webhookPayload.billing_address?.phone,
     
     // Shipping address
-    shipping_name: webhookPayload.shipping_address?.name,
-    shipping_address1: webhookPayload.shipping_address?.address1,
+    shipping_name: webhookPayload.shipping_address?.name || '',
+    shipping_address1: webhookPayload.shipping_address?.address1 || '',
     shipping_address2: webhookPayload.shipping_address?.address2,
-    shipping_city: webhookPayload.shipping_address?.city,
+    shipping_city: webhookPayload.shipping_address?.city || '',
     shipping_zip: webhookPayload.shipping_address?.zip,
-    shipping_country_code: webhookPayload.shipping_address?.country_code,
+    shipping_country_code: webhookPayload.shipping_address?.country_code || '',
     shipping_phone: webhookPayload.shipping_address?.phone,
     
     // Shipping info
@@ -257,9 +318,9 @@ export function webhookToOrderRecord(webhookPayload: any, locale?: string, domai
     shipping_method: webhookPayload.shipping?.method,
     
     // Marketing data
-    marketing_campaign_id: webhookPayload.marketing?.campaign_id,
-    marketing_adset_id: webhookPayload.marketing?.adset_id,
-    marketing_ad_id: webhookPayload.marketing?.ad_id,
+    marketing_campaign_id: webhookPayload.marketing?.campaign_id || undefined,
+    marketing_adset_id: webhookPayload.marketing?.adset_id || undefined,
+    marketing_ad_id: webhookPayload.marketing?.ad_id || undefined,
     marketing_medium: webhookPayload.marketing?.medium,
     
     // JSON fields
@@ -271,6 +332,6 @@ export function webhookToOrderRecord(webhookPayload: any, locale?: string, domai
     domain: domain || webhookPayload.domain,
     
     // Store raw webhook data for debugging
-    raw_webhook_data: webhookPayload
+    raw_webhook_data: webhookPayload as unknown as Record<string, unknown>
   };
 }

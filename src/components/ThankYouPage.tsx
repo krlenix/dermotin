@@ -11,7 +11,7 @@ import { Footer } from '@/components/ui/footer';
 import { OrderData } from '@/app/api/orders/route';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
+import { PixelTracker } from '@/components/tracking/PixelTracker';
 
 interface ThankYouPageProps {
   countryConfig: CountryConfig;
@@ -21,11 +21,9 @@ interface ThankYouPageProps {
 export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps) {
   const t = useTranslations();
   const router = useRouter();
-  const { trackEvent } = usePixelTracking(countryConfig.code);
   const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
-  const [purchaseTracked, setPurchaseTracked] = useState(false);
 
   useEffect(() => {
     // Get order data from session storage
@@ -45,31 +43,6 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
     setLoading(false);
   }, [router]);
 
-  // Track Purchase event when order data is loaded (only once)
-  useEffect(() => {
-    if (orderData && !purchaseTracked) {
-      setPurchaseTracked(true);
-      
-      // Prepare purchase event data
-      const purchaseEventData = {
-        content_name: orderData.productName,
-        content_category: 'Product',
-        content_ids: [orderData.productVariant || 'main-product'],
-        contents: [{
-          id: orderData.productVariant || 'main-product',
-          quantity: orderData.quantity || 1,
-          item_price: orderData.totalPrice
-        }],
-        currency: orderData.currency || countryConfig.currency || 'RSD',
-        value: orderData.totalPrice,
-        order_id: orderData.orderId,
-        num_items: orderData.quantity || 1
-      };
-      
-      // Track purchase event on both Meta and TikTok
-      trackEvent('purchase', purchaseEventData);
-    }
-  }, [orderData, purchaseTracked, trackEvent, countryConfig.currency]);
 
   // Animated progress steps
   useEffect(() => {

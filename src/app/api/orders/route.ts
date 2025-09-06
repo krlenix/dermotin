@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
 import { getMarketingCookiesFromHeaders } from '@/utils/marketing-cookies';
-import { OrderService, webhookToOrderRecord } from '@/lib/supabase';
+import { OrderService, webhookToOrderRecord, WebhookPayload } from '@/lib/supabase';
 
 // Configure dayjs with timezone support
 dayjs.extend(utc);
@@ -34,55 +34,7 @@ export interface OrderData {
   locale: string;
 }
 
-interface WebhookPayload {
-  order_id: string;
-  created_at: string;
-  currency: string;
-  total_price: number;
-  financial_status: string;
-  customer: {
-    email: string;
-    phone: string;
-    note: string;
-  };
-  billing_address: {
-    name: string;
-    address1: string;
-    address2: string;
-    city: string;
-    zip: string;
-    country_code: string;
-    phone: string;
-  };
-  shipping_address: {
-    name: string;
-    address1: string;
-    address2: string;
-    city: string;
-    zip: string;
-    country_code: string;
-    phone: string;
-  };
-  line_items: Array<{
-    sku: string;
-    name: string;
-    quantity: number;
-    price: number; // per unit price
-    item_total_price: number; // total price for this line item (price * quantity)
-    discount: number;
-  }>;
-  shipping: {
-    price: number;
-    method: string;
-  };
-  discount_codes: Array<unknown>;
-  marketing: {
-    campaign_id: string | null;
-    adset_id: string | null;
-    ad_id: string | null;
-    medium: string;
-  };
-}
+// WebhookPayload interface is now imported from supabase.ts
 
 // Function to get domain for X-Shop-Domain header (prioritize dynamic URL detection)
 function getCurrentDomain(req: NextRequest): string {
@@ -272,6 +224,9 @@ export async function POST(request: NextRequest) {
     if (orderData.bundleItems && Object.keys(orderData.bundleItems).length > 0) {
       Object.entries(orderData.bundleItems).forEach(([productId, totalPrice]) => {
         const bundleQuantity = 1; // Bundle items typically have quantity 1
+        if (!webhookPayload.line_items) {
+          webhookPayload.line_items = [];
+        }
         webhookPayload.line_items.push({
           sku: productId,
           name: `Bundle Item - ${productId}`,
