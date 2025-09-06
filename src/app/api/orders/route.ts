@@ -5,6 +5,7 @@ import utc from 'dayjs/plugin/utc';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
 import { getMarketingCookiesFromHeaders } from '@/utils/marketing-cookies';
+import { OrderService, webhookToOrderRecord } from '@/lib/supabase';
 
 // Configure dayjs with timezone support
 dayjs.extend(utc);
@@ -286,6 +287,31 @@ export async function POST(request: NextRequest) {
     let webhookStatus = 'pending';
     let webhookError = '';
     let webhookResult = null;
+    let supabaseStatus = 'pending';
+    let supabaseError = '';
+
+    // First, insert order into Supabase database
+    try {
+      console.log('💾 Inserting order into Supabase database:', orderId);
+      const orderRecord = webhookToOrderRecord(webhookPayload, orderData.locale, currentDomain);
+      const supabaseResult = await OrderService.insertOrder(orderRecord);
+      
+      if (supabaseResult.success) {
+        supabaseStatus = 'success';
+        console.log('✅ Order successfully saved to Supabase:', supabaseResult.data?.id);
+      } else {
+        supabaseStatus = 'failed';
+        supabaseError = supabaseResult.error || 'Unknown Supabase error';
+        console.error('❌ Failed to save order to Supabase:', supabaseError);
+        
+        // Continue with webhook even if Supabase fails (for now)
+        // You can change this behavior based on your requirements
+      }
+    } catch (supabaseErr) {
+      supabaseStatus = 'failed';
+      supabaseError = supabaseErr instanceof Error ? supabaseErr.message : 'Unknown Supabase error';
+      console.error('❌ Unexpected error saving to Supabase:', supabaseErr);
+    }
 
     // Send to webhook
     try {
@@ -306,6 +332,8 @@ export async function POST(request: NextRequest) {
           error: 'Processing error',
           details: webhookError,
           webhookStatus,
+          supabaseStatus,
+          supabaseError: supabaseError || undefined,
           orderId
         },
         { status: 500 }
@@ -320,13 +348,15 @@ export async function POST(request: NextRequest) {
     
     console.log('✅ Order processed successfully:', completeOrder);
     
-    // Return success response with order ID and webhook info
+    // Return success response with order ID, webhook info, and Supabase status
     return NextResponse.json({
       success: true,
       orderId,
       message: 'Order placed successfully',
       webhookStatus,
       webhookResult,
+      supabaseStatus,
+      supabaseError: supabaseError || undefined,
       domain: currentDomain,
       timestamp: webhookPayload.created_at
     });
