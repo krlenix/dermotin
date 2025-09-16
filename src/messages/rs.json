@@ -321,7 +321,7 @@
     "fast_delivery": "Brza dostava",
     "quality_guarantee": "Garancija kvaliteta",
     "delivery_info": "Podaci za dostavu",
-    "place_order": "Naruči za {amount}",
+    "place_order": "Naruči odmah",
     "processing_order": "Obrađujem narudžbu...",
     "secure_purchase_guarantee": "Sigurna kupovina sa garancijom povraćaja novca."
   },
