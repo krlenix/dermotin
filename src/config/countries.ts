@@ -222,7 +222,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         id: 'poste-srpske',
         name: 'Pošte Srpske',
         displayName: 'kurirske službe Pošte Srpske',
-        logo: '/images/couriers/postexpress.png',
+        logo: '/images/couriers/postesrpske.png',
         deliveryTime: '1-2 radna dana',
         trackingUrl: 'https://postesrpske.com/tracking',
         isDefault: true,

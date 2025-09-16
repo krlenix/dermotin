@@ -533,7 +533,7 @@ export function CheckoutForm({
                       <span className="text-xl">{t('order_summary.processing_order')}</span>
                     </div>
                   ) : (
-                    t('order_summary.place_order', { amount: formatPrice(finalTotal) })
+                    t('order_summary.place_order')
                   )}
                 </span>
               </Button>

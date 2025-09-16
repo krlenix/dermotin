@@ -23,9 +23,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'fungel-1pak',
         sku: 'FUNGEL',
         name: '1 PAKOVANJE (50ml)',
-        size: 'Okvirno 2 sedmice upotrebe',
+        size: 'Okvirno 3 sedmice upotrebe',
         quantity: 1,
-        price: 39.9,
+        price: 54.9,
         currency: 'BAM',
         discountPrice: 33.9,
         isDefault: true
@@ -34,9 +34,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'fungel-2pak',
         sku: 'FUNGEL',
         name: '2 PAKOVANJA (100ml)',
-        size: 'Okvirno mjesec dana upotrebe',
+        size: 'Okvirno mjesec i po upotrebe',
         quantity: 2,
-        price: 79.8,
+        price: 109.8,
         currency: 'BAM',
         discountPrice: 59.9
       },
@@ -44,9 +44,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'fungel-3pak',
         sku: 'FUNGEL',
         name: '3 PAKOVANJA (150ml)',
-        size: 'Okvirno 2 mjeseca upotrebe',
+        size: 'Okvirno 2 mjeseca i pol upotrebe',
         quantity: 3,
-        price: 119.7,
+        price: 164.7,
         currency: 'BAM',
         discountPrice: 79.9
       }
@@ -97,7 +97,7 @@ export const PRODUCTS: Record<string, Product> = {
       'sodium-benzoate',
       'potassium-sorbate'
     ],
-    usage: 'Nanositi 2 puta dnevno na problematične dijelove kože ili noktiju. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 2 sedmice redovne upotrebe).',
+    usage: 'Nanositi 2 puta dnevno na problematične dijelove kože ili noktiju. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 3 sedmice redovne upotrebe).',
     usageSteps: [
       'Očistite i osušite pogođeno mjesto',
       'Nanesite tanak sloj FUNGEL-a na problematičnu kožu ili nokte',
@@ -132,7 +132,7 @@ export const PRODUCTS: Record<string, Product> = {
     productFAQ: [
       {
         question: "Kako se koristi FUNGEL?",
-        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno na problemske dijelove kože ili noktiju. Ne treba da se ispira - samo ostaviti da se upije. Jedna tubica od 50ml traje oko 2 sedmice pri redovnoj upotrebi.",
+        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno na problemske dijelove kože ili noktiju. Ne treba da se ispira - samo ostaviti da se upije. Jedna tubica od 50ml traje oko 3 sedmice pri redovnoj upotrebi.",
         category: "usage"
       },
       {
@@ -269,9 +269,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'biomelis-1pak',
         sku: 'BIOMELIS',
         name: '1 PAKOVANJE (50ml)',
-        size: 'Okvirno 2 sedmice upotrebe',
+        size: 'Okvirno 3 sedmice upotrebe',
         quantity: 1,
-        price: 39.9,
+        price: 54.9,
         currency: 'BAM',
         discountPrice: 33.9,
         isDefault: true
@@ -280,9 +280,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'biomelis-2pak',
         sku: 'BIOMELIS',
         name: '2 PAKOVANJA (100ml)',
-        size: 'Okvirno mjesec dana upotrebe', 
+        size: 'Okvirno mjesec i po upotrebe', 
         quantity: 2,
-        price: 79.8,
+        price: 109.8,
         currency: 'BAM',
         discountPrice: 59.9
       },
@@ -290,9 +290,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'biomelis-3pak',
         sku: 'BIOMELIS',
         name: '3 PAKOVANJA (150ml)',
-        size: 'Okvirno 2 mjeseca upotrebe',
+        size: 'Okvirno 2 mjeseca i pol upotrebe',
         quantity: 3,
-        price: 119.7,
+        price: 164.7,
         currency: 'BAM',
         discountPrice: 79.9
       }
@@ -347,7 +347,7 @@ export const PRODUCTS: Record<string, Product> = {
       'sodium-benzoate',
       'potassium-sorbate'
     ],
-    usage: 'Nanositi 2 puta dnevno na pogođene dijelove kože i nežno masirati. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 2 sedmice redovne upotrebe).',
+    usage: 'Nanositi 2 puta dnevno na pogođene dijelove kože i nežno masirati. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 3 sedmice redovne upotrebe).',
     usageSteps: [
       'Očistite kožu blagim sapunom i osušite',
       'Nanesite malu količinu BIOMELIS-a na pogođeno mjesto',
@@ -382,7 +382,7 @@ export const PRODUCTS: Record<string, Product> = {
     productFAQ: [
       {
         question: "Kako se koristi BIOMELIS?",
-        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno na očišćenu kožu i nežno masirati. Ne treba da se ispira - samo ostaviti da se upije. Jedna tuba od 50ml traje oko 2 sedmice pri redovnoj upotrebi.",
+        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno na očišćenu kožu i nežno masirati. Ne treba da se ispira - samo ostaviti da se upije. Jedna tuba od 50ml traje oko 3 sedmice pri redovnoj upotrebi.",
         category: "usage"
       },
       {
@@ -520,9 +520,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'biowart-1pak',
         sku: 'BIOWART',
         name: '1 PAKOVANJE (50ml)',
-        size: 'Okvirno 2 sedmice upotrebe',
+        size: 'Okvirno 3 sedmice upotrebe',
         quantity: 1,
-        price: 39.9,
+        price: 54.9,
         currency: 'BAM',
         discountPrice: 33.9,
         isDefault: true
@@ -531,9 +531,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'biowart-2pak',
         sku: 'BIOWART',
         name: '2 PAKOVANJA (100ml)',
-        size: 'Okvirno mjesec dana upotrebe',
+        size: 'Okvirno mjesec i po upotrebe',
         quantity: 2,
-        price: 79.8,
+        price: 109.8,
         currency: 'BAM',
         discountPrice: 59.9
       },
@@ -541,9 +541,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'biowart-3pak',
         sku: 'BIOWART',
         name: '3 PAKOVANJA (150ml)',
-        size: 'Okvirno 2 mjeseca upotrebe',
+        size: 'Okvirno 2 mjeseca i pol upotrebe',
         quantity: 3,
-        price: 119.7,
+        price: 164.7,
         currency: 'BAM',
         discountPrice: 79.9
       }
@@ -668,9 +668,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'bioroid-1pak',
         sku: 'BIOROID',
         name: '1 PAKOVANJE (50ml)',
-        size: 'Okvirno 2 sedmice upotrebe',
+        size: 'Okvirno 3 sedmice upotrebe',
         quantity: 1,
-        price: 49.9,
+        price: 64.9,
         currency: 'BAM',
         discountPrice: 33.9,
         isDefault: true
@@ -679,9 +679,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'bioroid-2pak',
         sku: 'BIOROID',
         name: '2 PAKOVANJA (100ml)',
-        size: 'Okvirno mjesec dana upotrebe',
+        size: 'Okvirno mjesec i po upotrebe',
         quantity: 2,
-        price: 99.8,
+        price: 129.8,
         currency: 'BAM',
         discountPrice: 59.9
       },
@@ -689,9 +689,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'bioroid-3pak',
         sku: 'BIOROID',
         name: '3 PAKOVANJA (150ml)',
-        size: 'Okvirno 2 mjeseca upotrebe',
+        size: 'Okvirno 2 mjeseca i pol upotrebe',
         quantity: 3,
-        price: 149.7,
+        price: 194.7,
         currency: 'BAM',
         discountPrice: 79.9
       }
@@ -1489,9 +1489,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'fungomax-1pak',
         sku: 'FUNGOMAX',
         name: '1 PAKOVANJE (50ml)',
-        size: 'Okvirno 2 sedmice upotrebe',
+        size: 'Okvirno 3 sedmice upotrebe',
         quantity: 1,
-        price: 39.9,
+        price: 54.9,
         currency: 'BAM',
         discountPrice: 33.9,
         isDefault: true
@@ -1500,9 +1500,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'fungomax-2pak',
         sku: 'FUNGOMAX',
         name: '2 PAKOVANJA (100ml)',
-        size: 'Okvirno mjesec dana upotrebe',
+        size: 'Okvirno mjesec i po upotrebe',
         quantity: 2,
-        price: 79.8,
+        price: 109.8,
         currency: 'BAM',
         discountPrice: 59.9
       },
@@ -1510,9 +1510,9 @@ export const PRODUCTS: Record<string, Product> = {
         id: 'fungomax-3pak',
         sku: 'FUNGOMAX',
         name: '3 PAKOVANJA (150ml)',
-        size: 'Okvirno 2 mjeseca upotrebe',
+        size: 'Okvirno 2 mjeseca i pol upotrebe',
         quantity: 3,
-        price: 119.7,
+        price: 164.7,
         currency: 'BAM',
         discountPrice: 79.9
       }
@@ -1577,7 +1577,7 @@ export const PRODUCTS: Record<string, Product> = {
     productFAQ: [
       {
         question: "Kako se koristi FUNGOMAX serum?",
-        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno nekoliko kapi direktno na pogođenu kožu ili nokte, zatim blago utrljati. Ne treba da se ispira - samo ostaviti da se upije. Jedna bočica od 50ml traje oko 2 sedmice pri redovnoj upotrebi.",
+        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno nekoliko kapi direktno na pogođenu kožu ili nokte, zatim blago utrljati. Ne treba da se ispira - samo ostaviti da se upije. Jedna bočica od 50ml traje oko 3 sedmice pri redovnoj upotrebi.",
         category: "usage"
       },
       {
