@@ -110,6 +110,15 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
     },
   };
   
+  // Debug logging for CAPI configuration (commented out for production)
+  // console.log(`📊 Pixel Config for ${upperCountryCode}:`, {
+  //   metaPixelId: metaPixelId ? `${metaPixelId.substring(0, 10)}...` : 'NOT SET',
+  //   isValidMetaPixel,
+  //   capiAccessToken: capiAccessToken ? `${capiAccessToken.substring(0, 20)}...` : 'NOT SET',
+  //   isValidCapiToken,
+  //   capiTestEventCode: capiTestEventCode || 'NOT SET',
+  //   capiEnabled: config.meta.capi?.enabled,
+  // });
   
   return config;
 }

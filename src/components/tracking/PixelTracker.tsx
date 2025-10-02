@@ -3,9 +3,35 @@
 import { useEffect, useState, useRef } from 'react';
 import Script from 'next/script';
 import { getPixelConfig, META_EVENTS, TIKTOK_EVENTS } from '@/config/pixels';
+import { initializeFacebookTracking } from '@/utils/facebook-cookies';
+import { COUNTRIES } from '@/config/countries';
 
 interface PixelTrackerProps {
   countryCode: string;
+}
+
+// Helper function to check if marketing cookies are allowed
+function hasMarketingConsent(countryCode: string): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  // Check if country is in EU
+  const country = COUNTRIES[countryCode];
+  const isEU = country?.isEU || false;
+  
+  // If not EU, allow by default
+  if (!isEU) return true;
+  
+  // If EU, check localStorage for consent
+  try {
+    const consent = localStorage.getItem('cookie-consent');
+    if (!consent) return false; // No consent given yet
+    
+    const preferences = JSON.parse(consent);
+    return preferences.marketing === true;
+  } catch (error) {
+    // console.error('Failed to parse cookie consent:', error);
+    return false;
+  }
 }
 
 export function PixelTracker({ countryCode }: PixelTrackerProps) {
@@ -15,22 +41,75 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
 
   useEffect(() => {
     setIsClient(true);
+    
+    // Initialize Facebook tracking as fallback (captures fbclid and creates cookies)
+    // This runs even if Meta Pixel is blocked by ad blockers
+    if (typeof window !== 'undefined') {
+      const fbData = initializeFacebookTracking();
+      // console.log('📊 Facebook tracking initialized:', {
+      //   hasFbp: !!fbData.fbp,
+      //   hasFbc: !!fbData.fbc,
+      // });
+    }
   }, []);
 
   useEffect(() => {
     // Only initialize on client side and when pixel config is available
-    if (!isClient || initializedRef.current) return;
+    if (!isClient) return;
     
-    let metaInitialized = false;
+    let metaInitialized = initializedRef.current;
     let tiktokInitialized = false;
     
     // Initialize Meta Pixel
     const initMetaPixel = () => {
       if (metaInitialized || !pixelConfig.meta.enabled || !pixelConfig.meta.pixelId) return;
       
+      // Check for marketing consent
+      if (!hasMarketingConsent(countryCode)) {
+        // console.log('⚠️ Marketing consent not granted - skipping Meta Pixel initialization');
+        return;
+      }
+      
       if (typeof window !== 'undefined' && window.fbq) {
+        // console.log('✅ Meta Pixel (fbq) is loaded! Initializing...');
         window.fbq('init', pixelConfig.meta.pixelId);
-        window.fbq('track', META_EVENTS.PAGE_VIEW);
+        // console.log('✅ Meta Pixel initialized with ID:', pixelConfig.meta.pixelId);
+        
+        // Generate event ID for PageView
+        const pageViewEventId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        // Track PageView with event ID
+        // console.log('📊 Firing browser PageView with event ID:', pageViewEventId);
+        window.fbq('track', META_EVENTS.PAGE_VIEW, { eventID: pageViewEventId });
+        
+        // Always send PageView to CAPI - let the server decide if it's enabled
+        // (Browser can't check CAPI config because access tokens are server-only env vars)
+        // console.log('🚀 Sending PageView to CAPI...', {
+        //   countryCode,
+        //   eventId: pageViewEventId,
+        // });
+        
+        fetch('/api/capi', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            eventType: 'page_view',
+            eventData: {},
+            countryCode,
+            eventId: pageViewEventId,
+          }),
+          keepalive: true,
+        })
+        .then(response => response.json())
+        .then(data => {
+          // console.log('✅ CAPI PageView response:', data);
+        })
+        .catch((error) => {
+          // console.warn('❌ CAPI PageView tracking failed:', error);
+        });
+        
         metaInitialized = true;
       }
     };
@@ -38,6 +117,12 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
     // Initialize TikTok Pixel
     const initTikTokPixel = () => {
       if (tiktokInitialized || !pixelConfig.tiktok.enabled || !pixelConfig.tiktok.pixelId) return;
+      
+      // Check for marketing consent
+      if (!hasMarketingConsent(countryCode)) {
+        // console.log('⚠️ Marketing consent not granted - skipping TikTok Pixel initialization');
+        return;
+      }
       
       if (typeof window !== 'undefined' && window.ttq) {
         window.ttq.load(pixelConfig.tiktok.pixelId);
@@ -63,15 +148,61 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
     
     // Try immediate initialization (in case scripts are already loaded)
     setTimeout(() => {
+      if (typeof window !== 'undefined') {
+        // if (window.fbq) {
+        //   console.log('✅ Facebook Pixel (fbq) detected in window');
+        // } else {
+        //   console.warn('⚠️ Facebook Pixel (fbq) NOT found in window - script may not have loaded');
+        // }
+      }
       initMetaPixel();
       initTikTokPixel();
     }, 500);
+    
+    // Listen for storage changes (when consent is granted/changed)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'cookie-consent' && e.newValue) {
+        try {
+          const preferences = JSON.parse(e.newValue);
+          if (preferences.marketing === true) {
+            // Consent granted - reinitialize pixels
+            metaInitialized = false;
+            tiktokInitialized = false;
+            setTimeout(() => {
+              initMetaPixel();
+              initTikTokPixel();
+            }, 100);
+          }
+        } catch (error) {
+          // console.error('Failed to parse consent change:', error);
+        }
+      }
+    };
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange);
+      
+      // Also listen for a custom event for same-window updates
+      const handleConsentChange = () => {
+        if (hasMarketingConsent(countryCode)) {
+          metaInitialized = false;
+          tiktokInitialized = false;
+          setTimeout(() => {
+            initMetaPixel();
+            initTikTokPixel();
+          }, 100);
+        }
+      };
+      window.addEventListener('cookieConsentUpdated', handleConsentChange);
+    }
     
     // Cleanup function
     return () => {
       if (typeof window !== 'undefined') {
         window.removeEventListener('metaPixelLoaded', handleMetaPixelLoaded);
         window.removeEventListener('tiktokPixelLoaded', handleTikTokPixelLoaded);
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('cookieConsentUpdated', handleConsentChange);
       }
     };
   }, [isClient, pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId, countryCode]);
@@ -152,10 +283,19 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
 export function usePixelTracking(countryCode: string) {
   const pixelConfig = getPixelConfig(countryCode);
 
-  const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart', eventData?: Record<string, unknown>, eventId?: string) => {
+  const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart' | 'page_view' | 'lead', eventData?: Record<string, unknown>, eventId?: string) => {
     if (typeof window === 'undefined') return;
 
-    // Track Meta Pixel event
+    // Check for marketing consent
+    if (!hasMarketingConsent(countryCode)) {
+      // console.log('⚠️ Marketing consent not granted - skipping event tracking:', eventType);
+      return;
+    }
+
+    // Generate event ID if not provided (for deduplication between browser pixel and CAPI)
+    const finalEventId = eventId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Track Meta Pixel event (Browser-side)
     if (pixelConfig.meta.enabled && window.fbq && pixelConfig.meta.pixelId) {
       let metaEvent: string;
       
@@ -172,20 +312,30 @@ export function usePixelTracking(countryCode: string) {
         case 'add_to_cart':
           metaEvent = META_EVENTS.ADD_TO_CART;
           break;
+        case 'lead':
+          metaEvent = META_EVENTS.LEAD;
+          break;
+        case 'page_view':
+          metaEvent = META_EVENTS.PAGE_VIEW;
+          break;
         default:
           metaEvent = META_EVENTS.PAGE_VIEW;
       }
       
       // Prepare event data with event ID for deduplication
       const fullEventData = eventData ? { ...eventData } : {};
-      if (eventId) {
-        fullEventData.eventID = eventId; // Meta uses eventID (camelCase) for deduplication
+      if (finalEventId) {
+        fullEventData.eventID = finalEventId; // Meta uses eventID (camelCase) for deduplication
       }
+      
+      // console.log(`📊 Firing browser ${metaEvent} with event ID:`, finalEventId);
       
       if (Object.keys(fullEventData).length > 0) {
         window.fbq('track', metaEvent, fullEventData);
+        // console.log(`✅ Browser ${metaEvent} fired with data:`, fullEventData);
       } else {
         window.fbq('track', metaEvent);
+        // console.log(`✅ Browser ${metaEvent} fired (no data)`);
       }
     }
 
@@ -206,6 +356,12 @@ export function usePixelTracking(countryCode: string) {
         case 'add_to_cart':
           tiktokEvent = TIKTOK_EVENTS.ADD_TO_CART;
           break;
+        case 'lead':
+          tiktokEvent = TIKTOK_EVENTS.LEAD;
+          break;
+        case 'page_view':
+          tiktokEvent = TIKTOK_EVENTS.PAGE_VIEW;
+          break;
         default:
           tiktokEvent = TIKTOK_EVENTS.PAGE_VIEW;
       }
@@ -216,6 +372,37 @@ export function usePixelTracking(countryCode: string) {
         window.ttq.track(tiktokEvent);
       }
     }
+
+    // Always send to CAPI (Server-side) - let the server decide if it's enabled
+    // (Browser can't check CAPI config because access tokens are server-only env vars)
+    // console.log(`🚀 Sending ${eventType} to CAPI...`, {
+    //   countryCode,
+    //   eventId: finalEventId,
+    //   hasData: !!eventData,
+    // });
+    
+    fetch('/api/capi', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        eventType,
+        eventData: eventData || {},
+        countryCode,
+        eventId: finalEventId,
+      }),
+      // Use keepalive to ensure the request completes even if the page is closed
+      keepalive: true,
+    })
+    .then(response => response.json())
+    .then(data => {
+      // console.log(`✅ CAPI ${eventType} response:`, data);
+    })
+    .catch((error) => {
+      // Silently fail - don't block user experience
+      // console.warn(`❌ CAPI ${eventType} tracking failed:`, error);
+    });
   };
 
   return { trackEvent };
@@ -240,5 +427,9 @@ declare global {
   interface Window {
     fbq: FacebookPixel;
     ttq: TikTokPixel;
+  }
+  
+  interface WindowEventMap {
+    cookieConsentUpdated: CustomEvent;
   }
 }

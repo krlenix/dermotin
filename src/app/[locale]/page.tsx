@@ -10,7 +10,7 @@ import { getCountryConfig } from '@/config/countries';
 import { HOMEPAGE_IMAGES } from '@/config/images';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PixelTracker } from '@/components/tracking/PixelTracker';
+import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
 
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { CountriesHeader } from '@/components/features/CountriesHeader';
@@ -61,6 +61,7 @@ export default function HomePage() {
   const countryConfig = getCountryConfig(locale);
   const [products, setProducts] = useState<Product[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { trackEvent } = usePixelTracking(countryConfig.code);
   
   // Screen size detection for responsive images
   const [isMobile, setIsMobile] = useState(false);
@@ -95,6 +96,34 @@ export default function HomePage() {
     
     loadProducts();
   }, [locale]);
+
+  // Fire ViewContent event when products are loaded
+  useEffect(() => {
+    if (products.length > 0 && isClient) {
+      // Get the first product or featured products
+      const featuredProducts = products.slice(0, 3); // First 3 products
+      
+      // Prepare content_ids and contents for tracking
+      const contentIds = featuredProducts.map(p => p.id);
+      const contents = featuredProducts.map(p => ({
+        id: p.id,
+        quantity: 1,
+        item_price: p.variants[0]?.price || 0,
+      }));
+      
+      // Calculate total value (sum of first variant prices)
+      const totalValue = featuredProducts.reduce((sum, p) => sum + (p.variants[0]?.price || 0), 0);
+      
+      // Fire ViewContent event
+      trackEvent('view_content', {
+        content_type: 'product',
+        content_ids: contentIds,
+        contents: contents,
+        currency: countryConfig.currency,
+        value: totalValue,
+      });
+    }
+  }, [products, isClient, trackEvent, countryConfig.currency]);
 
   // Trigger underline animation when element comes into view
   useEffect(() => {

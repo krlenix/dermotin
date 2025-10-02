@@ -11,6 +11,9 @@ export async function getProductsForLocale(locale: string): Promise<Record<strin
       case 'ba':
         const { PRODUCTS: baProducts } = await import('./ba/products');
         return baProducts;
+      case 'hr':
+        const { PRODUCTS: hrProducts } = await import('./hr/products');
+        return hrProducts;
       default:
         // Fallback to Serbian
         const { PRODUCTS: defaultProducts } = await import('./rs/products');
@@ -110,8 +113,8 @@ export function getProductVariantsForCountry(product: Product, countryCode: stri
     
     return {
       ...variant,
-      price: Math.round(convertedPrice),
-      discountPrice: convertedDiscountPrice ? Math.round(convertedDiscountPrice) : undefined,
+      price: Math.round(convertedPrice * 10) / 10, // Round to 1 decimal place
+      discountPrice: convertedDiscountPrice ? Math.round(convertedDiscountPrice * 10) / 10 : undefined,
       currency: countryConfig.currency as 'RSD' | 'BAM' | 'EUR' | 'BGN'
     };
   });

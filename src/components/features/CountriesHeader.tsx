@@ -19,6 +19,7 @@ export function CountriesHeader() {
   const allCountries: CountryInfo[] = [
     { code: 'SRB', name: t('serbia'), flagCode: 'RS' },
     { code: 'BiH', name: t('bosnia'), flagCode: 'BA' },
+    { code: 'HR', name: t('croatia'), flagCode: 'HR' },
     { code: 'ME', name: t('montenegro'), flagCode: 'ME' },
     { code: 'EU', name: t('eu'), flagCode: 'EU' }
   ];
@@ -37,6 +38,14 @@ export function CountriesHeader() {
         allCountries[1], // Bosnia
         allCountries[0], // Serbia
         ...allCountries.slice(2) // Rest of countries
+      ];
+    } else if (locale === 'hr') {
+      // For Croatian locale, show Croatia first
+      return [
+        allCountries[2], // Croatia
+        allCountries[0], // Serbia
+        allCountries[1], // Bosnia
+        ...allCountries.slice(3) // Rest of countries
       ];
     }
     // Default order for other locales

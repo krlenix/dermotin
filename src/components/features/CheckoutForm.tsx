@@ -255,7 +255,7 @@ export function CheckoutForm({
   const isSingleCourier = availableCouriers.length === 1;
   
   // Get supported countries for phone input (only countries we have configured)
-  const supportedCountries = Object.keys(COUNTRIES).map(code => code.toUpperCase()) as Array<'RS' | 'BA'>;
+  const supportedCountries = Object.keys(COUNTRIES).map(code => code.toUpperCase()) as Array<'RS' | 'BA' | 'HR'>;
   
   // Calculate shipping cost using selected courier and country threshold
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
@@ -321,7 +321,7 @@ export function CheckoutForm({
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value || '')}
                   placeholder="Enter phone number"
-                  defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA'}
+                  defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA' | 'HR'}
                   countries={supportedCountries}
                   className={`focus:ring-brand-orange focus:border-brand-orange ${
                     formErrors.phone ? 'border-red-500' : ''

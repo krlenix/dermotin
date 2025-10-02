@@ -5,7 +5,6 @@ import { Montserrat, Playfair_Display } from "next/font/google";
 import { getCountryConfig } from '@/config/countries';
 import { Toaster } from "@/components/ui/sonner";
 import { PerformanceOptimizer } from "@/components/PerformanceOptimizer";
-import { FacebookCookieInitializer } from "@/components/tracking/FacebookCookieInitializer";
 import { DebugPixelLoader } from "@/components/tracking/DebugPixelLoader";
 import "./globals.css";
 
@@ -83,7 +82,6 @@ export default async function RootLayout({
       </head>
       <body className={`${montserrat.variable} ${playfairDisplay.variable} font-montserrat antialiased bg-background text-foreground`}>
         <PerformanceOptimizer />
-        <FacebookCookieInitializer />
         <DebugPixelLoader />
         <NextIntlClientProvider messages={messages}>
           {children}

@@ -264,17 +264,92 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         webhookSecret: process.env.BA_ORDER_WEBHOOK_SECRET || ''
       }
     }
+  },
+
+  hr: {
+    code: 'hr',
+    name: 'Croatia',
+    locale: 'hr-HR',
+    currency: 'EUR',
+    currencySymbol: '€',
+    region: 'EU',
+    isEU: true,
+    timezone: 'Europe/Zagreb',
+    logo: '/images/main/logo.png',
+    company: {
+      name: 'Dermotin',
+      legalName: 'CLICKY EOOD',
+      address: 'bul. Triadica br. 6, et. 3, ap. 310',
+      city: 'Sofija',
+      postalCode: '1000',
+      country: 'Bugarska',
+      taxNumber: '208072587',
+      phone: '+385 1 234 5678',
+      email: 'support@dermotin.com',
+      registrationNumber: '208072587',
+      activityCode: '47.91',
+      activityDescription: 'Trgovina na malo posredstvom pošte ili preko interneta',
+      website: 'dermotin.com'
+    },
+    couriers: [
+      {
+        id: 'hrvatska-posta',
+        name: 'Hrvatska pošta',
+        displayName: 'kurirske službe Hrvatske pošte',
+        logo: '/images/couriers/hrvatska-posta.png',
+        deliveryTime: '3-4 dana',
+        trackingUrl: 'https://www.posta.hr/pracenje-posiljaka',
+        isDefault: true,
+        enabled: true,
+        shipping: {
+          cost: 6.9,
+          currency: '€'
+        }
+      }
+    ],
+    business: {
+      deliveryArea: 'teritoriji Republike Hrvatske',
+      freeShippingThreshold: 80,
+      deliveryTimeMin: 3,
+      deliveryTimeMax: 4,
+      deliveryTimeUnit: 'dana',
+      paymentMethods: ['gotovinom prilikom dostave (pouzećem)'],
+      returnPeriodDays: 14,
+      warrantyPeriodYears: 2,
+      complaintResponseDays: 8,
+      complaintResolutionDays: 15,
+      technicalComplaintResolutionDays: 30,
+      faqItems: ['delivery_time', 'delivery_cost', 'cash_on_delivery', 'payment_methods', 'returns', 'support', 'tracking', 'safety', 'warranty']
+    },
+    legal: {
+      lastUpdated: '2025-01-01',
+      copyrightLaw: 'Zakona o autorskom pravu i srodnim pravima',
+      criminalCode: 'Kaznenog zakona Republike Hrvatske',
+      consumerProtectionLaw: 'Zakona o zaštiti potrošača Republike Hrvatske',
+      dataProtectionLaw: 'Zakona o provedbi Opće uredbe o zaštiti podataka',
+      obligationsLaw: 'Zakona o obveznim odnosima',
+      ministryWebsite: 'https://mingor.gov.hr/',
+      disputeResolutionListUrl: 'https://potrosac.mingo.hr/'
+    },
+    webhooks: {
+      orders: {
+        url: process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL || '',
+        authMethod: 'signature',
+        webhookSecret: process.env.HR_ORDER_WEBHOOK_SECRET || ''
+      }
+    }
   }
 };
 
 export const DEFAULT_COUNTRY = 'rs';
 
-export const SUPPORTED_CURRENCIES = ['RSD', 'BAM'] as const;
+export const SUPPORTED_CURRENCIES = ['RSD', 'BAM', 'EUR'] as const;
 export type SupportedCurrency = typeof SUPPORTED_CURRENCIES[number];
 
 export const CURRENCY_RATES: Record<SupportedCurrency, number> = {
   RSD: 1, // Base currency
-  BAM: 0.5 // Approximate rate - will be updated when adding Bosnia
+  BAM: 0.5, // Approximate rate
+  EUR: 0.0085 // RSD to EUR conversion rate
 };
 
 export function getCountryConfig(countryCode: string): CountryConfig {

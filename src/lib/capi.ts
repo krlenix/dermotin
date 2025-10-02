@@ -66,17 +66,18 @@ export interface CapiUserData {
 export interface CapiCustomData {
   currency?: string;
   value?: number;
-  contentName?: string;
-  contentCategory?: string;
-  contentIds?: string[];
+  content_type?: string;
+  content_name?: string;
+  content_category?: string;
+  content_ids?: string[];
   contents?: Array<{
     id: string;
     quantity: number;
     item_price?: number;
   }>;
-  numItems?: number;
-  orderId?: string;
-  predictedLtv?: number;
+  num_items?: number;
+  order_id?: string;
+  predicted_ltv?: number;
 }
 
 /**
@@ -121,6 +122,7 @@ interface CapiRequestPayload {
     custom_data?: {
       currency?: string;
       value?: string | number;
+      content_type?: string;
       content_name?: string;
       content_category?: string;
       content_ids?: string[];
@@ -145,11 +147,16 @@ export async function sendCapiEvent(
   countryCode: string,
   eventData: CapiEventData
 ): Promise<{ success: boolean; error?: string; eventId?: string }> {
+  // console.log('\n' + '='.repeat(80));
+  // console.log('🚀 CAPI EVENT TRIGGERED');
+  // console.log('='.repeat(80));
+  
   const pixelConfig = getPixelConfig(countryCode);
   
   // Check if CAPI is enabled for this country
   if (!pixelConfig.meta.capi || !pixelConfig.meta.capi.enabled) {
-    console.log(`🔇 CAPI not enabled for country: ${countryCode}`);
+    // console.log(`🔇 CAPI not enabled for country: ${countryCode}`);
+    // console.log('='.repeat(80) + '\n');
     return { success: false, error: 'CAPI not configured for this country' };
   }
   
@@ -157,6 +164,30 @@ export async function sendCapiEvent(
   
   // Generate event ID if not provided (for deduplication)
   const eventId = eventData.eventId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  // console.log('📊 Event Details:');
+  // console.log('  Event Name:', eventData.eventName);
+  // console.log('  Event ID:', eventId);
+  // console.log('  Country:', countryCode);
+  // console.log('  Pixel ID:', pixelConfig.meta.pixelId);
+  // console.log('  Test Mode:', !!capiConfig.testEventCode);
+  // console.log('  Event Source URL:', eventData.eventSourceUrl || 'N/A');
+  // console.log('  Action Source:', eventData.actionSource);
+  
+  // console.log('\n👤 Raw User Data (before hashing):');
+  // console.log('  Email:', eventData.userData.email || 'N/A');
+  // console.log('  Phone:', eventData.userData.phone || 'N/A');
+  // console.log('  First Name:', eventData.userData.firstName || 'N/A');
+  // console.log('  Last Name:', eventData.userData.lastName || 'N/A');
+  // console.log('  City:', eventData.userData.city || 'N/A');
+  // console.log('  State:', eventData.userData.state || 'N/A');
+  // console.log('  ZIP:', eventData.userData.zip || 'N/A');
+  // console.log('  Country:', eventData.userData.country || 'N/A');
+  // console.log('  External ID:', eventData.userData.externalId || 'N/A');
+  // console.log('  Client IP:', eventData.userData.clientIpAddress || 'N/A');
+  // console.log('  User Agent:', eventData.userData.clientUserAgent ? eventData.userData.clientUserAgent.substring(0, 50) + '...' : 'N/A');
+  // console.log('  FBP Cookie:', eventData.userData.fbp || 'N/A');
+  // console.log('  FBC Cookie:', eventData.userData.fbc || 'N/A');
   
   // Hash user data according to Meta requirements
   // Helper function to ensure proper array type
@@ -172,6 +203,16 @@ export async function sendCapiEvent(
   const hashedState = eventData.userData.state ? hashValue(eventData.userData.state) : null;
   const hashedZip = eventData.userData.zip ? hashValue(eventData.userData.zip) : null;
   const hashedCountry = eventData.userData.country ? hashValue(eventData.userData.country) : null;
+  
+  // console.log('\n🔐 Hashed User Data (what gets sent to Meta):');
+  // console.log('  Email (em):', hashedEmail || 'N/A');
+  // console.log('  Phone (ph):', hashedPhone || 'N/A');
+  // console.log('  First Name (fn):', hashedFirstName || 'N/A');
+  // console.log('  Last Name (ln):', hashedLastName || 'N/A');
+  // console.log('  City (ct):', hashedCity || 'N/A');
+  // console.log('  State (st):', hashedState || 'N/A');
+  // console.log('  ZIP (zp):', hashedZip || 'N/A');
+  // console.log('  Country (country):', hashedCountry || 'N/A');
   
   const hashedUserData: CapiRequestPayload['data'][0]['user_data'] = {
     em: toStringArray(hashedEmail),
@@ -210,16 +251,34 @@ export async function sendCapiEvent(
     payload.test_event_code = capiConfig.testEventCode;
   }
   
+  // if (eventData.customData) {
+  //   console.log('\n💰 Custom Data:');
+  //   console.log('  Currency:', eventData.customData.currency || 'N/A');
+  //   console.log('  Value:', eventData.customData.value || 'N/A');
+  //   console.log('  Content Type:', eventData.customData.content_type || 'N/A');
+  //   console.log('  Content Name:', eventData.customData.content_name || 'N/A');
+  //   console.log('  Content Category:', eventData.customData.content_category || 'N/A');
+  //   console.log('  Content IDs:', eventData.customData.content_ids || 'N/A');
+  //   console.log('  Num Items:', eventData.customData.num_items || 'N/A');
+  //   console.log('  Order ID:', eventData.customData.order_id || 'N/A');
+  //   if (eventData.customData.contents) {
+  //     console.log('  Contents:', JSON.stringify(eventData.customData.contents, null, 2));
+  //   }
+  // }
+  
+  // console.log('\n📦 Complete Payload Structure:');
+  // console.log(JSON.stringify(payload, null, 2));
+  
   // Meta CAPI endpoint
   const apiUrl = `https://graph.facebook.com/v21.0/${pixelConfig.meta.pixelId}/events`;
   
+  // console.log('\n🌐 API Request:');
+  // console.log('  URL:', apiUrl);
+  // console.log('  Method: POST');
+  // console.log('  Has Access Token:', !!capiConfig.accessToken);
+  
   try {
-    console.log(`📤 Sending CAPI event to Meta for ${countryCode}:`, {
-      eventName: eventData.eventName,
-      eventId,
-      pixelId: pixelConfig.meta.pixelId,
-      testMode: !!capiConfig.testEventCode,
-    });
+    // console.log('\n📤 Sending request to Meta...');
     
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -234,8 +293,15 @@ export async function sendCapiEvent(
     
     const result = await response.json();
     
+    // console.log('\n📥 Response from Meta:');
+    // console.log('  Status:', response.status);
+    // console.log('  OK:', response.ok);
+    // console.log('  Result:', JSON.stringify(result, null, 2));
+    
     if (!response.ok) {
-      console.error('❌ CAPI event failed:', result);
+      // console.error('\n❌ CAPI EVENT FAILED');
+      // console.error('Error details:', result);
+      // console.log('='.repeat(80) + '\n');
       return {
         success: false,
         error: result.error?.message || 'Unknown CAPI error',
@@ -243,14 +309,20 @@ export async function sendCapiEvent(
       };
     }
     
-    console.log('✅ CAPI event sent successfully:', result);
+    // console.log('\n✅ CAPI EVENT SENT SUCCESSFULLY');
+    // console.log('  Events Received:', result.events_received || 'N/A');
+    // console.log('  Messages:', result.messages || 'None');
+    // console.log('='.repeat(80) + '\n');
     
     return {
       success: true,
       eventId,
     };
   } catch (error) {
-    console.error('❌ CAPI request error:', error);
+    // console.error('\n❌ CAPI REQUEST ERROR');
+    // console.error('Error:', error);
+    // console.error('Stack:', error instanceof Error ? error.stack : 'N/A');
+    // console.log('='.repeat(80) + '\n');
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -289,24 +361,31 @@ export async function sendCapiPurchaseEvent(
     }>;
   }
 ): Promise<{ success: boolean; error?: string; eventId?: string }> {
+  // console.log('\n' + '💰'.repeat(40));
+  // console.log('🛒 CAPI PURCHASE EVENT HELPER CALLED');
+  // console.log('  Order ID:', purchaseData.orderId);
+  // console.log('  Total Price:', purchaseData.totalPrice, purchaseData.currency);
+  // console.log('  Line Items:', purchaseData.lineItems?.length || 0);
+  // console.log('💰'.repeat(40));
+  
   const eventTime = Math.floor(Date.now() / 1000);
   
   // Build custom data
   const customData: CapiCustomData = {
     currency: purchaseData.currency,
     value: purchaseData.totalPrice,
-    orderId: purchaseData.orderId,
+    order_id: purchaseData.orderId,
   };
   
   // Add line items if provided
   if (purchaseData.lineItems && purchaseData.lineItems.length > 0) {
-    customData.contentIds = purchaseData.lineItems.map(item => item.sku);
+    customData.content_ids = purchaseData.lineItems.map(item => item.sku);
     customData.contents = purchaseData.lineItems.map(item => ({
       id: item.sku,
       quantity: item.quantity,
       item_price: item.price,
     }));
-    customData.numItems = purchaseData.lineItems.reduce((sum, item) => sum + item.quantity, 0);
+    customData.num_items = purchaseData.lineItems.reduce((sum, item) => sum + item.quantity, 0);
   }
   
   // Build user data
@@ -354,6 +433,13 @@ export async function sendCapiInitiateCheckoutEvent(
     numItems?: number;
   }
 ): Promise<{ success: boolean; error?: string; eventId?: string }> {
+  // console.log('\n' + '🛍️'.repeat(40));
+  // console.log('🔔 CAPI INITIATE CHECKOUT EVENT HELPER CALLED');
+  // console.log('  Value:', checkoutData.value, checkoutData.currency);
+  // console.log('  Items:', checkoutData.numItems || 0);
+  // console.log('  Content IDs:', checkoutData.contentIds || []);
+  // console.log('🛍️'.repeat(40));
+  
   const eventTime = Math.floor(Date.now() / 1000);
   
   return sendCapiEvent(countryCode, {
@@ -372,8 +458,8 @@ export async function sendCapiInitiateCheckoutEvent(
     customData: {
       currency: checkoutData.currency,
       value: checkoutData.value,
-      contentIds: checkoutData.contentIds,
-      numItems: checkoutData.numItems,
+      content_ids: checkoutData.contentIds,
+      num_items: checkoutData.numItems,
     },
   });
 }

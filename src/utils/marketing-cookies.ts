@@ -33,9 +33,9 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
     
     document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
     
-    console.log('📊 Marketing cookies updated:', merged);
+    // console.log('📊 Marketing cookies updated:', merged);
   } catch (error) {
-    console.error('❌ Failed to set marketing cookies:', error);
+    // console.error('❌ Failed to set marketing cookies:', error);
   }
 }
 
@@ -72,7 +72,7 @@ export function getMarketingCookies(): MarketingParams {
       };
     }
   } catch (error) {
-    console.error('❌ Failed to parse marketing cookies:', error);
+    // console.error('❌ Failed to parse marketing cookies:', error);
   }
 
   // Return defaults if no cookie or parsing failed
@@ -91,29 +91,35 @@ export function clearMarketingCookies(): void {
   if (typeof window === 'undefined') return;
 
   document.cookie = `${MARKETING_COOKIE_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-  console.log('🗑️ Marketing cookies cleared');
+  // console.log('🗑️ Marketing cookies cleared');
 }
 
 /**
  * Extract marketing parameters from URL search params
+ * Note: fbclid is NOT a campaign_id - it's a Facebook Click ID used for attribution only
  */
 export function extractMarketingParamsFromURL(searchParams: URLSearchParams): Partial<MarketingParams> {
   const params: Partial<MarketingParams> = {};
 
-  // Extract campaign_id (Facebook/Meta ads)
-  const campaignId = searchParams.get('campaign_id') || searchParams.get('fbclid');
+  // Extract campaign_id (from actual campaign tracking parameters)
+  // Do NOT confuse with fbclid (Facebook Click ID for attribution)
+  const campaignId = searchParams.get('campaign_id') || 
+                     searchParams.get('utm_campaign') ||
+                     searchParams.get('campaign');
   if (campaignId) {
     params.campaign_id = campaignId;
   }
 
   // Extract adset_id
-  const adsetId = searchParams.get('adset_id');
+  const adsetId = searchParams.get('adset_id') ||
+                  searchParams.get('utm_adset');
   if (adsetId) {
     params.adset_id = adsetId;
   }
 
   // Extract ad_id
-  const adId = searchParams.get('ad_id');
+  const adId = searchParams.get('ad_id') ||
+               searchParams.get('utm_ad');
   if (adId) {
     params.ad_id = adId;
   }
@@ -125,6 +131,9 @@ export function extractMarketingParamsFromURL(searchParams: URLSearchParams): Pa
                 searchParams.get('utm_source');
   if (medium) {
     params.medium = medium;
+  } else if (searchParams.has('fbclid')) {
+    // If fbclid is present but no explicit medium, it's from Facebook
+    params.medium = 'facebook';
   }
 
   return params;
@@ -162,7 +171,7 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
       };
     }
   } catch (error) {
-    console.error('❌ Failed to parse marketing cookies from headers:', error);
+    // console.error('❌ Failed to parse marketing cookies from headers:', error);
   }
 
   return {

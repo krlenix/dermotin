@@ -5,7 +5,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
 
   // Ensure that a valid locale is used
-  if (!locale || !['rs', 'ba'].includes(locale)) { // Serbia and Bosnia only
+  if (!locale || !['rs', 'ba', 'hr'].includes(locale)) { // Serbia, Bosnia, and Croatia
     locale = 'rs';
   }
 

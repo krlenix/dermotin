@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPI Test Console</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        
+        .warning strong {
+            color: #92400e;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .warning p {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+        
+        button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .test-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+        
+        .result.success {
+            background: #ecfdf5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+        
+        .result.error {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+        
+        .result-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .badge {
+            background: #ddd6fe;
+            color: #5b21b6;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+        
+        .instructions {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .instructions h3 {
+            color: #1e40af;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            color: #1e40af;
+            font-size: 13px;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+        
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ CAPI Test Console</h1>
+            <p>Test Meta Conversion API events</p>
+        </div>
+        
+        <div class="content">
+            <div class="warning">
+                <strong>⚠️ Check Your Terminal!</strong>
+                <p>
+                    CAPI runs on the <strong>server-side</strong>. Detailed logs will appear in your 
+                    <strong>terminal/console</strong> where you run <code>npm run dev</code>, 
+                    not in the browser console.
+                </p>
+            </div>
+            
+            <div class="section">
+                <label>Select Country</label>
+                <div class="button-group" id="countryButtons">
+                    <button onclick="selectCountry('rs')" class="active" data-country="rs">RS</button>
+                    <button onclick="selectCountry('ba')" data-country="ba">BA</button>
+                    <button onclick="selectCountry('hr')" data-country="hr">HR</button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <label>Select Event Type</label>
+                <div class="button-group" id="eventButtons">
+                    <button onclick="selectEvent('purchase')" class="active" data-event="purchase">Purchase</button>
+                    <button onclick="selectEvent('checkout')" data-event="checkout">InitiateCheckout</button>
+                </div>
+            </div>
+            
+            <button class="test-button" onclick="testCAPI()" id="testButton">
+                ✨ Fire Test CAPI Event
+            </button>
+            
+            <div id="result"></div>
+            
+            <div class="instructions">
+                <h3>📋 How to Use:</h3>
+                <ol>
+                    <li>Select a country and event type</li>
+                    <li>Click "Fire Test CAPI Event"</li>
+                    <li><strong>Check your terminal</strong> where <code>npm run dev</code> is running</li>
+                    <li>Look for detailed logs with banners and emoji indicators</li>
+                    <li>Verify the event was sent successfully to Meta</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedCountry = 'rs';
+        let selectedEvent = 'purchase';
+        
+        function selectCountry(country) {
+            selectedCountry = country;
+            document.querySelectorAll('[data-country]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.country === country);
+            });
+        }
+        
+        function selectEvent(event) {
+            selectedEvent = event;
+            document.querySelectorAll('[data-event]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.event === event);
+            });
+        }
+        
+        async function testCAPI() {
+            const button = document.getElementById('testButton');
+            const resultDiv = document.getElementById('result');
+            
+            button.disabled = true;
+            button.textContent = '⏳ Sending CAPI Event...';
+            resultDiv.innerHTML = '';
+            
+            console.log('🧪 Triggering CAPI test...');
+            console.log('⚠️ NOTE: Detailed CAPI logs will appear in your TERMINAL (server console), not here!');
+            
+            try {
+                const response = await fetch(`/api/test-capi?country=${selectedCountry}&event=${selectedEvent}`);
+                const data = await response.json();
+                
+                console.log('📥 Test API Response:', data);
+                console.log('👀 Check your TERMINAL for detailed CAPI logs!');
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <div class="result-header">
+                            ✅ Success!
+                            ${data.result?.eventId ? `<span class="badge">Event ID: ${data.result.eventId}</span>` : ''}
+                        </div>
+                        <p>${data.message || 'CAPI event sent successfully'}</p>
+                        <p style="margin-top: 10px; font-size: 13px;">
+                            ✅ Check your terminal for detailed logs including:<br>
+                            • Event details<br>
+                            • User data (raw and hashed)<br>
+                            • Custom data<br>
+                            • Complete payload<br>
+                            • Meta API response
+                        </p>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <div class="result-header">❌ Failed</div>
+                        <p>${data.error || data.message || 'Unknown error'}</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Test error:', error);
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <div class="result-header">❌ Error</div>
+                    <p>${error.message}</p>
+                `;
+            } finally {
+                button.disabled = false;
+                button.textContent = '✨ Fire Test CAPI Event';
+            }
+        }
+    </script>
+</body>
+</html>
+

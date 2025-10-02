@@ -2,7 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { geolocation } from '@vercel/functions';
 
-const locales = ['rs', 'ba']; // Serbia and Bosnia only
+const locales = ['rs', 'ba', 'hr']; // Serbia, Bosnia, and Croatia
 
 const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
@@ -19,8 +19,8 @@ const intlMiddleware = createMiddleware({
 const countryToLocale: Record<string, string> = {
   'RS': 'rs', // Serbia
   'BA': 'ba', // Bosnia and Herzegovina
+  'HR': 'hr', // Croatia
   'ME': 'rs', // Montenegro (use Serbian locale)
-  'HR': 'rs', // Croatia (use Serbian locale)
   'MK': 'rs', // North Macedonia (use Serbian locale)
   'SI': 'rs', // Slovenia (use Serbian locale)
   'AL': 'rs', // Albania (use Serbian locale)
@@ -100,7 +100,7 @@ export const config = {
     
     // Set a cookie to remember the previous locale for
     // all requests that have a locale prefix
-    '/(rs|ba)/:path*',
+    '/(rs|ba|hr)/:path*',
     
     // Enable redirects that add missing locales
     // (e.g. `/pathnames` -> `/rs/pathnames`)

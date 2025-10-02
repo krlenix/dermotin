@@ -38,8 +38,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
 export async function generateStaticParams() {
   // This would typically come from your product database
-  const slugs = ['fungel', 'fungel-promo', 'antifungal-gel', 'gljivice-stopala'];
-  const locales = ['rs', 'ba', 'me', 'eu'];
+  const slugs = ['fungel', 'fungel-promo', 'antifungal-gel', 'gljivice-stopala', 'biomelis', 'biowart', 'bioroid', 'fungomax'];
+  const locales = ['rs', 'ba', 'hr'];
   
   const params = [];
   for (const locale of locales) {

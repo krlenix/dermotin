@@ -16,7 +16,7 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState({
     necessary: true,
-    marketing: false
+    marketing: true // Default to enabled for better user experience
   });
 
   useEffect(() => {
@@ -38,6 +38,12 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
     };
     setPreferences(allAccepted);
     localStorage.setItem('cookie-consent', JSON.stringify(allAccepted));
+    
+    // Dispatch custom event to notify pixel trackers
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cookieConsentUpdated'));
+    }
+    
     setShowBanner(false);
     setShowSettings(false);
   };
@@ -55,6 +61,12 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
   const savePreferences = () => {
     localStorage.setItem('cookie-consent', JSON.stringify(preferences));
+    
+    // Dispatch custom event to notify pixel trackers
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cookieConsentUpdated'));
+    }
+    
     setShowBanner(false);
     setShowSettings(false);
   };
