@@ -159,7 +159,7 @@ export function CheckoutForm({
     
     try {
       // Get Facebook tracking data for CAPI deduplication
-      const fbTrackingData = getFacebookTrackingData();
+      const fbTrackingData = getFacebookTrackingData(typeof document !== 'undefined' ? document.cookie : null);
       
       // Generate event ID for deduplication between browser pixel and CAPI
       const eventId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

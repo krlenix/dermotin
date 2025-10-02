@@ -28,7 +28,7 @@ function hasMarketingConsent(countryCode: string): boolean {
     
     const preferences = JSON.parse(consent);
     return preferences.marketing === true;
-  } catch (error) {
+  } catch {
     // console.error('Failed to parse cookie consent:', error);
     return false;
   }
@@ -45,7 +45,8 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
     // Initialize Facebook tracking as fallback (captures fbclid and creates cookies)
     // This runs even if Meta Pixel is blocked by ad blockers
     if (typeof window !== 'undefined') {
-      const fbData = initializeFacebookTracking();
+      initializeFacebookTracking();
+      // const fbData = initializeFacebookTracking();
       // console.log('📊 Facebook tracking initialized:', {
       //   hasFbp: !!fbData.fbp,
       //   hasFbc: !!fbData.fbc,
@@ -103,10 +104,10 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
           keepalive: true,
         })
         .then(response => response.json())
-        .then(data => {
+        .then(() => {
           // console.log('✅ CAPI PageView response:', data);
         })
-        .catch((error) => {
+        .catch(() => {
           // console.warn('❌ CAPI PageView tracking failed:', error);
         });
         
@@ -173,26 +174,26 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
               initTikTokPixel();
             }, 100);
           }
-        } catch (error) {
+        } catch {
           // console.error('Failed to parse consent change:', error);
         }
       }
     };
     
+    // Also listen for a custom event for same-window updates
+    const handleConsentChange = () => {
+      if (hasMarketingConsent(countryCode)) {
+        metaInitialized = false;
+        tiktokInitialized = false;
+        setTimeout(() => {
+          initMetaPixel();
+          initTikTokPixel();
+        }, 100);
+      }
+    };
+    
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', handleStorageChange);
-      
-      // Also listen for a custom event for same-window updates
-      const handleConsentChange = () => {
-        if (hasMarketingConsent(countryCode)) {
-          metaInitialized = false;
-          tiktokInitialized = false;
-          setTimeout(() => {
-            initMetaPixel();
-            initTikTokPixel();
-          }, 100);
-        }
-      };
       window.addEventListener('cookieConsentUpdated', handleConsentChange);
     }
     
@@ -396,10 +397,10 @@ export function usePixelTracking(countryCode: string) {
       keepalive: true,
     })
     .then(response => response.json())
-    .then(data => {
+    .then(() => {
       // console.log(`✅ CAPI ${eventType} response:`, data);
     })
-    .catch((error) => {
+    .catch(() => {
       // Silently fail - don't block user experience
       // console.warn(`❌ CAPI ${eventType} tracking failed:`, error);
     });

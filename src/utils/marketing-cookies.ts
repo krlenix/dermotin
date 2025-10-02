@@ -34,7 +34,7 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
     document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
     
     // console.log('📊 Marketing cookies updated:', merged);
-  } catch (error) {
+  } catch {
     // console.error('❌ Failed to set marketing cookies:', error);
   }
 }
@@ -71,7 +71,7 @@ export function getMarketingCookies(): MarketingParams {
         medium: parsed.medium || 'website'
       };
     }
-  } catch (error) {
+  } catch {
     // console.error('❌ Failed to parse marketing cookies:', error);
   }
 
@@ -170,7 +170,7 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
         medium: parsed.medium || 'website'
       };
     }
-  } catch (error) {
+  } catch {
     // console.error('❌ Failed to parse marketing cookies from headers:', error);
   }
 
