@@ -1,12 +1,17 @@
 /**
  * Pixel tracking configuration for Meta and TikTok
- * Uses environment variables for pixel IDs
+ * Uses environment variables for pixel IDs and CAPI tokens
  */
 
 export interface PixelConfig {
   meta: {
     pixelId: string;
     enabled: boolean;
+    capi?: {
+      accessToken: string;
+      testEventCode?: string;
+      enabled: boolean;
+    };
   };
   tiktok: {
     pixelId: string;
@@ -25,41 +30,61 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
   // Use direct access to environment variables - Next.js dynamic access doesn't work reliably on client
   let metaPixelId = '';
   let tiktokPixelId = '';
+  let capiAccessToken = '';
+  let capiTestEventCode = '';
   
-  // Map country codes to their specific environment variables
+  // Simple country-based configuration (e.g., NEXT_PUBLIC_META_PIXEL_RS)
+  // No domain-specific logic - keeps it simple
+  
   switch (upperCountryCode) {
     case 'RS':
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_RS || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_RS || '';
+      capiAccessToken = process.env.META_CAPI_TOKEN_RS || '';
+      capiTestEventCode = process.env.META_CAPI_TEST_CODE_RS || '';
       break;
     case 'BA':
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_BA || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_BA || '';
+      capiAccessToken = process.env.META_CAPI_TOKEN_BA || '';
+      capiTestEventCode = process.env.META_CAPI_TEST_CODE_BA || '';
       break;
     case 'BG':
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_BG || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_BG || '';
+      capiAccessToken = process.env.META_CAPI_TOKEN_BG || '';
+      capiTestEventCode = process.env.META_CAPI_TEST_CODE_BG || '';
       break;
     case 'HR':
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_HR || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_HR || '';
+      capiAccessToken = process.env.META_CAPI_TOKEN_HR || '';
+      capiTestEventCode = process.env.META_CAPI_TEST_CODE_HR || '';
       break;
     case 'ME':
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ME || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ME || '';
+      capiAccessToken = process.env.META_CAPI_TOKEN_ME || '';
+      capiTestEventCode = process.env.META_CAPI_TEST_CODE_ME || '';
       break;
     case 'RO':
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_RO || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_RO || '';
+      capiAccessToken = process.env.META_CAPI_TOKEN_RO || '';
+      capiTestEventCode = process.env.META_CAPI_TEST_CODE_RO || '';
       break;
     case 'EU':
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_EU || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_EU || '';
+      capiAccessToken = process.env.META_CAPI_TOKEN_EU || '';
+      capiTestEventCode = process.env.META_CAPI_TEST_CODE_EU || '';
       break;
     default:
-      // Fallback to dynamic access (might not work on client)
+      // Fallback to dynamic access
       metaPixelId = process.env[`NEXT_PUBLIC_META_PIXEL_${upperCountryCode}`] || '';
       tiktokPixelId = process.env[`NEXT_PUBLIC_TIKTOK_PIXEL_${upperCountryCode}`] || '';
+      capiAccessToken = process.env[`META_CAPI_TOKEN_${upperCountryCode}`] || '';
+      capiTestEventCode = process.env[`META_CAPI_TEST_CODE_${upperCountryCode}`] || '';
       break;
   }
   
@@ -67,11 +92,17 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
   // Allow any non-empty string that doesn't start with placeholder text
   const isValidMetaPixel = metaPixelId && !metaPixelId.startsWith('your_meta_pixel_id') && !metaPixelId.startsWith('your_actual_meta_pixel_id');
   const isValidTiktokPixel = tiktokPixelId && !tiktokPixelId.startsWith('your_tiktok_pixel_id') && !tiktokPixelId.startsWith('your_actual_tiktok_pixel_id');
+  const isValidCapiToken = capiAccessToken && !capiAccessToken.startsWith('your_');
   
   const config = {
     meta: {
       pixelId: metaPixelId,
       enabled: !!isValidMetaPixel,
+      capi: isValidMetaPixel ? {
+        accessToken: capiAccessToken,
+        testEventCode: capiTestEventCode || undefined,
+        enabled: !!isValidCapiToken,
+      } : undefined,
     },
     tiktok: {
       pixelId: tiktokPixelId,

@@ -23,6 +23,7 @@ import { UpsellCrossSell } from './UpsellCrossSell';
 import { CompactOrderSummary } from './CompactOrderSummary';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
 import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
+import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -157,6 +158,12 @@ export function CheckoutForm({
     setDialogType('loading');
     
     try {
+      // Get Facebook tracking data for CAPI deduplication
+      const fbTrackingData = getFacebookTrackingData();
+      
+      // Generate event ID for deduplication between browser pixel and CAPI
+      const eventId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
       // Prepare order data
       const orderData = {
         ...formData,
@@ -165,7 +172,10 @@ export function CheckoutForm({
         country: countryConfig.code,
         orderTotal: finalTotal,
         subtotal: subtotal,
-        shippingCost: shippingCost
+        shippingCost: shippingCost,
+        fbp: fbTrackingData.fbp || undefined,
+        fbc: fbTrackingData.fbc || undefined,
+        eventId: eventId
       };
 
       // Call onOrderSubmit and wait for result
@@ -188,8 +198,8 @@ export function CheckoutForm({
           num_items: selectedVariant.quantity || 1
         };
         
-        // Fire Purchase event for both Meta and TikTok
-        trackEvent('purchase', purchaseEventData);
+        // Fire Purchase event for both Meta and TikTok with eventId for deduplication
+        trackEvent('purchase', purchaseEventData, eventId);
         
         // Set success dialog data
         setOrderResult({

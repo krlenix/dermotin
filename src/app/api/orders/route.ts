@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
 import { getMarketingCookiesFromHeaders } from '@/utils/marketing-cookies';
 import { OrderService, webhookToOrderRecord, WebhookPayload } from '@/lib/supabase';
+import { sendCapiPurchaseEvent } from '@/lib/capi';
 
 // Configure dayjs with timezone support
 dayjs.extend(utc);
@@ -152,13 +153,24 @@ export async function POST(request: NextRequest) {
     const marketingParams = getMarketingCookiesFromHeaders(cookieHeader);
     console.log('📊 Marketing parameters from cookies:', marketingParams);
 
-    const orderData: Omit<OrderData, 'orderId'> = await request.json();
+    const orderData: Omit<OrderData, 'orderId'> & { 
+      fbp?: string; 
+      fbc?: string;
+      eventId?: string;
+    } = await request.json();
     
     // Generate order ID
     const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Get country configuration
     const countryConfig = getCountryConfig(orderData.locale);
+    
+    // Get client IP and user agent for CAPI
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown';
+    const clientUserAgent = request.headers.get('user-agent') || undefined;
+    const referer = request.headers.get('referer') || undefined;
 
     // Calculate individual product price (subtotal minus bundle items)
     const bundleTotal = orderData.bundleItems ? Object.values(orderData.bundleItems).reduce((sum, price) => sum + price, 0) : 0;
@@ -244,6 +256,60 @@ export async function POST(request: NextRequest) {
     let webhookResult = null;
     let supabaseStatus = 'pending';
     let supabaseError = '';
+    let capiStatus = 'pending';
+    let capiError = '';
+    let capiEventId = '';
+
+    // Send Meta Conversion API (CAPI) Purchase event
+    try {
+      console.log('📤 Sending CAPI Purchase event for locale:', orderData.locale);
+      
+      // Split customer name into first and last name
+      const nameParts = orderData.customerName.trim().split(/\s+/);
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      const capiResult = await sendCapiPurchaseEvent(orderData.locale, {
+        orderId,
+        currency: countryConfig.currency,
+        totalPrice: orderData.totalPrice,
+        customerEmail: orderData.customerEmail || undefined,
+        customerPhone: orderData.customerPhone || undefined,
+        customerFirstName: firstName,
+        customerLastName: lastName,
+        customerCity: orderData.customerCity || undefined,
+        customerZip: orderData.customerPostalCode || undefined,
+        customerCountry: countryConfig.code.toUpperCase(),
+        clientIp,
+        clientUserAgent,
+        fbp: orderData.fbp,
+        fbc: orderData.fbc,
+        eventSourceUrl: referer,
+        eventId: orderData.eventId, // Use the same event ID from the browser pixel for deduplication
+        lineItems: webhookPayload.line_items?.map(item => ({
+          sku: item.sku,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      });
+      
+      if (capiResult.success) {
+        capiStatus = 'success';
+        capiEventId = capiResult.eventId || '';
+        console.log('✅ CAPI Purchase event sent successfully:', capiEventId);
+      } else {
+        capiStatus = 'failed';
+        capiError = capiResult.error || 'Unknown CAPI error';
+        console.error('❌ Failed to send CAPI event:', capiError);
+        // Continue with order processing even if CAPI fails
+      }
+    } catch (capiErr) {
+      capiStatus = 'failed';
+      capiError = capiErr instanceof Error ? capiErr.message : 'Unknown CAPI error';
+      console.error('❌ Unexpected CAPI error:', capiErr);
+      // Continue with order processing even if CAPI fails
+    }
 
     // First, insert order into Supabase database
     try {
@@ -303,7 +369,7 @@ export async function POST(request: NextRequest) {
     
     console.log('✅ Order processed successfully:', completeOrder);
     
-    // Return success response with order ID, webhook info, and Supabase status
+    // Return success response with order ID, webhook info, Supabase status, and CAPI status
     return NextResponse.json({
       success: true,
       orderId,
@@ -312,6 +378,9 @@ export async function POST(request: NextRequest) {
       webhookResult,
       supabaseStatus,
       supabaseError: supabaseError || undefined,
+      capiStatus,
+      capiEventId,
+      capiError: capiError || undefined,
       domain: currentDomain,
       timestamp: webhookPayload.created_at
     });

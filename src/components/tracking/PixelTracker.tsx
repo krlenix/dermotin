@@ -152,7 +152,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
 export function usePixelTracking(countryCode: string) {
   const pixelConfig = getPixelConfig(countryCode);
 
-  const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart', eventData?: Record<string, unknown>) => {
+  const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart', eventData?: Record<string, unknown>, eventId?: string) => {
     if (typeof window === 'undefined') return;
 
     // Track Meta Pixel event
@@ -176,8 +176,14 @@ export function usePixelTracking(countryCode: string) {
           metaEvent = META_EVENTS.PAGE_VIEW;
       }
       
-      if (eventData) {
-        window.fbq('track', metaEvent, eventData);
+      // Prepare event data with event ID for deduplication
+      const fullEventData = eventData ? { ...eventData } : {};
+      if (eventId) {
+        fullEventData.eventID = eventId; // Meta uses eventID (camelCase) for deduplication
+      }
+      
+      if (Object.keys(fullEventData).length > 0) {
+        window.fbq('track', metaEvent, fullEventData);
       } else {
         window.fbq('track', metaEvent);
       }
