@@ -10,6 +10,17 @@ const MARKETING_COOKIE_KEY = 'marketing-params';
 const COOKIE_EXPIRY_DAYS = 30;
 const TEMP_STORAGE_KEY = 'temp-marketing-params'; // For storing params before consent
 
+// Debug logger - ONLY works in development (localhost), never in production
+const debugLog = (message: string, data?: unknown) => {
+  if (process.env.NODE_ENV === 'development') {
+    if (data !== undefined) {
+      console.log(message, data);
+    } else {
+      console.log(message);
+    }
+  }
+}
+
 /**
  * Set marketing parameters in cookies
  * Stores immediately in sessionStorage (always)
@@ -33,6 +44,7 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
 
     // ALWAYS store in sessionStorage (this is fine for GDPR)
     sessionStorage.setItem(TEMP_STORAGE_KEY, JSON.stringify(merged));
+    debugLog('📊 Marketing params stored in sessionStorage:', merged);
     
     // Check if we can store in cookies (for server-side access)
     const consent = localStorage.getItem('cookie-consent');
@@ -43,9 +55,12 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
       expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
       
       document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      debugLog('📊 Marketing cookies updated:', merged);
+    } else {
+      debugLog('⚠️ Waiting for cookie consent before storing in cookies');
     }
   } catch {
-    // Silently fail
+    debugLog('❌ Failed to set marketing cookies');
   }
 }
 
@@ -99,7 +114,7 @@ export function getMarketingCookies(): MarketingParams {
       };
     }
   } catch {
-    // Silently fail
+    debugLog('❌ Failed to parse marketing cookies');
   }
 
   // Return defaults if no cookie or parsing failed
@@ -120,6 +135,7 @@ export function clearMarketingCookies(): void {
 
   document.cookie = `${MARKETING_COOKIE_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   sessionStorage.removeItem(TEMP_STORAGE_KEY);
+  debugLog('🗑️ Marketing cookies cleared');
 }
 
 /**
@@ -176,9 +192,13 @@ export function extractMarketingParamsFromURL(searchParams: URLSearchParams): Pa
 
 /**
  * Server-side function to get marketing cookies from request headers
+ * Logs only in development mode for debugging
  */
 export function getMarketingCookiesFromHeaders(cookieHeader: string | null): MarketingParams {
+  const isDev = process.env.NODE_ENV === 'development';
+  
   if (!cookieHeader) {
+    if (isDev) console.log('⚠️ No cookie header found in request');
     return {
       campaign_id: null,
       adset_id: null,
@@ -200,6 +220,8 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
       const decoded = decodeURIComponent(value);
       const parsed = JSON.parse(decoded) as MarketingParams;
       
+      if (isDev) console.log('✅ Marketing cookies parsed from headers:', parsed);
+      
       return {
         campaign_id: parsed.campaign_id || null,
         adset_id: parsed.adset_id || null,
@@ -207,9 +229,14 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
         aff_id: parsed.aff_id || null,
         medium: parsed.medium || 'website'
       };
+    } else {
+      if (isDev) {
+        console.log('⚠️ marketing-params cookie not found in header. Available cookies:', 
+          cookies.map(c => c.trim().split('=')[0]).join(', '));
+      }
     }
   } catch {
-    // Silently fail
+    if (isDev) console.log('❌ Failed to parse marketing cookies from headers');
   }
 
   return {
