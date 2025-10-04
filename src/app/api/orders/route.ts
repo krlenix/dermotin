@@ -12,6 +12,11 @@ import { sendCapiPurchaseEvent } from '@/lib/capi';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// Helper function to round prices to 2 decimal places
+function roundPrice(price: number): number {
+  return Math.round(price * 100) / 100;
+}
+
 export interface OrderData {
   orderId: string;
   customerName: string;
@@ -184,7 +189,7 @@ export async function POST(request: NextRequest) {
       order_id: orderId,
       created_at: formattedDate, // Laravel date format
       currency: countryConfig.currency, // Should be RSD or BAM (3 chars)
-      total_price: orderData.totalPrice,
+      total_price: roundPrice(orderData.totalPrice),
       financial_status: 'pending', // Laravel expects 'pending' or 'paid'
       customer: {
         email: orderData.customerEmail || 'noreply@example.com', // Ensure email is not empty
@@ -214,13 +219,13 @@ export async function POST(request: NextRequest) {
           sku: orderData.productSku || 'UNKNOWN',
           name: orderData.productName,
           quantity: orderData.quantity,
-          price: mainProductPrice / orderData.quantity, // per unit price
-          item_total_price: mainProductPrice, // total price for this line item
+          price: roundPrice(mainProductPrice / orderData.quantity), // per unit price
+          item_total_price: roundPrice(mainProductPrice), // total price for this line item
           discount: 0 // Use 0 instead of null for Laravel validation
         }
       ],
       shipping: {
-        price: orderData.shippingCost,
+        price: roundPrice(orderData.shippingCost),
         method: orderData.courierName
       },
       discount_codes: [],
@@ -244,8 +249,8 @@ export async function POST(request: NextRequest) {
           sku: productId,
           name: `Bundle Item - ${productId}`,
           quantity: bundleQuantity,
-          price: totalPrice / bundleQuantity, // per unit price (same as total since qty=1)
-          item_total_price: totalPrice, // total price for this line item
+          price: roundPrice(totalPrice / bundleQuantity), // per unit price (same as total since qty=1)
+          item_total_price: roundPrice(totalPrice), // total price for this line item
           discount: 0
         });
       });
@@ -273,7 +278,7 @@ export async function POST(request: NextRequest) {
       const capiResult = await sendCapiPurchaseEvent(orderData.locale, {
         orderId,
         currency: countryConfig.currency,
-        totalPrice: orderData.totalPrice,
+        totalPrice: roundPrice(orderData.totalPrice),
         customerEmail: orderData.customerEmail || undefined,
         customerPhone: orderData.customerPhone || undefined,
         customerFirstName: firstName,
@@ -291,7 +296,7 @@ export async function POST(request: NextRequest) {
           sku: item.sku,
           name: item.name,
           quantity: item.quantity,
-          price: item.price,
+          price: item.price, // Already rounded in webhookPayload
         })),
       });
       
