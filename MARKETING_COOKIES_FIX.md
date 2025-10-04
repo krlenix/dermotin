@@ -60,6 +60,18 @@ Updated to accept marketing params from request body as fallback:
 - Falls back to request body params (for users with pending consent)
 - Ensures marketing params are always included in webhook payload
 
+## Server-Side vs Client-Side Behavior
+
+### Server-Side Rendering (SSR)
+- `hasMarketingConsent()` returns `true` (safe default)
+- This prevents blocking during SSR and allows pages to render
+- Actual consent checking happens client-side
+
+### Client-Side
+- `hasMarketingConsent()` reads from `localStorage`
+- Respects user's actual consent preferences
+- Controls whether params go to cookies or sessionStorage
+
 ## How It Works
 
 ### For Users WITHOUT Consent (or pending consent)

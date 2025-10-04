@@ -12,10 +12,13 @@ export interface CookieConsent {
  * Check if marketing cookies are allowed
  * For non-EU users, always return true (implied consent)
  * For EU users, check their explicit consent
+ * 
+ * IMPORTANT: This function is client-side only
  */
 export function hasMarketingConsent(): boolean {
+  // Server-side: assume consent (will be properly checked client-side)
   if (typeof window === 'undefined') {
-    return false;
+    return true;
   }
 
   try {
@@ -30,7 +33,7 @@ export function hasMarketingConsent(): boolean {
     return preferences.marketing === true;
   } catch (error) {
     console.error('Error reading cookie consent:', error);
-    return false;
+    return true; // Default to true on error to prevent blocking
   }
 }
 
