@@ -9,21 +9,6 @@ import {
   extractMarketingParamsFromURL 
 } from '@/utils/marketing-cookies';
 
-// Debug logger that works in production
-const debugLog = (message: string, data?: unknown) => {
-  if (typeof window === 'undefined') return;
-  
-  const isDebugMode = localStorage.getItem('debug-marketing') === 'true' || process.env.NODE_ENV === 'development';
-  
-  if (isDebugMode) {
-    if (data !== undefined) {
-      console.log(message, data);
-    } else {
-      console.log(message);
-    }
-  }
-};
-
 export function useMarketingTracking() {
   const searchParams = useSearchParams();
   const [marketingParams, setMarketingParams] = useState<MarketingParams>({
@@ -44,7 +29,6 @@ export function useMarketingTracking() {
     
     // If we have new parameters from URL, store them (respecting consent)
     if (Object.keys(urlParams).length > 0) {
-      debugLog('📊 New marketing parameters detected in URL:', urlParams);
       setMarketingCookies(urlParams);
       
       // Update state with merged parameters
@@ -66,7 +50,6 @@ export function useMarketingTracking() {
       // Refresh marketing params when consent changes
       const updatedParams = getMarketingCookies();
       setMarketingParams(updatedParams);
-      debugLog('📊 Marketing params updated after consent change:', updatedParams);
     };
 
     window.addEventListener('cookieConsentUpdated', handleConsentUpdate);

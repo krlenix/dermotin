@@ -1,26 +1,5 @@
 # Verify Marketing Cookie
 
-## 🔧 Enable Debug Mode in Production
-
-**IMPORTANT**: Console logs are now controlled by debug mode to prevent them from appearing in production by default.
-
-### To enable debug logging on production site:
-
-```javascript
-// Run this in browser console on dermotin.shop
-localStorage.setItem('debug-marketing', 'true');
-```
-
-Then reload the page. You should now see all marketing cookie logs!
-
-### To disable debug mode:
-
-```javascript
-localStorage.removeItem('debug-marketing');
-```
-
----
-
 ## Your Cookie IS Set! ✅
 
 In your screenshot, I can see:
