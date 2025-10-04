@@ -11,6 +11,7 @@ import { HOMEPAGE_IMAGES } from '@/config/images';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
+import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { CountriesHeader } from '@/components/features/CountriesHeader';
@@ -63,6 +64,9 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
   const { trackEvent } = usePixelTracking(countryConfig.code);
+  
+  // Initialize marketing tracking
+  const { marketingParams } = useMarketingTracking();
   
   // Screen size detection for responsive images
   const [isMobile, setIsMobile] = useState(false);

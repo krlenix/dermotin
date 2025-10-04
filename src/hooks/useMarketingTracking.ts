@@ -20,15 +20,22 @@ export function useMarketingTracking() {
   });
 
   useEffect(() => {
+    // ALWAYS log this in both dev and production to verify the hook is running
+    console.log('🔥 useMarketingTracking hook fired!');
+    console.log('🔥 Search params:', searchParams.toString());
+    
     // Get existing marketing parameters from cookies or sessionStorage
     const existingParams = getMarketingCookies();
+    console.log('🔥 Existing params:', existingParams);
     setMarketingParams(existingParams);
 
     // Extract new parameters from URL
     const urlParams = extractMarketingParamsFromURL(searchParams);
+    console.log('🔥 Extracted URL params:', urlParams);
     
     // If we have new parameters from URL, store them (respecting consent)
     if (Object.keys(urlParams).length > 0) {
+      console.log('🔥 Setting marketing cookies with:', urlParams);
       setMarketingCookies(urlParams);
       
       // Update state with merged parameters
@@ -40,7 +47,10 @@ export function useMarketingTracking() {
         medium: urlParams.medium !== undefined ? urlParams.medium : existingParams.medium,
       };
       
+      console.log('🔥 Final merged params:', updatedParams);
       setMarketingParams(updatedParams);
+    } else {
+      console.log('🔥 No URL params found, using existing only');
     }
   }, [searchParams]);
 

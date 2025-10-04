@@ -20,8 +20,21 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
   });
 
   useEffect(() => {
-    if (!isEU) return;
+    // For non-EU users, automatically set consent to true (no banner needed)
+    if (!isEU) {
+      const hasConsent = localStorage.getItem('cookie-consent');
+      if (!hasConsent) {
+        const autoConsent = {
+          necessary: true,
+          marketing: true
+        };
+        localStorage.setItem('cookie-consent', JSON.stringify(autoConsent));
+        console.log('✅ Auto-approved cookies for non-EU user');
+      }
+      return;
+    }
     
+    // For EU users, check if they've given consent
     const hasConsent = localStorage.getItem('cookie-consent');
     if (!hasConsent) {
       setShowBanner(true);

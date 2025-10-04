@@ -10,6 +10,26 @@ const MARKETING_COOKIE_KEY = 'marketing-params';
 const COOKIE_EXPIRY_DAYS = 30;
 const TEMP_STORAGE_KEY = 'temp-marketing-params'; // For storing params before consent
 
+// EU countries that require explicit consent
+const EU_COUNTRIES = ['hr', 'si', 'at', 'de', 'fr', 'it', 'es', 'pt', 'nl', 'be', 'lu', 'dk', 'se', 'fi', 'ee', 'lv', 'lt', 'pl', 'cz', 'sk', 'hu', 'ro', 'bg', 'gr', 'cy', 'mt', 'ie'];
+
+// Check if current user is from EU based on URL locale
+// This function is CLIENT-SIDE ONLY
+const isEUUser = (): boolean => {
+  // Must be called from browser
+  if (typeof window === 'undefined') {
+    return false; // Server-side: assume non-EU to avoid errors
+  }
+  
+  try {
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const locale = pathParts[0] || 'rs'; // Default to 'rs' if no locale
+    return EU_COUNTRIES.includes(locale.toLowerCase());
+  } catch {
+    return false; // On error, assume non-EU
+  }
+};
+
 // Debug logger - ONLY works in development (localhost), never in production
 const debugLog = (message: string, data?: unknown) => {
   if (process.env.NODE_ENV === 'development') {
@@ -47,8 +67,45 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
     debugLog('📊 Marketing params stored in sessionStorage:', merged);
     
     // Check if we can store in cookies (for server-side access)
+    const isEU = isEUUser();
     const consent = localStorage.getItem('cookie-consent');
-    const canUseCookies = !consent || JSON.parse(consent).marketing === true;
+    
+    let canUseCookies = false;
+    
+    if (isEU) {
+      // EU user - MUST have explicit consent
+      if (consent) {
+        try {
+          const consentData = JSON.parse(consent);
+          canUseCookies = consentData.marketing === true;
+          debugLog(canUseCookies ? '✅ EU: Marketing consent granted' : '❌ EU: Marketing consent denied');
+        } catch {
+          canUseCookies = false;
+          debugLog('❌ EU: Failed to parse consent data');
+        }
+      } else {
+        canUseCookies = false;
+        debugLog('⚠️ EU: Waiting for user consent before storing cookies');
+      }
+    } else {
+      // Non-EU user - Can store cookies immediately (consent will be auto-set by CookieConsent component)
+      if (!consent) {
+        // First visit, consent will be auto-set by CookieConsent component
+        // We can store cookies immediately
+        canUseCookies = true;
+        debugLog('✅ Non-EU: Auto-storing cookies (consent will be auto-set)');
+      } else {
+        // Consent already exists, check it
+        try {
+          const consentData = JSON.parse(consent);
+          canUseCookies = consentData.marketing === true;
+          debugLog(canUseCookies ? '✅ Non-EU: Marketing consent confirmed' : '❌ Non-EU: Marketing consent denied');
+        } catch {
+          canUseCookies = false;
+          debugLog('❌ Non-EU: Failed to parse consent data');
+        }
+      }
+    }
     
     if (canUseCookies) {
       const expires = new Date();
