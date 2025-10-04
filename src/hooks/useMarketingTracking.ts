@@ -20,14 +20,14 @@ export function useMarketingTracking() {
   });
 
   useEffect(() => {
-    // Get existing marketing parameters from cookies
+    // Get existing marketing parameters from cookies or sessionStorage
     const existingParams = getMarketingCookies();
     setMarketingParams(existingParams);
 
     // Extract new parameters from URL
     const urlParams = extractMarketingParamsFromURL(searchParams);
     
-    // If we have new parameters from URL, update cookies
+    // If we have new parameters from URL, store them (respecting consent)
     if (Object.keys(urlParams).length > 0) {
       console.log('📊 New marketing parameters detected in URL:', urlParams);
       setMarketingCookies(urlParams);
@@ -44,6 +44,22 @@ export function useMarketingTracking() {
       setMarketingParams(updatedParams);
     }
   }, [searchParams]);
+
+  // Listen for cookie consent changes to update marketing params
+  useEffect(() => {
+    const handleConsentUpdate = () => {
+      // Refresh marketing params when consent changes
+      const updatedParams = getMarketingCookies();
+      setMarketingParams(updatedParams);
+      console.log('📊 Marketing params updated after consent change:', updatedParams);
+    };
+
+    window.addEventListener('cookieConsentUpdated', handleConsentUpdate);
+    
+    return () => {
+      window.removeEventListener('cookieConsentUpdated', handleConsentUpdate);
+    };
+  }, []);
 
   return {
     marketingParams,

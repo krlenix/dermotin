@@ -4,7 +4,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
-import { getMarketingCookiesFromHeaders } from '@/utils/marketing-cookies';
+import { getMarketingCookiesFromHeaders, MarketingParams } from '@/utils/marketing-cookies';
 import { OrderService, webhookToOrderRecord, WebhookPayload } from '@/lib/supabase';
 import { sendCapiPurchaseEvent } from '@/lib/capi';
 
@@ -153,16 +153,21 @@ export async function POST(request: NextRequest) {
     // Get current domain early in the handler
     const currentDomain = getCurrentDomain(request);
 
-    // Get marketing parameters from cookies
-    const cookieHeader = request.headers.get('cookie');
-    const marketingParams = getMarketingCookiesFromHeaders(cookieHeader);
-    console.log('📊 Marketing parameters from cookies:', marketingParams);
-
     const orderData: Omit<OrderData, 'orderId'> & { 
       fbp?: string; 
       fbc?: string;
       eventId?: string;
+      marketingParams?: MarketingParams;
     } = await request.json();
+
+    // Get marketing parameters from cookies first, then fall back to request body
+    const cookieHeader = request.headers.get('cookie');
+    const cookieMarketingParams = getMarketingCookiesFromHeaders(cookieHeader);
+    
+    // Use marketing params from request body if provided (for cases where cookies aren't set yet)
+    // Otherwise use params from cookies
+    const marketingParams = orderData.marketingParams || cookieMarketingParams;
+    console.log('📊 Marketing parameters (from body or cookies):', marketingParams);
     
     // Generate order ID
     const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

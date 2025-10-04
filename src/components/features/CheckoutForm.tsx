@@ -24,6 +24,7 @@ import { CompactOrderSummary } from './CompactOrderSummary';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
 import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
+import { getMarketingCookies } from '@/utils/marketing-cookies';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -61,6 +62,12 @@ export function CheckoutForm({
       maximumFractionDigits: 2,
     }).format(amount) + ' ' + countryConfig.currencySymbol;
   };
+  
+  // Helper function to round prices to 2 decimal places (avoid floating-point errors)
+  const roundPrice = (price: number): number => {
+    return Math.round(price * 100) / 100;
+  };
+  
   const { trackEvent } = usePixelTracking(countryConfig.code);
   
   // Form validation function
@@ -161,6 +168,9 @@ export function CheckoutForm({
       // Get Facebook tracking data for CAPI deduplication
       const fbTrackingData = getFacebookTrackingData(typeof document !== 'undefined' ? document.cookie : null);
       
+      // Get marketing parameters (from cookies or sessionStorage)
+      const marketingData = getMarketingCookies();
+      
       // Generate event ID for deduplication between browser pixel and CAPI
       const eventId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
@@ -175,7 +185,9 @@ export function CheckoutForm({
         shippingCost: shippingCost,
         fbp: fbTrackingData.fbp || undefined,
         fbc: fbTrackingData.fbc || undefined,
-        eventId: eventId
+        eventId: eventId,
+        // Include marketing parameters for webhook
+        marketingParams: marketingData
       };
 
       // Call onOrderSubmit and wait for result
@@ -246,7 +258,7 @@ export function CheckoutForm({
 
   const orderTotal = selectedVariant.discountPrice || selectedVariant.price;
   const bundleTotal = Object.values(bundleItems).reduce((sum, price) => sum + price, 0);
-  const subtotal = orderTotal + bundleTotal;
+  const subtotal = roundPrice(orderTotal + bundleTotal);
   
   // Use selected courier or fallback to default
   const displayCourier = selectedCourier || getDefaultCourier(countryConfig);
@@ -259,8 +271,8 @@ export function CheckoutForm({
   
   // Calculate shipping cost using selected courier and country threshold
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
-  const shippingCost = hasFreeShipping ? 0 : calculateShippingCost(subtotal, displayCourier, countryConfig);
-  const finalTotal = subtotal + shippingCost;
+  const shippingCost = hasFreeShipping ? 0 : roundPrice(calculateShippingCost(subtotal, displayCourier, countryConfig));
+  const finalTotal = roundPrice(subtotal + shippingCost);
 
   return (
     <div className={`space-y-6 ${className}`}>

@@ -1,3 +1,5 @@
+import { hasMarketingConsent } from './cookie-consent';
+
 export interface MarketingParams {
   campaign_id: string | null;
   adset_id: string | null;
@@ -8,10 +10,12 @@ export interface MarketingParams {
 
 const MARKETING_COOKIE_KEY = 'marketing-params';
 const COOKIE_EXPIRY_DAYS = 30;
+const TEMP_STORAGE_KEY = 'temp-marketing-params'; // For storing params before consent
 
 /**
  * Set marketing parameters in cookies
- * If new parameters are provided, they override existing ones
+ * Only sets cookies if user has given marketing consent
+ * If consent not given, stores in sessionStorage temporarily
  */
 export function setMarketingCookies(params: Partial<MarketingParams>): void {
   if (typeof window === 'undefined') return;
@@ -29,20 +33,31 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
       medium: params.medium !== undefined ? params.medium : existing.medium,
     };
 
-    // Set cookie with expiry
-    const expires = new Date();
-    expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
-    
-    document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-    
-    // console.log('📊 Marketing cookies updated:', merged);
-  } catch {
-    // console.error('❌ Failed to set marketing cookies:', error);
+    // Check if user has given marketing consent
+    if (hasMarketingConsent()) {
+      // Set cookie with expiry
+      const expires = new Date();
+      expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
+      
+      document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      
+      console.log('📊 Marketing cookies updated:', merged);
+      
+      // Clear temporary storage if it exists
+      sessionStorage.removeItem(TEMP_STORAGE_KEY);
+    } else {
+      // Store temporarily in sessionStorage until consent is given
+      sessionStorage.setItem(TEMP_STORAGE_KEY, JSON.stringify(merged));
+      console.log('📊 Marketing params stored temporarily (awaiting consent):', merged);
+    }
+  } catch (error) {
+    console.error('❌ Failed to set marketing cookies:', error);
   }
 }
 
 /**
- * Get marketing parameters from cookies
+ * Get marketing parameters from cookies or temporary storage
+ * Returns data from cookies if consent given, or from sessionStorage if awaiting consent
  */
 export function getMarketingCookies(): MarketingParams {
   if (typeof window === 'undefined') {
@@ -56,6 +71,7 @@ export function getMarketingCookies(): MarketingParams {
   }
 
   try {
+    // First, try to get from cookies (if consent given)
     const cookies = document.cookie.split(';');
     const marketingCookie = cookies.find(cookie => 
       cookie.trim().startsWith(`${MARKETING_COOKIE_KEY}=`)
@@ -75,8 +91,21 @@ export function getMarketingCookies(): MarketingParams {
         medium: parsed.medium || 'website'
       };
     }
-  } catch {
-    // console.error('❌ Failed to parse marketing cookies:', error);
+
+    // If no cookie, check temporary storage
+    const tempData = sessionStorage.getItem(TEMP_STORAGE_KEY);
+    if (tempData) {
+      const parsed = JSON.parse(tempData) as MarketingParams;
+      return {
+        campaign_id: parsed.campaign_id || null,
+        adset_id: parsed.adset_id || null,
+        ad_id: parsed.ad_id || null,
+        aff_id: parsed.aff_id || null,
+        medium: parsed.medium || 'website'
+      };
+    }
+  } catch (error) {
+    console.error('❌ Failed to parse marketing cookies:', error);
   }
 
   // Return defaults if no cookie or parsing failed
@@ -90,13 +119,42 @@ export function getMarketingCookies(): MarketingParams {
 }
 
 /**
- * Clear marketing cookies
+ * Clear marketing cookies and temporary storage
  */
 export function clearMarketingCookies(): void {
   if (typeof window === 'undefined') return;
 
   document.cookie = `${MARKETING_COOKIE_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-  // console.log('🗑️ Marketing cookies cleared');
+  sessionStorage.removeItem(TEMP_STORAGE_KEY);
+  console.log('🗑️ Marketing cookies cleared');
+}
+
+/**
+ * Move marketing parameters from temporary storage to cookies
+ * Called when user gives marketing consent
+ */
+export function applyStoredMarketingParams(): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const tempData = sessionStorage.getItem(TEMP_STORAGE_KEY);
+    if (tempData) {
+      const params = JSON.parse(tempData) as MarketingParams;
+      
+      // Now that we have consent, store in cookies
+      const expires = new Date();
+      expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
+      
+      document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(params))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      
+      // Clear temporary storage
+      sessionStorage.removeItem(TEMP_STORAGE_KEY);
+      
+      console.log('✅ Marketing params moved from temporary storage to cookies:', params);
+    }
+  } catch (error) {
+    console.error('❌ Failed to apply stored marketing params:', error);
+  }
 }
 
 /**

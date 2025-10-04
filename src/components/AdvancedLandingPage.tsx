@@ -84,6 +84,11 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [isScrolled, setIsScrolled] = useState(false);
   const [triggerBundleShake, setTriggerBundleShake] = useState(false);
 
+  // Helper function to round prices to 2 decimal places (avoid floating-point errors)
+  const roundPrice = (price: number): number => {
+    return Math.round(price * 100) / 100;
+  };
+
   // Apply global overflow fix and prevent layout shifts
   useEffect(() => {
     // Only set maxWidth to prevent horizontal scroll, but keep overflow visible for sticky positioning
@@ -252,15 +257,17 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       productVariant: selectedVariant.name,
       productSku: selectedVariant.sku,
       quantity: selectedVariant.quantity || 1,
-      totalPrice: orderData.orderTotal as number,
-      subtotal: orderData.subtotal as number,
-      shippingCost: orderData.shippingCost as number,
+      totalPrice: roundPrice(orderData.orderTotal as number),
+      subtotal: roundPrice(orderData.subtotal as number),
+      shippingCost: roundPrice(orderData.shippingCost as number),
       currency: countryConfig.currencySymbol,
       courierName: selectedCourier.name,
       deliveryTime: selectedCourier.deliveryTime,
       paymentMethod: orderData.paymentMethod as string,
       bundleItems: bundleItems,
-      locale: countryConfig.code
+      locale: countryConfig.code,
+      // Include marketing parameters from orderData
+      marketingParams: orderData.marketingParams
     };
 
     try {
@@ -311,7 +318,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       if (newItems[productId]) {
         delete newItems[productId];
       } else {
-        newItems[productId] = price;
+        newItems[productId] = roundPrice(price);
       }
       return newItems;
     });
