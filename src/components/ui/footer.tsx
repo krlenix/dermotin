@@ -52,15 +52,17 @@ export function Footer({ countryConfig, locale = 'rs' }: FooterProps) {
           <div>
             <h4 className="font-bold mb-4">{t('footer.company_info')}</h4>
             <div className="space-y-3 text-sm text-gray-300">
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-gray-400" />
-                <a 
-                  href={`tel:${countryConfig.company.phone}`}
-                  className="font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                  {countryConfig.company.phone}
-                </a>
-              </div>
+              {countryConfig.company.phone && (
+                <div className="flex items-center gap-3">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  <a 
+                    href={`tel:${countryConfig.company.phone}`}
+                    className="font-medium text-gray-300 hover:text-white transition-colors"
+                  >
+                    {countryConfig.company.phone}
+                  </a>
+                </div>
+              )}
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-gray-400" />
                 <span className="font-medium">{countryConfig.company.email}</span>

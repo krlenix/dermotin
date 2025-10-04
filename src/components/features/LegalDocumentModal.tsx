@@ -84,7 +84,20 @@ export function LegalDocumentModal({
     processed = processed.replace(/\{\{company\.country\}\}/g, config.company.country);
     processed = processed.replace(/\{\{company\.taxNumber\}\}/g, config.company.taxNumber);
     processed = processed.replace(/\{\{company\.registrationNumber\}\}/g, config.company.registrationNumber);
-    processed = processed.replace(/\{\{company\.phone\}\}/g, config.company.phone);
+    // Handle phone placeholder intelligently - remove phone references when not available
+    if (config.company.phone) {
+      processed = processed.replace(/\{\{company\.phone\}\}/g, config.company.phone);
+    } else {
+      // Remove phone references from text when phone is not available
+      processed = processed
+        .replace(/\{\{company\.phone\}\}/g, '') // Remove phone placeholder
+        .replace(/ i telefon: /g, '') // Remove " i telefon: " 
+        .replace(/telefon: /g, '') // Remove "telefon: "
+        .replace(/ i telefon/g, '') // Remove " i telefon"
+        .replace(/\s+,\s*$/g, '') // Remove trailing comma and whitespace
+        .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
+        .trim();
+    }
     processed = processed.replace(/\{\{company\.email\}\}/g, config.company.email);
     processed = processed.replace(/\{\{company\.website\}\}/g, websiteDomain);
     processed = processed.replace(/\{\{company\.activityCode\}\}/g, config.company.activityCode);

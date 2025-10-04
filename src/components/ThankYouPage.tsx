@@ -339,11 +339,13 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
           </CardHeader>
           <CardContent className="text-center p-6">
             <p className="text-gray-600 mb-4">{t('thank_you.contact_support')}</p>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="flex items-center justify-center gap-2">
-                <Phone className="w-4 h-4 text-brand-orange" />
-                <span className="font-medium">{countryConfig.company.phone}</span>
-              </div>
+            <div className={`grid gap-4 ${countryConfig.company.phone ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
+              {countryConfig.company.phone && (
+                <div className="flex items-center justify-center gap-2">
+                  <Phone className="w-4 h-4 text-brand-orange" />
+                  <span className="font-medium">{countryConfig.company.phone}</span>
+                </div>
+              )}
               <div className="flex items-center justify-center gap-2">
                 <Mail className="w-4 h-4 text-brand-orange" />
                 <span className="font-medium">{countryConfig.company.email}</span>

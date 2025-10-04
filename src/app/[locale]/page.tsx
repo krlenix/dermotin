@@ -42,7 +42,8 @@ import {
   ArrowRight,
   Sparkles,
   ShieldCheck,
-  Phone
+  Phone,
+  Mail
 } from 'lucide-react';
 
 // Homepage statistics are now available through translations
@@ -330,31 +331,62 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Contact Info - Right side */}
-            <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
-              <Phone className="h-4 w-4 text-brand-orange" />
-              <a 
-                href={`tel:${countryConfig.company.phone}`}
-                className={`font-medium transition-colors ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-brand-orange' 
-                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                }`}
-              >
-                {countryConfig.company.phone}
-              </a>
-            </div>
+            {/* Contact Info - Right side - Show phone if available, otherwise show email */}
+            {countryConfig.company.phone ? (
+              <>
+                <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
+                  <Phone className="h-4 w-4 text-brand-orange" />
+                  <a 
+                    href={`tel:${countryConfig.company.phone}`}
+                    className={`font-medium transition-colors ${
+                      isScrolled 
+                        ? 'text-gray-700 hover:text-brand-orange' 
+                        : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                    }`}
+                  >
+                    {countryConfig.company.phone}
+                  </a>
+                </div>
 
-            {/* Mobile phone - Right side on mobile */}
-            <div className="md:hidden flex-1 flex justify-end">
-              <a 
-                href={`tel:${countryConfig.company.phone}`}
-                className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
-                aria-label={t('ui.call_us')}
-              >
-                <Phone className="h-4 w-4" />
-              </a>
-            </div>
+                {/* Mobile phone - Right side on mobile */}
+                <div className="md:hidden flex-1 flex justify-end">
+                  <a 
+                    href={`tel:${countryConfig.company.phone}`}
+                    className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
+                    aria-label={t('ui.call_us')}
+                  >
+                    <Phone className="h-4 w-4" />
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
+                  <Mail className="h-4 w-4 text-brand-orange" />
+                  <a 
+                    href={`mailto:${countryConfig.company.email}`}
+                    className={`font-medium transition-colors ${
+                      isScrolled 
+                        ? 'text-gray-700 hover:text-brand-orange' 
+                        : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                    }`}
+                  >
+                    {countryConfig.company.email}
+                  </a>
+                </div>
+
+                {/* Mobile email - Right side on mobile */}
+                <div className="md:hidden flex-1 flex justify-end">
+                  <a 
+                    href={`mailto:${countryConfig.company.email}`}
+                    className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
+                    aria-label={t('ui.email_us')}
+                  >
+                    <Mail className="h-4 w-4" />
+                  </a>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Dropdown */}
@@ -402,15 +434,27 @@ export default function HomePage() {
                 >
                   {t('navigation.contact')}
                 </Link>
-                <div className="px-2 py-1 border-t border-gray-200 mt-2 pt-3">
-                  <a 
-                    href={`tel:${countryConfig.company.phone}`}
-                    className="flex items-center gap-2 text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    {countryConfig.company.phone}
-                  </a>
-                </div>
+                {(countryConfig.company.phone || countryConfig.company.email) && (
+                  <div className="px-2 py-1 border-t border-gray-200 mt-2 pt-3">
+                    {countryConfig.company.phone ? (
+                      <a 
+                        href={`tel:${countryConfig.company.phone}`}
+                        className="flex items-center gap-2 text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors"
+                      >
+                        <Phone className="h-4 w-4" />
+                        {countryConfig.company.phone}
+                      </a>
+                    ) : (
+                      <a 
+                        href={`mailto:${countryConfig.company.email}`}
+                        className="flex items-center gap-2 text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors"
+                      >
+                        <Mail className="h-4 w-4" />
+                        {countryConfig.company.email}
+                      </a>
+                    )}
+                  </div>
+                )}
               </nav>
             </div>
           )}
@@ -572,7 +616,15 @@ export default function HomePage() {
               </p>
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className={`grid gap-8 ${
+              products.length === 1 
+                ? 'grid-cols-1 max-w-sm mx-auto' 
+                : products.length === 2 
+                ? 'grid-cols-1 md:grid-cols-2 max-w-2xl mx-auto' 
+                : products.length === 3 
+                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto' 
+                : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+            }`}>
               {products.map((product, index) => (
                 <Card 
                   key={product.id} 

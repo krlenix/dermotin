@@ -28,7 +28,7 @@ export interface CompanyInfo {
   country: string;
   taxNumber: string; // PIB/Tax ID
   vatNumber?: string;
-  phone: string;
+  phone?: string; // Optional for EU countries
   email: string;
   bankAccount?: string;
   registrationNumber: string; // MB
@@ -284,7 +284,6 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       postalCode: '1000',
       country: 'Bugarska',
       taxNumber: '208072587',
-      phone: '+385 1 234 5678',
       email: 'support@dermotin.com',
       registrationNumber: '208072587',
       activityCode: '47.91',

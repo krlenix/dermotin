@@ -91,6 +91,12 @@ export function MarketingDebug({ isDevelopment = false }: MarketingDebugProps) {
           </span>
         </div>
         <div className="flex justify-between">
+          <span className="text-gray-600">Affiliate ID:</span>
+          <span className="font-mono bg-gray-100 px-1 rounded">
+            {marketingParams.aff_id || 'null'}
+          </span>
+        </div>
+        <div className="flex justify-between">
           <span className="text-gray-600">Medium:</span>
           <span className="font-mono bg-gray-100 px-1 rounded">
             {marketingParams.medium}
@@ -119,7 +125,7 @@ export function MarketingDebug({ isDevelopment = false }: MarketingDebugProps) {
             ?campaign_id=123&medium=facebook
           </div>
           <div className="font-mono bg-gray-50 p-1 rounded text-[10px]">
-            ?adset_id=456&ad_id=789
+            ?adset_id=456&ad_id=789&aff_id=aff001
           </div>
         </div>
       </div>

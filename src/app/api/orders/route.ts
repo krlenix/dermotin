@@ -228,6 +228,7 @@ export async function POST(request: NextRequest) {
         campaign_id: marketingParams.campaign_id,
         adset_id: marketingParams.adset_id,
         ad_id: marketingParams.ad_id,
+        aff_id: marketingParams.aff_id,
         medium: marketingParams.medium
       }
     };

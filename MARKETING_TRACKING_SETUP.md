@@ -7,7 +7,8 @@ This document describes the marketing parameter tracking system that captures ca
 The system tracks the following marketing parameters:
 - `campaign_id` - Campaign identifier (Facebook/Meta ads, Google Ads, etc.)
 - `adset_id` - Ad set identifier
-- `ad_id` - Individual ad identifier  
+- `ad_id` - Individual ad identifier
+- `aff_id` - Affiliate identifier
 - `medium` - Traffic source/medium (facebook, google, email, etc.)
 
 ## How It Works
@@ -23,9 +24,10 @@ The system recognizes these URL parameters:
 
 | Parameter | Maps To | Alternative Names |
 |-----------|---------|-------------------|
-| `campaign_id` | campaign_id | `fbclid` |
-| `adset_id` | adset_id | - |
-| `ad_id` | ad_id | - |
+| `campaign_id` | campaign_id | `utm_campaign`, `campaign` |
+| `adset_id` | adset_id | `utm_adset` |
+| `ad_id` | ad_id | `utm_ad` |
+| `aff_id` | aff_id | `affiliate_id` |
 | `utm_medium` | medium | `medium`, `source`, `utm_source` |
 
 ## Example URLs
@@ -36,6 +38,9 @@ https://dermotin.com/rs/checkouts/fungel/?campaign_id=123456&adset_id=789&ad_id=
 
 # Google Ads
 https://dermotin.com/rs/checkouts/fungel/?campaign_id=google_123&utm_medium=google&utm_source=search
+
+# Affiliate Campaign
+https://dermotin.com/rs/checkouts/fungel/?campaign_id=aff_promo&aff_id=affiliate123&medium=affiliate
 
 # Email Campaign
 https://dermotin.com/rs/checkouts/fungel/?campaign_id=newsletter_2024&medium=email
@@ -58,6 +63,7 @@ Example cookie value:
   "campaign_id": "123456",
   "adset_id": "789", 
   "ad_id": "101112",
+  "aff_id": "affiliate123",
   "medium": "facebook"
 }
 ```
@@ -72,7 +78,8 @@ Marketing parameters are automatically included in order webhook payloads:
   "marketing": {
     "campaign_id": "123456",
     "adset_id": "789",
-    "ad_id": "101112", 
+    "ad_id": "101112",
+    "aff_id": "affiliate123",
     "medium": "facebook"
   }
 }
@@ -92,7 +99,7 @@ In development mode, a debug component is available that shows:
 
 1. Visit a product page with marketing parameters:
    ```
-   http://localhost:3000/rs/checkouts/fungel/?campaign_id=test123&medium=facebook
+   http://localhost:3000/rs/checkouts/fungel/?campaign_id=test123&aff_id=aff001&medium=facebook
    ```
 
 2. Check the debug component (bottom-right corner in development)
@@ -101,7 +108,7 @@ In development mode, a debug component is available that shows:
 
 4. Test parameter override by visiting with new parameters:
    ```
-   http://localhost:3000/rs/checkouts/fungel/?campaign_id=new456&medium=google
+   http://localhost:3000/rs/checkouts/fungel/?campaign_id=new456&aff_id=aff002&medium=google
    ```
 
 ### Manual Testing

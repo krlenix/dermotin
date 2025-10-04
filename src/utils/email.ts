@@ -131,7 +131,7 @@ export async function sendOrderConfirmationEmail(
           
           <div class="footer">
             <p>${support}</p>
-            <p>📞 ${countryConfig.company.phone}</p>
+            ${countryConfig.company.phone ? `<p>📞 ${countryConfig.company.phone}</p>` : ''}
             <p>📧 ${countryConfig.company.email}</p>
             <p>🌐 ${countryConfig.company.website}</p>
           </div>
@@ -165,7 +165,7 @@ Telefon: ${orderData.customerPhone}
 Email: ${orderData.customerEmail}
 
 ${support}
-📞 ${countryConfig.company.phone}
+${countryConfig.company.phone ? `📞 ${countryConfig.company.phone}` : ''}
 📧 ${countryConfig.company.email}
 🌐 ${countryConfig.company.website}
 

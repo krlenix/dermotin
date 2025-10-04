@@ -15,6 +15,7 @@ export function useMarketingTracking() {
     campaign_id: null,
     adset_id: null,
     ad_id: null,
+    aff_id: null,
     medium: 'website'
   });
 
@@ -36,6 +37,7 @@ export function useMarketingTracking() {
         campaign_id: urlParams.campaign_id !== undefined ? urlParams.campaign_id : existingParams.campaign_id,
         adset_id: urlParams.adset_id !== undefined ? urlParams.adset_id : existingParams.adset_id,
         ad_id: urlParams.ad_id !== undefined ? urlParams.ad_id : existingParams.ad_id,
+        aff_id: urlParams.aff_id !== undefined ? urlParams.aff_id : existingParams.aff_id,
         medium: urlParams.medium !== undefined ? urlParams.medium : existingParams.medium,
       };
       

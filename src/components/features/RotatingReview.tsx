@@ -144,8 +144,8 @@ export function RotatingReview({ countryCode, className, interval = 5000, produc
   // Don't render anything until mounted to prevent hydration mismatch
   if (!mounted || !countryTestimonials.length) {
     return (
-      <div className={`bg-white/70 p-4 rounded-lg border border-gray-200 overflow-hidden ${className}`}>
-        <div className="animate-pulse">
+      <div className={`bg-white/70 p-4 rounded-lg border border-gray-200 overflow-hidden ${className}`} style={{ minHeight: '140px' }}>
+        <div className="animate-pulse" style={{ minHeight: '100px' }}>
           <div className="flex items-center gap-2 mb-2">
             <div className="flex text-yellow-400">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -185,12 +185,13 @@ export function RotatingReview({ countryCode, className, interval = 5000, produc
     <div 
       ref={containerRef}
       className={`bg-white/70 p-4 rounded-lg border border-gray-200 overflow-hidden cursor-pointer select-none touch-pan-y ${className}`}
-      style={{ touchAction: 'pan-y' }}
+      style={{ touchAction: 'pan-y', minHeight: '140px' }}
     >
       <div 
         className={`transition-all duration-350 ease-in-out transform ${getAnimationClasses()}`}
         style={{
           filter: isTransitioning ? 'blur(2px)' : 'blur(0px)',
+          minHeight: '100px'
         }}
       >
         {/* Stars with staggered animation */}
@@ -222,9 +223,9 @@ export function RotatingReview({ countryCode, className, interval = 5000, produc
         </div>
         
         {/* Review text with typing effect */}
-        <p className={`text-sm text-gray-700 italic mb-2 transition-all duration-300 ${
+        <p className={`text-sm text-gray-700 italic mb-2 transition-all duration-300 line-clamp-3 ${
           isTransitioning ? 'tracking-wider' : 'tracking-normal'
-        }`}>
+        }`} style={{ minHeight: '60px' }}>
           &ldquo;{currentReview.text}&rdquo;
         </p>
         

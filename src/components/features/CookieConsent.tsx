@@ -137,7 +137,7 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
                   <p className="text-sm text-gray-700">{t('marketing_cookies_desc')}</p>
                   <div className="mt-2 text-xs text-gray-600">
                     <div className="font-medium mb-1">Tracking parameters:</div>
-                    <div>• campaign_id, adset_id, ad_id, medium</div>
+                    <div>• campaign_id, adset_id, ad_id, aff_id, medium</div>
                     <div>• Meta (Facebook) Pixel</div>
                     <div>• TikTok Pixel</div>
                   </div>

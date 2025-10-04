@@ -276,6 +276,7 @@ export interface WebhookPayload {
     campaign_id?: string | null;
     adset_id?: string | null;
     ad_id?: string | null;
+    aff_id?: string | null;
     medium?: string;
   };
   locale?: string;

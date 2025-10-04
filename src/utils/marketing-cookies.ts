@@ -2,6 +2,7 @@ export interface MarketingParams {
   campaign_id: string | null;
   adset_id: string | null;
   ad_id: string | null;
+  aff_id: string | null;
   medium: string;
 }
 
@@ -24,6 +25,7 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
       campaign_id: params.campaign_id !== undefined ? params.campaign_id : existing.campaign_id,
       adset_id: params.adset_id !== undefined ? params.adset_id : existing.adset_id,
       ad_id: params.ad_id !== undefined ? params.ad_id : existing.ad_id,
+      aff_id: params.aff_id !== undefined ? params.aff_id : existing.aff_id,
       medium: params.medium !== undefined ? params.medium : existing.medium,
     };
 
@@ -48,6 +50,7 @@ export function getMarketingCookies(): MarketingParams {
       campaign_id: null,
       adset_id: null,
       ad_id: null,
+      aff_id: null,
       medium: 'website'
     };
   }
@@ -68,6 +71,7 @@ export function getMarketingCookies(): MarketingParams {
         campaign_id: parsed.campaign_id || null,
         adset_id: parsed.adset_id || null,
         ad_id: parsed.ad_id || null,
+        aff_id: parsed.aff_id || null,
         medium: parsed.medium || 'website'
       };
     }
@@ -80,6 +84,7 @@ export function getMarketingCookies(): MarketingParams {
     campaign_id: null,
     adset_id: null,
     ad_id: null,
+    aff_id: null,
     medium: 'website'
   };
 }
@@ -124,6 +129,13 @@ export function extractMarketingParamsFromURL(searchParams: URLSearchParams): Pa
     params.ad_id = adId;
   }
 
+  // Extract aff_id (affiliate ID)
+  const affId = searchParams.get('aff_id') ||
+                searchParams.get('affiliate_id');
+  if (affId) {
+    params.aff_id = affId;
+  }
+
   // Extract medium (utm_medium, source, etc.)
   const medium = searchParams.get('utm_medium') || 
                 searchParams.get('medium') || 
@@ -148,6 +160,7 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
       campaign_id: null,
       adset_id: null,
       ad_id: null,
+      aff_id: null,
       medium: 'website'
     };
   }
@@ -167,6 +180,7 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
         campaign_id: parsed.campaign_id || null,
         adset_id: parsed.adset_id || null,
         ad_id: parsed.ad_id || null,
+        aff_id: parsed.aff_id || null,
         medium: parsed.medium || 'website'
       };
     }
@@ -178,6 +192,7 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
     campaign_id: null,
     adset_id: null,
     ad_id: null,
+    aff_id: null,
     medium: 'website'
   };
 }

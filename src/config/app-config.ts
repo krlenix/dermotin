@@ -82,6 +82,7 @@ export const FEATURE_FLAGS = {
       enabled: {
         rs: false,  // Disabled for RS locale
         ba: true,   // Enabled for BA locale
+        hr: false,  // Disabled for HR locale
       }
     },
     // Add more component feature flags here as needed

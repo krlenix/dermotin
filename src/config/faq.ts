@@ -88,11 +88,12 @@ function replacePlaceholders(template: string, faqContent: Record<string, unknow
     return template || '';
   }
 
-
-
   try {
     const content = faqContent as Record<string, Record<string, unknown>>;
-    return template
+    const phone = content?.company?.phone as string;
+    const email = content?.company?.email as string;
+    
+    let processedTemplate = template
       .replace('{deliveryTime}', (content?.delivery?.time as string) || 'N/A')
       .replace('{deliveryArea}', (content?.delivery?.area as string) || 'N/A')
       .replace('{cost}', (content?.delivery?.cost as string) || 'N/A')
@@ -101,9 +102,25 @@ function replacePlaceholders(template: string, faqContent: Record<string, unknow
       .replace('{freeShippingThreshold}', (content?.delivery?.freeShippingThreshold as string) || 'N/A')
       .replace('{currencySymbol}', (content?.delivery?.currencySymbol as string) || 'N/A')
       .replace('{periodDays}', (content?.returns?.periodDays as string) || 'N/A')
-      .replace('{phone}', (content?.company?.phone as string) || 'N/A')
-      .replace('{email}', (content?.company?.email as string) || 'N/A')
+      .replace('{email}', email || 'N/A')
       .replace('{paymentMethods}', Array.isArray(content?.payment?.methods) ? (content.payment.methods as string[]).join(', ') : (content?.payment?.methods as string) || 'N/A');
+    
+    // Handle phone placeholder intelligently
+    if (phone) {
+      // If phone is available, replace the placeholder normally
+      processedTemplate = processedTemplate.replace('{phone}', phone);
+    } else {
+      // If phone is not available, modify the text to remove phone references
+      // This handles cases like "telefona {phone} ili email-a {email}" -> "email-a {email}"
+      processedTemplate = processedTemplate
+        .replace(/putem telefona \{phone\} ili /gi, 'putem ') // Remove "putem telefona {phone} ili"
+        .replace(/telefona \{phone\} ili /gi, '') // Remove "telefona {phone} ili"
+        .replace(/\{phone\} ili /gi, '') // Remove "{phone} ili"
+        .replace(/ili \{phone\}/gi, '') // Remove "ili {phone}"
+        .replace(/\{phone\}/g, ''); // Remove any remaining {phone} placeholders
+    }
+    
+    return processedTemplate;
   } catch (error) {
     console.error('Error replacing placeholders:', error, { template, faqContent });
     return template;

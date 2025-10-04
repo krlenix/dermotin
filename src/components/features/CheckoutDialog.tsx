@@ -156,11 +156,13 @@ export function CheckoutDialog({
                   {countryConfig.company.email}
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span>{t('checkout_dialog.contact_phone')}: </span>
-                <span className="font-medium">{countryConfig.company.phone}</span>
-              </div>
+              {countryConfig.company.phone && (
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  <span>{t('checkout_dialog.contact_phone')}: </span>
+                  <span className="font-medium">{countryConfig.company.phone}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

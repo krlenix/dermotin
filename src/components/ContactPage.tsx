@@ -487,20 +487,22 @@ export default function ContactPage({ locale }: ContactPageProps) {
                         </div>
                       </div>
 
-                      {/* Phone */}
-                      <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 bg-brand-orange/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                          <Phone className="h-4 w-4 text-brand-orange" />
+                      {/* Phone - Only show if phone is configured */}
+                      {countryConfig.company.phone && (
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-brand-orange/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <Phone className="h-4 w-4 text-brand-orange" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-900 mb-1">{t('contact.phone_number')}</h4>
+                            <p className="text-sm text-gray-600">
+                              <a href={`tel:${countryConfig.company.phone}`} className="hover:text-brand-orange transition-colors">
+                                {countryConfig.company.phone}
+                              </a>
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-medium text-gray-900 mb-1">{t('contact.phone_number')}</h4>
-                          <p className="text-sm text-gray-600">
-                            <a href={`tel:${countryConfig.company.phone}`} className="hover:text-brand-orange transition-colors">
-                              {countryConfig.company.phone}
-                            </a>
-                          </p>
-                        </div>
-                      </div>
+                      )}
 
                       {/* Email */}
                       <div className="flex items-start gap-3">

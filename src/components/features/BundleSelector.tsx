@@ -154,15 +154,9 @@ export function BundleSelector({
                       {(() => {
                         const orderTotal = variant.discountPrice || variant.price;
                         const hasFreeShipping = orderTotal >= countryConfig.business.freeShippingThreshold;
-                        return hasFreeShipping ? (
+                        return hasFreeShipping && (
                           <p className="text-xs text-green-600 font-medium">
                             {t('bundles.free_shipping')}
-                          </p>
-                        ) : (
-                          <p className="text-xs text-gray-500">
-                            {t('bundles.shipping_cost', { 
-                              cost: formatPrice((selectedCourier || getDefaultCourier(countryConfig)).shipping.cost) 
-                            })}
                           </p>
                         );
                       })()}
