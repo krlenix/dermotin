@@ -14,8 +14,8 @@ const TEMP_STORAGE_KEY = 'temp-marketing-params'; // For storing params before c
 
 /**
  * Set marketing parameters in cookies
- * Only sets cookies if user has given marketing consent
- * If consent not given, stores in sessionStorage temporarily
+ * ALWAYS stores in cookies for server-side webhook access
+ * Also stores in sessionStorage as backup
  */
 export function setMarketingCookies(params: Partial<MarketingParams>): void {
   if (typeof window === 'undefined') return;
@@ -33,23 +33,16 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
       medium: params.medium !== undefined ? params.medium : existing.medium,
     };
 
-    // Check if user has given marketing consent
-    if (hasMarketingConsent()) {
-      // Set cookie with expiry
-      const expires = new Date();
-      expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
-      
-      document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-      
-      console.log('📊 Marketing cookies updated:', merged);
-      
-      // Clear temporary storage if it exists
-      sessionStorage.removeItem(TEMP_STORAGE_KEY);
-    } else {
-      // Store temporarily in sessionStorage until consent is given
-      sessionStorage.setItem(TEMP_STORAGE_KEY, JSON.stringify(merged));
-      console.log('📊 Marketing params stored temporarily (awaiting consent):', merged);
-    }
+    // ALWAYS set cookie for server-side access (webhook needs this)
+    const expires = new Date();
+    expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
+    
+    document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+    
+    console.log('📊 Marketing cookies updated:', merged);
+    
+    // Also store in sessionStorage as backup
+    sessionStorage.setItem(TEMP_STORAGE_KEY, JSON.stringify(merged));
   } catch (error) {
     console.error('❌ Failed to set marketing cookies:', error);
   }
@@ -130,34 +123,6 @@ export function clearMarketingCookies(): void {
 }
 
 /**
- * Move marketing parameters from temporary storage to cookies
- * Called when user gives marketing consent
- */
-export function applyStoredMarketingParams(): void {
-  if (typeof window === 'undefined') return;
-
-  try {
-    const tempData = sessionStorage.getItem(TEMP_STORAGE_KEY);
-    if (tempData) {
-      const params = JSON.parse(tempData) as MarketingParams;
-      
-      // Now that we have consent, store in cookies
-      const expires = new Date();
-      expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
-      
-      document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(params))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-      
-      // Clear temporary storage
-      sessionStorage.removeItem(TEMP_STORAGE_KEY);
-      
-      console.log('✅ Marketing params moved from temporary storage to cookies:', params);
-    }
-  } catch (error) {
-    console.error('❌ Failed to apply stored marketing params:', error);
-  }
-}
-
-/**
  * Extract marketing parameters from URL search params
  * Note: fbclid is NOT a campaign_id - it's a Facebook Click ID used for attribution only
  */
@@ -214,6 +179,7 @@ export function extractMarketingParamsFromURL(searchParams: URLSearchParams): Pa
  */
 export function getMarketingCookiesFromHeaders(cookieHeader: string | null): MarketingParams {
   if (!cookieHeader) {
+    console.log('⚠️ No cookie header found in request');
     return {
       campaign_id: null,
       adset_id: null,
@@ -230,9 +196,12 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
     );
 
     if (marketingCookie) {
-      const value = marketingCookie.split('=')[1];
+      // Split only on the first '=' to handle URL-encoded values that may contain '='
+      const value = marketingCookie.trim().substring(marketingCookie.trim().indexOf('=') + 1);
       const decoded = decodeURIComponent(value);
       const parsed = JSON.parse(decoded) as MarketingParams;
+      
+      console.log('✅ Marketing cookies parsed from headers:', parsed);
       
       return {
         campaign_id: parsed.campaign_id || null,
@@ -241,9 +210,12 @@ export function getMarketingCookiesFromHeaders(cookieHeader: string | null): Mar
         aff_id: parsed.aff_id || null,
         medium: parsed.medium || 'website'
       };
+    } else {
+      console.log('⚠️ marketing-params cookie not found in header. Available cookies:', 
+        cookies.map(c => c.trim().split('=')[0]).join(', '));
     }
-  } catch {
-    // console.error('❌ Failed to parse marketing cookies from headers:', error);
+  } catch (error) {
+    console.error('❌ Failed to parse marketing cookies from headers:', error);
   }
 
   return {

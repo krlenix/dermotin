@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { X, Settings, Shield } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { applyStoredMarketingParams } from '@/utils/marketing-cookies';
 
 interface CookieConsentProps {
   isEU: boolean;
@@ -40,9 +39,6 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
     setPreferences(allAccepted);
     localStorage.setItem('cookie-consent', JSON.stringify(allAccepted));
     
-    // Apply any stored marketing parameters from sessionStorage to cookies
-    applyStoredMarketingParams();
-    
     // Dispatch custom event to notify pixel trackers
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('cookieConsentUpdated', {
@@ -75,11 +71,6 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
   const savePreferences = () => {
     localStorage.setItem('cookie-consent', JSON.stringify(preferences));
-    
-    // If marketing consent is given, apply stored marketing params
-    if (preferences.marketing) {
-      applyStoredMarketingParams();
-    }
     
     // Dispatch custom event to notify pixel trackers
     if (typeof window !== 'undefined') {

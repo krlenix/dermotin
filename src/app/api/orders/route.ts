@@ -162,12 +162,16 @@ export async function POST(request: NextRequest) {
 
     // Get marketing parameters from cookies first, then fall back to request body
     const cookieHeader = request.headers.get('cookie');
+    console.log('🍪 Cookie header present:', !!cookieHeader, 'Length:', cookieHeader?.length || 0);
+    
     const cookieMarketingParams = getMarketingCookiesFromHeaders(cookieHeader);
+    console.log('📊 Marketing params from cookies:', cookieMarketingParams);
     
     // Use marketing params from request body if provided (for cases where cookies aren't set yet)
     // Otherwise use params from cookies
     const marketingParams = orderData.marketingParams || cookieMarketingParams;
-    console.log('📊 Marketing parameters (from body or cookies):', marketingParams);
+    console.log('📊 Final marketing parameters (from body or cookies):', marketingParams);
+    console.log('📊 Using source:', orderData.marketingParams ? 'REQUEST BODY' : 'COOKIES');
     
     // Generate order ID
     const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
