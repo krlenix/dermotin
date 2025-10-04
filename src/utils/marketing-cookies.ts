@@ -14,8 +14,8 @@ const TEMP_STORAGE_KEY = 'temp-marketing-params'; // For storing params before c
 
 /**
  * Set marketing parameters in cookies
- * ALWAYS stores in cookies for server-side webhook access
- * Also stores in sessionStorage as backup
+ * Stores immediately in sessionStorage (always)
+ * Stores in cookies only if consent is given OR user is not from EU
  */
 export function setMarketingCookies(params: Partial<MarketingParams>): void {
   if (typeof window === 'undefined') return;
@@ -33,16 +33,24 @@ export function setMarketingCookies(params: Partial<MarketingParams>): void {
       medium: params.medium !== undefined ? params.medium : existing.medium,
     };
 
-    // ALWAYS set cookie for server-side access (webhook needs this)
-    const expires = new Date();
-    expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
-    
-    document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-    
-    console.log('📊 Marketing cookies updated:', merged);
-    
-    // Also store in sessionStorage as backup
+    // ALWAYS store in sessionStorage (this is fine for GDPR)
     sessionStorage.setItem(TEMP_STORAGE_KEY, JSON.stringify(merged));
+    console.log('📊 Marketing params stored in sessionStorage:', merged);
+    
+    // Check if we can store in cookies (for server-side access)
+    const consent = localStorage.getItem('cookie-consent');
+    const canUseCookies = !consent || JSON.parse(consent).marketing === true;
+    
+    if (canUseCookies) {
+      const expires = new Date();
+      expires.setDate(expires.getDate() + COOKIE_EXPIRY_DAYS);
+      
+      document.cookie = `${MARKETING_COOKIE_KEY}=${encodeURIComponent(JSON.stringify(merged))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      
+      console.log('📊 Marketing cookies updated:', merged);
+    } else {
+      console.log('⚠️ Waiting for cookie consent before storing in cookies');
+    }
   } catch (error) {
     console.error('❌ Failed to set marketing cookies:', error);
   }

@@ -166,12 +166,21 @@ export async function POST(request: NextRequest) {
     
     const cookieMarketingParams = getMarketingCookiesFromHeaders(cookieHeader);
     console.log('📊 Marketing params from cookies:', cookieMarketingParams);
+    console.log('📊 Marketing params from request body:', orderData.marketingParams);
     
-    // Use marketing params from request body if provided (for cases where cookies aren't set yet)
-    // Otherwise use params from cookies
-    const marketingParams = orderData.marketingParams || cookieMarketingParams;
-    console.log('📊 Final marketing parameters (from body or cookies):', marketingParams);
-    console.log('📊 Using source:', orderData.marketingParams ? 'REQUEST BODY' : 'COOKIES');
+    // Prefer request body (always fresh, includes sessionStorage data)
+    // Fall back to cookies if request body doesn't have data
+    const hasBodyData = orderData.marketingParams && (
+      orderData.marketingParams.campaign_id || 
+      orderData.marketingParams.adset_id || 
+      orderData.marketingParams.ad_id ||
+      orderData.marketingParams.aff_id ||
+      (orderData.marketingParams.medium && orderData.marketingParams.medium !== 'website')
+    );
+    
+    const marketingParams = hasBodyData ? orderData.marketingParams : cookieMarketingParams;
+    console.log('📊 Final marketing parameters:', marketingParams);
+    console.log('📊 Using source:', hasBodyData ? 'REQUEST BODY (sessionStorage or cookies)' : 'COOKIE HEADERS');
     
     // Generate order ID
     const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -239,11 +248,11 @@ export async function POST(request: NextRequest) {
       },
       discount_codes: [],
       marketing: {
-        campaign_id: marketingParams.campaign_id,
-        adset_id: marketingParams.adset_id,
-        ad_id: marketingParams.ad_id,
-        aff_id: marketingParams.aff_id,
-        medium: marketingParams.medium
+        campaign_id: marketingParams?.campaign_id || null,
+        adset_id: marketingParams?.adset_id || null,
+        ad_id: marketingParams?.ad_id || null,
+        aff_id: marketingParams?.aff_id || null,
+        medium: marketingParams?.medium || 'website'
       }
     };
 

@@ -39,6 +39,20 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
     setPreferences(allAccepted);
     localStorage.setItem('cookie-consent', JSON.stringify(allAccepted));
     
+    // Move sessionStorage marketing params to cookies now that consent is given
+    try {
+      const tempData = sessionStorage.getItem('temp-marketing-params');
+      if (tempData) {
+        const params = JSON.parse(tempData);
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 30);
+        document.cookie = `marketing-params=${encodeURIComponent(JSON.stringify(params))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+        console.log('✅ Marketing params moved to cookies after consent:', params);
+      }
+    } catch (error) {
+      console.error('Error moving marketing params to cookies:', error);
+    }
+    
     // Dispatch custom event to notify pixel trackers
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('cookieConsentUpdated', {
@@ -71,6 +85,22 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
 
   const savePreferences = () => {
     localStorage.setItem('cookie-consent', JSON.stringify(preferences));
+    
+    // If marketing consent is given, move params to cookies
+    if (preferences.marketing) {
+      try {
+        const tempData = sessionStorage.getItem('temp-marketing-params');
+        if (tempData) {
+          const params = JSON.parse(tempData);
+          const expires = new Date();
+          expires.setDate(expires.getDate() + 30);
+          document.cookie = `marketing-params=${encodeURIComponent(JSON.stringify(params))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+          console.log('✅ Marketing params moved to cookies after consent:', params);
+        }
+      } catch (error) {
+        console.error('Error moving marketing params to cookies:', error);
+      }
+    }
     
     // Dispatch custom event to notify pixel trackers
     if (typeof window !== 'undefined') {
