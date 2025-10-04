@@ -10,7 +10,7 @@ import {
 } from '@/utils/marketing-cookies';
 
 // Debug logger that works in production
-const debugLog = (message: string, data?: any) => {
+const debugLog = (message: string, data?: unknown) => {
   if (typeof window === 'undefined') return;
   
   const isDebugMode = localStorage.getItem('debug-marketing') === 'true' || process.env.NODE_ENV === 'development';

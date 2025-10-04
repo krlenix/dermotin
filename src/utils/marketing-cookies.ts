@@ -1,5 +1,3 @@
-import { hasMarketingConsent } from './cookie-consent';
-
 export interface MarketingParams {
   campaign_id: string | null;
   adset_id: string | null;
@@ -13,7 +11,7 @@ const COOKIE_EXPIRY_DAYS = 30;
 const TEMP_STORAGE_KEY = 'temp-marketing-params'; // For storing params before consent
 
 // Debug logger that works in production
-const debugLog = (message: string, data?: any) => {
+const debugLog = (message: string, data?: unknown) => {
   const isDebugMode = typeof window !== 'undefined' && 
     (localStorage.getItem('debug-marketing') === 'true' || process.env.NODE_ENV === 'development');
   
