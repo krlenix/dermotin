@@ -67,13 +67,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
   // Initialize marketing tracking
   const { marketingParams, hasMarketingData } = useMarketingTracking();
-  
-  // Log marketing data for debugging
-  useEffect(() => {
-    if (hasMarketingData) {
-      console.log('📊 Marketing tracking active:', marketingParams);
-    }
-  }, [marketingParams, hasMarketingData]);
 
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});

@@ -29,7 +29,6 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
           marketing: true
         };
         localStorage.setItem('cookie-consent', JSON.stringify(autoConsent));
-        console.log('✅ Auto-approved cookies for non-EU user');
       }
       return;
     }
@@ -60,10 +59,9 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
         const expires = new Date();
         expires.setDate(expires.getDate() + 30);
         document.cookie = `marketing-params=${encodeURIComponent(JSON.stringify(params))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-        console.log('✅ Marketing params moved to cookies after consent:', params);
       }
-    } catch (error) {
-      console.error('Error moving marketing params to cookies:', error);
+    } catch {
+      // Silently fail
     }
     
     // Dispatch custom event to notify pixel trackers
