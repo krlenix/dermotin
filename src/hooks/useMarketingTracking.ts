@@ -44,6 +44,7 @@ export function useMarketingTracking() {
     }
   }, [searchParams]);
 
+
   // Listen for cookie consent changes to update marketing params
   useEffect(() => {
     const handleConsentUpdate = () => {
@@ -59,6 +60,7 @@ export function useMarketingTracking() {
     };
   }, []);
 
+  
   return {
     marketingParams,
     hasMarketingData: !!(

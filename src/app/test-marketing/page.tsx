@@ -123,12 +123,11 @@ export default function TestMarketingPage() {
         Test Set Cookie Manually
       </button>
       
-      <h2>📝 Test URLs</h2>
+      <h2>📝Test URLs</h2>
       <ul>
         <li><a href="?campaign_id=TEST123&adset_id=456&medium=facebook&aff_id=55" onClick={(e) => { e.preventDefault(); window.location.href = '?campaign_id=TEST123&adset_id=456&medium=facebook&aff_id=55'; }}>Test with parameters</a></li>
         <li><button onClick={() => window.location.href = '/test-marketing'} style={{ background: 'none', border: 'none', color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>Clear parameters</button></li>
       </ul>
-      
       <h2>✅ What Should Happen</h2>
       <ol>
         <li>URL parameters should be extracted</li>
