@@ -201,7 +201,7 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
                     <span>{orderData.quantity} {t('thank_you.pieces')}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold border-t pt-2 text-brand-orange">
-                    <span>{t('thank_you.total_paid')}:</span>
+                    <span>{t('thank_you.to_be_paid')}:</span>
                     <span>{orderData.totalPrice} {orderData.currency}</span>
                   </div>
                 </div>

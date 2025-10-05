@@ -507,7 +507,7 @@
     "variant": "Varijanta",
     "quantity": "Količina",
     "pieces": "kom",
-    "total_paid": "Ukupno plaćeno",
+    "to_be_paid": "Ukupno za plaćanje",
     "customer_info": "Podaci kupca",
     "payment_method": "Način plaćanja",
     "cod": "Plaćanje pouzećem",

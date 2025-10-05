@@ -308,7 +308,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     ],
     business: {
       deliveryArea: 'teritoriji Republike Hrvatske',
-      freeShippingThreshold: 80,
+      freeShippingThreshold: 40,
       deliveryTimeMin: 3,
       deliveryTimeMax: 4,
       deliveryTimeUnit: 'dana',
