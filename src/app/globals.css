@@ -231,6 +231,16 @@
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
+/* Green glow animation for GDPR accept button */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(96, 142, 126, 0.4), 0 0 40px rgba(96, 142, 126, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(96, 142, 126, 0.6), 0 0 60px rgba(96, 142, 126, 0.3);
+  }
+}
+
 /* Simplified hover effects for better performance */
 .hover-lift {
   transition: transform 0.2s ease;

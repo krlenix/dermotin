@@ -188,17 +188,17 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
             <div className="flex flex-col sm:flex-row gap-2">
               <Button 
                 onClick={acceptAll} 
-                className="flex-1 bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-brand-orange text-white font-semibold py-6 text-base shadow-lg hover:shadow-xl transition-all duration-300 border-0"
+                className="flex-1 bg-gradient-to-r from-brand-green to-emerald-600 hover:from-emerald-600 hover:to-brand-green text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0"
               >
                 ✓ {t('accept_all')}
               </Button>
-              <Button onClick={acceptNecessary} variant="outline" className="flex-1 text-sm">
+              <Button onClick={acceptNecessary} variant="outline" className="flex-1">
                 {t('accept_necessary')}
               </Button>
               <Button 
                 onClick={() => setShowSettings(true)} 
                 variant="ghost" 
-                className="flex-1 text-sm"
+                className="flex-1"
               >
                 <Settings className="mr-2 h-4 w-4" />
                 {t('cookie_settings')}
@@ -244,11 +244,11 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
             <div className="flex gap-2">
               <Button 
                 onClick={savePreferences} 
-                className="flex-1 bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-brand-orange text-white font-semibold py-6 text-base shadow-lg hover:shadow-xl transition-all duration-300 border-0"
+                className="flex-1 bg-gradient-to-r from-brand-green to-emerald-600 hover:from-emerald-600 hover:to-brand-green text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0"
               >
                 ✓ {t('save_preferences')}
               </Button>
-              <Button onClick={() => setShowSettings(false)} variant="outline" className="text-sm">
+              <Button onClick={() => setShowSettings(false)} variant="outline">
                 {t('back')}
               </Button>
             </div>
