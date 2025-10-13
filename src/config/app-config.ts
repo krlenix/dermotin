@@ -81,8 +81,9 @@ export const FEATURE_FLAGS = {
     urgencyTimer: {
       enabled: {
         rs: false,  // Disabled for RS locale
-        ba: true,   // Enabled for BA locale
+        ba: false,  // Disabled for BA locale
         hr: false,  // Disabled for HR locale
+        me: false,  // Disabled for ME locale
       }
     },
     // Add more component feature flags here as needed

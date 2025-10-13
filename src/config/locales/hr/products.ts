@@ -37,9 +37,9 @@ export const PRODUCTS: Record<string, Product> = {
         name: '2 PAKOVANJA (100ml)',
         size: 'Okvirno mjesec dana upotrebe',
         quantity: 2,
-        price: 40.9,
+        price: 53.9,
         currency: 'EUR',
-        discountPrice: 30.9
+        discountPrice: 29.9
       },
       {
         id: 'fungel-3pak',
@@ -47,9 +47,9 @@ export const PRODUCTS: Record<string, Product> = {
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 3,
-        price: 60.9,
+        price: 77.9,
         currency: 'EUR',
-        discountPrice: 40.9
+        discountPrice: 39.9
       }
     ],
     benefits: [
@@ -307,9 +307,9 @@ export const PRODUCTS: Record<string, Product> = {
         name: '2 PAKOVANJA (100ml)',
         size: 'Okvirno mjesec dana upotrebe',
         quantity: 2,
-        price: 40.9,
+        price: 53.9,
         currency: 'EUR',
-        discountPrice: 30.9
+        discountPrice: 29.9
       },
       {
         id: 'biomelis-3pak',
@@ -317,9 +317,9 @@ export const PRODUCTS: Record<string, Product> = {
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 3,
-        price: 60.9,
+        price: 77.9,
         currency: 'EUR',
-        discountPrice: 40.9
+        discountPrice: 39.9
       }
     ],
     benefits: [
@@ -678,9 +678,9 @@ export const PRODUCTS: Record<string, Product> = {
         name: '2 PAKOVANJA (100ml)',
         size: 'Okvirno mjesec dana upotrebe',
         quantity: 2,
-        price: 40.9,
+        price: 53.9,
         currency: 'EUR',
-        discountPrice: 30.9
+        discountPrice: 29.9
       },
       {
         id: 'biowart-3pak',
@@ -688,9 +688,9 @@ export const PRODUCTS: Record<string, Product> = {
         name: '3 PAKOVANJA (150ml)',
         size: 'Okvirno 2 mjeseca upotrebe',
         quantity: 3,
-        price: 60.9,
+        price: 77.9,
         currency: 'EUR',
-        discountPrice: 40.9
+        discountPrice: 39.9
       }
     ],
     benefits: [

@@ -86,7 +86,7 @@ export default function CapiTestPage() {
                 Select Country
               </label>
               <div className="flex gap-2">
-                {['rs', 'ba', 'hr'].map((country) => (
+                {['rs', 'ba', 'hr', 'me'].map((country) => (
                   <Button
                     key={country}
                     variant={selectedCountry === country ? 'default' : 'outline'}

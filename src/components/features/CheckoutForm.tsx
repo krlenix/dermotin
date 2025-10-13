@@ -84,6 +84,11 @@ export function CheckoutForm({
         return value.length < VALIDATION_RULES.minAddressLength ? tValidation.address_min_length : '';
       case 'city':
         return value.length < VALIDATION_RULES.minCityLength ? tValidation.city_min_length : '';
+      case 'postalCode':
+        if (value && !/^\d{5}$/.test(value)) {
+          return tValidation.postal_code_invalid || 'Poštanski broj mora imati tačno 5 cifara';
+        }
+        return '';
       default:
         return '';
     }
@@ -109,6 +114,11 @@ export function CheckoutForm({
   const [hasStartedCheckout, setHasStartedCheckout] = useState(false);
 
   const handleInputChange = (field: string, value: string | boolean) => {
+    // For postal code, only allow numeric input
+    if (field === 'postalCode' && typeof value === 'string') {
+      value = value.replace(/\D/g, '').slice(0, 5);
+    }
+    
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Track InitiateCheckout event when user starts filling the form (only once)
@@ -139,9 +149,17 @@ export function CheckoutForm({
     }
   };
 
+  const handleBlur = (field: string) => {
+    const value = formData[field as keyof typeof formData] as string;
+    const error = validateField(field, value);
+    if (error) {
+      setFormErrors(prev => ({ ...prev, [field]: error }));
+    }
+  };
+
   const validateForm = () => {
     const errors: Record<string, string> = {};
-    const fieldsToValidate = ['firstName', 'lastName', 'phone', 'address', 'city'];
+    const fieldsToValidate = ['firstName', 'lastName', 'phone', 'address', 'city', 'postalCode'];
     
     fieldsToValidate.forEach(field => {
       const error = validateField(field, formData[field as keyof typeof formData] as string);
@@ -297,13 +315,19 @@ export function CheckoutForm({
                   id="firstName"
                   value={formData.firstName}
                   onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  onBlur={() => handleBlur('firstName')}
                   required
                   className={`focus:ring-brand-orange focus:border-brand-orange ${
-                    formErrors.firstName ? 'border-red-500' : ''
+                    formErrors.firstName ? 'border-red-500 ring-2 ring-red-200' : ''
                   }`}
                 />
                 {formErrors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.firstName}</p>
+                  <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-1">
+                    <span className="inline-flex w-3 h-3 rounded-full bg-red-100 items-center justify-center flex-shrink-0">
+                      <span className="text-red-600 text-[9px] font-bold leading-none">!</span>
+                    </span>
+                    {formErrors.firstName}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -312,13 +336,19 @@ export function CheckoutForm({
                   id="lastName"
                   value={formData.lastName}
                   onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  onBlur={() => handleBlur('lastName')}
                   required
                   className={`focus:ring-brand-orange focus:border-brand-orange ${
-                    formErrors.lastName ? 'border-red-500' : ''
+                    formErrors.lastName ? 'border-red-500 ring-2 ring-red-200' : ''
                   }`}
                 />
                 {formErrors.lastName && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.lastName}</p>
+                  <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-1">
+                    <span className="inline-flex w-3 h-3 rounded-full bg-red-100 items-center justify-center flex-shrink-0">
+                      <span className="text-red-600 text-[9px] font-bold leading-none">!</span>
+                    </span>
+                    {formErrors.lastName}
+                  </p>
                 )}
               </div>
             </div>
@@ -332,15 +362,21 @@ export function CheckoutForm({
                 <PhoneInput
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value || '')}
+                  onBlur={() => handleBlur('phone')}
                   placeholder="Enter phone number"
                   defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA' | 'HR'}
                   countries={supportedCountries}
                   className={`focus:ring-brand-orange focus:border-brand-orange ${
-                    formErrors.phone ? 'border-red-500' : ''
+                    formErrors.phone ? 'border-red-500 ring-2 ring-red-200' : ''
                   }`}
                 />
                 {formErrors.phone && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>
+                  <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-1">
+                    <span className="inline-flex w-3 h-3 rounded-full bg-red-100 items-center justify-center flex-shrink-0">
+                      <span className="text-red-600 text-[9px] font-bold leading-none">!</span>
+                    </span>
+                    {formErrors.phone}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -349,13 +385,19 @@ export function CheckoutForm({
                   id="city"
                   value={formData.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
+                  onBlur={() => handleBlur('city')}
                   required
                   className={`focus:ring-brand-orange focus:border-brand-orange ${
-                    formErrors.city ? 'border-red-500' : ''
+                    formErrors.city ? 'border-red-500 ring-2 ring-red-200' : ''
                   }`}
                 />
                 {formErrors.city && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>
+                  <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-1">
+                    <span className="inline-flex w-3 h-3 rounded-full bg-red-100 items-center justify-center flex-shrink-0">
+                      <span className="text-red-600 text-[9px] font-bold leading-none">!</span>
+                    </span>
+                    {formErrors.city}
+                  </p>
                 )}
               </div>
             </div>
@@ -379,24 +421,46 @@ export function CheckoutForm({
                     id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
+                    onBlur={() => handleBlur('address')}
                     required
                     placeholder={t('placeholders.address')}
                     className={`focus:ring-brand-orange focus:border-brand-orange ${
-                      formErrors.address ? 'border-red-500' : ''
+                      formErrors.address ? 'border-red-500 ring-2 ring-red-200' : ''
                     }`}
                   />
                   {formErrors.address && (
-                    <p className="text-red-500 text-sm mt-1">{formErrors.address}</p>
+                    <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-1">
+                      <span className="inline-flex w-3 h-3 rounded-full bg-red-100 items-center justify-center flex-shrink-0">
+                        <span className="text-red-600 text-[9px] font-bold leading-none">!</span>
+                      </span>
+                      {formErrors.address}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="postalCode" className="text-gray-700">{t('forms.postal_code')}</Label>
                   <Input
                     id="postalCode"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={5}
                     value={formData.postalCode}
                     onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                    className="focus:ring-brand-orange focus:border-brand-orange"
+                    onBlur={() => handleBlur('postalCode')}
+                    placeholder="12345"
+                    className={`focus:ring-brand-orange focus:border-brand-orange ${
+                      formErrors.postalCode ? 'border-red-500 ring-2 ring-red-200' : ''
+                    }`}
                   />
+                  {formErrors.postalCode && (
+                    <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-1">
+                      <span className="inline-flex w-3 h-3 rounded-full bg-red-100 items-center justify-center flex-shrink-0">
+                        <span className="text-red-600 text-[9px] font-bold leading-none">!</span>
+                      </span>
+                      {formErrors.postalCode}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

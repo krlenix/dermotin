@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
     const countryToLocale: Record<string, string> = {
       'RS': 'rs', // Serbia
       'BA': 'ba', // Bosnia and Herzegovina
-      'ME': 'rs', // Montenegro (use Serbian locale)
-      'HR': 'rs', // Croatia (use Serbian locale)
+      'ME': 'me', // Montenegro
+      'HR': 'hr', // Croatia
       'MK': 'rs', // North Macedonia (use Serbian locale)
       'SI': 'rs', // Slovenia (use Serbian locale)
       'AL': 'rs', // Albania (use Serbian locale)
@@ -23,6 +23,17 @@ export async function GET(request: NextRequest) {
     // Default to Serbian if country not detected or not in our supported list
     const detectedLocale = geo.country ? countryToLocale[geo.country] || 'rs' : 'rs';
     
+    // Log for debugging (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🌍 Geo-detect API - Detected location:', {
+        country: geo.country,
+        city: geo.city,
+        region: geo.countryRegion,
+        detectedLocale,
+        ip
+      });
+    }
+
     // Prepare response data
     const responseData = {
       // Geolocation data
@@ -42,6 +53,9 @@ export async function GET(request: NextRequest) {
       
       // Additional metadata
       timestamp: new Date().toISOString(),
+      
+      // Development note
+      isDevelopment: !geo.country,
     };
 
     return NextResponse.json(responseData, {

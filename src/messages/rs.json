@@ -176,6 +176,7 @@
     "phone_invalid": "Neispravna format telefona",
     "address_min_length": "Adresa mora imati najmanje 5 karaktera",
     "city_min_length": "Mesto mora imati najmanje 2 karaktera",
+    "postal_code_invalid": "Poštanski broj mora imati tačno 5 cifara",
     "order_submission_failed": "Slanje porudžbine neuspešno"
   },
   "checkout_dialog": {
@@ -258,6 +259,7 @@
     "all_rights_reserved": "Sva prava zadržana",
     "legal_documents": "Pravni dokumenti",
     "powered_by": "Powered by",
+    "select_language": "Izaberite jezik",
     "address": "Adresa",
     "business_info": "Poslovne informacije"
   },
@@ -446,7 +448,7 @@
     "testimonials_subtitle": "Hiljade zadovoljnih kupaca već je iskusilo prednosti naših proizvoda. Budite sledeći!",
     "final_call": "Ne čekajte - Iskoristite akciju sada!",
     "final_subtitle": "Sve što trebate da znate ste već videli. Kliknite dugme ispod i napravite korak ka zdravijoj, lepšoj koži već danas!",
-    "mobile_floating": "Ograničena ponuda!"
+    "mobile_floating": "Poruči po akcijskoj ceni"
   },
   "currencies": {
     "rsd": "RSD",
@@ -637,5 +639,33 @@
     "read_more": "Pročitaj više",
     "important_note": "Važna napomena",
     "legal_disclaimer_note": "Ovi dokumenti su važni za razumevanje vaših prava i obaveza. Preporučujemo da ih pažljivo pročitate pre korišćenja naših usluga."
+  },
+  "country_switcher": {
+    "select_country": "Izaberite zemlju",
+    "current_country": "Trenutna zemlja",
+    "countries": {
+      "rs": "Srbija",
+      "ba": "Bosna i Hercegovina",
+      "hr": "Hrvatska",
+      "me": "Crna Gora"
+    }
+  },
+  "country_mismatch_banner": {
+    "modal_title": "Detektovali smo vašu lokaciju",
+    "detected_location": "Vaša detektovana lokacija",
+    "detected_country": "Detektovali smo da ste iz {country}",
+    "suggestion": "Želite li da pređete na verziju sajta za {suggestedCountry}?",
+    "current_viewing": "Trenutno gledate verziju sajta za {currentCountry}.",
+    "detection_note": "* Lokacija detektovana na osnovu IP adrese. Možda nije uvek precizna.",
+    "switch_button": "Prebaci na {country}",
+    "stay_button": "Ostani na {country}",
+    "dismiss_button": "Zatvori",
+    "close_aria": "Zatvori obaveštenje",
+    "countries": {
+      "rs": "Srbiju",
+      "ba": "Bosnu i Hercegovinu",
+      "hr": "Hrvatsku",
+      "me": "Crnu Goru"
+    }
   }
 }

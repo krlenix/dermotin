@@ -15,6 +15,8 @@ import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { CountriesHeader } from '@/components/features/CountriesHeader';
+import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
+import { CountrySwitcher } from '@/components/features/CountrySwitcher';
 import { Footer } from '@/components/ui/footer';
 import dynamic from 'next/dynamic';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
@@ -240,9 +242,13 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
+      {/* Country Mismatch Banner */}
+      <CountryMismatchBanner />
       
-      {/* Fixed Header */}
+      <div className="min-h-screen bg-white">
+        
+        {/* Fixed Header */}
       <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled 
           ? 'bg-white/95 backdrop-blur-md shadow-sm border-b py-1.5 md:py-2' 
@@ -335,25 +341,33 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Contact Info - Right side - Show phone if available, otherwise show email */}
+            {/* Contact Info & Country Switcher - Right side */}
             {countryConfig.company.phone ? (
               <>
-                <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
-                  <Phone className="h-4 w-4 text-brand-orange" />
-                  <a 
-                    href={`tel:${countryConfig.company.phone}`}
-                    className={`font-medium transition-colors ${
-                      isScrolled 
-                        ? 'text-gray-700 hover:text-brand-orange' 
-                        : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                    }`}
-                  >
-                    {countryConfig.company.phone}
-                  </a>
+                <div className="hidden md:flex items-center gap-3 text-sm flex-1 justify-end">
+                  <div className="flex items-center gap-1">
+                    <Phone className="h-4 w-4 text-brand-orange" />
+                    <a 
+                      href={`tel:${countryConfig.company.phone}`}
+                      className={`font-medium transition-colors ${
+                        isScrolled 
+                          ? 'text-gray-700 hover:text-brand-orange' 
+                          : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                      }`}
+                    >
+                      {countryConfig.company.phone}
+                    </a>
+                  </div>
+                  <CountrySwitcher 
+                    className={isScrolled 
+                      ? '!bg-white/90 hover:!bg-white !border-gray-200' 
+                      : '!bg-white/95 hover:!bg-white !border-gray-300 !shadow-md'
+                    } 
+                  />
                 </div>
 
-                {/* Mobile phone - Right side on mobile */}
-                <div className="md:hidden flex-1 flex justify-end">
+                {/* Mobile phone & Country Switcher - Right side on mobile */}
+                <div className="md:hidden flex-1 flex gap-2 justify-end items-center">
                   <a 
                     href={`tel:${countryConfig.company.phone}`}
                     className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
@@ -361,26 +375,42 @@ export default function HomePage() {
                   >
                     <Phone className="h-4 w-4" />
                   </a>
+                  <CountrySwitcher 
+                    variant="ghost"
+                    className={`!h-8 !px-2 ${
+                      isScrolled 
+                        ? '!bg-white/90 hover:!bg-white !border-gray-200' 
+                        : '!bg-white/95 hover:!bg-white !border-gray-300'
+                    }`}
+                  />
                 </div>
               </>
             ) : (
               <>
-                <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
-                  <Mail className="h-4 w-4 text-brand-orange" />
-                  <a 
-                    href={`mailto:${countryConfig.company.email}`}
-                    className={`font-medium transition-colors ${
-                      isScrolled 
-                        ? 'text-gray-700 hover:text-brand-orange' 
-                        : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                    }`}
-                  >
-                    {countryConfig.company.email}
-                  </a>
+                <div className="hidden md:flex items-center gap-3 text-sm flex-1 justify-end">
+                  <div className="flex items-center gap-1">
+                    <Mail className="h-4 w-4 text-brand-orange" />
+                    <a 
+                      href={`mailto:${countryConfig.company.email}`}
+                      className={`font-medium transition-colors ${
+                        isScrolled 
+                          ? 'text-gray-700 hover:text-brand-orange' 
+                          : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                      }`}
+                    >
+                      {countryConfig.company.email}
+                    </a>
+                  </div>
+                  <CountrySwitcher 
+                    className={isScrolled 
+                      ? '!bg-white/90 hover:!bg-white !border-gray-200' 
+                      : '!bg-white/95 hover:!bg-white !border-gray-300 !shadow-md'
+                    } 
+                  />
                 </div>
 
-                {/* Mobile email - Right side on mobile */}
-                <div className="md:hidden flex-1 flex justify-end">
+                {/* Mobile email & Country Switcher - Right side on mobile */}
+                <div className="md:hidden flex-1 flex gap-2 justify-end items-center">
                   <a 
                     href={`mailto:${countryConfig.company.email}`}
                     className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
@@ -388,6 +418,14 @@ export default function HomePage() {
                   >
                     <Mail className="h-4 w-4" />
                   </a>
+                  <CountrySwitcher 
+                    variant="ghost"
+                    className={`!h-8 !px-2 ${
+                      isScrolled 
+                        ? '!bg-white/90 hover:!bg-white !border-gray-200' 
+                        : '!bg-white/95 hover:!bg-white !border-gray-300'
+                    }`}
+                  />
                 </div>
               </>
             )}
@@ -881,7 +919,7 @@ export default function HomePage() {
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
                   overlayContent={
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center w-full h-full">
                       <div className="text-center text-white">
                         <Leaf className="w-20 h-20 mx-auto mb-4" />
                         <p className="text-xl font-bold">{t('homepage.nature_science_text')}</p>
@@ -974,6 +1012,7 @@ export default function HomePage() {
           </div>
         </div>
       )} */}
-    </div>
+      </div>
+    </>
   );
 }

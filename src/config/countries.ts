@@ -308,7 +308,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     ],
     business: {
       deliveryArea: 'teritoriji Republike Hrvatske',
-      freeShippingThreshold: 40,
+      freeShippingThreshold: 35,
       deliveryTimeMin: 3,
       deliveryTimeMax: 4,
       deliveryTimeUnit: 'dana',
@@ -335,6 +335,80 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL || '',
         authMethod: 'signature',
         webhookSecret: process.env.HR_ORDER_WEBHOOK_SECRET || ''
+      }
+    }
+  },
+
+  me: {
+    code: 'me',
+    name: 'Montenegro',
+    locale: 'sr-ME',
+    currency: 'EUR',
+    currencySymbol: '€',
+    region: 'Balkans',
+    isEU: false,
+    timezone: 'Europe/Podgorica',
+    logo: '/images/main/logo.png',
+    company: {
+      name: 'Dermotin',
+      legalName: 'Dermotin by Bio-Teo Centar D.o.o.',
+      address: '30. septembra bb',
+      city: 'Rožaje',
+      postalCode: '84310',
+      country: 'Crna Gora',
+      taxNumber: '03303632',
+      phone: '+382 69 244 404',
+      email: 'support@dermotin.com',
+      registrationNumber: '5-0922858/001',
+      activityCode: '47.91',
+      activityDescription: 'Trgovina na malo posredstvom pošte ili preko interneta',
+      website: 'dermotin.com'
+    },
+    couriers: [
+      {
+        id: 'rabbit-courier',
+        name: 'Rabbit Courier Express',
+        displayName: 'kurirske službe Rabbit Courier Express',
+        logo: '/images/couriers/rabbit-courier.png',
+        deliveryTime: '1-2 radna dana',
+        trackingUrl: 'https://www.rabbit.me/tracking',
+        isDefault: true,
+        enabled: true,
+        shipping: {
+          cost: 3.5,
+          currency: '€'
+        }
+      }
+    ],
+    business: {
+      deliveryArea: 'teritoriji Crne Gore',
+      freeShippingThreshold: 35,
+      deliveryTimeMin: 1,
+      deliveryTimeMax: 2,
+      deliveryTimeUnit: 'radna dana',
+      paymentMethods: ['gotovinom prilikom dostave (pouzećem)'],
+      returnPeriodDays: 14,
+      warrantyPeriodYears: 2,
+      complaintResponseDays: 8,
+      complaintResolutionDays: 15,
+      technicalComplaintResolutionDays: 30,
+      faqItems: ['delivery_time', 'delivery_cost', 'cash_on_delivery', 'payment_methods', 'returns', 'support', 'tracking', 'safety', 'warranty']
+    },
+    legal: {
+      lastUpdated: '2025-01-01',
+      copyrightLaw: 'Zakona o autorskom pravu',
+      criminalCode: 'Krivičnog zakonika Crne Gore',
+      consumerProtectionLaw: 'Zakona o zaštiti potrošača Crne Gore',
+      dataProtectionLaw: 'Zakona o zaštiti podataka o ličnosti',
+      obligationsLaw: 'Zakona o obligacionim odnosima',
+      ministryWebsite: 'https://www.gov.me/mek',
+      disputeResolutionListUrl: 'https://www.gov.me/mek'
+    },
+    webhooks: {
+      orders: {
+        url: process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL || '',
+        authMethod: 'signature',
+        webhookSecret: process.env.ME_ORDER_WEBHOOK_SECRET || ''
       }
     }
   }

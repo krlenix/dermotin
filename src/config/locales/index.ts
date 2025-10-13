@@ -14,6 +14,9 @@ export async function getProductsForLocale(locale: string): Promise<Record<strin
       case 'hr':
         const { PRODUCTS: hrProducts } = await import('./hr/products');
         return hrProducts;
+      case 'me':
+        const { PRODUCTS: meProducts } = await import('./me/products');
+        return meProducts;
       default:
         // Fallback to Serbian
         const { PRODUCTS: defaultProducts } = await import('./rs/products');

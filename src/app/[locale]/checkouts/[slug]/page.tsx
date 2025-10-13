@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getProductBySlug } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
 import { AdvancedLandingPage } from '@/components/AdvancedLandingPage';
+import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
 
 interface CheckoutPageProps {
   params: Promise<{
@@ -28,18 +29,21 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   }
 
   return (
-    <AdvancedLandingPage 
-      product={product} 
-      countryConfig={countryConfig}
-      slug={slug}
-    />
+    <>
+      <CountryMismatchBanner />
+      <AdvancedLandingPage 
+        product={product} 
+        countryConfig={countryConfig}
+        slug={slug}
+      />
+    </>
   );
 }
 
 export async function generateStaticParams() {
   // This would typically come from your product database
   const slugs = ['fungel', 'fungel-promo', 'antifungal-gel', 'gljivice-stopala', 'biomelis', 'biowart', 'bioroid', 'fungomax'];
-  const locales = ['rs', 'ba', 'hr'];
+  const locales = ['rs', 'ba', 'hr', 'me'];
   
   const params = [];
   for (const locale of locales) {

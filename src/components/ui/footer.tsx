@@ -6,6 +6,7 @@ import { CountryConfig } from '@/config/countries';
 import { Phone, Mail, FileText, Building2, MapPin, Hash } from 'lucide-react';
 import Image from 'next/image';
 import { LegalDocumentModal } from '@/components/features/LegalDocumentModal';
+import { CountrySwitcher } from '@/components/features/CountrySwitcher';
 
 interface FooterProps {
   countryConfig: CountryConfig;
@@ -47,6 +48,10 @@ export function Footer({ countryConfig, locale = 'rs' }: FooterProps) {
             <p className="text-gray-300 text-base mb-4 leading-relaxed">
               {t('footer.brand_description')}
             </p>
+            <div className="mt-4">
+              <h5 className="text-sm font-semibold text-white mb-2">{t('footer.select_language', { default: 'Select Language' })}</h5>
+              <CountrySwitcher variant="outline" className="!bg-gray-700 hover:!bg-gray-600 !border-gray-600 !text-white [&_svg]:!text-gray-300" />
+            </div>
           </div>
           
           <div>

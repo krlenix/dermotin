@@ -42,6 +42,7 @@ import { Footer } from '@/components/ui/footer';
 
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
+import { CountrySwitcher } from '@/components/features/CountrySwitcher';
 
 import { PixelTracker } from '@/components/tracking/PixelTracker';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
@@ -76,6 +77,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [selectedCourier, setSelectedCourier] = useState<CourierInfo>(getDefaultCourier(countryConfig));
   const [isScrolled, setIsScrolled] = useState(false);
   const [triggerBundleShake, setTriggerBundleShake] = useState(false);
+  const [showFloatingButton, setShowFloatingButton] = useState(false);
+  const [buttonHasAppeared, setButtonHasAppeared] = useState(false);
 
   // Helper function to round prices to 2 decimal places (avoid floating-point errors)
   const roundPrice = (price: number): number => {
@@ -156,6 +159,44 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Show floating button after 20 seconds or 1/3 page scroll
+  useEffect(() => {
+    let hasTriggered = false;
+    
+    // Set timeout for 20 seconds
+    const timeoutId = setTimeout(() => {
+      if (!hasTriggered) {
+        setShowFloatingButton(true);
+        setButtonHasAppeared(true);
+        hasTriggered = true;
+      }
+    }, 20000);
+
+    // Handle scroll to check if user scrolled 1/3 of page
+    const handleScroll = () => {
+      if (hasTriggered) return;
+      
+      const scrollTop = window.scrollY;
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercentage = (scrollTop / documentHeight) * 100;
+      
+      // Show button if scrolled past 33% (1/3) of page
+      if (scrollPercentage >= 33) {
+        setShowFloatingButton(true);
+        setButtonHasAppeared(true);
+        hasTriggered = true;
+        clearTimeout(timeoutId);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   // CTA Button text - configurable variable
   const ctaButtonText = t('common.order_now'); // "Naruči odmah po akcijskoj ceni"
 
@@ -224,13 +265,13 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   };
 
   // Reusable CTA Button Component
-  const CTAButton = ({ size = "lg", className = "", showPulse = false }: { size?: "sm" | "lg", className?: string, showPulse?: boolean }) => (
+  const CTAButton = ({ size = "lg", className = "", showPulse = false, children }: { size?: "sm" | "lg", className?: string, showPulse?: boolean, children?: React.ReactNode }) => (
     <Button 
       onClick={scrollToCheckout}
       size={size}
       className={`bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ${showPulse ? 'animate-pulse' : ''} ${className} text-center whitespace-normal break-words max-w-full`}
     >
-      <span className="text-sm sm:text-base lg:text-lg leading-tight">{ctaButtonText}</span>
+      <span className="text-sm sm:text-base lg:text-lg leading-tight">{children || ctaButtonText}</span>
     </Button>
   );
 
@@ -475,22 +516,26 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
             {/* Contact Info - Right side - Show phone if available, otherwise show email */}
             {countryConfig.company.phone ? (
               <>
-                <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
-                  <Phone className="h-4 w-4 text-brand-orange" />
-                  <a 
-                    href={`tel:${countryConfig.company.phone}`}
-                    className={`font-medium transition-colors ${
-                      isScrolled 
-                        ? 'text-gray-700 hover:text-brand-orange' 
-                        : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                    }`}
-                  >
-                    {countryConfig.company.phone}
-                  </a>
+                <div className="hidden md:flex items-center gap-3 text-sm flex-1 justify-end">
+                  <div className="flex items-center gap-1">
+                    <Phone className="h-4 w-4 text-brand-orange" />
+                    <a 
+                      href={`tel:${countryConfig.company.phone}`}
+                      className={`font-medium transition-colors ${
+                        isScrolled 
+                          ? 'text-gray-700 hover:text-brand-orange' 
+                          : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                      }`}
+                    >
+                      {countryConfig.company.phone}
+                    </a>
+                  </div>
+                  <CountrySwitcher variant="ghost" />
                 </div>
 
                 {/* Mobile phone - Right side on mobile */}
-                <div className="md:hidden flex-1 flex justify-end">
+                <div className="md:hidden flex-1 flex justify-end gap-2 items-center">
+                  <CountrySwitcher variant="ghost" />
                   <a 
                     href={`tel:${countryConfig.company.phone}`}
                     className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
@@ -502,22 +547,26 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               </>
             ) : (
               <>
-                <div className="hidden md:flex items-center gap-1 text-sm flex-1 justify-end">
-                  <Mail className="h-4 w-4 text-brand-orange" />
-                  <a 
-                    href={`mailto:${countryConfig.company.email}`}
-                    className={`font-medium transition-colors ${
-                      isScrolled 
-                        ? 'text-gray-700 hover:text-brand-orange' 
-                        : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                    }`}
-                  >
-                    {countryConfig.company.email}
-                  </a>
+                <div className="hidden md:flex items-center gap-3 text-sm flex-1 justify-end">
+                  <div className="flex items-center gap-1">
+                    <Mail className="h-4 w-4 text-brand-orange" />
+                    <a 
+                      href={`mailto:${countryConfig.company.email}`}
+                      className={`font-medium transition-colors ${
+                        isScrolled 
+                          ? 'text-gray-700 hover:text-brand-orange' 
+                          : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
+                      }`}
+                    >
+                      {countryConfig.company.email}
+                    </a>
+                  </div>
+                  <CountrySwitcher variant="ghost" />
                 </div>
 
                 {/* Mobile email - Right side on mobile */}
-                <div className="md:hidden flex-1 flex justify-end">
+                <div className="md:hidden flex-1 flex justify-end gap-2 items-center">
+                  <CountrySwitcher variant="ghost" />
                   <a 
                     href={`mailto:${countryConfig.company.email}`}
                     className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
@@ -891,21 +940,20 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />
 
-      {/* Floating Mobile CTA - Hidden when delivery form is visible */}
-      {!isDeliveryFormVisible && (
-        <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
-          <div className="bg-white rounded-lg shadow-2xl border border-gray-200 p-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {product.name}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {t('cta.mobile_floating') || "Naručite sada!"}
-                </p>
-              </div>
-              <CTAButton size="sm" className="py-2 px-4 text-sm flex-shrink-0" showPulse={true} />
+      {/* Floating Mobile CTA - Show after 20s or 1/3 scroll, hide when delivery form is visible */}
+      {showFloatingButton && !(buttonHasAppeared && isDeliveryFormVisible) && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden animate-slide-up-fade">
+          <div className="relative overflow-hidden">
+            {/* Countdown progress bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-orange-200">
+              <div className="countdown-bar h-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500"></div>
             </div>
+            <CTAButton 
+              className="w-full rounded-none py-4 text-base font-semibold shadow-lg" 
+              showPulse={false}
+            >
+              {t('cta.mobile_floating') || "Naručite sada!"}
+            </CTAButton>
           </div>
         </div>
       )}
