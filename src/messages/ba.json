@@ -653,6 +653,7 @@
     "modal_title": "Detektovali smo vašu lokaciju",
     "detected_location": "Vaša detektovana lokacija",
     "detected_country": "Detektovali smo da ste iz {country}",
+    "choose_version": "Izaberite željenu verziju stranice:",
     "suggestion": "Želite li da pređete na verziju stranice za {suggestedCountry}?",
     "current_viewing": "Trenutno gledate verziju stranice za {currentCountry}.",
     "detection_note": "* Lokacija detektovana na osnovu IP adrese. Možda nije uvijek precizna.",
@@ -665,6 +666,12 @@
       "ba": "Bosnu i Hercegovinu",
       "hr": "Hrvatsku",
       "me": "Crnu Goru"
+    },
+    "countries_nominative": {
+      "rs": "Srbija",
+      "ba": "Bosna i Hercegovina",
+      "hr": "Hrvatska",
+      "me": "Crna Gora"
     }
   }
 }

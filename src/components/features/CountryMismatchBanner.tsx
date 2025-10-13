@@ -19,15 +19,23 @@ import Image from 'next/image';
 
 const DISMISSED_KEY = 'country-mismatch-dismissed';
 
-// Country code mapping (ISO to locale)
+// Country code mapping (ISO to locale) with fallback logic
 const countryToLocale: Record<string, string> = {
   RS: 'rs', // Serbia
   BA: 'ba', // Bosnia and Herzegovina
   HR: 'hr', // Croatia
   ME: 'me', // Montenegro
-  MK: 'rs', // North Macedonia (use Serbian)
-  SI: 'rs', // Slovenia (use Serbian)
-  AL: 'rs', // Albania (use Serbian)
+  // Fallback to closest locale for neighboring countries
+  MK: 'rs', // North Macedonia -> Serbian
+  SI: 'hr', // Slovenia -> Croatian (closer geographically and linguistically to EU standards)
+  AL: 'rs', // Albania -> Serbian
+  XK: 'rs', // Kosovo -> Serbian
+  BG: 'rs', // Bulgaria -> Serbian
+  RO: 'rs', // Romania -> Serbian
+  HU: 'hr', // Hungary -> Croatian (EU member)
+  AT: 'hr', // Austria -> Croatian (EU member)
+  IT: 'hr', // Italy -> Croatian (EU member)
+  GR: 'rs', // Greece -> Serbian
 };
 
 // Flag code mapping (locale to ISO)
@@ -140,6 +148,11 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
         reason: isDevMode ? 'Geolocation only works in production on Vercel' : 'Geolocation service unavailable',
         solution: isDevMode ? 'Deploy to Vercel to test geolocation' : 'Check Vercel deployment'
       });
+      
+      // If no exact match found, try to use fallback for neighboring countries
+      if (geoData && geoData.country && !countryToLocale[geoData.country]) {
+        console.log('⚠️ No exact locale match for country:', geoData.country, '- using default fallback');
+      }
     }
   }, [geoData, loading, locale, isDismissed, forceShow, isDevMode]);
 
@@ -279,15 +292,15 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
     }} modal>
       <DialogContent className="sm:max-w-md !bg-white !border !border-gray-200 !shadow-xl z-[100]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl text-gray-900">
+          <DialogTitle className="flex items-center gap-2 text-xl text-gray-900 justify-center">
             <Globe className="h-6 w-6 text-brand-orange" />
             {t('modal_title', { default: 'Country Detection' })}
           </DialogTitle>
-          <DialogDescription className="text-left pt-2">
-            <div className="space-y-4">
+          <DialogDescription className="text-center pt-4">
+            <div className="space-y-6">
               <div className="flex items-center gap-3 p-3 !bg-orange-50 rounded-lg border border-orange-200">
                 <MapPin className="h-5 w-5 text-brand-orange flex-shrink-0" />
-                <div className="flex-1">
+                <div className="flex-1 text-left">
                   <p className="text-sm font-medium text-orange-900">
                     {t('detected_location', { default: 'Your detected location' })}
                   </p>
@@ -307,14 +320,8 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
               </div>
 
               <div className="text-sm text-gray-600">
-                <p>{t('suggestion', { suggestedCountry: detectedCountryName })}</p>
-                <p className="mt-2 text-xs text-gray-500">
-                  {t('current_viewing', { 
-                    default: `You are currently viewing the ${currentCountryName} version.`,
-                    currentCountry: currentCountryName 
-                  })}
-                </p>
-                <p className="mt-2 text-xs text-orange-600 italic">
+                <p className="mb-4">{t('choose_version', { default: 'Choose your preferred version:' })}</p>
+                <p className="text-xs text-orange-600 italic">
                   {t('detection_note', { 
                     default: '* Location detected via IP address. May not always be accurate.'
                   })}
@@ -324,38 +331,56 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
           </DialogDescription>
         </DialogHeader>
         
-        <DialogFooter className="flex-col sm:flex-row gap-2">
-          <Button
+        <DialogFooter className="flex flex-row justify-center gap-8 sm:gap-12 pb-4">
+          {/* Current Country Flag */}
+          <button
             onClick={handleDismiss}
-            variant="outline"
-            className="w-full sm:w-auto !bg-white hover:!bg-gray-50"
+            className="flex flex-col items-center gap-3 group hover:scale-105 transition-transform duration-200"
           >
-            {currentFlagCode && (
-              <Image
-                src={`https://flagcdn.com/w40/${currentFlagCode.toLowerCase()}.png`}
-                alt={currentCountryName}
-                width={20}
-                height={15}
-                className="rounded-sm mr-2"
-              />
-            )}
-            {t('stay_button', { default: `Stay on ${currentCountryName}`, country: currentCountryName })}
-          </Button>
-          <Button
+            <div className="relative">
+              {currentFlagCode && (
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-4 border-gray-300 group-hover:border-gray-400 transition-colors shadow-lg">
+                  <Image
+                    src={`https://flagcdn.com/w160/${currentFlagCode.toLowerCase()}.png`}
+                    alt={currentCountryName}
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+            </div>
+            <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">
+              {t(`countries_nominative.${locale}`, { default: currentCountryName })}
+            </span>
+          </button>
+
+          {/* Detected Country Flag */}
+          <button
             onClick={handleSwitch}
-            className="w-full sm:w-auto !bg-gradient-to-r !from-brand-orange !to-orange-600 hover:!from-orange-600 hover:!to-orange-700 !text-white shadow-lg"
+            className="flex flex-col items-center gap-3 group hover:scale-105 transition-transform duration-200"
           >
-            {detectedFlagCode && (
-              <Image
-                src={`https://flagcdn.com/w40/${detectedFlagCode.toLowerCase()}.png`}
-                alt={detectedCountryName}
-                width={20}
-                height={15}
-                className="rounded-sm mr-2"
-              />
-            )}
-            {t('switch_button', { country: detectedCountryName })}
-          </Button>
+            <div className="relative">
+              {detectedFlagCode && (
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-4 border-brand-orange group-hover:border-orange-600 transition-colors shadow-lg">
+                  <Image
+                    src={`https://flagcdn.com/w160/${detectedFlagCode.toLowerCase()}.png`}
+                    alt={detectedCountryName}
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              {/* Recommended badge */}
+              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-brand-orange to-orange-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                ✓
+              </div>
+            </div>
+            <span className="text-sm font-semibold text-brand-orange group-hover:text-orange-600">
+              {t(`countries_nominative.${detectedLocale}`, { default: detectedCountryName })}
+            </span>
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

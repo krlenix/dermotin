@@ -315,6 +315,32 @@ summary,
   animation: shake 0.4s ease-in-out;
 }
 
+/* Periodic shake for urgency icon */
+@keyframes periodicShake {
+  0%, 85%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  87% {
+    transform: translateX(-3px) rotate(-5deg);
+  }
+  89% {
+    transform: translateX(3px) rotate(5deg);
+  }
+  91% {
+    transform: translateX(-2px) rotate(-3deg);
+  }
+  93% {
+    transform: translateX(2px) rotate(3deg);
+  }
+  95% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.animate-periodic-shake {
+  animation: periodicShake 4s ease-in-out infinite;
+}
+
 /* Elegant urgency countdown effect - asymptotic slowdown (never reaches end) */
 @keyframes countdownProgress {
   0% {

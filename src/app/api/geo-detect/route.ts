@@ -9,19 +9,35 @@ export async function GET(request: NextRequest) {
     const geo = geolocation(request);
     const ip = ipAddress(request);
     
-    // Map Vercel country codes to our supported locales
+    // Map Vercel country codes to our supported locales with fallback logic
     const countryToLocale: Record<string, string> = {
+      // Primary supported countries
       'RS': 'rs', // Serbia
       'BA': 'ba', // Bosnia and Herzegovina
-      'ME': 'me', // Montenegro
       'HR': 'hr', // Croatia
-      'MK': 'rs', // North Macedonia (use Serbian locale)
-      'SI': 'rs', // Slovenia (use Serbian locale)
-      'AL': 'rs', // Albania (use Serbian locale)
+      'ME': 'me', // Montenegro
+      // Fallback to closest locale for neighboring countries
+      'MK': 'rs', // North Macedonia -> Serbian
+      'SI': 'hr', // Slovenia -> Croatian (closer geographically and linguistically to EU standards)
+      'AL': 'rs', // Albania -> Serbian
+      'XK': 'rs', // Kosovo -> Serbian
+      'BG': 'rs', // Bulgaria -> Serbian
+      'RO': 'rs', // Romania -> Serbian
+      'HU': 'hr', // Hungary -> Croatian (EU member)
+      'AT': 'hr', // Austria -> Croatian (EU member)
+      'IT': 'hr', // Italy -> Croatian (EU member)
+      'GR': 'rs', // Greece -> Serbian
     };
 
     // Default to Serbian if country not detected or not in our supported list
     const detectedLocale = geo.country ? countryToLocale[geo.country] || 'rs' : 'rs';
+    
+    // Log fallback usage for analytics
+    if (geo.country && !['RS', 'BA', 'HR', 'ME'].includes(geo.country) && countryToLocale[geo.country]) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔀 Using fallback locale for country:', geo.country, '→', detectedLocale);
+      }
+    }
     
     // Log for debugging (only in development)
     if (process.env.NODE_ENV === 'development') {
