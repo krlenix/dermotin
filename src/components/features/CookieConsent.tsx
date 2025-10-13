@@ -36,29 +36,36 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
     // For EU users, check if they've given consent
     const hasConsent = localStorage.getItem('cookie-consent');
     if (!hasConsent) {
-      // Check if geo modal is dismissed - only show cookie consent after geo modal
-      let attempts = 0;
-      const maxAttempts = 5; // Max 5 seconds of checking
-      
-      const checkGeoModalDismissed = () => {
-        const geoModalDismissed = localStorage.getItem('country-mismatch-dismissed');
-        attempts++;
-        
-        // If geo modal is dismissed, show cookie consent
-        if (geoModalDismissed === 'true') {
-          setShowBanner(true);
-        } else if (attempts < maxAttempts) {
-          // Check again after a delay
-          setTimeout(checkGeoModalDismissed, 1000);
-        } else {
-          // After max attempts (5 seconds), show cookie consent anyway
-          // This covers the case where geo modal doesn't show at all
-          setShowBanner(true);
-        }
+      // Function to show cookie consent
+      const showCookieConsent = () => {
+        setShowBanner(true);
       };
+
+      // Check if geo modal was already dismissed (e.g. on page refresh)
+      const geoModalDismissed = localStorage.getItem('country-mismatch-dismissed');
       
-      // Start checking after a short delay to allow geo modal to potentially show
-      setTimeout(checkGeoModalDismissed, 1500);
+      if (geoModalDismissed === 'true') {
+        // Geo modal already dismissed, show cookie consent after a short delay
+        setTimeout(showCookieConsent, 500);
+      } else {
+        // Geo modal might show, wait for it to be dismissed
+        // Listen for the custom event from geo modal
+        const handleGeoModalDismissed = () => {
+          // Small delay to ensure smooth transition between modals
+          setTimeout(showCookieConsent, 300);
+        };
+        
+        window.addEventListener('geoModalDismissed', handleGeoModalDismissed);
+        
+        // Also set a timeout fallback in case geo modal never shows (e.g., matching locale)
+        const fallbackTimeout = setTimeout(showCookieConsent, 3000);
+        
+        // Cleanup
+        return () => {
+          window.removeEventListener('geoModalDismissed', handleGeoModalDismissed);
+          clearTimeout(fallbackTimeout);
+        };
+      }
     } else {
       const savedPreferences = JSON.parse(hasConsent);
       setPreferences(savedPreferences);

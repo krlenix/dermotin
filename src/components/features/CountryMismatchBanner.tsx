@@ -176,6 +176,12 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
       setIsOpen(false);
       setShowTestModal(false);
       
+      // Mark as dismissed and notify other components
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(DISMISSED_KEY, 'true');
+        window.dispatchEvent(new CustomEvent('geoModalDismissed'));
+      }
+      
       // Get current pathname without locale
       const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
       const pathWithoutLocale = currentPath.replace(`/${locale}`, '');
@@ -196,6 +202,8 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
     setIsDismissed(true);
     if (typeof window !== 'undefined') {
       localStorage.setItem(DISMISSED_KEY, 'true');
+      // Dispatch event to notify other components (like cookie consent) that geo modal is closed
+      window.dispatchEvent(new CustomEvent('geoModalDismissed'));
     }
   };
 
@@ -339,7 +347,7 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
           >
             <div className="relative">
               {currentFlagCode && (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-4 border-gray-300 group-hover:border-gray-400 transition-colors shadow-lg">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
                   <Image
                     src={`https://flagcdn.com/w160/${currentFlagCode.toLowerCase()}.png`}
                     alt={currentCountryName}
@@ -362,7 +370,7 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
           >
             <div className="relative">
               {detectedFlagCode && (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden border-4 border-brand-orange group-hover:border-orange-600 transition-colors shadow-lg">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow ring-2 ring-brand-orange ring-offset-2">
                   <Image
                     src={`https://flagcdn.com/w160/${detectedFlagCode.toLowerCase()}.png`}
                     alt={detectedCountryName}
