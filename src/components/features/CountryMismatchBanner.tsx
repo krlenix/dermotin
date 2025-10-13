@@ -17,6 +17,19 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 import { COUNTRIES } from '@/config/countries';
 import Image from 'next/image';
 
+// Import all message files
+import rsMessages from '@/messages/rs.json';
+import hrMessages from '@/messages/hr.json';
+import baMessages from '@/messages/ba.json';
+import meMessages from '@/messages/me.json';
+
+const messages: Record<string, any> = {
+  rs: rsMessages,
+  hr: hrMessages,
+  ba: baMessages,
+  me: meMessages,
+};
+
 const DISMISSED_KEY = 'country-mismatch-dismissed';
 
 // Country code mapping (ISO to locale) with fallback logic
@@ -78,7 +91,20 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
       return;
     }
 
-    // Check if already dismissed
+    // DEBUG: Force show on localhost for HR locale to test GDPR coordination
+    if (isDevMode && locale === 'hr') {
+      console.log('🧪 DEBUG MODE: Forcing geo modal for HR locale on localhost (ignoring dismissed state)');
+      // Clear dismissed state and force show every time on HR locale
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(DISMISSED_KEY);
+      }
+      setTimeout(() => {
+        setIsOpen(true);
+      }, 500);
+      return;
+    }
+
+    // Check if already dismissed (for non-HR locales)
     if (typeof window !== 'undefined') {
       const dismissed = localStorage.getItem(DISMISSED_KEY);
       if (dismissed === 'true') {
@@ -213,6 +239,9 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
   if (forcedCountry) {
     // Use forced country for testing
     detectedLocale = forcedCountry;
+  } else if (isDevMode && locale === 'hr' && isOpen) {
+    // DEBUG: When on localhost with HR locale, show RS as detected
+    detectedLocale = 'rs';
   } else if (geoData && geoData.country) {
     // Use real detected country
     detectedLocale = countryToLocale[geoData.country];
@@ -224,19 +253,36 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
 
   // If no country detected and not in force mode or test mode, don't show
   if (!detectedLocale || !COUNTRIES[detectedLocale]) {
-    if (!forceShow && !showTestModal) return null;
-    // For forceShow without country, default to 'hr' as an example
-    detectedLocale = 'hr';
+    if (!forceShow && !showTestModal && !(isDevMode && locale === 'hr')) return null;
+    // For forceShow without country, default to 'rs' as an example
+    detectedLocale = 'rs';
   }
 
   const detectedCountry = COUNTRIES[detectedLocale];
-  const detectedCountryName = t(`countries_nominative.${detectedLocale}`);
-  const currentCountryName = t(`countries_nominative.${locale}`);
+  
+  // Helper function to get translations in the detected locale
+  const getDetectedLocaleTranslation = (key: string, defaultValue?: string): string => {
+    const detectedMessages = messages[detectedLocale] || messages['rs'];
+    // All keys are under 'country_mismatch_banner'
+    const fullKey = `country_mismatch_banner.${key}`;
+    const keys = fullKey.split('.');
+    let value: any = detectedMessages;
+    
+    for (const k of keys) {
+      value = value?.[k];
+      if (value === undefined) break;
+    }
+    
+    return value || defaultValue || key;
+  };
+  
+  const detectedCountryName = getDetectedLocaleTranslation(`countries_nominative.${detectedLocale}`);
+  const currentCountryName = getDetectedLocaleTranslation(`countries_nominative.${locale}`);
   const detectedFlagCode = localeToFlagCode[detectedLocale];
   const currentFlagCode = localeToFlagCode[locale];
 
-  // Show development notice on localhost
-  if (isDevMode && !forceShow && !showTestModal) {
+  // Show development notice on localhost (but not for HR locale - it auto-shows the modal)
+  if (isDevMode && !forceShow && !showTestModal && locale !== 'hr') {
     const handleClearDismissed = () => {
       localStorage.removeItem(DISMISSED_KEY);
       console.log('✅ Cleared dismissed state - refresh page to test modal');
@@ -302,94 +348,92 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl text-gray-900 justify-center">
             <Globe className="h-6 w-6 text-brand-orange" />
-            {t('modal_title', { default: 'Country Detection' })}
+            {getDetectedLocaleTranslation('modal_title', 'Detektirali smo vašu lokaciju')}
           </DialogTitle>
-          <DialogDescription className="text-center pt-4">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 p-3 !bg-orange-50 rounded-lg border border-orange-200">
-                <MapPin className="h-5 w-5 text-brand-orange flex-shrink-0" />
-                <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-orange-900">
-                    {t('detected_location', { default: 'Your detected location' })}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    {detectedFlagCode && (
-                      <Image
-                        src={`https://flagcdn.com/w40/${detectedFlagCode.toLowerCase()}.png`}
-                        alt={detectedCountryName}
-                        width={24}
-                        height={18}
-                        className="rounded-sm"
-                      />
-                    )}
-                    <span className="font-semibold text-orange-900">{detectedCountryName}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-sm text-gray-600">
-                <p className="mb-4">{t('choose_version', { default: 'Choose your preferred version:' })}</p>
-                <p className="text-xs text-orange-600 italic">
-                  {t('detection_note', { 
-                    default: '* Location detected via IP address. May not always be accurate.'
-                  })}
-                </p>
-              </div>
-            </div>
-          </DialogDescription>
         </DialogHeader>
         
-        <DialogFooter className="flex flex-row justify-center gap-8 sm:gap-12 pb-4">
+        <div className="text-center pt-4">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 p-3 !bg-orange-50 rounded-lg border border-orange-200">
+              <MapPin className="h-5 w-5 text-brand-orange flex-shrink-0" />
+              <div className="flex-1 text-left">
+                <div className="text-sm font-medium text-orange-900">
+                  {getDetectedLocaleTranslation('detected_location', 'Vaša detektovana lokacija')}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  {detectedFlagCode && (
+                    <Image
+                      src={`https://flagcdn.com/w40/${detectedFlagCode.toLowerCase()}.png`}
+                      alt={detectedCountryName}
+                      width={24}
+                      height={18}
+                      className="rounded-sm"
+                    />
+                  )}
+                  <span className="font-semibold text-orange-900">{detectedCountryName}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-sm text-gray-600">
+              <div className="mb-4">{getDetectedLocaleTranslation('choose_version', 'Odaberite željenu verziju stranice:')}</div>
+            </div>
+          </div>
+        </div>
+        
+        <DialogFooter className="!flex !flex-row !justify-center items-center gap-8 sm:gap-12 pb-4 w-full">
           {/* Current Country Flag */}
           <button
             onClick={handleDismiss}
-            className="flex flex-col items-center gap-3 group hover:scale-105 transition-transform duration-200"
+            className="flex flex-col items-center justify-center gap-3 group hover:scale-105 transition-transform duration-200 outline-none focus:outline-none"
           >
-            <div className="relative">
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28">
               {currentFlagCode && (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
-                  <Image
-                    src={`https://flagcdn.com/w160/${currentFlagCode.toLowerCase()}.png`}
-                    alt={currentCountryName}
-                    width={160}
-                    height={160}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <Image
+                  src={`https://flagcdn.com/w160/${currentFlagCode.toLowerCase()}.png`}
+                  alt={currentCountryName}
+                  width={160}
+                  height={160}
+                  className="w-full h-full object-cover rounded-lg shadow-lg group-hover:shadow-xl transition-shadow"
+                />
               )}
             </div>
-            <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">
-              {t(`countries_nominative.${locale}`, { default: currentCountryName })}
+            <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 text-center">
+              {currentCountryName}
             </span>
           </button>
 
           {/* Detected Country Flag */}
           <button
             onClick={handleSwitch}
-            className="flex flex-col items-center gap-3 group hover:scale-105 transition-transform duration-200"
+            className="flex flex-col items-center justify-center gap-3 group hover:scale-105 transition-transform duration-200 outline-none focus:outline-none"
           >
-            <div className="relative">
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28">
               {detectedFlagCode && (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow ring-2 ring-brand-orange ring-offset-2">
-                  <Image
-                    src={`https://flagcdn.com/w160/${detectedFlagCode.toLowerCase()}.png`}
-                    alt={detectedCountryName}
-                    width={160}
-                    height={160}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <Image
+                  src={`https://flagcdn.com/w160/${detectedFlagCode.toLowerCase()}.png`}
+                  alt={detectedCountryName}
+                  width={160}
+                  height={160}
+                  className="w-full h-full object-cover rounded-lg shadow-lg group-hover:shadow-xl transition-shadow"
+                />
               )}
               {/* Recommended badge */}
               <div className="absolute -top-2 -right-2 bg-gradient-to-r from-brand-orange to-orange-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
                 ✓
               </div>
             </div>
-            <span className="text-sm font-semibold text-brand-orange group-hover:text-orange-600">
-              {t(`countries_nominative.${detectedLocale}`, { default: detectedCountryName })}
+            <span className="text-sm font-semibold text-brand-orange group-hover:text-orange-600 text-center">
+              {detectedCountryName}
             </span>
           </button>
         </DialogFooter>
+        
+        <div className="text-center pb-4 px-6">
+          <div className="text-xs text-orange-600 italic">
+            {getDetectedLocaleTranslation('detection_note', '* Lokacija detektovana putem IP adrese. Možda nije uvek tačna.')}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

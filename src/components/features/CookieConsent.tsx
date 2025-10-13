@@ -36,36 +36,41 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
     // For EU users, check if they've given consent
     const hasConsent = localStorage.getItem('cookie-consent');
     if (!hasConsent) {
+      let eventListenerAdded = false;
+      
       // Function to show cookie consent
       const showCookieConsent = () => {
+        console.log('🍪 Showing cookie consent banner');
         setShowBanner(true);
       };
+
+      // Listen for the custom event from geo modal
+      const handleGeoModalDismissed = () => {
+        console.log('🍪 Geo modal dismissed event received, showing cookie consent after 300ms');
+        // Small delay to ensure smooth transition between modals
+        setTimeout(showCookieConsent, 300);
+      };
+      
+      window.addEventListener('geoModalDismissed', handleGeoModalDismissed);
+      eventListenerAdded = true;
 
       // Check if geo modal was already dismissed (e.g. on page refresh)
       const geoModalDismissed = localStorage.getItem('country-mismatch-dismissed');
       
       if (geoModalDismissed === 'true') {
         // Geo modal already dismissed, show cookie consent after a short delay
+        console.log('🍪 Geo modal already dismissed, showing cookie consent');
         setTimeout(showCookieConsent, 500);
-      } else {
-        // Geo modal might show, wait for it to be dismissed
-        // Listen for the custom event from geo modal
-        const handleGeoModalDismissed = () => {
-          // Small delay to ensure smooth transition between modals
-          setTimeout(showCookieConsent, 300);
-        };
-        
-        window.addEventListener('geoModalDismissed', handleGeoModalDismissed);
-        
-        // Also set a timeout fallback in case geo modal never shows (e.g., matching locale)
-        const fallbackTimeout = setTimeout(showCookieConsent, 3000);
-        
-        // Cleanup
-        return () => {
-          window.removeEventListener('geoModalDismissed', handleGeoModalDismissed);
-          clearTimeout(fallbackTimeout);
-        };
       }
+      // If geo modal is not dismissed, we just wait for the event (no fallback timeout)
+      // This prevents cookie consent from showing while geo modal is open
+      
+      // Cleanup
+      return () => {
+        if (eventListenerAdded) {
+          window.removeEventListener('geoModalDismissed', handleGeoModalDismissed);
+        }
+      };
     } else {
       const savedPreferences = JSON.parse(hasConsent);
       setPreferences(savedPreferences);
@@ -181,16 +186,19 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-2">
-              <Button onClick={acceptAll} className="flex-1">
-                {t('accept_all')}
+              <Button 
+                onClick={acceptAll} 
+                className="flex-1 bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-brand-orange text-white font-semibold py-6 text-base shadow-lg hover:shadow-xl transition-all duration-300 border-0"
+              >
+                ✓ {t('accept_all')}
               </Button>
-              <Button onClick={acceptNecessary} variant="outline" className="flex-1">
+              <Button onClick={acceptNecessary} variant="outline" className="flex-1 text-sm">
                 {t('accept_necessary')}
               </Button>
               <Button 
                 onClick={() => setShowSettings(true)} 
                 variant="ghost" 
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 <Settings className="mr-2 h-4 w-4" />
                 {t('cookie_settings')}
@@ -234,10 +242,13 @@ export function CookieConsent({ isEU }: CookieConsentProps) {
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={savePreferences} className="flex-1">
-                {t('save_preferences')}
+              <Button 
+                onClick={savePreferences} 
+                className="flex-1 bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-brand-orange text-white font-semibold py-6 text-base shadow-lg hover:shadow-xl transition-all duration-300 border-0"
+              >
+                ✓ {t('save_preferences')}
               </Button>
-              <Button onClick={() => setShowSettings(false)} variant="outline">
+              <Button onClick={() => setShowSettings(false)} variant="outline" className="text-sm">
                 {t('back')}
               </Button>
             </div>
