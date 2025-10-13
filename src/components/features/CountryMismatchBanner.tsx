@@ -222,8 +222,8 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
   }
 
   const detectedCountry = COUNTRIES[detectedLocale];
-  const detectedCountryName = t(`countries.${detectedLocale}`);
-  const currentCountryName = t(`countries.${locale}`);
+  const detectedCountryName = t(`countries_nominative.${detectedLocale}`);
+  const currentCountryName = t(`countries_nominative.${locale}`);
   const detectedFlagCode = localeToFlagCode[detectedLocale];
   const currentFlagCode = localeToFlagCode[locale];
 
