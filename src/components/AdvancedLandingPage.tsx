@@ -80,8 +80,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [triggerBundleShake, setTriggerBundleShake] = useState(false);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [buttonHasAppeared, setButtonHasAppeared] = useState(false);
-  const [progressStartTime, setProgressStartTime] = useState<number | null>(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
 
   // Helper function to round prices to 2 decimal places (avoid floating-point errors)
   const roundPrice = (price: number): number => {
@@ -170,11 +168,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     const timeoutId = setTimeout(() => {
       if (!hasTriggered) {
         setShowFloatingButton(true);
-        setButtonHasAppeared(true);
-        if (!progressStartTime) {
-          setProgressStartTime(Date.now());
-        }
         hasTriggered = true;
+        // Set buttonHasAppeared after animation completes
+        setTimeout(() => setButtonHasAppeared(true), 600);
       }
     }, 20000);
 
@@ -189,12 +185,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       // Show button if scrolled past 33% (1/3) of page
       if (scrollPercentage >= 33) {
         setShowFloatingButton(true);
-        setButtonHasAppeared(true);
-        if (!progressStartTime) {
-          setProgressStartTime(Date.now());
-        }
         hasTriggered = true;
         clearTimeout(timeoutId);
+        // Set buttonHasAppeared after animation completes
+        setTimeout(() => setButtonHasAppeared(true), 600);
       }
     };
 
@@ -204,20 +198,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       clearTimeout(timeoutId);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [progressStartTime]);
-
-  // Track elapsed time when button visibility changes
-  useEffect(() => {
-    if (!showFloatingButton && progressStartTime) {
-      // Button is hiding, save elapsed time
-      const elapsed = Date.now() - progressStartTime;
-      setElapsedTime(prev => prev + elapsed);
-      setProgressStartTime(null);
-    } else if (showFloatingButton && !progressStartTime && buttonHasAppeared) {
-      // Button is showing again, resume progress
-      setProgressStartTime(Date.now());
-    }
-  }, [showFloatingButton, progressStartTime, buttonHasAppeared]);
+  }, []);
 
   // CTA Button text - configurable variable
   const ctaButtonText = t('common.order_now'); // "Naruči odmah po akcijskoj ceni"
@@ -962,17 +943,20 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       <CookieConsent isEU={countryConfig.isEU} />
 
       {/* Floating Mobile CTA - Show after 20s or 1/3 scroll, hide when delivery form is visible */}
-      {showFloatingButton && !(buttonHasAppeared && isDeliveryFormVisible) && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden animate-slide-up-fade">
+      {showFloatingButton && (
+        <div 
+          className={`fixed bottom-0 left-0 right-0 z-50 md:hidden ${
+            buttonHasAppeared && isDeliveryFormVisible 
+              ? 'translate-y-full opacity-0 pointer-events-none transition-all duration-400' 
+              : buttonHasAppeared 
+                ? 'translate-y-0 opacity-100 transition-all duration-400'
+                : 'animate-slide-up-fade'
+          }`}
+        >
           <div className="relative overflow-hidden bg-gradient-to-r from-brand-orange to-orange-600">
-            {/* Countdown progress bar with preserved state */}
+            {/* Countdown progress bar - continues running even when hidden */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-orange-200">
-              <div 
-                className="countdown-bar h-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500"
-                style={{
-                  animationDelay: `-${elapsedTime / 1000}s`
-                }}
-              ></div>
+              <div className="countdown-bar h-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500"></div>
             </div>
             <button 
               onClick={scrollToCheckout}
