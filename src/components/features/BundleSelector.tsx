@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProductVariant } from '@/config/products';
-import { CountryConfig, CourierInfo, getDefaultCourier } from '@/config/countries';
+import { CountryConfig } from '@/config/countries';
 
 import { useTranslations } from 'next-intl';
 import { CheckCircle } from 'lucide-react';
@@ -16,7 +16,6 @@ interface BundleSelectorProps {
   selectedVariant: ProductVariant;
   onVariantChange: (variant: ProductVariant) => void;
   countryConfig: CountryConfig;
-  selectedCourier?: CourierInfo;
   className?: string;
   triggerShake?: boolean; // New prop to trigger shake animation
 }
@@ -26,7 +25,6 @@ export function BundleSelector({
   selectedVariant, 
   onVariantChange, 
   countryConfig,
-  selectedCourier,
   className,
   triggerShake = false
 }: BundleSelectorProps) {

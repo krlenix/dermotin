@@ -68,7 +68,7 @@ export default function HomePage() {
   const { trackEvent } = usePixelTracking(countryConfig.code);
   
   // Initialize marketing tracking
-  const { marketingParams } = useMarketingTracking();
+  useMarketingTracking();
   
   // Screen size detection for responsive images
   const [isMobile, setIsMobile] = useState(false);

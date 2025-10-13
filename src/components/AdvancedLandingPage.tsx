@@ -68,7 +68,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const locale = useLocale();
 
   // Initialize marketing tracking
-  const { marketingParams, hasMarketingData } = useMarketingTracking();
+  useMarketingTracking();
 
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [bundleItems, setBundleItems] = useState<{[key: string]: number}>({});
@@ -823,7 +823,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   selectedVariant={selectedVariant}
                   onVariantChange={setSelectedVariant}
                   countryConfig={countryConfig}
-                  selectedCourier={selectedCourier}
                   triggerShake={triggerBundleShake}
                 />
               </div>

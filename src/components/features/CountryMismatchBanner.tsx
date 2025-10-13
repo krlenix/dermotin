@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Globe, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -23,6 +21,7 @@ import hrMessages from '@/messages/hr.json';
 import baMessages from '@/messages/ba.json';
 import meMessages from '@/messages/me.json';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const messages: Record<string, any> = {
   rs: rsMessages,
   hr: hrMessages,
@@ -65,7 +64,6 @@ interface CountryMismatchBannerProps {
 }
 
 export function CountryMismatchBanner({ forceShow = false, forcedCountry }: CountryMismatchBannerProps = {}) {
-  const t = useTranslations('country_mismatch_banner');
   const locale = useLocale();
   const router = useRouter();
   const { data: geoData, loading } = useGeolocation();
@@ -258,14 +256,13 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
     detectedLocale = 'rs';
   }
 
-  const detectedCountry = COUNTRIES[detectedLocale];
-  
   // Helper function to get translations in the detected locale
   const getDetectedLocaleTranslation = (key: string, defaultValue?: string): string => {
     const detectedMessages = messages[detectedLocale] || messages['rs'];
     // All keys are under 'country_mismatch_banner'
     const fullKey = `country_mismatch_banner.${key}`;
     const keys = fullKey.split('.');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let value: any = detectedMessages;
     
     for (const k of keys) {
