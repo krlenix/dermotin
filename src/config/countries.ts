@@ -375,7 +375,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         isDefault: true,
         enabled: true,
         shipping: {
-          cost: 3.5,
+          cost: 3,
           currency: '€'
         }
       }

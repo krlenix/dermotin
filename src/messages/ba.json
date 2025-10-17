@@ -36,7 +36,7 @@
     "view_all_button": "POGLEDAJ SVE",
     "add_to_cart_button": "DODAJ U KORPU",
     "before_after_title": "70% kupaca izvrši ponovnu kupovinu u roku od 20 dana",
-    "before_after_subtitle": "Naši kupci dijele svoje nevjerojatne rezultate nakon korištenja DERMOTIN proizvoda. U praksi se pokazalo da prirodni sastojci donose vidljive rezultate već poslije nekoliko tjedana redovne upotrebe.",
+    "before_after_subtitle": "Naši kupci dijele svoje nevjerojatne rezultate nakon korištenja DERMOTIN proizvoda. U praksi se pokazalo da prirodni sastojci donose vidljive rezultate već poslije nekoliko sedmica redovne upotrebe.",
     "visible_results": "Efikasna formula",
     "safe_all_skin": "Laboratorijski testirano",
     "no_side_effects": "Prirodno i bezbijedno",
@@ -340,7 +340,7 @@
     "today": "danas",
     "yesterday": "jučer",
     "days_ago": "dana ranije",
-    "weeks_ago": "tjedana ranije",
+    "weeks_ago": "sedmica ranije",
     "months_ago": "mjeseci ranije"
   },
   "upsell": {
@@ -447,7 +447,7 @@
     "testimonials_subtitle": "Tisuće zadovoljnih kupaca već je iskusilo prednosti naših proizvoda. Budite sljedeći!",
     "final_call": "Ne čekajte - Iskoristite akciju sada!",
     "final_subtitle": "Sve što trebate znati ste već vidjeli. Kliknite gumb ispod i napravite korak prema zdravijoj, ljepšoj koži već danas!",
-    "mobile_floating": "Poruči po akcijskoj ceni"
+    "mobile_floating": "Poruči po akcijskoj cijeni"
   },
   "currencies": {
     "rsd": "RSD",
