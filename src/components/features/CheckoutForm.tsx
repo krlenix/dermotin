@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
 import { getDefaultCourier } from '@/config/countries';
-import { Truck, Banknote, Shield, Phone, MapPin, User, Check, Tag, X, CheckCircle2 } from 'lucide-react';
+import { Truck, Banknote, Shield, Phone, MapPin, User, Check, Tag, X } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 import { CompactOrderSummary } from './CompactOrderSummary';
@@ -25,7 +25,7 @@ import { usePixelTracking } from '@/components/tracking/PixelTracker';
 import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
-import { validateCoupon, validateCouponWithAPI, calculateCouponDiscount, type Coupon } from '@/config/coupons';
+import { validateCouponWithAPI, calculateCouponDiscount, type Coupon } from '@/config/coupons';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -121,91 +121,8 @@ export function CheckoutForm({
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [showCouponField, setShowCouponField] = useState(true);
   const [isValidatingUrlCoupon, setIsValidatingUrlCoupon] = useState(false);
-  const [urlCouponValidated, setUrlCouponValidated] = useState(false);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const [animatedSavings, setAnimatedSavings] = useState(0);
-  
-  // Check URL parameters for coupon and medium on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const searchParams = new URLSearchParams(window.location.search);
-      const urlCoupon = searchParams.get('coupon');
-      const urlMedium = searchParams.get('medium');
-      
-      // Hide coupon field if medium is set in URL
-      if (urlMedium) {
-        setShowCouponField(false);
-      }
-      
-      // Auto-apply coupon from URL if present (async, non-blocking)
-      if (urlCoupon && !urlMedium) {
-        const normalizedCode = urlCoupon.toUpperCase();
-        setCouponCode(normalizedCode);
-        setIsValidatingUrlCoupon(true);
-        
-        // Validate coupon asynchronously without blocking page load
-        (async () => {
-          try {
-            // Small delay to ensure component is fully mounted
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            console.log(`🔍 Auto-validating coupon from URL: ${normalizedCode}`);
-            await handleApplyCoupon(normalizedCode);
-            
-          } catch (error) {
-            console.error('Error auto-applying URL coupon:', error);
-          } finally {
-            setIsValidatingUrlCoupon(false);
-            setUrlCouponValidated(true);
-          }
-        })();
-      }
-    }
-  }, []);
-
-  const handleInputChange = (field: string, value: string | boolean) => {
-    // For postal code, only allow numeric input
-    if (field === 'postalCode' && typeof value === 'string') {
-      value = value.replace(/\D/g, '').slice(0, 5);
-    }
-    
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Track InitiateCheckout event when user starts filling the form (only once)
-    if (!hasStartedCheckout && typeof value === 'string' && value.trim().length > 0) {
-      setHasStartedCheckout(true);
-      
-      // Track the event with order data
-      const eventData = {
-        content_name: productName,
-        content_category: 'Product',
-        content_ids: [selectedVariant.id || mainProductId],
-        contents: [{
-          id: selectedVariant.id || mainProductId,
-          quantity: 1,
-          item_price: selectedVariant.discountPrice || selectedVariant.price
-        }],
-        currency: countryConfig.currency || 'RSD',
-        value: (selectedVariant.discountPrice || selectedVariant.price) + Object.values(bundleItems).reduce((sum, price) => sum + price, 0),
-        num_items: 1 + Object.keys(bundleItems).length
-      };
-      
-      trackEvent('initiate_checkout', eventData);
-    }
-    
-    // Clear error when user starts typing
-    if (formErrors[field]) {
-      setFormErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const handleBlur = (field: string) => {
-    const value = formData[field as keyof typeof formData] as string;
-    const error = validateField(field, value);
-    if (error) {
-      setFormErrors(prev => ({ ...prev, [field]: error }));
-    }
-  };
   
   // Coupon handling functions
   const handleApplyCoupon = async (codeToApply?: string) => {
@@ -258,6 +175,88 @@ export function CheckoutForm({
       console.error('Error applying coupon:', error);
       setCouponError(t('coupons.invalid_code'));
       setIsApplyingCoupon(false);
+    }
+  };
+  
+  // Check URL parameters for coupon and medium on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const urlCoupon = searchParams.get('coupon');
+      const urlMedium = searchParams.get('medium');
+      
+      // Hide coupon field if medium is set in URL
+      if (urlMedium) {
+        setShowCouponField(false);
+      }
+      
+      // Auto-apply coupon from URL if present (async, non-blocking)
+      if (urlCoupon && !urlMedium) {
+        const normalizedCode = urlCoupon.toUpperCase();
+        setCouponCode(normalizedCode);
+        setIsValidatingUrlCoupon(true);
+        
+        // Validate coupon asynchronously without blocking page load
+        (async () => {
+          try {
+            // Small delay to ensure component is fully mounted
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            console.log(`🔍 Auto-validating coupon from URL: ${normalizedCode}`);
+            await handleApplyCoupon(normalizedCode);
+            
+          } catch (error) {
+            console.error('Error auto-applying URL coupon:', error);
+          } finally {
+            setIsValidatingUrlCoupon(false);
+          }
+        })();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    // For postal code, only allow numeric input
+    if (field === 'postalCode' && typeof value === 'string') {
+      value = value.replace(/\D/g, '').slice(0, 5);
+    }
+    
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Track InitiateCheckout event when user starts filling the form (only once)
+    if (!hasStartedCheckout && typeof value === 'string' && value.trim().length > 0) {
+      setHasStartedCheckout(true);
+      
+      // Track the event with order data
+      const eventData = {
+        content_name: productName,
+        content_category: 'Product',
+        content_ids: [selectedVariant.id || mainProductId],
+        contents: [{
+          id: selectedVariant.id || mainProductId,
+          quantity: 1,
+          item_price: selectedVariant.discountPrice || selectedVariant.price
+        }],
+        currency: countryConfig.currency || 'RSD',
+        value: (selectedVariant.discountPrice || selectedVariant.price) + Object.values(bundleItems).reduce((sum, price) => sum + price, 0),
+        num_items: 1 + Object.keys(bundleItems).length
+      };
+      
+      trackEvent('initiate_checkout', eventData);
+    }
+    
+    // Clear error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleBlur = (field: string) => {
+    const value = formData[field as keyof typeof formData] as string;
+    const error = validateField(field, value);
+    if (error) {
+      setFormErrors(prev => ({ ...prev, [field]: error }));
     }
   };
   
@@ -441,7 +440,7 @@ export function CheckoutForm({
                       {t('coupons.validating')}
                     </p>
                     <p className="text-xs text-blue-600">
-                      {t('coupons.checking_code')} "{couponCode}"...
+                      {t('coupons.checking_code')} &ldquo;{couponCode}&rdquo;...
                     </p>
                   </div>
                 </div>

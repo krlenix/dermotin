@@ -261,7 +261,7 @@ export async function POST(request: NextRequest) {
       },
       discount_codes: orderData.coupon ? [{
         code: orderData.coupon.code,
-        type: orderData.coupon.type,
+        type: orderData.coupon.type === 'absolute' || orderData.coupon.type === 'free_shipping' ? 'fixed' : 'percentage',
         amount: roundPrice(orderData.coupon.totalDiscount)
       }] : [],
       marketing: {
