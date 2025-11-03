@@ -17,6 +17,14 @@ function roundPrice(price: number): number {
   return Math.round(price * 100) / 100;
 }
 
+export interface CouponData {
+  code: string;
+  type: 'absolute' | 'percentage' | 'free_shipping';
+  productDiscount: number;
+  shippingDiscount: number;
+  totalDiscount: number;
+}
+
 export interface OrderData {
   orderId: string;
   customerName: string;
@@ -38,6 +46,7 @@ export interface OrderData {
   paymentMethod: string;
   bundleItems?: Record<string, number>;
   locale: string;
+  coupon?: CouponData;
 }
 
 // WebhookPayload interface is now imported from supabase.ts
@@ -158,6 +167,7 @@ export async function POST(request: NextRequest) {
       fbc?: string;
       eventId?: string;
       marketingParams?: MarketingParams;
+      coupon?: CouponData;
     } = await request.json();
 
     // Get marketing parameters from cookies first, then fall back to request body
@@ -199,6 +209,9 @@ export async function POST(request: NextRequest) {
     const bundleTotal = orderData.bundleItems ? Object.values(orderData.bundleItems).reduce((sum, price) => sum + price, 0) : 0;
     const mainProductPrice = orderData.subtotal - bundleTotal;
     
+    // Calculate per-item discount if coupon is applied
+    const productDiscountAmount = orderData.coupon?.productDiscount || 0;
+    
     // Prepare webhook payload to match Laravel controller validation
     const currentDate = dayjs().tz(countryConfig.timezone);
     const formattedDate = currentDate.format('YYYY-MM-DD HH:mm:ss');
@@ -239,14 +252,18 @@ export async function POST(request: NextRequest) {
           quantity: orderData.quantity,
           price: roundPrice(mainProductPrice / orderData.quantity), // per unit price
           item_total_price: roundPrice(mainProductPrice), // total price for this line item
-          discount: 0 // Use 0 instead of null for Laravel validation
+          discount: roundPrice(productDiscountAmount) // Apply product discount
         }
       ],
       shipping: {
         price: roundPrice(orderData.shippingCost),
         method: orderData.courierName
       },
-      discount_codes: [],
+      discount_codes: orderData.coupon ? [{
+        code: orderData.coupon.code,
+        type: orderData.coupon.type,
+        amount: roundPrice(orderData.coupon.totalDiscount)
+      }] : [],
       marketing: {
         campaign_id: marketingParams?.campaign_id || null,
         adset_id: marketingParams?.adset_id || null,

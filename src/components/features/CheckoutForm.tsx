@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
 import { getDefaultCourier } from '@/config/countries';
-import { Truck, Banknote, Shield, Phone, MapPin, User, Check } from 'lucide-react';
+import { Truck, Banknote, Shield, Phone, MapPin, User, Check, Tag, X, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { UpsellCrossSell } from './UpsellCrossSell';
 import { CompactOrderSummary } from './CompactOrderSummary';
@@ -25,6 +25,7 @@ import { usePixelTracking } from '@/components/tracking/PixelTracker';
 import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
+import { validateCoupon, validateCouponWithAPI, calculateCouponDiscount, type Coupon } from '@/config/coupons';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -112,6 +113,53 @@ export function CheckoutForm({
   const [dialogError, setDialogError] = useState<string>('');
   const [orderResult, setOrderResult] = useState<{orderId?: string; customerName?: string; totalPrice?: number; currency?: string}>({});
   const [hasStartedCheckout, setHasStartedCheckout] = useState(false);
+  
+  // Coupon state
+  const [couponCode, setCouponCode] = useState<string>('');
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [couponError, setCouponError] = useState<string>('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [showCouponField, setShowCouponField] = useState(true);
+  const [isValidatingUrlCoupon, setIsValidatingUrlCoupon] = useState(false);
+  const [urlCouponValidated, setUrlCouponValidated] = useState(false);
+  
+  // Check URL parameters for coupon and medium on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const urlCoupon = searchParams.get('coupon');
+      const urlMedium = searchParams.get('medium');
+      
+      // Hide coupon field if medium is set in URL
+      if (urlMedium) {
+        setShowCouponField(false);
+      }
+      
+      // Auto-apply coupon from URL if present (async, non-blocking)
+      if (urlCoupon && !urlMedium) {
+        const normalizedCode = urlCoupon.toUpperCase();
+        setCouponCode(normalizedCode);
+        setIsValidatingUrlCoupon(true);
+        
+        // Validate coupon asynchronously without blocking page load
+        (async () => {
+          try {
+            // Small delay to ensure component is fully mounted
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            console.log(`🔍 Auto-validating coupon from URL: ${normalizedCode}`);
+            await handleApplyCoupon(normalizedCode);
+            
+          } catch (error) {
+            console.error('Error auto-applying URL coupon:', error);
+          } finally {
+            setIsValidatingUrlCoupon(false);
+            setUrlCouponValidated(true);
+          }
+        })();
+      }
+    }
+  }, []);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     // For postal code, only allow numeric input
@@ -155,6 +203,54 @@ export function CheckoutForm({
     if (error) {
       setFormErrors(prev => ({ ...prev, [field]: error }));
     }
+  };
+  
+  // Coupon handling functions
+  const handleApplyCoupon = async (codeToApply?: string) => {
+    const code = codeToApply || couponCode;
+    if (!code.trim()) return;
+    
+    setIsApplyingCoupon(true);
+    setCouponError('');
+    
+    try {
+      // Calculate current subtotal (before shipping)
+      const orderTotal = selectedVariant.discountPrice || selectedVariant.price;
+      const bundleTotal = Object.values(bundleItems).reduce((sum, price) => sum + price, 0);
+      const subtotal = roundPrice(orderTotal + bundleTotal);
+      
+      // Validate coupon with API integration (falls back to static if API fails)
+      const validation = await validateCouponWithAPI(code, subtotal, countryConfig.code);
+      
+      if (!validation.valid) {
+        // Set error message based on error type
+        if (validation.error === 'invalid_code') {
+          setCouponError(t('coupons.invalid_code'));
+        } else if (validation.error === 'not_valid_country') {
+          setCouponError(t('coupons.not_valid_country'));
+        } else if (validation.error === 'min_order_not_met' && validation.coupon) {
+          const minValue = validation.coupon.minOrderValue || 0;
+          setCouponError(t('coupons.min_order_not_met', { amount: formatPrice(minValue) }));
+        }
+        setIsApplyingCoupon(false);
+        return;
+      }
+      
+      // Apply coupon
+      setAppliedCoupon(validation.coupon!);
+      setCouponError('');
+      setIsApplyingCoupon(false);
+    } catch (error) {
+      console.error('Error applying coupon:', error);
+      setCouponError(t('coupons.invalid_code'));
+      setIsApplyingCoupon(false);
+    }
+  };
+  
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError('');
   };
 
   const validateForm = () => {
@@ -205,7 +301,15 @@ export function CheckoutForm({
         fbc: fbTrackingData.fbc || undefined,
         eventId: eventId,
         // Include marketing parameters for webhook
-        marketingParams: marketingData
+        marketingParams: marketingData,
+        // Include coupon data
+        coupon: appliedCoupon ? {
+          code: appliedCoupon.code,
+          type: appliedCoupon.type,
+          productDiscount: couponDiscount.productDiscount,
+          shippingDiscount: couponDiscount.shippingDiscount,
+          totalDiscount: couponDiscount.totalDiscount
+        } : undefined
       };
 
       // Call onOrderSubmit and wait for result
@@ -289,8 +393,17 @@ export function CheckoutForm({
   
   // Calculate shipping cost using selected courier and country threshold
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
-  const shippingCost = hasFreeShipping ? 0 : roundPrice(calculateShippingCost(subtotal, displayCourier, countryConfig));
-  const finalTotal = roundPrice(subtotal + shippingCost);
+  const baseShippingCost = hasFreeShipping ? 0 : roundPrice(calculateShippingCost(subtotal, displayCourier, countryConfig));
+  
+  // Calculate coupon discounts
+  const couponDiscount = appliedCoupon 
+    ? calculateCouponDiscount(appliedCoupon, subtotal, baseShippingCost)
+    : { productDiscount: 0, shippingDiscount: 0, totalDiscount: 0 };
+  
+  // Apply discounts
+  const subtotalAfterDiscount = roundPrice(subtotal - couponDiscount.productDiscount);
+  const shippingCost = roundPrice(baseShippingCost - couponDiscount.shippingDiscount);
+  const finalTotal = roundPrice(subtotalAfterDiscount + shippingCost);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -304,6 +417,126 @@ export function CheckoutForm({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* URL Coupon Validation Status - Show while validating from URL */}
+            {isValidatingUrlCoupon && (
+              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg animate-pulse">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">
+                      {t('coupons.validating')}
+                    </p>
+                    <p className="text-xs text-blue-600">
+                      {t('coupons.checking_code')} "{couponCode}"...
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Coupon Code Section - Show only if not hidden by medium parameter */}
+            {showCouponField && (
+              <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg">
+                <div className="flex items-start gap-2 mb-3">
+                  <Tag className="h-5 w-5 text-green-600 mt-0.5" />
+                  <div className="flex-1">
+                    <Label className="text-sm font-semibold text-gray-900 mb-1 block">
+                      {t('coupons.have_coupon')}
+                    </Label>
+                    <p className="text-xs text-gray-600">{t('coupons.enter_code')}</p>
+                  </div>
+                </div>
+                
+                {!appliedCoupon ? (
+                  <div className="flex gap-2">
+                    <Input
+                      value={couponCode}
+                      onChange={(e) => {
+                        setCouponCode(e.target.value.toUpperCase());
+                        setCouponError('');
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleApplyCoupon();
+                        }
+                      }}
+                      placeholder={t('coupons.placeholder')}
+                      className="flex-1 uppercase focus:ring-green-500 focus:border-green-500"
+                      disabled={isApplyingCoupon}
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => handleApplyCoupon()}
+                      disabled={!couponCode.trim() || isApplyingCoupon}
+                      className="bg-green-600 hover:bg-green-700 text-white px-6"
+                    >
+                      {isApplyingCoupon ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      ) : (
+                        t('coupons.apply')
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-white border-2 border-green-500 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 flex-1">
+                        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="font-semibold text-green-800">{appliedCoupon.code}</p>
+                          <p className="text-xs text-green-600">
+                            {appliedCoupon.type === 'percentage' && `${appliedCoupon.value}% ${t('coupons.discount')}`}
+                            {appliedCoupon.type === 'absolute' && `${formatPrice(appliedCoupon.value)} ${t('coupons.discount')}`}
+                            {appliedCoupon.type === 'free_shipping' && t('coupons.free_shipping_applied')}
+                          </p>
+                        </div>
+                      </div>
+                      {couponDiscount.totalDiscount > 0 && (
+                        <div className="flex items-center gap-2">
+                          <div className="text-right mr-2">
+                            <p className="text-xs text-gray-600">{t('coupons.you_save')}</p>
+                            <p className="text-lg font-bold text-green-700">
+                              -{formatPrice(couponDiscount.totalDiscount)}
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            onClick={handleRemoveCoupon}
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                      {!couponDiscount.totalDiscount && (
+                        <Button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {couponError && (
+                  <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-2">
+                    <span className="inline-flex w-3 h-3 rounded-full bg-red-100 items-center justify-center flex-shrink-0">
+                      <span className="text-red-600 text-[9px] font-bold leading-none">!</span>
+                    </span>
+                    {couponError}
+                  </p>
+                )}
+              </div>
+            )}
+            
             {/* Personal Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">

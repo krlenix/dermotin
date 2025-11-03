@@ -630,6 +630,80 @@ export const PRODUCTS: Record<string, Product> = {
         answer: 'Rezultati mogu biti individualni. Preporučuje se redovna upotreba 2-3 puta dnevno. Za najbolje rezultate, koristiti kontinuirano prema uputstvu.',
         category: 'effects'
       }
+    ],
+    testimonials: [
+      {
+        id: "biowart_ba1",
+        name: "Fadila K.",
+        city: "Sarajevo",
+        rating: 5,
+        text: "BIOWART mi je pomogao da se riješim upornih bradavica na rukama. Probala sam razne načine, ali ovaj prirodni melem je konačno donio rezultate. Nakon mjesec dana redovne upotrebe, koža mi je čista i glatka!",
+        verified: true,
+        productUsed: "BIOWART",
+        dateAdded: "2024-12-14",
+        featured: true,
+        likes: 48
+      },
+      {
+        id: "biowart_ba2",
+        name: "Haris T.",
+        city: "Zenica",
+        rating: 5,
+        text: "Imao sam bradavice na prstima koje su me gnjavile godinama. BIOWART sa rusom i nevenom je bio prava stvar - prirodno, bez bola i stvarno efikasno. Preporučujem svima!",
+        verified: true,
+        productUsed: "BIOWART",
+        dateAdded: "2024-12-11",
+        featured: true,
+        likes: 41
+      },
+      {
+        id: "biowart_ba3",
+        name: "Emina S.",
+        city: "Tuzla",
+        rating: 5,
+        text: "Moje dijete je imalo bradavicu na stopalu i jako ga je bolilo. BIOWART je bio nježan, bez iritacije, a bradavica je nestala nakon tri sedmice. Prirodni sastojci su mi bili veoma važni.",
+        verified: true,
+        productUsed: "BIOWART",
+        dateAdded: "2024-12-08",
+        featured: true,
+        likes: 45
+      },
+      {
+        id: "biowart_ba4",
+        name: "Mirza J.",
+        city: "Mostar",
+        rating: 4,
+        text: "Dobar proizvod za bradavice. Trebalo mi je oko mjesec dana da vidim potpunu promjenu, ali prirodna formula vrijedi čekanja. Bez agresivnih kemikalija.",
+        verified: true,
+        productUsed: "BIOWART",
+        dateAdded: "2024-12-05",
+        featured: false,
+        likes: 33
+      },
+      {
+        id: "biowart_ba5",
+        name: "Azra M.",
+        city: "Banja Luka",
+        rating: 5,
+        text: "Skeptična sam bila prema prirodnim proizvodima, ali BIOWART me pozitivno iznenadio. Bradavica na mom prstu je nestala nakon mjesec dana. Sada preporučujem svim prijateljima.",
+        verified: true,
+        productUsed: "BIOWART",
+        dateAdded: "2024-12-02",
+        featured: true,
+        likes: 39
+      },
+      {
+        id: "biowart_ba6",
+        name: "Nedim R.",
+        city: "Bijeljina",
+        rating: 5,
+        text: "Kao neko ko radi sa rukama, bradavice su mi bile veliki problem. BIOWART sa 7 eteričnih ulja je djelovao brzo i efikasno. Bez neželjenih efekata, a koža je sada potpuno čista.",
+        verified: true,
+        productUsed: "BIOWART",
+        dateAdded: "2024-11-29",
+        featured: false,
+        likes: 36
+      }
     ]
   },
 

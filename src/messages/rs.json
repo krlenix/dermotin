@@ -209,6 +209,22 @@
     "card": "Kreditna kartica",
     "bank_transfer": "Bankovni prevod"
   },
+  "coupons": {
+    "have_coupon": "Imate kod za popust?",
+    "enter_code": "Unesite vaš kupon kod i ostvarite dodatni popust",
+    "placeholder": "UNESITE KOD",
+    "apply": "Primeni",
+    "discount": "popust",
+    "free_shipping_applied": "Besplatna dostava",
+    "you_save": "Ušteda:",
+    "invalid_code": "Neispravan kod kupona",
+    "not_valid_country": "Ovaj kupon nije važeći za vašu zemlju",
+    "min_order_not_met": "Minimalna vrednost porudžbine za ovaj kupon je {amount}",
+    "coupon_applied": "Kupon je uspešno primenjen",
+    "remove_coupon": "Ukloni kupon",
+    "validating": "Proveravamo Vaš kupon...",
+    "checking_code": "Proveravamo kod"
+  },
   "delivery": {
     "courier_title": "Dostava putem",
     "delivery_by": "Dostavljaće",

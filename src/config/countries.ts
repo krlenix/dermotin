@@ -71,6 +71,10 @@ export interface WebhookConfig {
     apiKey?: string;
     webhookSecret?: string;
   };
+  affiliateCodes?: {
+    url: string;
+    apiKey: string;
+  };
 }
 
 export interface CourierInfo {
@@ -187,6 +191,12 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL || '',
         authMethod: 'signature',
         webhookSecret: process.env.RS_ORDER_WEBHOOK_SECRET || ''
+      },
+      affiliateCodes: {
+        url: process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL 
+          ? process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
+          : '',
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
       }
     }
   },
@@ -262,6 +272,12 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL || '',
         authMethod: 'signature',
         webhookSecret: process.env.BA_ORDER_WEBHOOK_SECRET || ''
+      },
+      affiliateCodes: {
+        url: process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL 
+          ? process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
+          : '',
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
       }
     }
   },
@@ -296,7 +312,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         name: 'Hrvatska pošta',
         displayName: 'kurirske službe Hrvatske pošte',
         logo: '/images/couriers/hrvatska-posta.png',
-        deliveryTime: '3-4 dana',
+        deliveryTime: '5-7 dana',
         trackingUrl: 'https://www.posta.hr/pracenje-posiljaka',
         isDefault: true,
         enabled: true,
@@ -335,6 +351,12 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL || '',
         authMethod: 'signature',
         webhookSecret: process.env.HR_ORDER_WEBHOOK_SECRET || ''
+      },
+      affiliateCodes: {
+        url: process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL 
+          ? process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
+          : '',
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
       }
     }
   },
@@ -409,6 +431,12 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL || '',
         authMethod: 'signature',
         webhookSecret: process.env.ME_ORDER_WEBHOOK_SECRET || ''
+      },
+      affiliateCodes: {
+        url: process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL 
+          ? process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
+          : '',
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
       }
     }
   }
