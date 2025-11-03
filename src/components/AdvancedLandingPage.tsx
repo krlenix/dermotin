@@ -281,6 +281,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const handleOrderSubmit = async (orderData: Record<string, unknown>) => {
     console.log('Order submitted:', orderData);
     console.log('Bundle items:', bundleItems);
+    if (orderData.coupon) {
+      console.log('🎟️ Coupon data from CheckoutForm:', orderData.coupon);
+    }
     
     // Prepare order data for API
     const apiOrderData = {
@@ -304,7 +307,9 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       bundleItems: bundleItems,
       locale: countryConfig.code,
       // Include marketing parameters from orderData
-      marketingParams: orderData.marketingParams
+      marketingParams: orderData.marketingParams,
+      // Include coupon data if present
+      coupon: orderData.coupon
     };
 
     try {

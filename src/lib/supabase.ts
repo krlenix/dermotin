@@ -55,7 +55,7 @@ export interface OrderRecord {
   marketing_ad_id?: string;
   marketing_medium?: string;
   line_items: LineItem[];
-  discount_codes: DiscountCode[];
+  discount_codes: string[]; // Array of coupon code strings
   locale: string;
   domain?: string;
   webhook_received_at?: string;
@@ -271,7 +271,7 @@ export interface WebhookPayload {
     price: number;
     method?: string;
   };
-  discount_codes?: DiscountCode[];
+  discount_codes?: string[]; // Array of coupon code strings
   marketing?: {
     campaign_id?: string | null;
     adset_id?: string | null;

@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
 import { getMarketingCookiesFromHeaders, MarketingParams } from '@/utils/marketing-cookies';
-import { OrderService, webhookToOrderRecord, WebhookPayload } from '@/lib/supabase';
+import { OrderService, webhookToOrderRecord, WebhookPayload, LineItem } from '@/lib/supabase';
 import { sendCapiPurchaseEvent } from '@/lib/capi';
 
 // Configure dayjs with timezone support
@@ -209,8 +209,67 @@ export async function POST(request: NextRequest) {
     const bundleTotal = orderData.bundleItems ? Object.values(orderData.bundleItems).reduce((sum, price) => sum + price, 0) : 0;
     const mainProductPrice = orderData.subtotal - bundleTotal;
     
-    // Calculate per-item discount if coupon is applied
-    const productDiscountAmount = orderData.coupon?.productDiscount || 0;
+    // Get product discount amount (excluding shipping discount)
+    const totalProductDiscount = orderData.coupon?.productDiscount || 0;
+    
+    // Debug: Log coupon data
+    if (orderData.coupon) {
+      console.log('🎟️ Coupon data received:', JSON.stringify(orderData.coupon, null, 2));
+      console.log('🎟️ Total product discount to distribute:', totalProductDiscount);
+    } else {
+      console.log('🎟️ No coupon applied to this order');
+    }
+    
+    // Build all line items first (without discounts)
+    const lineItems: LineItem[] = [
+      {
+        sku: orderData.productSku || 'UNKNOWN',
+        name: orderData.productName,
+        quantity: orderData.quantity,
+        price: roundPrice(mainProductPrice / orderData.quantity),
+        item_total_price: roundPrice(mainProductPrice),
+        discount: 0 // Will be calculated below
+      }
+    ];
+    
+    // Add bundle items if present
+    if (orderData.bundleItems && Object.keys(orderData.bundleItems).length > 0) {
+      Object.entries(orderData.bundleItems).forEach(([productId, totalPrice]) => {
+        const bundleQuantity = 1;
+        lineItems.push({
+          sku: productId,
+          name: `Bundle Item - ${productId}`,
+          quantity: bundleQuantity,
+          price: roundPrice(totalPrice / bundleQuantity),
+          item_total_price: roundPrice(totalPrice),
+          discount: 0 // Will be calculated below
+        });
+      });
+    }
+    
+    // Distribute discount proportionally across all line items
+    if (totalProductDiscount > 0 && lineItems.length > 0) {
+      const totalOrderValue = lineItems.reduce((sum, item) => sum + item.item_total_price, 0);
+      let remainingDiscount = totalProductDiscount;
+      
+      console.log('🎟️ Distributing discount across', lineItems.length, 'line items');
+      console.log('🎟️ Total order value:', totalOrderValue);
+      
+      // Distribute discount proportionally to each item
+      lineItems.forEach((item, index) => {
+        if (index === lineItems.length - 1) {
+          // Last item gets the remaining discount to handle rounding
+          item.discount = roundPrice(remainingDiscount);
+        } else {
+          // Calculate proportional discount for this item
+          const itemProportion = item.item_total_price / totalOrderValue;
+          const itemDiscount = totalProductDiscount * itemProportion;
+          item.discount = roundPrice(itemDiscount);
+          remainingDiscount -= item.discount;
+        }
+        console.log(`🎟️ ${item.name}: ${item.item_total_price} - discount: ${item.discount}`);
+      });
+    }
     
     // Prepare webhook payload to match Laravel controller validation
     const currentDate = dayjs().tz(countryConfig.timezone);
@@ -245,25 +304,12 @@ export async function POST(request: NextRequest) {
         country_code: countryConfig.code.toUpperCase(),
         phone: orderData.customerPhone
       },
-      line_items: [
-        {
-          sku: orderData.productSku || 'UNKNOWN',
-          name: orderData.productName,
-          quantity: orderData.quantity,
-          price: roundPrice(mainProductPrice / orderData.quantity), // per unit price
-          item_total_price: roundPrice(mainProductPrice), // total price for this line item
-          discount: roundPrice(productDiscountAmount) // Apply product discount
-        }
-      ],
+      line_items: lineItems, // Use the line items with distributed discounts
       shipping: {
         price: roundPrice(orderData.shippingCost),
         method: orderData.courierName
       },
-      discount_codes: orderData.coupon ? [{
-        code: orderData.coupon.code,
-        type: orderData.coupon.type === 'absolute' || orderData.coupon.type === 'free_shipping' ? 'fixed' : 'percentage',
-        amount: roundPrice(orderData.coupon.totalDiscount)
-      }] : [],
+      discount_codes: orderData.coupon ? [orderData.coupon.code] : [],
       marketing: {
         campaign_id: marketingParams?.campaign_id || null,
         adset_id: marketingParams?.adset_id || null,
@@ -273,23 +319,12 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    // Add bundle items if present
-    if (orderData.bundleItems && Object.keys(orderData.bundleItems).length > 0) {
-      Object.entries(orderData.bundleItems).forEach(([productId, totalPrice]) => {
-        const bundleQuantity = 1; // Bundle items typically have quantity 1
-        if (!webhookPayload.line_items) {
-          webhookPayload.line_items = [];
-        }
-        webhookPayload.line_items.push({
-          sku: productId,
-          name: `Bundle Item - ${productId}`,
-          quantity: bundleQuantity,
-          price: roundPrice(totalPrice / bundleQuantity), // per unit price (same as total since qty=1)
-          item_total_price: roundPrice(totalPrice), // total price for this line item
-          discount: 0
-        });
-      });
+    // Debug: Log discount codes in webhook payload
+    if (webhookPayload.discount_codes && webhookPayload.discount_codes.length > 0) {
+      console.log('🎟️ Discount codes array:', webhookPayload.discount_codes);
+      console.log('🎟️ Discount codes as comma-separated:', webhookPayload.discount_codes.join(', '));
     }
+    console.log('🎟️ Line items with distributed discounts:', JSON.stringify(webhookPayload.line_items, null, 2));
 
     // Initialize webhook status variables
     let webhookStatus = 'pending';
