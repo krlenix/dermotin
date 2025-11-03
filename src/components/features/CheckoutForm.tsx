@@ -122,6 +122,8 @@ export function CheckoutForm({
   const [showCouponField, setShowCouponField] = useState(true);
   const [isValidatingUrlCoupon, setIsValidatingUrlCoupon] = useState(false);
   const [urlCouponValidated, setUrlCouponValidated] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [animatedSavings, setAnimatedSavings] = useState(0);
   
   // Check URL parameters for coupon and medium on mount
   useEffect(() => {
@@ -236,10 +238,22 @@ export function CheckoutForm({
         return;
       }
       
-      // Apply coupon
+      // Apply coupon with success animation
       setAppliedCoupon(validation.coupon!);
       setCouponError('');
       setIsApplyingCoupon(false);
+      
+      // Trigger success animation instantly
+      setShowSuccessAnimation(true);
+      
+      // Show final savings amount immediately (no rolling animation)
+      const targetSavings = couponDiscount.totalDiscount || 0;
+      setAnimatedSavings(targetSavings);
+      
+      // Reset animation flag quickly
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+      }, 400);
     } catch (error) {
       console.error('Error applying coupon:', error);
       setCouponError(t('coupons.invalid_code'));
@@ -434,8 +448,8 @@ export function CheckoutForm({
               </div>
             )}
             
-            {/* Coupon Code Section - Show only if not hidden by medium parameter */}
-            {showCouponField && (
+            {/* Coupon Code Section - Show only if not hidden by medium parameter AND no coupon applied */}
+            {showCouponField && !appliedCoupon && (
               <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg">
                 <div className="flex items-start gap-2 mb-3">
                   <Tag className="h-5 w-5 text-green-600 mt-0.5" />
@@ -447,84 +461,36 @@ export function CheckoutForm({
                   </div>
                 </div>
                 
-                {!appliedCoupon ? (
-                  <div className="flex gap-2">
+                <div className="flex gap-2">
                     <Input
-                      value={couponCode}
-                      onChange={(e) => {
-                        setCouponCode(e.target.value.toUpperCase());
-                        setCouponError('');
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleApplyCoupon();
-                        }
-                      }}
-                      placeholder={t('coupons.placeholder')}
-                      className="flex-1 uppercase focus:ring-green-500 focus:border-green-500"
-                      disabled={isApplyingCoupon}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => handleApplyCoupon()}
-                      disabled={!couponCode.trim() || isApplyingCoupon}
-                      className="bg-green-600 hover:bg-green-700 text-white px-6"
-                    >
-                      {isApplyingCoupon ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      ) : (
-                        t('coupons.apply')
-                      )}
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="p-3 bg-white border-2 border-green-500 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 flex-1">
-                        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-                        <div className="flex-1">
-                          <p className="font-semibold text-green-800">{appliedCoupon.code}</p>
-                          <p className="text-xs text-green-600">
-                            {appliedCoupon.type === 'percentage' && `${appliedCoupon.value}% ${t('coupons.discount')}`}
-                            {appliedCoupon.type === 'absolute' && `${formatPrice(appliedCoupon.value)} ${t('coupons.discount')}`}
-                            {appliedCoupon.type === 'free_shipping' && t('coupons.free_shipping_applied')}
-                          </p>
-                        </div>
-                      </div>
-                      {couponDiscount.totalDiscount > 0 && (
-                        <div className="flex items-center gap-2">
-                          <div className="text-right mr-2">
-                            <p className="text-xs text-gray-600">{t('coupons.you_save')}</p>
-                            <p className="text-lg font-bold text-green-700">
-                              -{formatPrice(couponDiscount.totalDiscount)}
-                            </p>
-                          </div>
-                          <Button
-                            type="button"
-                            onClick={handleRemoveCoupon}
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                      {!couponDiscount.totalDiscount && (
-                        <Button
-                          type="button"
-                          onClick={handleRemoveCoupon}
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )}
+                    value={couponCode}
+                    onChange={(e) => {
+                      setCouponCode(e.target.value.toUpperCase());
+                      setCouponError('');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleApplyCoupon();
+                      }
+                    }}
+                    placeholder={t('coupons.placeholder')}
+                    className="flex-1 uppercase focus:ring-green-500 focus:border-green-500"
+                    disabled={isApplyingCoupon}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => handleApplyCoupon()}
+                    disabled={!couponCode.trim() || isApplyingCoupon}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6"
+                  >
+                    {isApplyingCoupon ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      t('coupons.apply')
+                    )}
+                  </Button>
+                </div>
                 
                 {couponError && (
                   <p className="text-red-600 text-xs font-medium flex items-center gap-1.5 mt-2">
@@ -534,6 +500,46 @@ export function CheckoutForm({
                     {couponError}
                   </p>
                 )}
+              </div>
+            )}
+            
+            {/* Applied Coupon Display - Simple and clean, shows when coupon is applied */}
+            {appliedCoupon && showCouponField && (
+              <div className={`p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 rounded-lg transition-all duration-200 ease-out ${
+                showSuccessAnimation 
+                  ? 'border-green-500 shadow-xl shadow-green-300/50 scale-[1.02]' 
+                  : 'border-green-400'
+              }`}>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-green-900 mb-1">
+                      {t('coupons.coupon_applied')} 🎉
+                    </p>
+                    <p className="text-xs text-green-700">
+                      {t('coupons.code')}: <span className="font-bold text-green-800">{appliedCoupon.code}</span>
+                      {appliedCoupon.type === 'percentage' && ` • ${appliedCoupon.value}% ${t('coupons.discount')}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {couponDiscount.totalDiscount > 0 && (
+                      <div className="text-right">
+                        <p className="text-xs text-gray-600">{t('coupons.you_save')}</p>
+                        <p className="text-xl font-bold text-green-600 tabular-nums">
+                          -{formatPrice(showSuccessAnimation ? animatedSavings : couponDiscount.totalDiscount)}
+                        </p>
+                      </div>
+                    )}
+                    <Button
+                      type="button"
+                      onClick={handleRemoveCoupon}
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             )}
             

@@ -223,7 +223,9 @@
     "coupon_applied": "Kupon je uspješno primijenjen",
     "remove_coupon": "Ukloni kupon",
     "validating": "Provjeravamo Vaš kupon...",
-    "checking_code": "Provjeravamo kod"
+    "checking_code": "Provjeravamo kod",
+    "code": "Kod",
+    "total_savings": "Ukupna ušteda"
   },
   "delivery": {
     "courier_title": "Dostava putem",
