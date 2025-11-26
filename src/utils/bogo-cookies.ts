@@ -15,9 +15,11 @@ const BOGO_DISCOVERED_COOKIE = 'bogo_discovered';
  * 1. Set BOGO_ENABLED to true
  * 2. Set BOGO_EXPIRATION_DATE to the new end date (format: 'YYYY-MM-DDTHH:mm:ss')
  * 3. Optionally update BOGO_COUPON_CODE if using a different code
+ * 4. Update CONFIG_VERSION to force cache invalidation
  * 
  * To disable the BOGO offer:
  * 1. Set BOGO_ENABLED to false
+ * 2. Update CONFIG_VERSION to force cache invalidation
  */
 export const BOGO_CONFIG = {
   // Master switch - set to false to completely disable BOGO feature
@@ -32,6 +34,10 @@ export const BOGO_CONFIG = {
   
   // Maximum quantity for BOGO (e.g., 3 means max 3+3)
   maxQuantity: 3,
+  
+  // Config version - INCREMENT THIS when you change any setting above
+  // This helps invalidate browser localStorage cache
+  configVersion: 1,
 };
 
 // ============================================================
@@ -45,6 +51,7 @@ export interface BOGOCookieData {
   couponCode: string;
   discoveredAt: string;
   source: 'url' | 'manual' | 'homepage';
+  configVersion?: number; // Track which config version created this cookie
 }
 
 /**
@@ -93,7 +100,8 @@ export function storeBOGOCookie(couponCode: string, source: 'url' | 'manual' | '
   const data: BOGOCookieData = {
     couponCode: couponCode.toUpperCase(),
     discoveredAt: new Date().toISOString(),
-    source
+    source,
+    configVersion: BOGO_CONFIG.configVersion
   };
   
   const expires = getCookieExpiration();
@@ -127,6 +135,14 @@ export function getBOGOCookie(): BOGOCookieData | null {
   try {
     const value = bogoCookie.split('=')[1];
     const data = JSON.parse(decodeURIComponent(value)) as BOGOCookieData;
+    
+    // Check if cookie was created with an older config version - invalidate if so
+    if (data.configVersion !== BOGO_CONFIG.configVersion) {
+      console.log('🎁 BOGO cookie config version mismatch, clearing old cookie');
+      clearBOGOCookie();
+      return null;
+    }
+    
     return data;
   } catch (error) {
     console.error('Error parsing BOGO cookie:', error);
@@ -179,5 +195,41 @@ export function wasBOGOBannerSeen(): boolean {
   
   const cookies = document.cookie.split(';');
   return cookies.some(c => c.trim().startsWith('bogo_banner_seen='));
+}
+
+/**
+ * Initialize BOGO system - call this on app load
+ * Clears stale cookies and localStorage if offer is expired or config changed
+ */
+export function initializeBOGO(): { isActive: boolean; wasCleared: boolean } {
+  if (typeof document === 'undefined') {
+    return { isActive: false, wasCleared: false };
+  }
+  
+  let wasCleared = false;
+  
+  // Check if BOGO is currently active
+  const isActive = isBOGOActive();
+  
+  if (!isActive) {
+    // Offer is not active - clear all BOGO cookies
+    clearBOGOCookie();
+    wasCleared = true;
+    console.log('🎁 BOGO offer not active - cleared all cookies');
+  } else {
+    // Check if existing cookie has outdated config version
+    const existingCookie = getBOGOCookie();
+    if (existingCookie === null) {
+      // getBOGOCookie already handles version mismatch and clears
+      // Check if there WAS a cookie that got cleared
+      const cookies = document.cookie.split(';');
+      const hadCookie = cookies.some(c => c.trim().startsWith(`${BOGO_COOKIE_NAME}=`));
+      if (hadCookie) {
+        wasCleared = true;
+      }
+    }
+  }
+  
+  return { isActive, wasCleared };
 }
 

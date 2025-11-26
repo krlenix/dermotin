@@ -17,7 +17,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { isComponentEnabled } from '@/config/constants';
 import { type Coupon, getBOGOCoupon } from '@/config/coupons';
 import { BOGODiscoveryBanner } from '@/components/features/BOGODiscoveryBanner';
-import { storeBOGOCookie, getBOGOCookie, wasBOGOBannerSeen, isBOGOExpired } from '@/utils/bogo-cookies';
+import { storeBOGOCookie, getBOGOCookie, wasBOGOBannerSeen, isBOGOActive, initializeBOGO } from '@/utils/bogo-cookies';
 
 import dynamic from 'next/dynamic';
 
@@ -166,32 +166,37 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
   // Check for BOGO coupon from URL or cookie on mount and show banner
   useEffect(() => {
-    if (typeof window !== 'undefined' && !isBOGOExpired()) {
-      const searchParams = new URLSearchParams(window.location.search);
-      const urlCoupon = searchParams.get('coupon');
-      const urlMedium = searchParams.get('medium');
+    if (typeof window === 'undefined') return;
+    
+    // Initialize BOGO system - clears stale cookies if expired or config changed
+    const { isActive: bogoIsActive } = initializeBOGO();
+    
+    if (!bogoIsActive) return;
+    
+    const searchParams = new URLSearchParams(window.location.search);
+    const urlCoupon = searchParams.get('coupon');
+    const urlMedium = searchParams.get('medium');
+    
+    // Check if BOGO coupon is in URL
+    if (urlCoupon && urlCoupon.toUpperCase() === '1PLUS1' && !urlMedium) {
+      // Store in cookie
+      storeBOGOCookie(urlCoupon, 'url');
       
-      // Check if BOGO coupon is in URL
-      if (urlCoupon && urlCoupon.toUpperCase() === '1PLUS1' && !urlMedium) {
-        // Store in cookie
-        storeBOGOCookie(urlCoupon, 'url');
-        
-        // Show banner if not seen before
-        if (!wasBOGOBannerSeen()) {
-          setShowBOGOBanner(true);
-          setPendingBOGOActivation(true);
-        }
+      // Show banner if not seen before
+      if (!wasBOGOBannerSeen()) {
+        setShowBOGOBanner(true);
+        setPendingBOGOActivation(true);
       }
-      // Check for stored BOGO cookie (returning visitor)
-      else if (!urlMedium) {
-        const storedBOGO = getBOGOCookie();
-        if (storedBOGO && storedBOGO.couponCode === '1PLUS1') {
-          // Auto-activate BOGO for returning visitors (no banner needed)
-          const bogoCouponData = getBOGOCoupon('1PLUS1');
-          if (bogoCouponData) {
-            setIsBogoActive(true);
-            setBogoCoupon(bogoCouponData);
-          }
+    }
+    // Check for stored BOGO cookie (returning visitor)
+    else if (!urlMedium) {
+      const storedBOGO = getBOGOCookie();
+      if (storedBOGO && storedBOGO.couponCode === '1PLUS1') {
+        // Auto-activate BOGO for returning visitors (no banner needed)
+        const bogoCouponData = getBOGOCoupon('1PLUS1');
+        if (bogoCouponData) {
+          setIsBogoActive(true);
+          setBogoCoupon(bogoCouponData);
         }
       }
     }

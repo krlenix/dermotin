@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, Gift, Sparkles, PartyPopper, Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { markBOGOBannerSeen, wasBOGOBannerSeen, isBOGOExpired } from '@/utils/bogo-cookies';
+import { markBOGOBannerSeen, wasBOGOBannerSeen, isBOGOActive } from '@/utils/bogo-cookies';
 
 interface BOGODiscoveryBannerProps {
   isVisible: boolean;
@@ -39,7 +39,7 @@ export function BOGODiscoveryBanner({ isVisible, onClose, onAccept }: BOGODiscov
     onAccept();
   };
 
-  if (!shouldRender || isBOGOExpired()) return null;
+  if (!shouldRender || !isBOGOActive()) return null;
 
   return (
     <>

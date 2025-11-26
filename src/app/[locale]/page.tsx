@@ -22,7 +22,7 @@ import dynamic from 'next/dynamic';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
 import EnhancedImageEffect from '@/components/features/EnhancedImageEffect';
 import { BOGOLoadedBanner } from '@/components/features/BOGOLoadedBanner';
-import { storeBOGOCookie, wasBOGOBannerSeen, BOGO_CONFIG } from '@/utils/bogo-cookies';
+import { storeBOGOCookie, wasBOGOBannerSeen, BOGO_CONFIG, initializeBOGO } from '@/utils/bogo-cookies';
 import { useRouter } from 'next/navigation';
 
 // Lazy load heavy components for better performance
@@ -90,14 +90,16 @@ export default function HomePage() {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     
+    // Initialize BOGO system - clears stale cookies if expired or config changed
+    const { isActive: bogoIsActive } = initializeBOGO();
+    
     // Check for BOGO coupon from URL or cookie
     const checkBOGOCoupon = () => {
-      // Check if BOGO is enabled and not expired (using centralized config)
-      if (!BOGO_CONFIG.enabled) return;
-      
-      const expirationDate = new Date(BOGO_CONFIG.expirationDate);
-      const now = new Date();
-      if (now > expirationDate) return;
+      // Check if BOGO is active (handles enabled flag + expiration)
+      if (!bogoIsActive) {
+        setIsBOGOActive(false);
+        return;
+      }
       
       const searchParams = new URLSearchParams(window.location.search);
       const urlCoupon = searchParams.get('coupon');
