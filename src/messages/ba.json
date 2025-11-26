@@ -168,7 +168,8 @@
     "country": "Zemlja",
     "required_field": "Obavezno polje",
     "invalid_email": "Neispravna email adresa",
-    "invalid_phone": "Neispravan broj telefona"
+    "invalid_phone": "Neispravan broj telefona",
+    "optional": "opciono"
   },
   "validation": {
     "name_min_length": "Ime mora imati najmanje 2 karaktera",
@@ -226,6 +227,34 @@
     "checking_code": "Provjeravamo kod",
     "code": "Kod",
     "total_savings": "Ukupna ušteda"
+  },
+  "bogo": {
+    "special_offer": "SPECIJALNA PONUDA",
+    "buy_one_get_one": "Kupi 1, Dobij 1 GRATIS!",
+    "select_quantity": "Izaberite količinu i dobijete istu količinu potpuno besplatno",
+    "free": "GRATIS",
+    "pay_for": "Plati",
+    "get": "dobij",
+    "save": "Ušteda:",
+    "most_popular": "NAJPOPULARNIJE",
+    "best_value": "NAJBOLJA VRIJEDNOST",
+    "paid": "plaćeno",
+    "total_items": "Ukupno pakovanja",
+    "how_it_works": "Kako funkcioniše 1+1 ponuda?",
+    "description": "Izaberite željenu količinu i automatski dobijate istu količinu GRATIS! Npr. izaberete 2+2 = platite 2 pakovanja, a dobijate 4 pakovanja ukupno.",
+    "offer_active": "1+1 PONUDA AKTIVNA",
+    "regular_price": "Redovna cijena",
+    "you_pay": "Vi plaćate",
+    "you_get": "Dobijate",
+    "once_in_five_years": "SAMO JEDNOM U 5 GODINA!",
+    "offer_ends_in": "Ponuda ističe za:",
+    "days": "dana",
+    "hours": "sati",
+    "minutes": "min",
+    "seconds": "sek",
+    "ends_date": "Ponuda važi do {date}",
+    "buy": "Kupi",
+    "total_items": "Ukupno pakovanja"
   },
   "delivery": {
     "courier_title": "Dostava putem",

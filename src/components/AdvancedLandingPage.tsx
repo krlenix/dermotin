@@ -10,10 +10,12 @@ import { CountryConfig, getDefaultCourier, CourierInfo } from '@/config/countrie
 
 import { Button } from '@/components/ui/button';
 import { BundleSelector } from '@/components/features/BundleSelector';
+import { BOGOSelector } from '@/components/features/BOGOSelector';
 import { CheckoutForm } from '@/components/features/CheckoutForm';
 import { UrgencyTimer } from '@/components/features/UrgencyTimer';
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { isComponentEnabled } from '@/config/constants';
+import { type Coupon } from '@/config/coupons';
 
 import dynamic from 'next/dynamic';
 
@@ -80,6 +82,17 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [triggerBundleShake, setTriggerBundleShake] = useState(false);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [buttonHasAppeared, setButtonHasAppeared] = useState(false);
+  
+  // BOGO state
+  const [isBogoActive, setIsBogoActive] = useState(false);
+  const [bogoCoupon, setBogoCoupon] = useState<Coupon | null>(null);
+  const [bogoQuantity, setBogoQuantity] = useState(1);
+  
+  // Get the base (single unit) variant for BOGO calculations
+  // This is the variant with quantity=1 or the first variant
+  const baseVariant = product.variants.find(v => v.quantity === 1) || product.variants[0];
+  // Use discount price (1990) for BOGO - the "regular" shown strikethrough price is inflated/fake
+  const bogoUnitPrice = baseVariant.discountPrice || baseVariant.price;
 
   // Helper function to round prices to 2 decimal places (avoid floating-point errors)
   const roundPrice = (price: number): number => {
@@ -286,6 +299,11 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     }
     
     // Prepare order data for API
+    // Determine variant and quantity based on BOGO mode
+    const currentVariant = isBogoActive ? baseVariant : selectedVariant;
+    const totalQuantity = isBogoActive ? bogoQuantity * 2 : (selectedVariant.quantity || 1); // BOGO: paid + free
+    const paidQuantity = isBogoActive ? bogoQuantity : totalQuantity;
+    
     const apiOrderData = {
       customerName: `${orderData.firstName} ${orderData.lastName}`,
       customerEmail: orderData.email as string,
@@ -294,9 +312,13 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       customerCity: orderData.city as string,
       customerPostalCode: orderData.postalCode as string,
       productName: product.name,
-      productVariant: selectedVariant.name,
-      productSku: selectedVariant.sku,
-      quantity: selectedVariant.quantity || 1,
+      productVariant: isBogoActive 
+        ? `BOGO ${bogoQuantity}+${bogoQuantity} (${baseVariant.name})`
+        : selectedVariant.name,
+      productSku: currentVariant.sku,
+      quantity: totalQuantity,
+      paidQuantity: paidQuantity,
+      freeQuantity: isBogoActive ? bogoQuantity : 0,
       totalPrice: roundPrice(orderData.orderTotal as number),
       subtotal: roundPrice(orderData.subtotal as number),
       shippingCost: roundPrice(orderData.shippingCost as number),
@@ -304,12 +326,20 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       courierName: selectedCourier.name,
       deliveryTime: selectedCourier.deliveryTime,
       paymentMethod: orderData.paymentMethod as string,
-      bundleItems: bundleItems,
+      bundleItems: isBogoActive ? {} : bundleItems,
       locale: countryConfig.code,
       // Include marketing parameters from orderData
       marketingParams: orderData.marketingParams,
       // Include coupon data if present
-      coupon: orderData.coupon
+      coupon: orderData.coupon,
+      // BOGO-specific data
+      isBOGO: isBogoActive,
+      bogoDetails: isBogoActive ? {
+        unitPrice: bogoUnitPrice,
+        paidQuantity: bogoQuantity,
+        freeQuantity: bogoQuantity,
+        totalQuantity: bogoQuantity * 2
+      } : undefined
     };
 
     try {
@@ -364,6 +394,28 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       }
       return newItems;
     });
+  };
+  
+  // Handle BOGO coupon activation/deactivation
+  const handleBOGOChange = (isActive: boolean, coupon: Coupon | null) => {
+    setIsBogoActive(isActive);
+    setBogoCoupon(coupon);
+    
+    if (isActive) {
+      // When BOGO is activated, reset to quantity 1 and clear bundle items
+      setBogoQuantity(1);
+      setBundleItems({});
+      // Set the selected variant to the base variant for proper display
+      setSelectedVariant(baseVariant);
+    } else {
+      // When BOGO is deactivated, reset to default variant
+      setSelectedVariant(product.variants[0]);
+    }
+  };
+  
+  // Handle BOGO quantity change
+  const handleBogoQuantityChange = (quantity: number) => {
+    setBogoQuantity(quantity);
   };
 
   // Floating elements animation
@@ -802,30 +854,44 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             <div id="order" className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 w-full overflow-hidden">
-              {/* Bundle Selection */}
+              {/* Bundle/BOGO Selection */}
               <div className="w-full overflow-hidden lg:sticky lg:top-12 lg:self-start">
-                <BundleSelector
-                  variants={product.variants}
-                  selectedVariant={selectedVariant}
-                  onVariantChange={setSelectedVariant}
-                  countryConfig={countryConfig}
-                  triggerShake={triggerBundleShake}
-                />
+                {isBogoActive ? (
+                  <BOGOSelector
+                    baseVariant={baseVariant}
+                    selectedQuantity={bogoQuantity}
+                    onQuantityChange={handleBogoQuantityChange}
+                    countryConfig={countryConfig}
+                    triggerShake={triggerBundleShake}
+                    productImage={product.images.thumbnail}
+                  />
+                ) : (
+                  <BundleSelector
+                    variants={product.variants}
+                    selectedVariant={selectedVariant}
+                    onVariantChange={setSelectedVariant}
+                    countryConfig={countryConfig}
+                    triggerShake={triggerBundleShake}
+                  />
+                )}
               </div>
 
               {/* Checkout Form */}
               <div id="delivery-form" className="space-y-6">
                 <CheckoutForm
-                  selectedVariant={selectedVariant}
+                  selectedVariant={isBogoActive ? baseVariant : selectedVariant}
                   countryConfig={countryConfig}
                   productName={product.name}
-                  bundleItems={bundleItems}
+                  bundleItems={isBogoActive ? {} : bundleItems}
                   onOrderSubmit={handleOrderSubmit}
                   mainProductId={product.id}
                   onAddToBundle={handleAddToBundle}
                   selectedCourier={selectedCourier}
                   onCourierChange={setSelectedCourier}
                   onReselect={scrollToQuantitySelection}
+                  onBOGOChange={handleBOGOChange}
+                  bogoQuantity={bogoQuantity}
+                  bogoUnitPrice={bogoUnitPrice}
                 />
               </div>
             </div>

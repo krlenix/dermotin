@@ -19,10 +19,16 @@ function roundPrice(price: number): number {
 
 export interface CouponData {
   code: string;
-  type: 'absolute' | 'percentage' | 'free_shipping';
+  type: 'absolute' | 'percentage' | 'free_shipping' | 'bogo';
   productDiscount: number;
   shippingDiscount: number;
   totalDiscount: number;
+  // BOGO-specific fields
+  isBOGO?: boolean;
+  bogoQuantity?: number;
+  bogoFreeItems?: number;
+  bogoFreeValue?: number;
+  bogoTotalItems?: number;
 }
 
 export interface OrderData {
@@ -37,6 +43,8 @@ export interface OrderData {
   productVariant: string;
   productSku?: string;
   quantity: number;
+  paidQuantity?: number; // For BOGO: number of items paid for
+  freeQuantity?: number; // For BOGO: number of free items
   totalPrice: number;
   subtotal: number;
   shippingCost: number;
@@ -47,6 +55,14 @@ export interface OrderData {
   bundleItems?: Record<string, number>;
   locale: string;
   coupon?: CouponData;
+  // BOGO-specific fields
+  isBOGO?: boolean;
+  bogoDetails?: {
+    unitPrice: number;
+    paidQuantity: number;
+    freeQuantity: number;
+    totalQuantity: number;
+  };
 }
 
 // WebhookPayload interface is now imported from supabase.ts
@@ -205,6 +221,9 @@ export async function POST(request: NextRequest) {
     const clientUserAgent = request.headers.get('user-agent') || undefined;
     const referer = request.headers.get('referer') || undefined;
 
+    // Check if this is a BOGO order
+    const isBOGOOrder = orderData.isBOGO && orderData.bogoDetails;
+    
     // Calculate individual product price (subtotal minus bundle items)
     const bundleTotal = orderData.bundleItems ? Object.values(orderData.bundleItems).reduce((sum, price) => sum + price, 0) : 0;
     const mainProductPrice = orderData.subtotal - bundleTotal;
@@ -216,59 +235,92 @@ export async function POST(request: NextRequest) {
     if (orderData.coupon) {
       console.log('🎟️ Coupon data received:', JSON.stringify(orderData.coupon, null, 2));
       console.log('🎟️ Total product discount to distribute:', totalProductDiscount);
+      if (isBOGOOrder) {
+        console.log('🎁 BOGO Order detected:', JSON.stringify(orderData.bogoDetails, null, 2));
+      }
     } else {
       console.log('🎟️ No coupon applied to this order');
     }
     
-    // Build all line items first (without discounts)
-    const lineItems: LineItem[] = [
-      {
+    // Build line items based on order type
+    const lineItems: LineItem[] = [];
+    
+    if (isBOGOOrder && orderData.bogoDetails) {
+      // BOGO order: create separate line items for paid and free items
+      const { unitPrice, paidQuantity, freeQuantity } = orderData.bogoDetails;
+      
+      // Paid items line
+      lineItems.push({
+        sku: orderData.productSku || 'UNKNOWN',
+        name: `${orderData.productName} (Paid)`,
+        quantity: paidQuantity,
+        price: roundPrice(unitPrice),
+        item_total_price: roundPrice(unitPrice * paidQuantity),
+        discount: 0
+      });
+      
+      // Free items line (price is unit price but with 100% discount)
+      lineItems.push({
+        sku: orderData.productSku || 'UNKNOWN',
+        name: `${orderData.productName} (FREE - BOGO)`,
+        quantity: freeQuantity,
+        price: roundPrice(unitPrice),
+        item_total_price: roundPrice(unitPrice * freeQuantity),
+        discount: roundPrice(unitPrice * freeQuantity) // Full discount = free
+      });
+      
+      console.log('🎁 BOGO Line Items created:', lineItems.length, 'items');
+      console.log(`🎁 Paid: ${paidQuantity} x ${unitPrice} = ${unitPrice * paidQuantity}`);
+      console.log(`🎁 Free: ${freeQuantity} x ${unitPrice} = ${unitPrice * freeQuantity} (100% discount)`);
+    } else {
+      // Regular order
+      lineItems.push({
         sku: orderData.productSku || 'UNKNOWN',
         name: orderData.productName,
         quantity: orderData.quantity,
         price: roundPrice(mainProductPrice / orderData.quantity),
         item_total_price: roundPrice(mainProductPrice),
         discount: 0 // Will be calculated below
-      }
-    ];
-    
-    // Add bundle items if present
-    if (orderData.bundleItems && Object.keys(orderData.bundleItems).length > 0) {
-      Object.entries(orderData.bundleItems).forEach(([productId, totalPrice]) => {
-        const bundleQuantity = 1;
-        lineItems.push({
-          sku: productId,
-          name: `Bundle Item - ${productId}`,
-          quantity: bundleQuantity,
-          price: roundPrice(totalPrice / bundleQuantity),
-          item_total_price: roundPrice(totalPrice),
-          discount: 0 // Will be calculated below
+      });
+      
+      // Add bundle items if present
+      if (orderData.bundleItems && Object.keys(orderData.bundleItems).length > 0) {
+        Object.entries(orderData.bundleItems).forEach(([productId, totalPrice]) => {
+          const bundleQuantity = 1;
+          lineItems.push({
+            sku: productId,
+            name: `Bundle Item - ${productId}`,
+            quantity: bundleQuantity,
+            price: roundPrice(totalPrice / bundleQuantity),
+            item_total_price: roundPrice(totalPrice),
+            discount: 0 // Will be calculated below
+          });
         });
-      });
-    }
-    
-    // Distribute discount proportionally across all line items
-    if (totalProductDiscount > 0 && lineItems.length > 0) {
-      const totalOrderValue = lineItems.reduce((sum, item) => sum + item.item_total_price, 0);
-      let remainingDiscount = totalProductDiscount;
+      }
       
-      console.log('🎟️ Distributing discount across', lineItems.length, 'line items');
-      console.log('🎟️ Total order value:', totalOrderValue);
-      
-      // Distribute discount proportionally to each item
-      lineItems.forEach((item, index) => {
-        if (index === lineItems.length - 1) {
-          // Last item gets the remaining discount to handle rounding
-          item.discount = roundPrice(remainingDiscount);
-        } else {
-          // Calculate proportional discount for this item
-          const itemProportion = item.item_total_price / totalOrderValue;
-          const itemDiscount = totalProductDiscount * itemProportion;
-          item.discount = roundPrice(itemDiscount);
-          remainingDiscount -= item.discount;
-        }
-        console.log(`🎟️ ${item.name}: ${item.item_total_price} - discount: ${item.discount}`);
-      });
+      // Distribute discount proportionally across all line items (for non-BOGO orders)
+      if (totalProductDiscount > 0 && lineItems.length > 0) {
+        const totalOrderValue = lineItems.reduce((sum, item) => sum + item.item_total_price, 0);
+        let remainingDiscount = totalProductDiscount;
+        
+        console.log('🎟️ Distributing discount across', lineItems.length, 'line items');
+        console.log('🎟️ Total order value:', totalOrderValue);
+        
+        // Distribute discount proportionally to each item
+        lineItems.forEach((item, index) => {
+          if (index === lineItems.length - 1) {
+            // Last item gets the remaining discount to handle rounding
+            item.discount = roundPrice(remainingDiscount);
+          } else {
+            // Calculate proportional discount for this item
+            const itemProportion = item.item_total_price / totalOrderValue;
+            const itemDiscount = totalProductDiscount * itemProportion;
+            item.discount = roundPrice(itemDiscount);
+            remainingDiscount -= item.discount;
+          }
+          console.log(`🎟️ ${item.name}: ${item.item_total_price} - discount: ${item.discount}`);
+        });
+      }
     }
     
     // Prepare webhook payload to match Laravel controller validation

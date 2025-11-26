@@ -25,7 +25,7 @@ import { usePixelTracking } from '@/components/tracking/PixelTracker';
 import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
-import { validateCouponWithAPI, calculateCouponDiscount, type Coupon } from '@/config/coupons';
+import { validateCouponWithAPI, calculateCouponDiscount, isBOGOCoupon, calculateBOGODiscount, type Coupon } from '@/config/coupons';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -39,6 +39,10 @@ interface CheckoutFormProps {
   selectedCourier?: CourierInfo;
   onCourierChange?: (courier: CourierInfo) => void;
   onReselect?: () => void;
+  // BOGO-specific props
+  onBOGOChange?: (isActive: boolean, coupon: Coupon | null) => void;
+  bogoQuantity?: number; // Quantity selected in BOGO mode (e.g., 1, 2, 3 for 1+1, 2+2, 3+3)
+  bogoUnitPrice?: number; // Regular unit price for BOGO calculations
 }
 
 export function CheckoutForm({ 
@@ -52,7 +56,10 @@ export function CheckoutForm({
   onAddToBundle,
   selectedCourier,
   onCourierChange,
-  onReselect
+  onReselect,
+  onBOGOChange,
+  bogoQuantity = 1,
+  bogoUnitPrice
 }: CheckoutFormProps) {
   const t = useTranslations();
   // Simple price formatter using the country's currency symbol (no conversion)
@@ -160,6 +167,11 @@ export function CheckoutForm({
       setCouponError('');
       setIsApplyingCoupon(false);
       
+      // Check if this is a BOGO coupon and notify parent
+      if (isBOGOCoupon(validation.coupon!)) {
+        onBOGOChange?.(true, validation.coupon!);
+      }
+      
       // Trigger success animation instantly
       setShowSuccessAnimation(true);
       
@@ -261,6 +273,10 @@ export function CheckoutForm({
   };
   
   const handleRemoveCoupon = () => {
+    // Check if we're removing a BOGO coupon
+    if (isBOGOCoupon(appliedCoupon)) {
+      onBOGOChange?.(false, null);
+    }
     setAppliedCoupon(null);
     setCouponCode('');
     setCouponError('');
@@ -319,9 +335,17 @@ export function CheckoutForm({
         coupon: appliedCoupon ? {
           code: appliedCoupon.code,
           type: appliedCoupon.type,
-          productDiscount: couponDiscount.productDiscount,
-          shippingDiscount: couponDiscount.shippingDiscount,
-          totalDiscount: couponDiscount.totalDiscount
+          productDiscount: effectiveDiscount.productDiscount,
+          shippingDiscount: effectiveDiscount.shippingDiscount,
+          totalDiscount: effectiveDiscount.totalDiscount,
+          // BOGO-specific data
+          ...(isBOGOActive && {
+            isBOGO: true,
+            bogoQuantity: bogoQuantity,
+            bogoFreeItems: bogoDiscount.freeItems,
+            bogoFreeValue: bogoDiscount.freeValue,
+            bogoTotalItems: bogoDiscount.totalItems
+          })
         } : undefined
       };
 
@@ -391,9 +415,25 @@ export function CheckoutForm({
     }
   };
 
-  const orderTotal = selectedVariant.discountPrice || selectedVariant.price;
-  const bundleTotal = Object.values(bundleItems).reduce((sum, price) => sum + price, 0);
-  const subtotal = roundPrice(orderTotal + bundleTotal);
+  // Check if BOGO coupon is active
+  const isBOGOActive = isBOGOCoupon(appliedCoupon);
+  
+  // Calculate pricing based on whether BOGO is active
+  let orderTotal: number;
+  let subtotal: number;
+  let bogoDiscount = { freeItems: 0, freeValue: 0, totalPaid: 0, totalItems: 0 };
+  
+  if (isBOGOActive && bogoUnitPrice) {
+    // BOGO mode: use regular price (from bogoUnitPrice prop) and calculate based on BOGO quantity
+    bogoDiscount = calculateBOGODiscount(bogoUnitPrice, bogoQuantity);
+    orderTotal = bogoDiscount.totalPaid; // Only pay for half the items
+    subtotal = roundPrice(orderTotal);
+  } else {
+    // Normal mode: use variant price (which may have discounts)
+    orderTotal = selectedVariant.discountPrice || selectedVariant.price;
+    const bundleTotal = Object.values(bundleItems).reduce((sum, price) => sum + price, 0);
+    subtotal = roundPrice(orderTotal + bundleTotal);
+  }
   
   // Use selected courier or fallback to default
   const displayCourier = selectedCourier || getDefaultCourier(countryConfig);
@@ -408,10 +448,15 @@ export function CheckoutForm({
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
   const baseShippingCost = hasFreeShipping ? 0 : roundPrice(calculateShippingCost(subtotal, displayCourier, countryConfig));
   
-  // Calculate coupon discounts
-  const couponDiscount = appliedCoupon 
+  // Calculate coupon discounts (for non-BOGO coupons)
+  const couponDiscount = (appliedCoupon && !isBOGOActive)
     ? calculateCouponDiscount(appliedCoupon, subtotal, baseShippingCost)
     : { productDiscount: 0, shippingDiscount: 0, totalDiscount: 0 };
+  
+  // For BOGO, the "discount" is the value of free items (for display purposes)
+  const effectiveDiscount = isBOGOActive 
+    ? { productDiscount: bogoDiscount.freeValue, shippingDiscount: 0, totalDiscount: bogoDiscount.freeValue }
+    : couponDiscount;
   
   // Apply discounts
   const subtotalAfterDiscount = roundPrice(subtotal - couponDiscount.productDiscount);
@@ -502,29 +547,35 @@ export function CheckoutForm({
               </div>
             )}
             
-            {/* Applied Coupon Display - Simple and clean, shows when coupon is applied */}
+            {/* Applied Coupon Display - Different styles for BOGO vs regular coupons */}
             {appliedCoupon && showCouponField && (
-              <div className={`p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 rounded-lg transition-all duration-200 ease-out ${
-                showSuccessAnimation 
-                  ? 'border-green-500 shadow-xl shadow-green-300/50 scale-[1.02]' 
-                  : 'border-green-400'
-              }`}>
+              <div className={`p-4 border-2 rounded-lg transition-all duration-200 ease-out ${
+                isBOGOActive 
+                  ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-400'
+                  : 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-400'
+              } ${showSuccessAnimation ? 'shadow-xl shadow-green-300/50 scale-[1.02]' : ''}`}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-green-900 mb-1">
-                      {t('coupons.coupon_applied')} 🎉
+                      {isBOGOActive ? t('bogo.offer_active') : t('coupons.coupon_applied')} 🎉
                     </p>
                     <p className="text-xs text-green-700">
                       {t('coupons.code')}: <span className="font-bold text-green-800">{appliedCoupon.code}</span>
                       {appliedCoupon.type === 'percentage' && ` • ${appliedCoupon.value}% ${t('coupons.discount')}`}
+                      {isBOGOActive && ` • ${t('bogo.buy_one_get_one')}`}
                     </p>
+                    {isBOGOActive && bogoDiscount.totalItems > 0 && (
+                      <p className="text-xs text-emerald-700 mt-1 font-medium">
+                        {t('bogo.you_pay')} {bogoQuantity} • {t('bogo.you_get')} {bogoDiscount.totalItems} ({bogoDiscount.freeItems} {t('bogo.free')})
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-3">
-                    {couponDiscount.totalDiscount > 0 && (
+                    {effectiveDiscount.totalDiscount > 0 && (
                       <div className="text-right">
                         <p className="text-xs text-gray-600">{t('coupons.you_save')}</p>
                         <p className="text-xl font-bold text-green-600 tabular-nums">
-                          -{formatPrice(showSuccessAnimation ? animatedSavings : couponDiscount.totalDiscount)}
+                          -{formatPrice(showSuccessAnimation ? animatedSavings : effectiveDiscount.totalDiscount)}
                         </p>
                       </div>
                     )}
@@ -640,12 +691,20 @@ export function CheckoutForm({
               </div>
             </div>
 
-            {/* Hidden email field */}
-            <input
-              type="hidden"
-              name="email"
-              value={formData.email}
-            />
+            {/* Email (Optional) */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="flex items-center gap-1 text-gray-700">
+                {t('forms.email')} <span className="text-gray-400 text-xs">({t('forms.optional')})</span>
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder={t('placeholders.email')}
+                className="focus:ring-brand-orange focus:border-brand-orange"
+              />
+            </div>
 
             {/* Address */}
             <div className="space-y-4">

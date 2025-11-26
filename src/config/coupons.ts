@@ -1,12 +1,12 @@
 // Discount Coupon Configuration
-// Coupons can be absolute, percentage discount, or free shipping
+// Coupons can be absolute, percentage discount, free shipping, or BOGO (Buy One Get One)
 
-export type CouponType = 'absolute' | 'percentage' | 'free_shipping';
+export type CouponType = 'absolute' | 'percentage' | 'free_shipping' | 'bogo';
 
 export interface Coupon {
   code: string;
   type: CouponType;
-  value: number; // For absolute: amount in currency, for percentage: 0-100
+  value: number; // For absolute: amount in currency, for percentage: 0-100, for bogo: not used (set to 0)
   description?: string;
   minOrderValue?: number; // Minimum order value to apply coupon (before shipping)
   maxDiscount?: number; // Maximum discount amount for percentage coupons
@@ -15,10 +15,31 @@ export interface Coupon {
   enabled: boolean;
 }
 
+// BOGO (Buy One Get One) Configuration
+// When BOGO is active: buy X items, get X items free at regular price
+export interface BOGOConfig {
+  couponCode: string;
+  maxQuantity: number; // Maximum quantity pairs (e.g., 3 means 3+3)
+}
+
+export const BOGO_CONFIG: BOGOConfig = {
+  couponCode: '1PLUS1',
+  maxQuantity: 3
+};
+
 // Centralized coupon list
-// NOTE: Static coupons are commented out - system now uses API-only validation from OMS
-// Uncomment and add coupons here if you want fallback static codes in the future
+// NOTE: Most static coupons are commented out - system now uses API-only validation from OMS
+// BOGO coupons are handled locally as they require special UI treatment
 export const COUPONS: Record<string, Coupon> = {
+  // BOGO (Buy One Get One) coupon - 1+1 offer for all products
+  '1PLUS1': {
+    code: '1PLUS1',
+    type: 'bogo',
+    value: 0, // Not used for BOGO, discount is calculated based on free items
+    description: 'Buy 1 Get 1 Free - BOGO offer',
+    minOrderValue: 0,
+    enabled: true,
+  },
   // 'WELCOME10': {
   //   code: 'WELCOME10',
   //   type: 'percentage',
@@ -132,6 +153,12 @@ export function calculateCouponDiscount(
     case 'free_shipping':
       shippingDiscount = shippingCost;
       break;
+      
+    case 'bogo':
+      // BOGO discount is calculated separately based on quantity
+      // This function returns 0 for BOGO as it's handled in the UI component
+      productDiscount = 0;
+      break;
   }
   
   // Round to 2 decimal places
@@ -140,6 +167,42 @@ export function calculateCouponDiscount(
   const totalDiscount = Math.round((productDiscount + shippingDiscount) * 100) / 100;
   
   return { productDiscount, shippingDiscount, totalDiscount };
+}
+
+// Calculate BOGO (Buy One Get One) discount
+// Returns the value of free items (e.g., if buying 2 at 1990 each, free value is 2 * 1990)
+export function calculateBOGODiscount(
+  unitPrice: number,
+  quantity: number
+): { freeItems: number; freeValue: number; totalPaid: number; totalItems: number } {
+  const freeItems = quantity; // Same number of free items as paid items
+  const freeValue = Math.round(unitPrice * freeItems * 100) / 100;
+  const totalPaid = Math.round(unitPrice * quantity * 100) / 100;
+  const totalItems = quantity * 2; // Paid items + Free items
+  
+  return { freeItems, freeValue, totalPaid, totalItems };
+}
+
+// Check if a coupon is a BOGO type
+export function isBOGOCoupon(coupon: Coupon | null): boolean {
+  return coupon?.type === 'bogo';
+}
+
+// Get BOGO coupon by code (for static validation)
+export function getBOGOCoupon(code: string): Coupon | null {
+  const normalizedCode = code.trim().toUpperCase();
+  const coupon = COUPONS[normalizedCode];
+  
+  if (!coupon || !coupon.enabled || coupon.type !== 'bogo') {
+    return null;
+  }
+  
+  // Check if coupon is expired
+  if (coupon.validUntil && new Date() > coupon.validUntil) {
+    return null;
+  }
+  
+  return coupon;
 }
 
 // Get all active coupons (for admin/testing purposes)
@@ -188,6 +251,15 @@ export async function validateCouponWithAPI(
   subtotal: number, 
   countryCode: string
 ): Promise<{ valid: boolean; coupon?: Coupon; error?: string }> {
+  // First check if it's a BOGO coupon (handled locally)
+  const bogoCoupon = getBOGOCoupon(couponCode);
+  if (bogoCoupon) {
+    // BOGO coupons don't have country restrictions (available everywhere)
+    // No minimum order value check for BOGO
+    return { valid: true, coupon: bogoCoupon };
+  }
+  
+  // For other coupons, use API validation
   const coupon = await getCouponWithAPI(couponCode, countryCode);
   
   if (!coupon) {
