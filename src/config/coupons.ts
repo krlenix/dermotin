@@ -1,6 +1,8 @@
 // Discount Coupon Configuration
 // Coupons can be absolute, percentage discount, free shipping, or BOGO (Buy One Get One)
 
+import { BOGO_CONFIG as BOGO_COOKIE_CONFIG, isBOGOActive } from '@/utils/bogo-cookies';
+
 export type CouponType = 'absolute' | 'percentage' | 'free_shipping' | 'bogo';
 
 export interface Coupon {
@@ -22,9 +24,11 @@ export interface BOGOConfig {
   maxQuantity: number; // Maximum quantity pairs (e.g., 3 means 3+3)
 }
 
+// Re-export BOGO config from centralized location
+// To change BOGO settings, edit src/utils/bogo-cookies.ts
 export const BOGO_CONFIG: BOGOConfig = {
-  couponCode: '1PLUS1',
-  maxQuantity: 3
+  couponCode: BOGO_COOKIE_CONFIG.couponCode,
+  maxQuantity: BOGO_COOKIE_CONFIG.maxQuantity
 };
 
 // Centralized coupon list
@@ -32,13 +36,14 @@ export const BOGO_CONFIG: BOGOConfig = {
 // BOGO coupons are handled locally as they require special UI treatment
 export const COUPONS: Record<string, Coupon> = {
   // BOGO (Buy One Get One) coupon - 1+1 offer for all products
+  // Note: This coupon's enabled state is controlled by BOGO_CONFIG in bogo-cookies.ts
   '1PLUS1': {
     code: '1PLUS1',
     type: 'bogo',
     value: 0, // Not used for BOGO, discount is calculated based on free items
     description: 'Buy 1 Get 1 Free - BOGO offer',
     minOrderValue: 0,
-    enabled: true,
+    enabled: true, // Actual availability is controlled by isBOGOActive()
   },
   // 'WELCOME10': {
   //   code: 'WELCOME10',
@@ -197,7 +202,12 @@ export function getBOGOCoupon(code: string): Coupon | null {
     return null;
   }
   
-  // Check if coupon is expired
+  // Check if BOGO offer is currently active (master switch + expiration)
+  if (!isBOGOActive()) {
+    return null;
+  }
+  
+  // Check if coupon has its own expiration (in addition to global BOGO expiration)
   if (coupon.validUntil && new Date() > coupon.validUntil) {
     return null;
   }

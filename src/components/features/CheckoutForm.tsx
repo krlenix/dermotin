@@ -26,7 +26,7 @@ import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
 import { validateCouponWithAPI, calculateCouponDiscount, isBOGOCoupon, calculateBOGODiscount, type Coupon } from '@/config/coupons';
-import { storeBOGOCookie, getBOGOCookie, isBOGOExpired } from '@/utils/bogo-cookies';
+import { storeBOGOCookie, getBOGOCookie, isBOGOExpired, wasBOGOBannerSeen } from '@/utils/bogo-cookies';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -42,6 +42,7 @@ interface CheckoutFormProps {
   onReselect?: () => void;
   // BOGO-specific props
   onBOGOChange?: (isActive: boolean, coupon: Coupon | null) => void;
+  onBOGODiscovered?: (coupon: Coupon) => void; // Called when BOGO is discovered via manual entry (to show banner)
   bogoQuantity?: number; // Quantity selected in BOGO mode (e.g., 1, 2, 3 for 1+1, 2+2, 3+3)
   bogoUnitPrice?: number; // Regular unit price for BOGO calculations
 }
@@ -59,6 +60,7 @@ export function CheckoutForm({
   onCourierChange,
   onReselect,
   onBOGOChange,
+  onBOGODiscovered,
   bogoQuantity = 1,
   bogoUnitPrice
 }: CheckoutFormProps) {
@@ -170,9 +172,27 @@ export function CheckoutForm({
       
       // Check if this is a BOGO coupon and notify parent
       if (isBOGOCoupon(validation.coupon!)) {
-        onBOGOChange?.(true, validation.coupon!);
+        // Determine the source of the coupon
+        const isFromUrl = codeToApply !== undefined;
+        const isFromCookie = !isFromUrl && getBOGOCookie()?.couponCode === validation.coupon!.code;
+        const isManualEntry = !isFromUrl && !isFromCookie;
+        
         // Store BOGO coupon in cookie for persistence
-        storeBOGOCookie(validation.coupon!.code, codeToApply ? 'url' : 'manual');
+        if (!isFromCookie) {
+          storeBOGOCookie(validation.coupon!.code, isFromUrl ? 'url' : 'manual');
+        }
+        
+        // If manually entered (not from URL or cookie), notify parent to show banner
+        if (isManualEntry && !wasBOGOBannerSeen()) {
+          onBOGODiscovered?.(validation.coupon!);
+          // Don't activate BOGO yet - let the banner handle it
+          setAppliedCoupon(null);
+          setCouponCode('');
+          return;
+        }
+        
+        // Activate BOGO
+        onBOGOChange?.(true, validation.coupon!);
       }
       
       // Trigger success animation instantly

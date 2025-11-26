@@ -21,6 +21,9 @@ import { Footer } from '@/components/ui/footer';
 import dynamic from 'next/dynamic';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
 import EnhancedImageEffect from '@/components/features/EnhancedImageEffect';
+import { BOGOLoadedBanner } from '@/components/features/BOGOLoadedBanner';
+import { storeBOGOCookie, wasBOGOBannerSeen, BOGO_CONFIG } from '@/utils/bogo-cookies';
+import { useRouter } from 'next/navigation';
 
 // Lazy load heavy components for better performance
 const AdvancedTestimonials = dynamic(() => import('@/components/features/AdvancedTestimonials').then(mod => ({ default: mod.AdvancedTestimonials })), {
@@ -46,7 +49,8 @@ import {
   Sparkles,
   ShieldCheck,
   Phone,
-  Mail
+  Mail,
+  Gift
 } from 'lucide-react';
 
 // Homepage statistics are now available through translations
@@ -65,25 +69,80 @@ export default function HomePage() {
   const countryConfig = getCountryConfig(locale);
   const [products, setProducts] = useState<Product[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showBOGOBanner, setShowBOGOBanner] = useState(false);
+  const [isBOGOActive, setIsBOGOActive] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const { trackEvent } = usePixelTracking(countryConfig.code);
+  const router = useRouter();
   
   // Initialize marketing tracking
   useMarketingTracking();
-  
-  // Screen size detection for responsive images
-  const [isMobile, setIsMobile] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  
+
+  // Client-side initialization (runs once after hydration)
   useEffect(() => {
     setIsClient(true);
+    
+    // Screen size detection
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 1024); // lg breakpoint
     };
-    
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
+    
+    // Check for BOGO coupon from URL or cookie
+    const checkBOGOCoupon = () => {
+      // Check if BOGO is enabled and not expired (using centralized config)
+      if (!BOGO_CONFIG.enabled) return;
+      
+      const expirationDate = new Date(BOGO_CONFIG.expirationDate);
+      const now = new Date();
+      if (now > expirationDate) return;
+      
+      const searchParams = new URLSearchParams(window.location.search);
+      const urlCoupon = searchParams.get('coupon');
+      
+      if (urlCoupon && urlCoupon.toUpperCase() === BOGO_CONFIG.couponCode) {
+        storeBOGOCookie(urlCoupon, 'url');
+        // Always show banner when coupon is in URL (user explicitly shared the link)
+        setShowBOGOBanner(true);
+        setIsBOGOActive(true);
+      } else {
+        // Check if BOGO cookie exists (returning visitor)
+        const cookies = document.cookie.split(';');
+        const hasBOGOCookie = cookies.some(c => c.trim().startsWith('bogo_offer='));
+        if (hasBOGOCookie) {
+          setIsBOGOActive(true);
+        }
+      }
+    };
+    checkBOGOCoupon();
+    
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  // Smooth scroll to products section
+  const scrollToProducts = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+      productsSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  // Handle BOGO banner - scroll to products section
+  const handleBOGOSelectProduct = () => {
+    setShowBOGOBanner(false);
+    scrollToProducts();
+  };
+
+  // Handle BOGO banner close
+  const handleBOGOBannerClose = () => {
+    setShowBOGOBanner(false);
+  };
   
   // Get the appropriate image source based on screen size
   // Ensure we use mobile image on mobile devices
@@ -165,18 +224,6 @@ export default function HomePage() {
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Smooth scroll functions
-  const scrollToProducts = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    const productsSection = document.getElementById('products');
-    if (productsSection) {
-      productsSection.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
-
   const scrollToTestimonials = (e: React.MouseEvent) => {
     e.preventDefault();
     const testimonialsSection = document.querySelector('[data-section="testimonials"]');
@@ -243,6 +290,13 @@ export default function HomePage() {
 
   return (
     <>
+      {/* BOGO Coupon Loaded Banner - Fixed at top */}
+      <BOGOLoadedBanner
+        isVisible={showBOGOBanner}
+        onClose={handleBOGOBannerClose}
+        onSelectProduct={handleBOGOSelectProduct}
+      />
+
       {/* Country Mismatch Banner */}
       <CountryMismatchBanner />
       
@@ -674,10 +728,27 @@ export default function HomePage() {
                   style={{animationDelay: `${index * 0.1}s`}}
                 >
                   {/* Bestseller Badge */}
-                  {index === 0 && (
+                  {index === 0 && !isBOGOActive && (
                     <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-brand-orange to-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
                       {t('homepage.bestseller')}
                     </div>
+                  )}
+                  
+                  {/* BOGO Corner Ribbon Badge - Shows when coupon is active */}
+                  {isBOGOActive && (
+                    <>
+                      {/* Corner ribbon */}
+                      <div className="absolute -top-1 -right-1 z-20 overflow-hidden w-24 h-24 pointer-events-none">
+                        <div className="absolute top-4 -right-8 w-32 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-bold py-1 text-center transform rotate-45 shadow-md">
+                          1+1 GRATIS
+                        </div>
+                      </div>
+                      {/* Small badge in top left */}
+                      <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-lg">
+                        <Gift className="w-3 h-3" />
+                        <span>1+1</span>
+                      </div>
+                    </>
                   )}
                   
                   <div className="aspect-square relative bg-gradient-to-br from-gray-50 to-white p-0 overflow-hidden">

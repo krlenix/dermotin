@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProductVariant } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
-import { BOGO_CONFIG, calculateBOGODiscount } from '@/config/coupons';
+import { BOGO_CONFIG as BOGO_COUPON_CONFIG, calculateBOGODiscount } from '@/config/coupons';
+import { BOGO_CONFIG } from '@/utils/bogo-cookies';
 import { useTranslations } from 'next-intl';
 import { Gift, Check, Sparkles, Package, Clock, AlertTriangle } from 'lucide-react';
 
@@ -42,10 +43,10 @@ export function BOGOSelector({
     }
   }, [triggerShake]);
 
-  // Countdown timer - ends on 28.11.2025 at 23:59:59
+  // Countdown timer - uses expiration date from centralized config
   useEffect(() => {
-    // Set to 28.11 of the current year (or next year if passed) based on user's context (2025)
-    const endDate = new Date('2025-11-28T23:59:59');
+    // Use expiration date from BOGO_CONFIG
+    const endDate = new Date(BOGO_CONFIG.expirationDate);
     
     const calculateTimeLeft = () => {
       const now = new Date();
@@ -83,7 +84,7 @@ export function BOGOSelector({
 
   // Generate quantity options: 1+1, 2+2, 3+3
   const quantityOptions = Array.from(
-    { length: BOGO_CONFIG.maxQuantity },
+    { length: BOGO_COUPON_CONFIG.maxQuantity },
     (_, i) => i + 1
   );
 

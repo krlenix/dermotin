@@ -476,6 +476,13 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     setShowBOGOBanner(false);
   };
 
+  // Handle BOGO discovered via manual entry in coupon field
+  const handleBOGODiscovered = (coupon: Coupon) => {
+    setBogoCoupon(coupon);
+    setShowBOGOBanner(true);
+    setPendingBOGOActivation(true);
+  };
+
   // Floating elements animation
   useEffect(() => {
     const interval = setInterval(() => {
@@ -948,6 +955,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   onCourierChange={setSelectedCourier}
                   onReselect={scrollToQuantitySelection}
                   onBOGOChange={handleBOGOChange}
+                  onBOGODiscovered={handleBOGODiscovered}
                   bogoQuantity={bogoQuantity}
                   bogoUnitPrice={bogoUnitPrice}
                 />

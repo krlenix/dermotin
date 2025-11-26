@@ -4,8 +4,42 @@
 const BOGO_COOKIE_NAME = 'bogo_offer';
 const BOGO_DISCOVERED_COOKIE = 'bogo_discovered';
 
-// BOGO offer expiration date: 28.11.2025 at 23:59:59
-const BOGO_EXPIRATION_DATE = new Date('2025-11-28T23:59:59');
+// ============================================================
+// BOGO OFFER CONFIGURATION - EDIT THESE VALUES TO CONTROL OFFER
+// ============================================================
+
+/**
+ * BOGO Offer Configuration
+ * 
+ * To enable a new BOGO offer:
+ * 1. Set BOGO_ENABLED to true
+ * 2. Set BOGO_EXPIRATION_DATE to the new end date (format: 'YYYY-MM-DDTHH:mm:ss')
+ * 3. Optionally update BOGO_COUPON_CODE if using a different code
+ * 
+ * To disable the BOGO offer:
+ * 1. Set BOGO_ENABLED to false
+ */
+export const BOGO_CONFIG = {
+  // Master switch - set to false to completely disable BOGO feature
+  enabled: true,
+  
+  // Coupon code that triggers BOGO
+  couponCode: '1PLUS1',
+  
+  // Expiration date and time (local time)
+  // Format: 'YYYY-MM-DDTHH:mm:ss'
+  expirationDate: '2025-11-28T23:59:59',
+  
+  // Maximum quantity for BOGO (e.g., 3 means max 3+3)
+  maxQuantity: 3,
+};
+
+// ============================================================
+// END OF CONFIGURATION
+// ============================================================
+
+// Parse the expiration date from config
+const BOGO_EXPIRATION_DATE = new Date(BOGO_CONFIG.expirationDate);
 
 export interface BOGOCookieData {
   couponCode: string;
@@ -14,10 +48,22 @@ export interface BOGOCookieData {
 }
 
 /**
+ * Check if the BOGO offer is currently active
+ * Returns false if:
+ * - BOGO_ENABLED is false
+ * - Current date is past BOGO_EXPIRATION_DATE
+ */
+export function isBOGOActive(): boolean {
+  if (!BOGO_CONFIG.enabled) return false;
+  return new Date() <= BOGO_EXPIRATION_DATE;
+}
+
+/**
  * Check if the BOGO offer has expired
+ * @deprecated Use isBOGOActive() instead for clearer semantics
  */
 export function isBOGOExpired(): boolean {
-  return new Date() > BOGO_EXPIRATION_DATE;
+  return !isBOGOActive();
 }
 
 /**
@@ -38,9 +84,9 @@ function getCookieExpiration(): Date {
 export function storeBOGOCookie(couponCode: string, source: 'url' | 'manual' | 'homepage' = 'manual'): void {
   if (typeof document === 'undefined') return;
   
-  // Don't store if offer has expired
-  if (isBOGOExpired()) {
-    console.log('🎁 BOGO offer has expired, not storing cookie');
+  // Don't store if offer is not active
+  if (!isBOGOActive()) {
+    console.log('🎁 BOGO offer is not active, not storing cookie');
     return;
   }
   
@@ -67,8 +113,8 @@ export function storeBOGOCookie(couponCode: string, source: 'url' | 'manual' | '
 export function getBOGOCookie(): BOGOCookieData | null {
   if (typeof document === 'undefined') return null;
   
-  // If offer has expired, clear the cookie and return null
-  if (isBOGOExpired()) {
+  // If offer is not active, clear the cookie and return null
+  if (!isBOGOActive()) {
     clearBOGOCookie();
     return null;
   }
@@ -94,7 +140,7 @@ export function getBOGOCookie(): BOGOCookieData | null {
 export function wasBOGODiscovered(): boolean {
   if (typeof document === 'undefined') return false;
   
-  if (isBOGOExpired()) return false;
+  if (!isBOGOActive()) return false;
   
   const cookies = document.cookie.split(';');
   return cookies.some(c => c.trim().startsWith(`${BOGO_DISCOVERED_COOKIE}=`));
@@ -119,7 +165,7 @@ export function clearBOGOCookie(): void {
 export function markBOGOBannerSeen(): void {
   if (typeof document === 'undefined') return;
   
-  if (isBOGOExpired()) return;
+  if (!isBOGOActive()) return;
   
   const expires = getCookieExpiration();
   document.cookie = `bogo_banner_seen=1; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;

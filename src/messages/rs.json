@@ -258,7 +258,12 @@
     "banner_title": "OTKLJUČALI STE TAJNU PONUDU!",
     "banner_description": "Ekskluzivna 1+1 GRATIS ponuda je aktivirana! Izaberite količinu i dobijte istu količinu potpuno besplatno.",
     "activate_offer": "AKTIVIRAJ PONUDU",
-    "maybe_later": "Možda kasnije"
+    "maybe_later": "Možda kasnije",
+    "coupon_loaded": "Kupon 1+1 GRATIS je učitan!",
+    "coupon_loaded_description": "Vaš ekskluzivni kupon će biti automatski primenjen kada izaberete proizvod. Kupite bilo koji proizvod i dobijte isti GRATIS!",
+    "select_product": "Izaberi proizvod",
+    "exclusive_offer": "EKSKLUZIVNA PONUDA",
+    "offer_badge": "1+1 GRATIS"
   },
   "delivery": {
     "courier_title": "Dostava putem",
