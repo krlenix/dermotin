@@ -60,6 +60,26 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Ensure JS/CSS bundles are revalidated on each request
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // HTML pages should not be cached aggressively
+        source: '/:locale(rs|ba|hr|me)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
         source: '/:path*',
         headers: [
           {
