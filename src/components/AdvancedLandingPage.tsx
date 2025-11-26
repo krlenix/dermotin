@@ -15,7 +15,9 @@ import { CheckoutForm } from '@/components/features/CheckoutForm';
 import { UrgencyTimer } from '@/components/features/UrgencyTimer';
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { isComponentEnabled } from '@/config/constants';
-import { type Coupon } from '@/config/coupons';
+import { type Coupon, getBOGOCoupon } from '@/config/coupons';
+import { BOGODiscoveryBanner } from '@/components/features/BOGODiscoveryBanner';
+import { storeBOGOCookie, getBOGOCookie, wasBOGOBannerSeen, isBOGOExpired } from '@/utils/bogo-cookies';
 
 import dynamic from 'next/dynamic';
 
@@ -87,6 +89,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [isBogoActive, setIsBogoActive] = useState(false);
   const [bogoCoupon, setBogoCoupon] = useState<Coupon | null>(null);
   const [bogoQuantity, setBogoQuantity] = useState(1);
+  const [showBOGOBanner, setShowBOGOBanner] = useState(false);
+  const [pendingBOGOActivation, setPendingBOGOActivation] = useState(false);
   
   // Get the base (single unit) variant for BOGO calculations
   // This is the variant with quantity=1 or the first variant
@@ -159,6 +163,39 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       };
     }
   }, [product.images.main, product.images.gallery, countryConfig.logo]);
+
+  // Check for BOGO coupon from URL or cookie on mount and show banner
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !isBOGOExpired()) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const urlCoupon = searchParams.get('coupon');
+      const urlMedium = searchParams.get('medium');
+      
+      // Check if BOGO coupon is in URL
+      if (urlCoupon && urlCoupon.toUpperCase() === '1PLUS1' && !urlMedium) {
+        // Store in cookie
+        storeBOGOCookie(urlCoupon, 'url');
+        
+        // Show banner if not seen before
+        if (!wasBOGOBannerSeen()) {
+          setShowBOGOBanner(true);
+          setPendingBOGOActivation(true);
+        }
+      }
+      // Check for stored BOGO cookie (returning visitor)
+      else if (!urlMedium) {
+        const storedBOGO = getBOGOCookie();
+        if (storedBOGO && storedBOGO.couponCode === '1PLUS1') {
+          // Auto-activate BOGO for returning visitors (no banner needed)
+          const bogoCouponData = getBOGOCoupon('1PLUS1');
+          if (bogoCouponData) {
+            setIsBogoActive(true);
+            setBogoCoupon(bogoCouponData);
+          }
+        }
+      }
+    }
+  }, []);
 
   // Handle scroll for header transparency
   useEffect(() => {
@@ -416,6 +453,27 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   // Handle BOGO quantity change
   const handleBogoQuantityChange = (quantity: number) => {
     setBogoQuantity(quantity);
+  };
+
+  // Handle BOGO banner acceptance
+  const handleBOGOBannerAccept = () => {
+    setShowBOGOBanner(false);
+    
+    // Activate BOGO
+    const bogoCouponData = getBOGOCoupon('1PLUS1');
+    if (bogoCouponData) {
+      handleBOGOChange(true, bogoCouponData);
+      
+      // Scroll to the order section
+      setTimeout(() => {
+        scrollToQuantitySelection();
+      }, 300);
+    }
+  };
+
+  // Handle BOGO banner close
+  const handleBOGOBannerClose = () => {
+    setShowBOGOBanner(false);
   };
 
   // Floating elements animation
@@ -1042,6 +1100,13 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
 
       {/* Marketing Debug Component (development only) */}
       <MarketingDebug isDevelopment={process.env.NODE_ENV === 'development'} />
+
+      {/* BOGO Discovery Banner */}
+      <BOGODiscoveryBanner
+        isVisible={showBOGOBanner}
+        onClose={handleBOGOBannerClose}
+        onAccept={handleBOGOBannerAccept}
+      />
     </div>
   );
 }

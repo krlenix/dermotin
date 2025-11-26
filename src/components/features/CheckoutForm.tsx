@@ -26,6 +26,7 @@ import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
 import { validateCouponWithAPI, calculateCouponDiscount, isBOGOCoupon, calculateBOGODiscount, type Coupon } from '@/config/coupons';
+import { storeBOGOCookie, getBOGOCookie, isBOGOExpired } from '@/utils/bogo-cookies';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -170,6 +171,8 @@ export function CheckoutForm({
       // Check if this is a BOGO coupon and notify parent
       if (isBOGOCoupon(validation.coupon!)) {
         onBOGOChange?.(true, validation.coupon!);
+        // Store BOGO coupon in cookie for persistence
+        storeBOGOCookie(validation.coupon!.code, codeToApply ? 'url' : 'manual');
       }
       
       // Trigger success animation instantly
@@ -190,7 +193,7 @@ export function CheckoutForm({
     }
   };
   
-  // Check URL parameters for coupon and medium on mount
+  // Check URL parameters for coupon, stored BOGO cookie, and medium on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
@@ -202,10 +205,26 @@ export function CheckoutForm({
         setShowCouponField(false);
       }
       
-      // Auto-apply coupon from URL if present (async, non-blocking)
+      // Priority: URL coupon > Stored BOGO cookie
+      let couponToApply: string | null = null;
+      let source: 'url' | 'cookie' = 'url';
+      
       if (urlCoupon && !urlMedium) {
-        const normalizedCode = urlCoupon.toUpperCase();
-        setCouponCode(normalizedCode);
+        couponToApply = urlCoupon.toUpperCase();
+        source = 'url';
+      } else if (!urlMedium && !isBOGOExpired()) {
+        // Check for stored BOGO cookie
+        const storedBOGO = getBOGOCookie();
+        if (storedBOGO) {
+          couponToApply = storedBOGO.couponCode;
+          source = 'cookie';
+          console.log('🎁 Found stored BOGO cookie:', storedBOGO);
+        }
+      }
+      
+      // Auto-apply coupon if found
+      if (couponToApply) {
+        setCouponCode(couponToApply);
         setIsValidatingUrlCoupon(true);
         
         // Validate coupon asynchronously without blocking page load
@@ -214,11 +233,11 @@ export function CheckoutForm({
             // Small delay to ensure component is fully mounted
             await new Promise(resolve => setTimeout(resolve, 100));
             
-            console.log(`🔍 Auto-validating coupon from URL: ${normalizedCode}`);
-            await handleApplyCoupon(normalizedCode);
+            console.log(`🔍 Auto-validating coupon from ${source}: ${couponToApply}`);
+            await handleApplyCoupon(couponToApply!);
             
           } catch (error) {
-            console.error('Error auto-applying URL coupon:', error);
+            console.error('Error auto-applying coupon:', error);
           } finally {
             setIsValidatingUrlCoupon(false);
           }

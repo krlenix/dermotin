@@ -1060,11 +1060,9 @@ export const PRODUCTS: Record<string, Product> = {
     images: {
       main: '/images/products/biomelis-kapi/biomelis-kapi-box-and-product-mockup.png',
       gallery: [
-        '/images/products/biomelis-kapi/biomelis-kapi-box-only.png',
-        '/images/products/biomelis-kapi/biomelis-kapi-open-bottle.png',
-        '/images/products/biomelis-kapi/biomelis-kapi-old-product-image.png'
+        '/images/products/biomelis-kapi/biomelis-kapi-box-and-product-mockup.png'
       ],
-      thumbnail: '/images/products/biomelis-kapi/biomelis-kapi-box-only.png',
+      thumbnail: '/images/products/biomelis-kapi/biomelis-kapi-box-and-product-mockup.png',
       fallback: '/images/products/biomelis-kapi/biomelis-kapi-box-and-product-mockup.png'
     },
     variants: [
@@ -1284,11 +1282,9 @@ export const PRODUCTS: Record<string, Product> = {
     images: {
       main: '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png',
       gallery: [
-        '/images/products/bioroid-kapi/bioroid-kapi-box-only.png',
-        '/images/products/bioroid-kapi/bioroid-kapi-open-bottle.png',
-        '/images/products/bioroid-kapi/bioroid-kapi-old-product-image.png'
+        '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png'
       ],
-      thumbnail: '/images/products/bioroid-kapi/bioroid-kapi-box-only.png',
+      thumbnail: '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png',
       fallback: '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png'
     },
     variants: [
@@ -1495,11 +1491,9 @@ export const PRODUCTS: Record<string, Product> = {
     images: {
       main: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png',
       gallery: [
-        '/images/products/immunis-kapi/immunis-kapi-box-only.png',
-        '/images/products/immunis-kapi/immunis-kapi-open-bottle.png',
-        '/images/products/immunis-kapi/immunis-kapi-old-product-image.png'
+        '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
       ],
-      thumbnail: '/images/products/immunis-kapi/immunis-kapi-box-only.png',
+      thumbnail: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png',
       fallback: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
     },
     variants: [
@@ -1707,11 +1701,9 @@ export const PRODUCTS: Record<string, Product> = {
     images: {
       main: '/images/products/fungomax/fungomax-box-and-product-mockup.png',
       gallery: [
-        '/images/products/fungomax/fungomax-box-only.png',
-        '/images/products/fungomax/fungomax-open-bottle.png',
-        '/images/products/fungomax/fungomax-product-image.png'
+        '/images/products/fungomax/fungomax-box-and-product-mockup.png'
       ],
-      thumbnail: '/images/products/fungomax/fungomax-box-only.png',
+      thumbnail: '/images/products/fungomax/fungomax-box-and-product-mockup.png',
       fallback: '/images/products/fungomax/fungomax-box-and-product-mockup.png'
     },
     variants: [

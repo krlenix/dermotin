@@ -726,11 +726,9 @@ export const PRODUCTS: Record<string, Product> = {
     images: {
       main: '/images/products/fungomax/fungomax-box-and-product-mockup.png',
       gallery: [
-        '/images/products/fungomax/fungomax-box-only.png',
-        '/images/products/fungomax/fungomax-open-bottle.png',
-        '/images/products/fungomax/fungomax-product-image.png'
+        '/images/products/fungomax/fungomax-box-and-product-mockup.png'
       ],
-      thumbnail: '/images/products/fungomax/fungomax-box-only.png',
+      thumbnail: '/images/products/fungomax/fungomax-box-and-product-mockup.png',
       fallback: '/images/products/fungomax/fungomax-box-and-product-mockup.png'
     },
     variants: [

@@ -254,7 +254,11 @@
     "seconds": "sek",
     "ends_date": "Ponuda važi do {date}",
     "buy": "Kupi",
-    "total_items": "Ukupno pakovanja"
+    "total_items": "Ukupno pakovanja",
+    "banner_title": "OTKLJUČALI STE TAJNU PONUDU!",
+    "banner_description": "Ekskluzivna 1+1 GRATIS ponuda je aktivirana! Izaberite količinu i dobijete istu količinu potpuno besplatno.",
+    "activate_offer": "AKTIVIRAJ PONUDU",
+    "maybe_later": "Možda kasnije"
   },
   "delivery": {
     "courier_title": "Dostava putem",
