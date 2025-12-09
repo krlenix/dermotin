@@ -17,7 +17,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { isComponentEnabled } from '@/config/constants';
 import { type Coupon, getBOGOCoupon } from '@/config/coupons';
 import { BOGODiscoveryBanner } from '@/components/features/BOGODiscoveryBanner';
-import { storeBOGOCookie, getBOGOCookie, wasBOGOBannerSeen, isBOGOActive, initializeBOGO } from '@/utils/bogo-cookies';
+import { storeBOGOCookie, getBOGOCookie, wasBOGOBannerSeen, initializeBOGO } from '@/utils/bogo-cookies';
 
 import dynamic from 'next/dynamic';
 
@@ -87,10 +87,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   
   // BOGO state
   const [isBogoActive, setIsBogoActive] = useState(false);
-  const [bogoCoupon, setBogoCoupon] = useState<Coupon | null>(null);
+  const [, setBogoCoupon] = useState<Coupon | null>(null);
   const [bogoQuantity, setBogoQuantity] = useState(1);
   const [showBOGOBanner, setShowBOGOBanner] = useState(false);
-  const [pendingBOGOActivation, setPendingBOGOActivation] = useState(false);
+  const [, setPendingBOGOActivation] = useState(false);
   
   // Get the base (single unit) variant for BOGO calculations
   // This is the variant with quantity=1 or the first variant

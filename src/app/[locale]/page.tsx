@@ -22,8 +22,7 @@ import dynamic from 'next/dynamic';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
 import EnhancedImageEffect from '@/components/features/EnhancedImageEffect';
 import { BOGOLoadedBanner } from '@/components/features/BOGOLoadedBanner';
-import { storeBOGOCookie, wasBOGOBannerSeen, BOGO_CONFIG, initializeBOGO } from '@/utils/bogo-cookies';
-import { useRouter } from 'next/navigation';
+import { storeBOGOCookie, BOGO_CONFIG, initializeBOGO } from '@/utils/bogo-cookies';
 
 // Lazy load heavy components for better performance
 const AdvancedTestimonials = dynamic(() => import('@/components/features/AdvancedTestimonials').then(mod => ({ default: mod.AdvancedTestimonials })), {
@@ -74,7 +73,6 @@ export default function HomePage() {
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { trackEvent } = usePixelTracking(countryConfig.code);
-  const router = useRouter();
   
   // Initialize marketing tracking
   useMarketingTracking();

@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ProductVariant } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { BOGO_CONFIG as BOGO_COUPON_CONFIG, calculateBOGODiscount } from '@/config/coupons';
 import { BOGO_CONFIG } from '@/utils/bogo-cookies';
 import { useTranslations } from 'next-intl';
-import { Gift, Check, Sparkles, Package, Clock, AlertTriangle } from 'lucide-react';
+import { Gift, Check, Package, Clock, AlertTriangle } from 'lucide-react';
 
 interface BOGOSelectorProps {
   baseVariant: ProductVariant; // The single unit variant (1 package)

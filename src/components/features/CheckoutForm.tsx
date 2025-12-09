@@ -26,7 +26,7 @@ import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
 import { validateCouponWithAPI, calculateCouponDiscount, isBOGOCoupon, calculateBOGODiscount, type Coupon } from '@/config/coupons';
-import { storeBOGOCookie, getBOGOCookie, isBOGOActive, wasBOGOBannerSeen, initializeBOGO } from '@/utils/bogo-cookies';
+import { storeBOGOCookie, getBOGOCookie, isBOGOActive as checkBOGOActive, wasBOGOBannerSeen } from '@/utils/bogo-cookies';
 
 interface CheckoutFormProps {
   selectedVariant: ProductVariant;
@@ -232,7 +232,7 @@ export function CheckoutForm({
       if (urlCoupon && !urlMedium) {
         couponToApply = urlCoupon.toUpperCase();
         source = 'url';
-      } else if (!urlMedium && isBOGOActive()) {
+      } else if (!urlMedium && checkBOGOActive()) {
         // Check for stored BOGO cookie (only if BOGO is currently active)
         const storedBOGO = getBOGOCookie();
         if (storedBOGO) {
