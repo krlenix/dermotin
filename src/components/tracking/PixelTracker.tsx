@@ -374,36 +374,27 @@ export function usePixelTracking(countryCode: string) {
       }
     }
 
-    // Always send to CAPI (Server-side) - let the server decide if it's enabled
-    // (Browser can't check CAPI config because access tokens are server-only env vars)
-    // console.log(`🚀 Sending ${eventType} to CAPI...`, {
-    //   countryCode,
-    //   eventId: finalEventId,
-    //   hasData: !!eventData,
-    // });
-    
-    fetch('/api/capi', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventType,
-        eventData: eventData || {},
-        countryCode,
-        eventId: finalEventId,
-      }),
-      // Use keepalive to ensure the request completes even if the page is closed
-      keepalive: true,
-    })
-    .then(response => response.json())
-    .then(() => {
-      // console.log(`✅ CAPI ${eventType} response:`, data);
-    })
-    .catch(() => {
-      // Silently fail - don't block user experience
-      // console.warn(`❌ CAPI ${eventType} tracking failed:`, error);
-    });
+    // Send to CAPI (Server-side) for all events EXCEPT purchase.
+    // Purchase CAPI is handled by /api/orders with richer customer data (email, phone, address)
+    // to avoid duplicate events with mismatched eventIds.
+    if (eventType !== 'purchase') {
+      fetch('/api/capi', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventType,
+          eventData: eventData || {},
+          countryCode,
+          eventId: finalEventId,
+        }),
+        keepalive: true,
+      })
+      .then(response => response.json())
+      .then(() => {})
+      .catch(() => {});
+    }
   };
 
   return { trackEvent };

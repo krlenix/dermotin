@@ -370,9 +370,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       paymentMethod: orderData.paymentMethod as string,
       bundleItems: isBogoActive ? {} : bundleItems,
       locale: countryConfig.code,
-      // Include marketing parameters from orderData
+      fbp: orderData.fbp as string | undefined,
+      fbc: orderData.fbc as string | undefined,
+      eventId: orderData.eventId as string | undefined,
       marketingParams: orderData.marketingParams,
-      // Include coupon data if present
       coupon: orderData.coupon,
       // BOGO-specific data
       isBOGO: isBogoActive,
