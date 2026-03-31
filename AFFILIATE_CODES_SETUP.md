@@ -24,7 +24,7 @@ NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL=https://hrvatska.topoms.com/api/webhook/custom/
 NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL=https://crna-gora.topoms.com/api/webhook/custom/orders
 
 # Optional: Override the default API key
-NEXT_PUBLIC_AFFILIATE_API_KEY=mB1pHWfEli7YjpwY0eyQp0nfmbz
+NEXT_PUBLIC_AFFILIATE_API_KEY=tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum
 ```
 
 ### 2. Automatic URL Derivation
@@ -39,7 +39,7 @@ The system automatically converts:
 ```http
 GET https://clicky.topoms.com/api/affiliate/codes HTTP/1.1
 Content-Type: application/json
-X-API-Key: mB1pHWfEli7YjpwY0eyQp0nfmbz
+X-API-Key: tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum
 ```
 
 ### Expected Response Format
@@ -217,7 +217,7 @@ export const COUPONS: Record<string, Coupon> = {
 3. Confirm webhook URL is correct in environment variables
 4. Test the API endpoint directly with curl:
    ```bash
-   curl -H "X-API-Key: mB1pHWfEli7YjpwY0eyQp0nfmbz" \
+   curl -H "X-API-Key: tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum" \
         https://clicky.topoms.com/api/affiliate/codes
    ```
 

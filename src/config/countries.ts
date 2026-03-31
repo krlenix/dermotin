@@ -196,7 +196,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL 
           ? process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
           : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
       }
     }
   },
@@ -277,7 +277,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL 
           ? process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
           : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
       }
     }
   },
@@ -356,7 +356,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL 
           ? process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
           : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
       }
     }
   },
@@ -397,7 +397,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         isDefault: true,
         enabled: true,
         shipping: {
-          cost: 3,
+          cost: 4,
           currency: '€'
         }
       }
@@ -436,7 +436,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL 
           ? process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
           : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'mB1pHWfEli7YjpwY0eyQp0nfmbz'
+        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
       }
     }
   }
