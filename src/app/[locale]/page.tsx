@@ -1,64 +1,50 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { getProductsForCountry, Product } from '@/config/products';
+import { useTranslations } from 'next-intl';
+import {
+  ArrowRight,
+  Award,
+  Check,
+  Leaf,
+  Mail,
+  Menu,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Truck,
+  X,
+} from 'lucide-react';
+import { getProductsForCountry, type Product } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
 import { HOMEPAGE_IMAGES } from '@/config/images';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
-import { useMarketingTracking } from '@/hooks/useMarketingTracking';
-
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { CountriesHeader } from '@/components/features/CountriesHeader';
 import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
 import { CountrySwitcher } from '@/components/features/CountrySwitcher';
-import { Footer } from '@/components/ui/footer';
-import dynamic from 'next/dynamic';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
-import EnhancedImageEffect from '@/components/features/EnhancedImageEffect';
 import { BOGOLoadedBanner } from '@/components/features/BOGOLoadedBanner';
+import { Footer } from '@/components/ui/footer';
+import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
+import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 import { storeBOGOCookie, BOGO_CONFIG, initializeBOGO } from '@/utils/bogo-cookies';
 
-// Lazy load heavy components for better performance
-const AdvancedTestimonials = dynamic(() => import('@/components/features/AdvancedTestimonials').then(mod => ({ default: mod.AdvancedTestimonials })), {
-  loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-lg"></div>,
-  ssr: false
-});
+const AdvancedFAQ = dynamic(
+  () => import('@/components/features/AdvancedFAQ').then((mod) => ({ default: mod.AdvancedFAQ })),
+  {
+    loading: () => <div className="h-96 animate-pulse rounded-[1.75rem] bg-white/80" />,
+    ssr: false,
+  }
+);
 
-const AdvancedFAQ = dynamic(() => import('@/components/features/AdvancedFAQ').then(mod => ({ default: mod.AdvancedFAQ })), {
-  loading: () => <div className="animate-pulse bg-gray-100 h-96 rounded-lg"></div>,
-  ssr: false
-});
-// import { WheelPopup } from '@/components/wheel-of-fortune/WheelPopup';
-// import { WheelOfFortune } from '@/components/wheel-of-fortune/WheelOfFortune';
-// import { WHEEL_CONFIG, POPUP_CONFIG } from '@/config/wheel';
-
-import { 
-  Shield, 
-  Truck, 
-  Award, 
-  Leaf, 
-  CheckCircle,
-  ArrowRight,
-  Sparkles,
-  ShieldCheck,
-  Phone,
-  Mail,
-  Gift
-} from 'lucide-react';
-
-// Homepage statistics are now available through translations
-// Access via: t('homepage.stats_customers'), t('homepage.stats_rating'), etc.
-
-// Hero Images Configuration - Simple mobile/desktop setup
 const HERO_IMAGES = {
-  mobile: HOMEPAGE_IMAGES.hero.mobile, // Mobile hero image from config
-  desktop: HOMEPAGE_IMAGES.hero.main // Desktop hero image from config
+  mobile: HOMEPAGE_IMAGES.hero.mobile,
+  desktop: HOMEPAGE_IMAGES.hero.main,
 };
 
 export default function HomePage() {
@@ -66,89 +52,61 @@ export default function HomePage() {
   const locale = params.locale as string;
   const t = useTranslations();
   const countryConfig = getCountryConfig(locale);
+  const { trackEvent } = usePixelTracking(countryConfig.code);
+
   const [products, setProducts] = useState<Product[]>([]);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const headerProgressRef = useRef(0);
+  const headerAnimationFrameRef = useRef<number | null>(null);
+  const headerFrameRef = useRef<HTMLDivElement | null>(null);
+  const headerSeamRef = useRef<HTMLDivElement | null>(null);
+  const headerMembranePathRef = useRef<SVGPathElement | null>(null);
+  const headerSeamBasePathRef = useRef<SVGPathElement | null>(null);
+  const headerSeamGlowPathRef = useRef<SVGPathElement | null>(null);
+  const headerShadowRef = useRef<HTMLDivElement | null>(null);
+  const headerShellRef = useRef<HTMLDivElement | null>(null);
+  const headerSurfaceRef = useRef<HTMLDivElement | null>(null);
+  const headerHighlightRef = useRef<HTMLDivElement | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showBOGOBanner, setShowBOGOBanner] = useState(false);
   const [isBOGOActive, setIsBOGOActive] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const { trackEvent } = usePixelTracking(countryConfig.code);
-  
-  // Initialize marketing tracking
+
   useMarketingTracking();
 
-  // Client-side initialization (runs once after hydration)
   useEffect(() => {
     setIsClient(true);
-    
-    // Screen size detection
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
     };
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    // Initialize BOGO system - clears stale cookies if expired or config changed
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
     const { isActive: bogoIsActive } = initializeBOGO();
-    
-    // Check for BOGO coupon from URL or cookie
-    const checkBOGOCoupon = () => {
-      // Check if BOGO is active (handles enabled flag + expiration)
-      if (!bogoIsActive) {
-        setIsBOGOActive(false);
-        return;
-      }
-      
+
+    if (bogoIsActive) {
       const searchParams = new URLSearchParams(window.location.search);
       const urlCoupon = searchParams.get('coupon');
-      
+
       if (urlCoupon && urlCoupon.toUpperCase() === BOGO_CONFIG.couponCode) {
         storeBOGOCookie(urlCoupon, 'url');
-        // Always show banner when coupon is in URL (user explicitly shared the link)
         setShowBOGOBanner(true);
         setIsBOGOActive(true);
       } else {
-        // Check if BOGO cookie exists (returning visitor)
         const cookies = document.cookie.split(';');
-        const hasBOGOCookie = cookies.some(c => c.trim().startsWith('bogo_offer='));
+        const hasBOGOCookie = cookies.some((cookie) => cookie.trim().startsWith('bogo_offer='));
+
         if (hasBOGOCookie) {
           setIsBOGOActive(true);
         }
       }
-    };
-    checkBOGOCoupon();
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
+    }
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Smooth scroll to products section
-  const scrollToProducts = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    const productsSection = document.getElementById('products');
-    if (productsSection) {
-      productsSection.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
-
-  // Handle BOGO banner - scroll to products section
-  const handleBOGOSelectProduct = () => {
-    setShowBOGOBanner(false);
-    scrollToProducts();
-  };
-
-  // Handle BOGO banner close
-  const handleBOGOBannerClose = () => {
-    setShowBOGOBanner(false);
-  };
-  
-  // Get the appropriate image source based on screen size
-  // Ensure we use mobile image on mobile devices
-  const currentImageSrc = isClient && isMobile ? HERO_IMAGES.mobile : HERO_IMAGES.desktop;
-  
-  // Load products for the current locale
   useEffect(() => {
     const loadProducts = async () => {
       try {
@@ -159,930 +117,702 @@ export default function HomePage() {
         setProducts([]);
       }
     };
-    
+
     loadProducts();
   }, [locale]);
 
-  // Fire ViewContent event when products are loaded
   useEffect(() => {
-    if (products.length > 0 && isClient) {
-      // Get the first product or featured products
-      const featuredProducts = products.slice(0, 3); // First 3 products
-      
-      // Prepare content_ids and contents for tracking
-      const contentIds = featuredProducts.map(p => p.id);
-      const contents = featuredProducts.map(p => ({
-        id: p.id,
-        quantity: 1,
-        item_price: p.variants[0]?.price || 0,
-      }));
-      
-      // Calculate total value (sum of first variant prices)
-      const totalValue = featuredProducts.reduce((sum, p) => sum + (p.variants[0]?.price || 0), 0);
-      
-      // Fire ViewContent event
-      trackEvent('view_content', {
-        content_type: 'product',
-        content_ids: contentIds,
-        contents: contents,
-        currency: countryConfig.currency,
-        value: totalValue,
-      });
+    if (!isClient || products.length === 0) {
+      return;
     }
-  }, [products, isClient, trackEvent, countryConfig.currency]);
 
-  // Trigger underline animation when element comes into view
+    const featuredProducts = products.slice(0, 3);
+    const totalValue = featuredProducts.reduce((sum, product) => sum + (product.variants[0]?.price || 0), 0);
+
+    trackEvent('view_content', {
+      content_type: 'product',
+      content_ids: featuredProducts.map((product) => product.id),
+      contents: featuredProducts.map((product) => ({
+        id: product.id,
+        quantity: 1,
+        item_price: product.variants[0]?.price || 0,
+      })),
+      currency: countryConfig.currency,
+      value: totalValue,
+    });
+  }, [countryConfig.currency, isClient, products, trackEvent]);
+
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Add animate class to the specific element that's in view
-            entry.target.classList.add('animate');
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
+    const frame = headerFrameRef.current;
+    const seam = headerSeamRef.current;
+    const membranePath = headerMembranePathRef.current;
+    const seamBasePath = headerSeamBasePathRef.current;
+    const seamGlowPath = headerSeamGlowPathRef.current;
+    const shadow = headerShadowRef.current;
+    const shell = headerShellRef.current;
+    const surface = headerSurfaceRef.current;
+    const highlight = headerHighlightRef.current;
 
-    // Wait for elements to be rendered
-    const timer = setTimeout(() => {
-      const underlineElements = document.querySelectorAll('.hand-drawn-underline');
-      underlineElements.forEach((element) => {
-        observer.observe(element);
+    if (!frame || !seam || !membranePath || !seamBasePath || !seamGlowPath || !shadow || !shell || !surface || !highlight) {
+      return;
+    }
+
+    frame.style.transform = 'translateZ(0)';
+    seam.style.transform = 'translateZ(0)';
+    shadow.style.transform = 'translate3d(-50%, 2px, 0) scaleX(0.985)';
+    shell.style.transform = 'translateZ(0)';
+    surface.style.transform = 'translate3d(0, 0, 0) scale(1)';
+    highlight.style.transform = 'translate3d(0, -10px, 0) scale(1)';
+
+    const applyHeaderProgress = (progress: number) => {
+      const easedHeaderProgress = 1 - Math.pow(1 - progress, 2.35);
+      const squeezeProgress = Math.min(easedHeaderProgress / 0.52, 1);
+      const bubbleProgress = Math.min(Math.max((easedHeaderProgress - 0.26) / 0.74, 0), 1);
+      const shadowProgress = Math.min(Math.max((bubbleProgress - 0.72) / 0.28, 0), 1);
+      const tearProgress = Math.min(Math.max((easedHeaderProgress - 0.06) / 0.34, 0), 1) * (1 - bubbleProgress * 0.72);
+      const seamDepth = 8 + squeezeProgress * 22;
+      const membranePathValue = `M 0 0 L 100 0 L 100 6 C 90 6 79 ${Math.round(8 + seamDepth * 0.16)} 67 ${Math.round(10 + seamDepth * 0.34)} C 58 ${Math.round(12 + seamDepth * 0.48)} 42 ${Math.round(12 + seamDepth * 0.48)} 33 ${Math.round(10 + seamDepth * 0.34)} C 21 ${Math.round(8 + seamDepth * 0.16)} 10 6 0 6 Z`;
+      const seamPathValue = `M 0 6 C 10 6 21 ${Math.round(8 + seamDepth * 0.16)} 33 ${Math.round(10 + seamDepth * 0.34)} C 42 ${Math.round(12 + seamDepth * 0.48)} 58 ${Math.round(12 + seamDepth * 0.48)} 67 ${Math.round(10 + seamDepth * 0.34)} C 79 ${Math.round(8 + seamDepth * 0.16)} 90 6 100 6`;
+
+      frame.style.paddingTop = `${Math.round(bubbleProgress * 9)}px`;
+      frame.style.paddingLeft = `${Math.round(bubbleProgress * 14)}px`;
+      frame.style.paddingRight = `${Math.round(bubbleProgress * 14)}px`;
+
+      seam.style.height = `${Math.round(20 + seamDepth * 0.82)}px`;
+      seam.style.opacity = `${tearProgress * 0.22}`;
+
+      membranePath.setAttribute('d', membranePathValue);
+      membranePath.setAttribute('fill', `rgba(255,255,255,${0.015 + tearProgress * 0.035})`);
+      seamBasePath.setAttribute('d', seamPathValue);
+      seamGlowPath.setAttribute('d', seamPathValue);
+
+      shadow.style.opacity = `${shadowProgress * 0.28}`;
+      shadow.style.transform = `translate3d(-50%, ${2 + bubbleProgress * 4}px, 0) scaleX(${0.985 - bubbleProgress * 0.11})`;
+
+      shell.style.width = `calc(100% - ${Math.round(squeezeProgress * 10 + bubbleProgress * 28)}px)`;
+      shell.style.maxWidth = `${Math.round(2200 - bubbleProgress * 920)}px`;
+
+      surface.style.borderRadius = `${Math.round(easedHeaderProgress * 26)}px`;
+      surface.style.background = `linear-gradient(135deg, rgba(255, 255, 255, ${easedHeaderProgress * 0.76}), rgba(255, 255, 255, ${easedHeaderProgress * 0.3}))`;
+      surface.style.backdropFilter = `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`;
+      surface.style.webkitBackdropFilter = `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`;
+      surface.style.border = `1px solid rgba(255, 255, 255, ${easedHeaderProgress * 0.6})`;
+      surface.style.boxShadow = `inset 0 1px 0 rgba(255, 255, 255, ${0.18 + easedHeaderProgress * 0.66}), inset 0 -1px 0 rgba(255, 255, 255, ${easedHeaderProgress * 0.2})`;
+      surface.style.transform = `translate3d(0, ${easedHeaderProgress * 7}px, 0) scale(${1 - easedHeaderProgress * 0.02})`;
+
+      highlight.style.opacity = `${0.12 + easedHeaderProgress * 0.72}`;
+      highlight.style.background = `linear-gradient(180deg, rgba(255,255,255,${0.08 + easedHeaderProgress * 0.24}) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,${easedHeaderProgress * 0.24}) 0%, rgba(255,255,255,0) 58%)`;
+      highlight.style.transform = `translate3d(0, ${(1 - easedHeaderProgress) * -10}px, 0) scale(${1 + easedHeaderProgress * 0.02})`;
+    };
+
+    const animateHeader = () => {
+      const targetProgress = Math.min(window.scrollY / 170, 1);
+      const currentProgress = headerProgressRef.current;
+      const nextProgress = currentProgress + (targetProgress - currentProgress) * 0.12;
+
+      if (Math.abs(targetProgress - nextProgress) < 0.0025) {
+        headerProgressRef.current = targetProgress;
+        applyHeaderProgress(targetProgress);
+        headerAnimationFrameRef.current = null;
+        return;
+      }
+
+      headerProgressRef.current = nextProgress;
+      applyHeaderProgress(nextProgress);
+      headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
+    };
+
+    const handleScroll = () => {
+      if (headerAnimationFrameRef.current === null) {
+        headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    applyHeaderProgress(0);
+
+    let prewarmFrameOne = 0;
+    let prewarmFrameTwo = 0;
+    let prewarmFrameThree = 0;
+
+    prewarmFrameOne = window.requestAnimationFrame(() => {
+      applyHeaderProgress(0.035);
+      prewarmFrameTwo = window.requestAnimationFrame(() => {
+        applyHeaderProgress(0);
+        prewarmFrameThree = window.requestAnimationFrame(() => {
+          shadow.style.opacity = '0';
+          seam.style.opacity = '0';
+        });
       });
-    }, 100);
+    });
+
+    handleScroll();
 
     return () => {
-      clearTimeout(timer);
-      const underlineElements = document.querySelectorAll('.hand-drawn-underline');
-      underlineElements.forEach((element) => {
-        observer.unobserve(element);
-      });
+      window.removeEventListener('scroll', handleScroll);
+      if (headerAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(headerAnimationFrameRef.current);
+      }
+      window.cancelAnimationFrame(prewarmFrameOne);
+      window.cancelAnimationFrame(prewarmFrameTwo);
+      window.cancelAnimationFrame(prewarmFrameThree);
     };
   }, []);
-  
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const scrollToTestimonials = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const testimonialsSection = document.querySelector('[data-section="testimonials"]');
-    if (testimonialsSection) {
-      testimonialsSection.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+  const currentImageSrc = isClient && isMobile ? HERO_IMAGES.mobile : HERO_IMAGES.desktop;
+
+  const featureCards = useMemo(
+    () => [
+      {
+        icon: Leaf,
+        title: t('homepage.feature_natural_title'),
+        description: t('homepage.feature_natural_desc'),
+        details: t('homepage.feature_natural_details'),
+      },
+      {
+        icon: ShieldCheck,
+        title: t('homepage.feature_tested_title'),
+        description: t('homepage.feature_tested_desc'),
+        details: t('homepage.feature_tested_details'),
+      },
+      {
+        icon: Sparkles,
+        title: t('homepage.feature_results_title'),
+        description: t('homepage.feature_results_desc'),
+        details: t('homepage.feature_results_details'),
+      },
+      {
+        icon: Star,
+        title: t('homepage.feature_trusted_title'),
+        description: t('homepage.feature_trusted_desc'),
+        details: t('homepage.feature_trusted_details'),
+      },
+      {
+        icon: Truck,
+        title: t('homepage.feature_shipping_title'),
+        description: t('homepage.feature_shipping_desc'),
+        details: t('homepage.feature_shipping_details'),
+      },
+      {
+        icon: Award,
+        title: t('homepage.feature_guarantee_title'),
+        description: t('homepage.feature_guarantee_desc'),
+        details: t('homepage.feature_guarantee_details'),
+      },
+    ],
+    [t]
+  );
+
+  const supportHref = countryConfig.company.phone
+    ? `tel:${countryConfig.company.phone}`
+    : `mailto:${countryConfig.company.email}`;
+  const supportLabel = countryConfig.company.phone || countryConfig.company.email;
+
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setIsMenuOpen(false);
     }
   };
-  // const [showWheelTest, setShowWheelTest] = useState(false);
 
-  // Handle wheel of fortune prize won
-  // const handlePrizeWon = (couponCode: string) => {
-  //   console.log('Prize won with coupon code:', couponCode);
-  //   // Here you can implement logic to:
-  //   // - Save coupon to local storage
-  //   // - Send analytics event
-  //   // - Show notification
-  //   // - Apply coupon automatically to cart
-  //   
-  //   // For now, we'll just show an alert
-  //   if (typeof window !== 'undefined') {
-  //     localStorage.setItem('wheel_coupon', couponCode);
-  //   }
-  // };
+  const handleMenuScroll = (event: MouseEvent<HTMLButtonElement>, id: string) => {
+    event.preventDefault();
+    scrollToSection(id);
+  };
 
-  // const handleWheelClose = () => {
-  //   console.log('Wheel popup closed');
-  //   // Analytics or other cleanup logic can go here
-  // };
+  const handleBOGOSelectProduct = () => {
+    setShowBOGOBanner(false);
+    scrollToSection('products');
+  };
 
-  // Debug wheel configuration
-  // useEffect(() => {
-  //   console.log('🎡 HomePage: WHEEL_CONFIG:', WHEEL_CONFIG);
-  //   console.log('🎡 HomePage: POPUP_CONFIG:', POPUP_CONFIG);
-  // }, []);
-
-
-
-  // Handle scroll animations and header transparency
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 50);
-
-      // Animate elements on scroll
-      const elements = document.querySelectorAll('.animate-on-scroll, .animate-on-scroll-left, .animate-on-scroll-right');
-      elements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const elementVisible = 150;
-        
-        if (elementTop < window.innerHeight - elementVisible) {
-          element.classList.add('animate');
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Run once on mount
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const SupportIcon = countryConfig.company.phone ? Phone : Mail;
 
   return (
     <>
-      {/* BOGO Coupon Loaded Banner - Fixed at top */}
       <BOGOLoadedBanner
         isVisible={showBOGOBanner}
-        onClose={handleBOGOBannerClose}
+        onClose={() => setShowBOGOBanner(false)}
         onSelectProduct={handleBOGOSelectProduct}
       />
 
-      {/* Country Mismatch Banner */}
       <CountryMismatchBanner />
-      
-      <div className="min-h-screen bg-white">
-        
-        {/* Fixed Header */}
-      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b py-1.5 md:py-2' 
-          : 'bg-transparent py-2 md:py-4'
-      }`}>
-        <div className="container mx-auto px-4 overflow-hidden">
-          <div className="relative flex items-center w-full">
-            {/* Navigation Menu - Left side */}
-            <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 flex-1 overflow-hidden">
-              <Link 
-                href={`/${locale}`} 
-                className={`text-sm font-medium transition-colors underline-animate ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-brand-orange' 
-                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                }`}
-              >
-                {t('navigation.home')}
-              </Link>
-              <button 
-                onClick={scrollToProducts}
-                className={`text-sm font-medium transition-colors underline-animate ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-brand-orange' 
-                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                }`}
-              >
-                {t('navigation.products')}
-              </button>
-              <button 
-                onClick={scrollToTestimonials}
-                className={`text-sm font-medium transition-colors underline-animate ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-brand-orange' 
-                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                }`}
-              >
-                {t('navigation.testimonials')}
-              </button>
-              <Link 
-                href="#faq" 
-                className={`text-sm font-medium transition-colors underline-animate ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-brand-orange' 
-                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                }`}
-              >
-                {t('navigation.faq')}
-              </Link>
-              <Link
-                href={`/${locale}/contact`}
-                className="bg-brand-orange text-white px-3 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors shadow-lg whitespace-nowrap"
-              >
-                {t('navigation.contact')}
-              </Link>
-            </nav>
 
-            {/* Mobile Menu Button - Left side on mobile */}
-            <div className="md:hidden flex-1">
-              <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={`p-1.5 transition-colors ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-brand-orange' 
-                    : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                }`}
-                aria-label={t('ui.toggle_menu')}
-              >
-                {isMenuOpen ? (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                )}
-              </button>
-            </div>
-
-            {/* Absolutely Centered Logo */}
-            <div className="absolute left-1/2 transform -translate-x-1/2">
-              <Image
-                src={countryConfig.logo}
-                alt={t('ui.alt_logo')}
-                width={150}
-                height={40}
-                className="h-7 md:h-10 w-auto"
-                priority
-              />
-            </div>
-
-            {/* Contact Info & Country Switcher - Right side */}
-            {countryConfig.company.phone ? (
-              <>
-                <div className="hidden md:flex items-center gap-3 text-sm flex-1 justify-end">
-                  <div className="flex items-center gap-1">
-                    <Phone className="h-4 w-4 text-brand-orange" />
-                    <a 
-                      href={`tel:${countryConfig.company.phone}`}
-                      className={`font-medium transition-colors ${
-                        isScrolled 
-                          ? 'text-gray-700 hover:text-brand-orange' 
-                          : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                      }`}
-                    >
-                      {countryConfig.company.phone}
-                    </a>
-                  </div>
-                  <CountrySwitcher 
-                    className={isScrolled 
-                      ? '!bg-white/90 hover:!bg-white !border-gray-200' 
-                      : '!bg-white/95 hover:!bg-white !border-gray-300 !shadow-md'
-                    } 
-                  />
-                </div>
-
-                {/* Mobile phone & Country Switcher - Right side on mobile */}
-                <div className="md:hidden flex-1 flex gap-2 justify-end items-center">
-                  <a 
-                    href={`tel:${countryConfig.company.phone}`}
-                    className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
-                    aria-label={t('ui.call_us')}
-                  >
-                    <Phone className="h-4 w-4" />
-                  </a>
-                  <CountrySwitcher 
-                    variant="ghost"
-                    className={`!h-8 !px-2 ${
-                      isScrolled 
-                        ? '!bg-white/90 hover:!bg-white !border-gray-200' 
-                        : '!bg-white/95 hover:!bg-white !border-gray-300'
-                    }`}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="hidden md:flex items-center gap-3 text-sm flex-1 justify-end">
-                  <div className="flex items-center gap-1">
-                    <Mail className="h-4 w-4 text-brand-orange" />
-                    <a 
-                      href={`mailto:${countryConfig.company.email}`}
-                      className={`font-medium transition-colors ${
-                        isScrolled 
-                          ? 'text-gray-700 hover:text-brand-orange' 
-                          : 'text-gray-800 hover:text-brand-orange drop-shadow-sm'
-                      }`}
-                    >
-                      {countryConfig.company.email}
-                    </a>
-                  </div>
-                  <CountrySwitcher 
-                    className={isScrolled 
-                      ? '!bg-white/90 hover:!bg-white !border-gray-200' 
-                      : '!bg-white/95 hover:!bg-white !border-gray-300 !shadow-md'
-                    } 
-                  />
-                </div>
-
-                {/* Mobile email & Country Switcher - Right side on mobile */}
-                <div className="md:hidden flex-1 flex gap-2 justify-end items-center">
-                  <a 
-                    href={`mailto:${countryConfig.company.email}`}
-                    className="p-1.5 text-brand-orange hover:text-brand-orange/80 transition-colors drop-shadow-sm"
-                    aria-label={t('ui.email_us')}
-                  >
-                    <Mail className="h-4 w-4" />
-                  </a>
-                  <CountrySwitcher 
-                    variant="ghost"
-                    className={`!h-8 !px-2 ${
-                      isScrolled 
-                        ? '!bg-white/90 hover:!bg-white !border-gray-200' 
-                        : '!bg-white/95 hover:!bg-white !border-gray-300'
-                    }`}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Dropdown */}
-          {isMenuOpen && (
-            <div className={`md:hidden mt-2 pb-2 border-t border-gray-200 ${
-              !isScrolled ? 'bg-white/95 backdrop-blur-md rounded-lg mx-2' : ''
-            }`}>
-              <nav className="flex flex-col space-y-2 pt-2">
-                <Link 
-                  href={`/${locale}`} 
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors px-2 py-1"
-                >
-                  {t('navigation.home')}
-                </Link>
-                <button 
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    scrollToProducts();
-                  }}
-                  className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors px-2 py-1 text-left"
-                >
-                  {t('navigation.products')}
-                </button>
-                <button 
-                  onClick={(e) => {
-                    setIsMenuOpen(false);
-                    scrollToTestimonials(e);
-                  }}
-                  className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors px-2 py-1 text-left"
-                >
-                  {t('navigation.testimonials')}
-                </button>
-                <a 
-                  href="#faq" 
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-sm font-medium text-gray-700 hover:text-brand-orange transition-colors px-2 py-1"
-                >
-                  {t('navigation.faq')}
-                </a>
-                <Link
-                  href={`/${locale}/contact`}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="bg-brand-orange text-white px-3 py-2 rounded-full text-sm font-medium hover:bg-brand-orange/90 transition-colors text-center mx-2 whitespace-nowrap"
-                >
-                  {t('navigation.contact')}
-                </Link>
-                {(countryConfig.company.phone || countryConfig.company.email) && (
-                  <div className="px-2 py-1 border-t border-gray-200 mt-2 pt-3">
-                    {countryConfig.company.phone ? (
-                      <a 
-                        href={`tel:${countryConfig.company.phone}`}
-                        className="flex items-center gap-2 text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors"
-                      >
-                        <Phone className="h-4 w-4" />
-                        {countryConfig.company.phone}
-                      </a>
-                    ) : (
-                      <a 
-                        href={`mailto:${countryConfig.company.email}`}
-                        className="flex items-center gap-2 text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors"
-                      >
-                        <Mail className="h-4 w-4" />
-                        {countryConfig.company.email}
-                      </a>
-                    )}
-                  </div>
-                )}
-              </nav>
-            </div>
-          )}
+      <div
+        className="relative min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f6f8f6_0%,#ffffff_28%,#f8fbf9_62%,#ffffff_100%)]"
+        style={{ maxWidth: '100vw' }}
+      >
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-28 right-0 h-96 w-96 rounded-full bg-[#358055]/8 blur-3xl" />
+          <div className="absolute top-[32rem] -left-20 h-80 w-80 rounded-full bg-[#F3765D]/8 blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 h-72 w-72 rounded-full bg-[#358055]/7 blur-3xl" />
         </div>
-      </header>
 
-      {/* Hero Section - Enhanced with Modern Design */}
-      <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 overflow-hidden">
-        {/* Simplified Background Elements - Optimized for LCP */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-r from-brand-green/10 to-emerald-300/5 rounded-full blur-3xl opacity-50"></div>
-          <div className="absolute bottom-20 left-20 w-56 h-56 bg-gradient-to-r from-brand-orange/10 to-orange-300/5 rounded-full blur-2xl opacity-50"></div>
-        </div>
-        
-        <div className="container mx-auto px-4 pt-20 md:pt-24">
-          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center min-h-[80vh] max-w-full overflow-hidden">
-            {/* Left Content - Optimized for LCP */}
-            <div className="space-y-8 lg:pr-8 text-center lg:text-left">
-              {/* Badge */}
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-green/10 to-emerald-100/50 border border-brand-green/20 rounded-full text-sm font-medium text-brand-green animate-fadeInUp">
-                <Sparkles className="w-4 h-4 mr-2" />
-                {t('homepage.trusted_by_thousands')}
-              </div>
-
-              <div className="space-y-6">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent leading-[1.1] animate-fadeInUp">
-                  {t('homepage.hero_title')}
-                </h1>
-                
-                <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
-                  {t('homepage.hero_subtitle')}
-                </p>
-
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 animate-fadeInUp justify-center lg:justify-start" style={{animationDelay: '0.4s'}}>
-                <Button 
-                  size="lg" 
-                  onClick={scrollToProducts}
-                  className="bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-102 hover:-translate-y-0.5 group cursor-pointer relative overflow-hidden"
-                >
-                  {/* Subtle background glow on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 -translate-x-full group-hover:translate-x-full"></div>
-                  
-                  {/* Button content */}
-                  <span className="relative z-10 flex items-center">
-                    {t('homepage.products_button')}
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                  </span>
-                </Button>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="flex flex-wrap items-center gap-6 pt-4 animate-fadeInUp justify-center lg:justify-start" style={{animationDelay: '0.5s'}}>
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-brand-green" />
-                  <span className="text-sm text-gray-600">{t('homepage.trust_dermatologically_tested')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Leaf className="w-5 h-5 text-brand-green" />
-                  <span className="text-sm text-gray-600">{t('homepage.trust_natural_ingredients')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-brand-green" />
-                  <span className="text-sm text-gray-600">{t('homepage.trust_clinically_proven')}</span>
-                </div>
-              </div>
+        <header className="fixed inset-x-0 top-0 z-40">
+          <div ref={headerFrameRef} className="relative" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0 }}>
+            <div ref={headerSeamRef} className="pointer-events-none absolute inset-x-0 top-full overflow-hidden" style={{ height: '32px', opacity: 0, willChange: 'height, opacity, transform', contain: 'paint' }}>
+              <svg className="h-full w-full" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="homepage-header-seam" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                    <stop offset="18%" stopColor="rgba(255,255,255,0.18)" />
+                    <stop offset="50%" stopColor="rgba(255,255,255,0.32)" />
+                    <stop offset="82%" stopColor="rgba(255,255,255,0.18)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                  </linearGradient>
+                </defs>
+                <path ref={headerMembranePathRef} d="M 0 0 L 100 0 L 100 6 C 90 6 79 9 67 13 C 58 16 42 16 33 13 C 21 9 10 6 0 6 Z" fill="rgba(255,255,255,0.015)" />
+                <path ref={headerSeamBasePathRef} d="M 0 6 C 10 6 21 9 33 13 C 42 16 58 16 67 13 C 79 9 90 6 100 6" stroke="rgba(53,128,85,0.025)" strokeWidth="2.2" fill="none" />
+                <path ref={headerSeamGlowPathRef} d="M 0 6 C 10 6 21 9 33 13 C 42 16 58 16 67 13 C 79 9 90 6 100 6" stroke="url(#homepage-header-seam)" strokeWidth="0.85" fill="none" />
+              </svg>
             </div>
-            
-            {/* Right Image - Optimized for LCP */}
-            <div className="flex justify-center lg:block lg:relative lg:w-full lg:max-w-full lg:overflow-visible">
-              
-              {/* Mobile: Just the image with rounded corners */}
-              <div className="lg:hidden pb-8">
-                <Image
-                  src={currentImageSrc}
-                  alt={t('homepage.natural_beauty_alt')}
-                  width={1200}
-                  height={1400}
-                  className="object-contain w-full max-w-lg h-auto rounded-2xl"
-                  priority
-                  loading="eager"
-                  fetchPriority="high"
-                  quality={100}
-                  sizes="90vw"
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                />
-              </div>
+            <div ref={headerShadowRef} className="pointer-events-none absolute left-1/2 top-full h-10 w-[74%] -translate-x-1/2 rounded-full bg-[#1a362a]/14 blur-3xl" style={{ opacity: 0, transform: 'translate3d(-50%, 4px, 0) scaleX(0.92)', willChange: 'transform, opacity', contain: 'paint' }} />
+            <div
+              ref={headerShellRef}
+              className="mx-auto w-full"
+              style={{ width: 'calc(100% - 0px)', maxWidth: '2200px', willChange: 'width, max-width, transform', contain: 'layout paint style' }}
+            >
+              <div
+                ref={headerSurfaceRef}
+                className="relative overflow-hidden px-4 py-3 md:px-6"
+                style={{ borderRadius: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0))', border: '1px solid rgba(255,255,255,0)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0), inset 0 -1px 0 rgba(255,255,255,0)', transform: 'translate3d(0, 0, 0) scale(1)', willChange: 'transform, border-radius, backdrop-filter, box-shadow, background, border', contain: 'paint' }}
+              >
+              <div ref={headerHighlightRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0.12, background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%)', transform: 'translate3d(0, -10px, 0) scale(1)', willChange: 'transform, opacity', contain: 'paint' }} />
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 md:gap-5">
+                  <button
+                    type="button"
+                    onClick={() => setIsMenuOpen((open) => !open)}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#358055]/15 bg-white/80 text-slate-700 md:hidden"
+                    aria-label={t('ui.toggle_menu')}
+                  >
+                    {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                  </button>
 
-              {/* Desktop: Full layout with effects */}
-              <div className="hidden lg:block relative h-auto flex items-center justify-center p-4 md:p-6 max-w-full lg:z-10">
-                <div className="relative group w-auto lg:w-full lg:max-w-[500px] lg:z-20 flex justify-center">
-                  {/* Background overlay - desktop only */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-green-100/30 rounded-3xl animate-float lg:z-0"></div>
-                  
-                  {/* Enhanced background glow effect - desktop only */}
-                  <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-r from-brand-green/20 via-transparent to-brand-orange/20 rounded-3xl blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
-                  
-                  {/* Floating particles - desktop only */}
-                  <div className="absolute -top-4 -left-4 w-8 h-8 bg-brand-green/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.2s'}}></div>
-                  <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-brand-orange/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.4s'}}></div>
-                  <div className="absolute top-1/2 -right-6 w-4 h-4 bg-brand-green/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 animate-float" style={{animationDelay: '0.6s'}}></div>
-                  
-                  {/* Desktop image with effects */}
-                  <div className="relative overflow-visible transition-all duration-700 rounded-2xl lg:z-30 w-full h-auto">
+                  <Link href={`/${locale}`} className="inline-flex items-center">
                     <Image
-                      src={currentImageSrc}
-                      alt={t('homepage.natural_beauty_alt')}
-                      width={1200}
-                      height={1400}
-                      className="object-contain w-full h-auto transition-all duration-700 group-hover:scale-[1.02] rounded-2xl relative lg:z-40"
+                      src={countryConfig.logo}
+                      alt={t('ui.alt_logo')}
+                      width={150}
+                      height={40}
+                      className="h-8 w-auto md:h-10"
                       priority
-                      loading="eager"
-                      fetchPriority="high"
-                      quality={100}
-                      sizes="(max-width: 768px) 90vw, (max-width: 1024px) 50vw, 500px"
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
-                      style={{
-                        minWidth: '400px',
-                        minHeight: '500px'
-                      }}
                     />
-                    
-                    {/* Overlay effect on hover */}
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
-                    
-                    {/* Sparkle effect */}
-                    <div className="absolute top-4 right-4 w-6 h-6 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-0 group-hover:scale-100">
-                      <Sparkles className="w-3 h-3 text-brand-orange" />
+                  </Link>
+                </div>
+
+                <nav className="hidden items-center gap-5 text-sm font-semibold text-slate-700 md:flex">
+                  <button type="button" onClick={(event) => handleMenuScroll(event, 'products')} className="transition-colors hover:text-[#F3765D]">
+                    {t('navigation.products')}
+                  </button>
+                  <button type="button" onClick={(event) => handleMenuScroll(event, 'story')} className="transition-colors hover:text-[#F3765D]">
+                    {t('homepage.features_title')}
+                  </button>
+                  <button type="button" onClick={(event) => handleMenuScroll(event, 'faq')} className="transition-colors hover:text-[#F3765D]">
+                    {t('navigation.faq')}
+                  </button>
+                </nav>
+
+                <div className="flex items-center gap-2 md:gap-3">
+                  <CountrySwitcher variant="ghost" />
+                  <a
+                    href={supportHref}
+                    className="liquid-glass-soft hidden items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-slate-700 md:inline-flex"
+                  >
+                    {countryConfig.company.phone ? (
+                      <Phone className="h-4 w-4 text-[#F3765D]" />
+                    ) : (
+                      <Mail className="h-4 w-4 text-[#F3765D]" />
+                    )}
+                    {supportLabel}
+                  </a>
+                  <Link
+                    href={`/${locale}/contact`}
+                    className="inline-flex items-center justify-center rounded-full bg-[#F3765D] px-4 py-2 text-sm font-extrabold text-white shadow-lg transition-colors hover:bg-[#e0654d]"
+                  >
+                    {t('navigation.contact')}
+                  </Link>
+                </div>
+              </div>
+
+              {isMenuOpen && (
+                <div className="mt-3 rounded-[1.3rem] border border-white/60 bg-white/75 p-4 md:hidden">
+                  <nav className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
+                    <button
+                      type="button"
+                      onClick={(event) => handleMenuScroll(event, 'products')}
+                      className="rounded-xl px-3 py-2 text-left hover:bg-[#358055]/5"
+                    >
+                      {t('navigation.products')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => handleMenuScroll(event, 'story')}
+                      className="rounded-xl px-3 py-2 text-left hover:bg-[#358055]/5"
+                    >
+                      {t('homepage.features_title')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => handleMenuScroll(event, 'faq')}
+                      className="rounded-xl px-3 py-2 text-left hover:bg-[#358055]/5"
+                    >
+                      {t('navigation.faq')}
+                    </button>
+                    <Link
+                      href={`/${locale}/contact`}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="rounded-xl px-3 py-2 hover:bg-[#358055]/5"
+                    >
+                      {t('navigation.contact')}
+                    </Link>
+                  </nav>
+                </div>
+              )}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className="relative pb-16 pt-28 md:pb-20 md:pt-34">
+          <section className="relative">
+            <div className="container mx-auto px-4">
+              <div className="section-card-strong overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10">
+                <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
+                  <div className="space-y-6">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="inline-flex items-center rounded-full border border-[#358055]/20 bg-[#358055]/10 px-3 py-1 text-[13px] font-extrabold tracking-[0.01em] text-[#2f6f4a]">
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        {t('homepage.trusted_by_thousands')}
+                      </span>
+                      <span className="inline-flex items-center rounded-full border border-[#F3765D]/20 bg-[#F3765D]/10 px-3 py-1 text-[13px] font-extrabold tracking-[0.01em] text-[#ba5a47]">
+                        {t('homepage.most_popular')}
+                      </span>
                     </div>
+
+                    <div className="space-y-4">
+                      <h1 className="max-w-3xl text-4xl font-black leading-[1.12] tracking-[-0.02em] text-slate-900 sm:text-5xl lg:text-6xl">
+                        {t('homepage.hero_title')}
+                      </h1>
+                      <p className="max-w-2xl text-lg leading-relaxed text-slate-700 md:text-xl">
+                        {t('homepage.hero_subtitle')}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700">
+                      <div className="liquid-glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2">
+                        <div className="flex text-amber-400">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className="h-4 w-4 fill-current" />
+                          ))}
+                        </div>
+                        <span className="font-semibold">4.97/5</span>
+                      </div>
+                      <div className="liquid-glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2">
+                        <ShieldCheck className="h-4 w-4 text-[#358055]" />
+                        <span className="font-medium">{t('homepage.trust_dermatologically_tested')}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                      <button
+                        type="button"
+                        onClick={() => scrollToSection('products')}
+                        className="inline-flex items-center justify-center rounded-full bg-[#F3765D] px-8 py-4 text-base font-extrabold text-white shadow-[0_18px_36px_rgba(243,118,93,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e0654d]"
+                      >
+                        {t('homepage.products_button')}
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </button>
+                      <Link
+                        href={`/${locale}/contact`}
+                        className="inline-flex items-center justify-center rounded-full border border-[#358055]/15 bg-white px-8 py-4 text-base font-bold text-slate-800 transition-colors hover:border-[#F3765D]/30 hover:text-[#F3765D]"
+                      >
+                        {t('navigation.contact')}
+                      </Link>
+                    </div>
+
+                    <div className="overflow-hidden rounded-[1.5rem] border border-[#358055]/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,250,248,0.94))] shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+                      {[
+                        t('homepage.trust_dermatologically_tested'),
+                        t('homepage.trust_natural_ingredients'),
+                        t('homepage.trust_clinically_proven'),
+                      ].map((item, index) => (
+                        <div
+                          key={item}
+                          className={`flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-slate-700 md:px-5 ${
+                            index > 0 ? 'border-t border-[#358055]/10' : ''
+                          }`}
+                        >
+                          <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#358055]/18 bg-[#358055]/8">
+                            <Check className="h-3.5 w-3.5 text-[#358055]" />
+                          </span>
+                          <span className="leading-6">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="relative overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(242,247,244,0.94))] p-4 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                      <div className="absolute -left-6 top-10 hidden h-24 w-24 rounded-full bg-[#F3765D]/15 blur-2xl md:block" />
+                      <div className="absolute -right-6 bottom-10 hidden h-28 w-28 rounded-full bg-[#358055]/15 blur-2xl md:block" />
+                      <div className="relative overflow-hidden rounded-[1.6rem] bg-[radial-gradient(circle_at_top_left,rgba(53,128,85,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(243,118,93,0.12),transparent_24%),linear-gradient(180deg,rgba(248,251,249,1),rgba(255,255,255,1))] p-4">
+                        <Image
+                          src={currentImageSrc}
+                          alt={t('homepage.natural_beauty_alt')}
+                          width={1200}
+                          height={1400}
+                          className="h-auto w-full rounded-[1.3rem] object-contain"
+                          priority
+                          quality={95}
+                          sizes="(max-width: 1024px) 100vw, 42vw"
+                        />
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* Countries Header Section */}
-      <CountriesHeader />
+          <CountriesHeader />
 
-      <main className="bg-white">
-
-        {/* Enhanced Product Showcase */}
-        <section id="products" className="py-20 bg-gradient-to-b from-white to-gray-50 scroll-mt-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16 animate-fadeInUp">
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-orange/10 to-orange-100/50 border border-brand-orange/20 rounded-full text-sm font-medium text-brand-orange mb-6">
-                <Sparkles className="w-4 h-4 mr-2" />
-                {t('homepage.most_popular')}
-              </div>
-              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-                {t('homepage.products_section_title')}
-              </h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
-                {t('homepage.product_showcase_subtitle')}
-              </p>
-            </div>
-            
-            <div className={`grid gap-8 ${
-              products.length === 1 
-                ? 'grid-cols-1 max-w-sm mx-auto' 
-                : products.length === 2 
-                ? 'grid-cols-1 md:grid-cols-2 max-w-2xl mx-auto' 
-                : products.length === 3 
-                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto' 
-                : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
-            }`}>
-              {products.map((product, index) => (
-                <Card 
-                  key={product.id} 
-                  className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 group animate-slideInScale bg-white relative p-0"
-                  style={{animationDelay: `${index * 0.1}s`}}
+          <section id="products" className="scroll-mt-28 py-8 md:py-10">
+            <div className="container mx-auto px-4">
+              <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div className="max-w-3xl">
+                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.featured_products')}</p>
+                  <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 md:text-5xl">
+                    <span className="highlight-block-orange">{t('homepage.products_section_title')}</span>
+                  </h2>
+                  <p className="mt-4 text-lg leading-relaxed text-slate-600">{t('homepage.product_showcase_subtitle')}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection('faq')}
+                  className="inline-flex items-center text-sm font-semibold text-[#F3765D] transition-colors hover:text-[#e0654d]"
                 >
-                  {/* Bestseller Badge */}
-                  {index === 0 && !isBOGOActive && (
-                    <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-brand-orange to-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                      {t('homepage.bestseller')}
-                    </div>
-                  )}
-                  
-                  {/* BOGO Corner Ribbon Badge - Shows when coupon is active */}
-                  {isBOGOActive && (
-                    <>
-                      {/* Corner ribbon */}
-                      <div className="absolute -top-1 -right-1 z-20 overflow-hidden w-24 h-24 pointer-events-none">
-                        <div className="absolute top-4 -right-8 w-32 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-bold py-1 text-center transform rotate-45 shadow-md">
-                          1+1 GRATIS
+                  {t('homepage.learn_more_button')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </div>
+
+              {products.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+                  {products.map((product, index) => (
+                    <Link
+                      key={product.id}
+                      href={`/${locale}/checkouts/${product.slug}`}
+                      className="group relative overflow-hidden rounded-[1.35rem] border border-[#d7e6de] bg-[linear-gradient(180deg,#f7faf8_0%,#eef4f0_100%)] shadow-[0_14px_34px_rgba(15,23,42,0.05)] transition-transform duration-300 hover:-translate-y-1 md:rounded-[1.65rem]"
+                    >
+                      <div className="relative aspect-square overflow-hidden bg-[linear-gradient(180deg,#fafafa_0%,#ececec_100%)]">
+                        {isBOGOActive && index === 0 && (
+                          <div className="absolute left-3 top-3 z-10 rounded-full bg-[#358055] px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-white">
+                            1+1 GRATIS
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.45),rgba(255,255,255,0.12)_34%,transparent_62%)]" />
+                        <ProductImageHover
+                          mainImage={product.images.main}
+                          hoverImage={
+                            product.images.gallery && product.images.gallery.length > 0
+                              ? product.images.gallery[product.images.gallery.length - 1] || product.images.main
+                              : product.images.main
+                          }
+                          productName={product.name}
+                          width={520}
+                          height={520}
+                          className="h-full w-full transition-transform duration-500 group-hover:scale-[1.01]"
+                          imageClassName="object-contain object-center"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
+                          <div className="w-full rounded-[1rem] border border-white/38 bg-[linear-gradient(180deg,rgba(255,255,255,0.52),rgba(255,255,255,0.3))] px-3 py-2.5 shadow-[0_10px_22px_rgba(15,23,42,0.07)] backdrop-blur-lg md:rounded-[1.15rem] md:px-4 md:py-3">
+                            <p className="text-base font-black uppercase tracking-[0.02em] text-slate-950 md:text-lg">{product.name}</p>
+                            <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-700 md:text-sm">{product.shortDescription}</p>
+                          </div>
                         </div>
                       </div>
-                      {/* Small badge in top left */}
-                      <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-lg">
-                        <Gift className="w-3 h-3" />
-                        <span>1+1</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section id="story" className="scroll-mt-28 py-8 md:py-10">
+            <div className="container mx-auto px-4">
+              <div className="section-card overflow-hidden">
+                <div className="grid gap-0 lg:grid-cols-[0.92fr_1.08fr]">
+                  <div className="relative overflow-hidden px-6 py-6 md:px-8 md:py-8">
+                    <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(250,252,251,0.98)_0%,rgba(241,247,244,0.96)_36%,rgba(252,247,243,0.95)_100%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(96,142,126,0.24),transparent_34%),radial-gradient(circle_at_85%_18%,rgba(255,107,53,0.14),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.18),transparent_58%)]" />
+                    <div className="relative h-full">
+                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.proven_results')}</p>
+                      <h2 className="mt-4 text-3xl font-black leading-tight text-slate-950 md:text-5xl">
+                        {t('homepage.before_after_title')}
+                      </h2>
+                      <p className="mt-4 max-w-2xl text-lg leading-relaxed text-slate-600">
+                        {t('homepage.before_after_subtitle')}
+                      </p>
+
+                      <div className="mt-6 grid gap-3">
+                        {[
+                          {
+                            title: t('homepage.visible_results'),
+                            description: t('homepage.visible_results_desc'),
+                          },
+                          {
+                            title: t('homepage.safe_all_skin'),
+                            description: t('homepage.safe_all_skin_desc'),
+                          },
+                          {
+                            title: t('homepage.no_side_effects'),
+                            description: t('homepage.no_side_effects_desc'),
+                          },
+                        ].map((item) => (
+                          <div
+                            key={item.title}
+                            className="rounded-2xl border border-white/70 bg-white/82 px-4 py-4 shadow-[0_10px_24px_rgba(53,128,85,0.05)]"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="rounded-full bg-[#358055]/10 p-1.5">
+                                <Check className="h-4 w-4 text-[#358055]" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-slate-900">{item.title}</p>
+                                <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </>
-                  )}
-                  
-                  <div className="aspect-square relative bg-gradient-to-br from-gray-50 to-white p-0 overflow-hidden">
-                    {/* Background decoration */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-green/5 to-brand-orange/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
-                    <div className="relative w-full h-full flex items-center justify-center">
-                      <ProductImageHover
-                        mainImage={product.images.main}
-                        hoverImage={
-                          product.images.gallery && 
-                          product.images.gallery.length > 0 && 
-                          product.images.gallery[product.images.gallery.length - 1] &&
-                          product.images.gallery[product.images.gallery.length - 1].trim() !== ''
-                            ? product.images.gallery[product.images.gallery.length - 1] 
-                            : product.images.main
-                        }
-                        productName={product.name}
-                        width={300}
-                        height={300}
-                        className="w-full h-full"
+                    </div>
+                  </div>
+
+                  <div className="px-6 py-6 md:px-8 md:py-8">
+                    <div className="relative h-full overflow-hidden rounded-[1.8rem] bg-[linear-gradient(180deg,#f8fbf9,#ffffff)] p-4">
+                      <Image
+                        src={HOMEPAGE_IMAGES.beforeAfter.main}
+                        alt={t('homepage.before_after_alt')}
+                        width={900}
+                        height={720}
+                        className="h-full w-full rounded-[1.4rem] object-cover"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
                       />
                     </div>
                   </div>
-                  
-                  <CardContent className="p-6 text-center relative">
-                    <h3 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-brand-green transition-colors duration-300">{product.name}</h3>
-                    <p className="text-sm text-gray-600 mb-4 leading-relaxed">{product.shortDescription}</p>
-                    
-                    {/* Product Purpose */}
-                    <p className="text-xs text-gray-500 mb-6 leading-relaxed italic">{product.purpose}</p>
-                    
-                    {/* Rating - Commented Out */}
-                    {/* <div className="flex items-center justify-center gap-2 mb-4">
-                      <div className="flex text-yellow-400">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} className="h-4 w-4 fill-current" />
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-500 font-medium">(4.8)</span>
-                      <span className="text-xs text-gray-400">• 127 {t('homepage.reviews_count')}</span>
-                    </div> */}
-                    
-                    {/* Price - Commented Out */}
-                    {/* <div className="mb-6">
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-2xl font-bold text-brand-orange">
-                          {product.variants[0].discountPrice || product.variants[0].price} {countryConfig.currencySymbol}
-                        </span>
-                        {product.variants[0].discountPrice && (
-                          <span className="text-sm text-gray-500 line-through">
-                            {product.variants[0].price} {countryConfig.currencySymbol}
-                          </span>
-                        )}
-                      </div>
-                      {product.variants[0].discountPrice && (
-                        <div className="text-sm text-green-600 font-medium mt-1">
-                          {t('homepage.savings')}: {product.variants[0].price - product.variants[0].discountPrice} {countryConfig.currencySymbol}
-                        </div>
-                      )}
-                    </div> */}
-                    
-                    {/* CTA Button */}
-                    <Button asChild size="lg" className="bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white w-full rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group/btn">
-                      <Link href={`/${locale}/checkouts/${product.slug}`}>
-                        {t('homepage.more_info')}
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                      </Link>
-                    </Button>
-                    
-                    {/* Trust indicators */}
-                    <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Truck className="w-3 h-3" />
-                        <span>{t('homepage.fast_delivery')}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Shield className="w-3 h-3" />
-                        <span>{t('homepage.guarantee')}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            
-
-          </div>
-        </section>
-
-        {/* Trust Badges Section */}
-        <section className="py-8 bg-gradient-to-r from-gray-50 to-white border-y border-gray-100">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 lg:gap-12">
-              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
-                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
-                  <Shield className="w-5 h-5 text-brand-green" />
                 </div>
-                <span className="text-sm font-medium">{t('homepage.trust_dermatologically_tested')}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
-                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
-                  <Leaf className="w-5 h-5 text-brand-green" />
-                </div>
-                <span className="text-sm font-medium">{t('homepage.trust_natural_ingredients')}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
-                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
-                  <Award className="w-5 h-5 text-brand-green" />
-                </div>
-                <span className="text-sm font-medium">{t('homepage.trust_clinically_proven')}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600 hover:text-brand-green transition-colors duration-300 group">
-                <div className="p-2 bg-brand-green/10 rounded-full group-hover:bg-brand-green/20 transition-colors">
-                  <ShieldCheck className="w-5 h-5 text-brand-green" />
-                </div>
-                <span className="text-sm font-medium">{t('homepage.trust_no_parabens')}</span>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Enhanced Before/After Section */}
-        <section className="py-20 bg-gradient-to-br from-emerald-50 via-white to-orange-50 w-full overflow-hidden">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8 animate-on-scroll-left">
-                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-brand-green/10 to-emerald-100/50 border border-brand-green/20 rounded-full text-sm font-medium text-brand-green">
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  {t('homepage.proven_results')}
-                </div>
-                
-                <h2 className="text-3xl md:text-5xl font-bold text-gray-900">
-                  <span className="hand-drawn-underline">
-                    70% kupaca
-                    <svg viewBox="0 0 100 15" preserveAspectRatio="none">
-                      <path d="M1,12 Q8,3 18,8 Q25,2 35,7 Q42,4 50,9 Q58,3 68,8 Q75,5 85,10 Q92,6 99,12" />
-                    </svg>
-                  </span>
-                  {' '}izvrši ponovnu kupovinu u roku od{' '}
-                  <span className="hand-drawn-underline">
-                    20 dana
-                    <svg viewBox="0 0 100 15" preserveAspectRatio="none">
-                      <path d="M1,12 Q8,3 18,8 Q25,2 35,7 Q42,4 50,9 Q58,3 68,8 Q75,5 85,10 Q92,6 99,12" />
-                    </svg>
-                  </span>
+          <section className="py-8 md:py-10">
+            <div className="container mx-auto px-4">
+              <div className="mb-8 max-w-3xl">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.dermatologically_approved')}</p>
+                <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 md:text-5xl">
+                  {t('homepage.features_title')}
                 </h2>
-                <p className="text-xl text-gray-600 leading-relaxed">
-                  {t('homepage.before_after_subtitle')}
-                </p>
-                
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4 p-4 bg-white/70 rounded-xl shadow-sm animate-fadeInUp" style={{animationDelay: '0.1s'}}>
-                    <div className="w-10 h-10 bg-brand-green/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-5 w-5 text-brand-green" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">{t('homepage.visible_results')}</h4>
-                      <p className="text-sm text-gray-600">{t('homepage.visible_results_desc')}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4 p-4 bg-white/70 rounded-xl shadow-sm animate-fadeInUp" style={{animationDelay: '0.2s'}}>
-                    <div className="w-10 h-10 bg-brand-green/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-5 w-5 text-brand-green" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">{t('homepage.safe_all_skin')}</h4>
-                      <p className="text-sm text-gray-600">{t('homepage.safe_all_skin_desc')}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4 p-4 bg-white/70 rounded-xl shadow-sm animate-fadeInUp" style={{animationDelay: '0.3s'}}>
-                    <div className="w-10 h-10 bg-brand-green/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-5 w-5 text-brand-green" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">{t('homepage.no_side_effects')}</h4>
-                      <p className="text-sm text-gray-600">{t('homepage.no_side_effects_desc')}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-4 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
-                  <Button 
-                    onClick={scrollToProducts}
-                    className="bg-gradient-to-r from-brand-orange to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer"
-                  >
-                    {t('homepage.view_all_products')}
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
+                <p className="mt-4 text-lg leading-relaxed text-slate-600">{t('homepage.features_subtitle')}</p>
               </div>
-              
-              <div className="relative animate-on-scroll-right w-full">
-                <div className="w-full max-w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl overflow-hidden group shadow-2xl">
-                  <Image
-                    src={HOMEPAGE_IMAGES.beforeAfter.main}
-                    alt={t('homepage.before_after_alt')}
-                    width={600}
-                    height={400}
-                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                    quality={85}
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
-                  />
 
-                </div>
-                
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {featureCards.map((feature) => {
+                  const Icon = feature.icon;
 
+                  return (
+                    <div key={feature.title} className="section-card px-5 py-6">
+                      <div className="flex items-center gap-3">
+                        <div className="rounded-2xl bg-[#358055]/10 p-3">
+                          <Icon className="h-6 w-6 text-[#358055]" />
+                        </div>
+                        <p className="text-lg font-black text-slate-950">{feature.title}</p>
+                      </div>
+                      <p className="mt-4 text-sm leading-6 text-slate-600">{feature.description}</p>
+                      <p className="mt-4 text-sm font-semibold text-[#F3765D]">{feature.details}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          </div>
-        </section>
-        
-        {/* Testimonials Section */}
-        <div data-section="testimonials">
-          <AdvancedTestimonials countryCode={locale} />
-        </div>
+          </section>
 
-        {/* Why Natural Section - Inspired by Reference */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="relative">
-                <EnhancedImageEffect
-                  src={HOMEPAGE_IMAGES.naturalScience.main}
-                  alt={t('homepage.nature_science_alt')}
-                  width={500}
-                  height={500}
-                  className="aspect-square bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl"
-                  effectType="parallax"
-                  scrollEffect={true}
-                  hoverEffect={true}
-                  quality={80}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAAPwCdABmX/9k="
-                  overlayContent={
-                    <div className="flex items-center justify-center w-full h-full">
-                      <div className="text-center text-white">
-                        <Leaf className="w-20 h-20 mx-auto mb-4" />
-                        <p className="text-xl font-bold">{t('homepage.nature_science_text')}</p>
+          <section className="py-8 md:py-10">
+            <div className="container mx-auto px-4">
+              <div className="section-card-strong overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-9">
+                <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+                  <div className="relative">
+                    <div className="absolute -left-4 top-8 hidden h-24 w-24 rounded-full bg-[#F3765D]/15 blur-2xl md:block" />
+                    <div className="absolute -right-4 bottom-8 hidden h-28 w-28 rounded-full bg-[#358055]/15 blur-2xl md:block" />
+                    <div className="relative overflow-hidden rounded-[1.8rem] bg-[linear-gradient(180deg,#f8fbf9,#ffffff)] p-4">
+                      <Image
+                        src={HOMEPAGE_IMAGES.naturalScience.main}
+                        alt={t('homepage.nature_science_alt')}
+                        width={900}
+                        height={900}
+                        className="aspect-square w-full rounded-[1.4rem] object-cover"
+                        sizes="(max-width: 1024px) 100vw, 45vw"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.dermatologically_approved')}</p>
+                    <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
+                      {t('homepage.natural_science_title')}
+                    </h2>
+                    <p className="text-lg leading-relaxed text-slate-600">{t('homepage.natural_science_subtitle')}</p>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="section-card px-4 py-4">
+                        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#358055]">
+                          {t('homepage.fast_absorption')}
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-slate-600">{t('homepage.fast_absorption_desc')}</p>
+                      </div>
+                      <div className="section-card px-4 py-4">
+                        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#358055]">
+                          {t('homepage.safe_formula')}
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-slate-600">{t('homepage.safe_formula_desc')}</p>
                       </div>
                     </div>
-                  }
-                />
-              </div>
-              
-              <div className="space-y-6">
-                                 <div className="text-sm text-brand-orange font-semibold uppercase tracking-wide">
-                   {t('homepage.dermatologically_approved')}
-                 </div>
-                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                   {t('homepage.natural_science_title')}
-                 </h2>
-                 <p className="text-lg text-gray-600 leading-relaxed">
-                   {t('homepage.natural_science_subtitle')}
-                 </p>
-                
-                <div className="w-full bg-gray-50 rounded-lg p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="bg-brand-green/10 p-3 rounded-full">
-                        <ShieldCheck className="h-6 w-6 text-brand-green" />
+
+                    <div className="rounded-[1.6rem] bg-[#358055] px-5 py-5 text-white shadow-[0_20px_45px_rgba(53,128,85,0.22)]">
+                      <div className="flex items-start gap-3">
+                        <div className="rounded-full bg-white/15 p-2">
+                          <SupportIcon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-base font-black">{t('homepage.testimonials_cta')}</p>
+                          <p className="mt-1 text-sm leading-6 text-white/80">{supportLabel}</p>
+                          <a href={supportHref} className="mt-3 inline-flex items-center text-sm font-bold text-white">
+                            {t('navigation.contact')}
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-semibold text-gray-900 text-lg">{t('homepage.fast_absorption')}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{t('guarantee.description')}</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* FAQ Section */}
-        <section id="faq" className="py-20 bg-white scroll-mt-20">
-          <div className="container mx-auto px-2 md:px-4">
-            <div className="max-w-6xl mx-auto">
-              <AdvancedFAQ countryCode={locale} className="bg-gray-50 rounded-2xl p-3 md:p-8 shadow-sm" />
+          <section id="faq" className="scroll-mt-28 py-8 md:py-10">
+            <div className="container mx-auto px-4">
+              <div className="max-w-6xl mx-auto">
+                <AdvancedFAQ countryCode={locale} className="section-card-strong p-4 md:p-8" />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </main>
 
-      </main>
-
-      {/* Footer */}
-      <Footer countryConfig={countryConfig} locale={locale} />
-
-      {/* Pixel Tracking */}
-      <PixelTracker countryCode={countryConfig.code} />
-
-      {/* GDPR Cookie Consent for EU */}
-      <CookieConsent isEU={countryConfig.isEU} />
-
-      {/* Wheel of Fortune Popup */}
-      {/* <WheelPopup
-        wheelConfig={WHEEL_CONFIG}
-        popupConfig={POPUP_CONFIG}
-        onPrizeWon={handlePrizeWon}
-        onClose={handleWheelClose}
-      /> */}
-
-      {/* Test Wheel Modal */}
-      {/* {showWheelTest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
-          <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => setShowWheelTest(false)}
-          />
-          <div className="relative z-10 w-full max-w-[95vw] sm:max-w-2xl">
-            <div className="absolute -top-4 -right-4 z-20">
-              <Button
-                onClick={() => setShowWheelTest(false)}
-                size="sm"
-                variant="outline"
-                className="rounded-full w-10 h-10 p-0 bg-white/90 hover:bg-white border-2 border-gray-300 shadow-lg"
-              >
-                ✕
-              </Button>
-            </div>
-            <WheelOfFortune
-              config={WHEEL_CONFIG}
-              onPrizeWon={handlePrizeWon}
-              onClose={() => setShowWheelTest(false)}
-            />
-          </div>
-        </div>
-      )} */}
+        <Footer countryConfig={countryConfig} locale={locale} />
+        <PixelTracker countryCode={countryConfig.code} />
+        <CookieConsent isEU={countryConfig.isEU} />
       </div>
     </>
   );

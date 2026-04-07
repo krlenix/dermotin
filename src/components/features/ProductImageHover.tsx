@@ -10,6 +10,7 @@ interface ProductImageHoverProps {
   width?: number;
   height?: number;
   className?: string;
+  imageClassName?: string;
 }
 
 export function ProductImageHover({
@@ -18,7 +19,8 @@ export function ProductImageHover({
   productName,
   width = 300,
   height = 300,
-  className = ''
+  className = '',
+  imageClassName = 'object-contain'
 }: ProductImageHoverProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [validHoverImage, setValidHoverImage] = useState<string>(mainImage);
@@ -75,7 +77,7 @@ export function ProductImageHover({
             alt={productName}
             width={width}
             height={height}
-            className={`object-contain w-full h-full transition-all duration-700 ease-in-out transform ${
+            className={`${imageClassName} w-full h-full transition-all duration-700 ease-in-out transform ${
               isHovered ? 'opacity-0 scale-105 rotate-2' : 'opacity-100 scale-100 rotate-0'
             }`}
           />
@@ -86,7 +88,7 @@ export function ProductImageHover({
             alt={`${productName} - hover view`}
             width={width}
             height={height}
-            className={`absolute inset-0 object-contain w-full h-full transition-all duration-700 ease-in-out transform ${
+            className={`absolute inset-0 ${imageClassName} w-full h-full transition-all duration-700 ease-in-out transform ${
               isHovered ? 'opacity-100 scale-105 rotate-2' : 'opacity-0 scale-95 rotate-0'
             }`}
           />
@@ -98,7 +100,7 @@ export function ProductImageHover({
           alt={productName}
           width={width}
           height={height}
-          className={`object-contain w-full h-full transition-all duration-500 ease-in-out transform ${
+          className={`${imageClassName} w-full h-full transition-all duration-500 ease-in-out transform ${
             isHovered ? 'scale-105' : 'scale-100'
           }`}
         />

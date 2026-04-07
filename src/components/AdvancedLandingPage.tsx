@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
@@ -53,7 +53,17 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   const [isDeliveryFormVisible, setIsDeliveryFormVisible] = useState(false);
   // Removed mounted state for immediate rendering
   const [selectedCourier, setSelectedCourier] = useState<CourierInfo>(getDefaultCourier(countryConfig));
-  const [isScrolled, setIsScrolled] = useState(false);
+  const headerProgressRef = useRef(0);
+  const headerAnimationFrameRef = useRef<number | null>(null);
+  const headerFrameRef = useRef<HTMLDivElement | null>(null);
+  const headerSeamRef = useRef<HTMLDivElement | null>(null);
+  const headerMembranePathRef = useRef<SVGPathElement | null>(null);
+  const headerSeamBasePathRef = useRef<SVGPathElement | null>(null);
+  const headerSeamGlowPathRef = useRef<SVGPathElement | null>(null);
+  const headerShadowRef = useRef<HTMLDivElement | null>(null);
+  const headerShellRef = useRef<HTMLDivElement | null>(null);
+  const headerSurfaceRef = useRef<HTMLDivElement | null>(null);
+  const headerHighlightRef = useRef<HTMLDivElement | null>(null);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [buttonHasAppeared, setButtonHasAppeared] = useState(false);
   
@@ -181,17 +191,122 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     }
   }, []);
 
-  // Handle scroll for header transparency
+  // Animate the header from a flush, transparent bar into a detached glass pill.
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 50);
+    const frame = headerFrameRef.current;
+    const seam = headerSeamRef.current;
+    const membranePath = headerMembranePathRef.current;
+    const seamBasePath = headerSeamBasePathRef.current;
+    const seamGlowPath = headerSeamGlowPathRef.current;
+    const shadow = headerShadowRef.current;
+    const shell = headerShellRef.current;
+    const surface = headerSurfaceRef.current;
+    const highlight = headerHighlightRef.current;
+
+    if (!frame || !seam || !membranePath || !seamBasePath || !seamGlowPath || !shadow || !shell || !surface || !highlight) {
+      return;
+    }
+
+    frame.style.transform = 'translateZ(0)';
+    seam.style.transform = 'translateZ(0)';
+    shadow.style.transform = 'translate3d(-50%, 2px, 0) scaleX(0.985)';
+    shell.style.transform = 'translateZ(0)';
+    surface.style.transform = 'translate3d(0, 0, 0) scale(1)';
+    highlight.style.transform = 'translate3d(0, -10px, 0) scale(1)';
+
+    const applyHeaderProgress = (progress: number) => {
+      const easedHeaderProgress = 1 - Math.pow(1 - progress, 2.35);
+      const squeezeProgress = Math.min(easedHeaderProgress / 0.52, 1);
+      const bubbleProgress = Math.min(Math.max((easedHeaderProgress - 0.26) / 0.74, 0), 1);
+      const shadowProgress = Math.min(Math.max((bubbleProgress - 0.72) / 0.28, 0), 1);
+      const tearProgress = Math.min(Math.max((easedHeaderProgress - 0.06) / 0.34, 0), 1) * (1 - bubbleProgress * 0.72);
+      const seamDepth = 8 + squeezeProgress * 22;
+      const membranePathValue = `M 0 0 L 100 0 L 100 6 C 90 6 79 ${Math.round(8 + seamDepth * 0.16)} 67 ${Math.round(10 + seamDepth * 0.34)} C 58 ${Math.round(12 + seamDepth * 0.48)} 42 ${Math.round(12 + seamDepth * 0.48)} 33 ${Math.round(10 + seamDepth * 0.34)} C 21 ${Math.round(8 + seamDepth * 0.16)} 10 6 0 6 Z`;
+      const seamPathValue = `M 0 6 C 10 6 21 ${Math.round(8 + seamDepth * 0.16)} 33 ${Math.round(10 + seamDepth * 0.34)} C 42 ${Math.round(12 + seamDepth * 0.48)} 58 ${Math.round(12 + seamDepth * 0.48)} 67 ${Math.round(10 + seamDepth * 0.34)} C 79 ${Math.round(8 + seamDepth * 0.16)} 90 6 100 6`;
+
+      frame.style.paddingTop = `${Math.round(bubbleProgress * 9)}px`;
+      frame.style.paddingLeft = `${Math.round(bubbleProgress * 14)}px`;
+      frame.style.paddingRight = `${Math.round(bubbleProgress * 14)}px`;
+
+      seam.style.height = `${Math.round(20 + seamDepth * 0.82)}px`;
+      seam.style.opacity = `${tearProgress * 0.22}`;
+
+      membranePath.setAttribute('d', membranePathValue);
+      membranePath.setAttribute('fill', `rgba(255,255,255,${0.015 + tearProgress * 0.035})`);
+      seamBasePath.setAttribute('d', seamPathValue);
+      seamGlowPath.setAttribute('d', seamPathValue);
+
+      shadow.style.opacity = `${shadowProgress * 0.28}`;
+      shadow.style.transform = `translate3d(-50%, ${2 + bubbleProgress * 4}px, 0) scaleX(${0.985 - bubbleProgress * 0.11})`;
+
+      shell.style.width = `calc(100% - ${Math.round(squeezeProgress * 10 + bubbleProgress * 28)}px)`;
+      shell.style.maxWidth = `${Math.round(2200 - bubbleProgress * 920)}px`;
+
+      surface.style.borderRadius = `${Math.round(easedHeaderProgress * 26)}px`;
+      surface.style.background = `linear-gradient(135deg, rgba(255, 255, 255, ${easedHeaderProgress * 0.76}), rgba(255, 255, 255, ${easedHeaderProgress * 0.3}))`;
+      surface.style.backdropFilter = `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`;
+      surface.style.webkitBackdropFilter = `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`;
+      surface.style.border = `1px solid rgba(255, 255, 255, ${easedHeaderProgress * 0.6})`;
+      surface.style.boxShadow = `inset 0 1px 0 rgba(255, 255, 255, ${0.18 + easedHeaderProgress * 0.66}), inset 0 -1px 0 rgba(255, 255, 255, ${easedHeaderProgress * 0.2})`;
+      surface.style.transform = `translate3d(0, ${easedHeaderProgress * 7}px, 0) scale(${1 - easedHeaderProgress * 0.02})`;
+
+      highlight.style.opacity = `${0.12 + easedHeaderProgress * 0.72}`;
+      highlight.style.background = `linear-gradient(180deg, rgba(255,255,255,${0.08 + easedHeaderProgress * 0.24}) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,${easedHeaderProgress * 0.24}) 0%, rgba(255,255,255,0) 58%)`;
+      highlight.style.transform = `translate3d(0, ${(1 - easedHeaderProgress) * -10}px, 0) scale(${1 + easedHeaderProgress * 0.02})`;
     };
 
-    window.addEventListener('scroll', handleScroll);
-    // Don't check initial scroll position to avoid hydration mismatch
-    
-    return () => window.removeEventListener('scroll', handleScroll);
+    const animateHeader = () => {
+      const targetProgress = Math.min(window.scrollY / 170, 1);
+      const currentProgress = headerProgressRef.current;
+      const nextProgress = currentProgress + (targetProgress - currentProgress) * 0.12;
+
+      if (Math.abs(targetProgress - nextProgress) < 0.0025) {
+        headerProgressRef.current = targetProgress;
+        applyHeaderProgress(targetProgress);
+        headerAnimationFrameRef.current = null;
+        return;
+      }
+
+      headerProgressRef.current = nextProgress;
+      applyHeaderProgress(nextProgress);
+      headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
+    };
+
+    const handleScroll = () => {
+      if (headerAnimationFrameRef.current === null) {
+        headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    applyHeaderProgress(0);
+
+    let prewarmFrameOne = 0;
+    let prewarmFrameTwo = 0;
+    let prewarmFrameThree = 0;
+
+    prewarmFrameOne = window.requestAnimationFrame(() => {
+      applyHeaderProgress(0.035);
+      prewarmFrameTwo = window.requestAnimationFrame(() => {
+        applyHeaderProgress(0);
+        prewarmFrameThree = window.requestAnimationFrame(() => {
+          shadow.style.opacity = '0';
+          seam.style.opacity = '0';
+        });
+      });
+    });
+
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (headerAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(headerAnimationFrameRef.current);
+      }
+      window.cancelAnimationFrame(prewarmFrameOne);
+      window.cancelAnimationFrame(prewarmFrameTwo);
+      window.cancelAnimationFrame(prewarmFrameThree);
+    };
   }, []);
 
   // Show floating button after 20 seconds or 1/3 page scroll
@@ -433,9 +548,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       observer.disconnect();
     };
   }, []);
-
-
-
   // Remove loading state for immediate page render - better LCP
 
   return (
@@ -447,19 +559,36 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         <div className="absolute top-[24rem] -left-20 h-80 w-80 rounded-full bg-[#F3765D]/8 blur-3xl" />
       </div>
 
-      <header
-        className={`absolute inset-x-0 top-0 z-40 transition-all duration-300 md:fixed ${
-          isScrolled ? 'top-3 px-3 md:top-5 md:px-5 bg-transparent' : 'top-3 px-3 md:top-5 md:px-5 bg-transparent'
-        }`}
-      >
-        <div className="container mx-auto px-0 md:px-4">
+      <header className="fixed inset-x-0 top-0 z-40">
+        <div ref={headerFrameRef} className="relative" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0 }}>
+          <div ref={headerSeamRef} className="pointer-events-none absolute inset-x-0 top-full overflow-hidden" style={{ height: '32px', opacity: 0, willChange: 'height, opacity, transform', contain: 'paint' }}>
+            <svg className="h-full w-full" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="advanced-header-seam" x1="0%" x2="100%" y1="0%" y2="0%">
+                  <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                  <stop offset="18%" stopColor="rgba(255,255,255,0.18)" />
+                  <stop offset="50%" stopColor="rgba(255,255,255,0.32)" />
+                  <stop offset="82%" stopColor="rgba(255,255,255,0.18)" />
+                  <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                </linearGradient>
+              </defs>
+              <path ref={headerMembranePathRef} d="M 0 0 L 100 0 L 100 6 C 90 6 79 9 67 13 C 58 16 42 16 33 13 C 21 9 10 6 0 6 Z" fill="rgba(255,255,255,0.015)" />
+              <path ref={headerSeamBasePathRef} d="M 0 6 C 10 6 21 9 33 13 C 42 16 58 16 67 13 C 79 9 90 6 100 6" stroke="rgba(53,128,85,0.025)" strokeWidth="2.2" fill="none" />
+              <path ref={headerSeamGlowPathRef} d="M 0 6 C 10 6 21 9 33 13 C 42 16 58 16 67 13 C 79 9 90 6 100 6" stroke="url(#advanced-header-seam)" strokeWidth="0.85" fill="none" />
+            </svg>
+          </div>
+          <div ref={headerShadowRef} className="pointer-events-none absolute left-1/2 top-full h-10 w-[74%] -translate-x-1/2 rounded-full bg-[#1a362a]/14 blur-3xl" style={{ opacity: 0, transform: 'translate3d(-50%, 4px, 0) scaleX(0.92)', willChange: 'transform, opacity', contain: 'paint' }} />
           <div
-            className={`liquid-glass flex items-center justify-between gap-3 rounded-[1.35rem] px-4 py-3 transition-all duration-300 md:px-6 ${
-              isScrolled
-                ? 'shadow-[0_16px_38px_rgba(26,54,42,0.12)]'
-                : 'shadow-[0_12px_34px_rgba(26,54,42,0.08)]'
-            }`}
+            ref={headerShellRef}
+            className="mx-auto w-full"
+            style={{ width: 'calc(100% - 0px)', maxWidth: '2200px', willChange: 'width, max-width, transform', contain: 'layout paint style' }}
           >
+            <div
+              ref={headerSurfaceRef}
+              className="relative overflow-hidden flex items-center justify-between gap-3 px-4 py-3 md:px-6"
+              style={{ borderRadius: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0))', border: '1px solid rgba(255,255,255,0)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0), inset 0 -1px 0 rgba(255,255,255,0)', transform: 'translate3d(0, 0, 0) scale(1)', willChange: 'transform, border-radius, backdrop-filter, box-shadow, background, border', contain: 'paint' }}
+            >
+            <div ref={headerHighlightRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0.12, background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%)', transform: 'translate3d(0, -10px, 0) scale(1)', willChange: 'transform, opacity', contain: 'paint' }} />
             <div className="flex items-center gap-3 md:gap-5">
               <button
                 type="button"
@@ -527,26 +656,27 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                 {t('navigation.order')}
               </button>
             </div>
-          </div>
-
-          {mobileMenuOpen && (
-            <div className="liquid-glass mb-3 rounded-[1.5rem] p-4 md:hidden">
-              <nav className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
-                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
-                  {t('navigation.home')}
-                </Link>
-                <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
-                  {t('navigation.benefits')}
-                </a>
-                <a href="#order" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
-                  {t('navigation.order')}
-                </a>
-                <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
-                  {t('navigation.testimonials')}
-                </a>
-              </nav>
             </div>
-          )}
+
+            {mobileMenuOpen && (
+              <div className="liquid-glass mt-3 rounded-[1.5rem] p-4 md:hidden">
+                <nav className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
+                  <Link href="/" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+                    {t('navigation.home')}
+                  </Link>
+                  <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+                    {t('navigation.benefits')}
+                  </a>
+                  <a href="#order" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+                    {t('navigation.order')}
+                  </a>
+                  <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+                    {t('navigation.testimonials')}
+                  </a>
+                </nav>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
