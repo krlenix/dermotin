@@ -195,7 +195,7 @@ export default function HomePage() {
       surface.style.borderRadius = `${Math.round(easedHeaderProgress * 26)}px`;
       surface.style.background = `linear-gradient(135deg, rgba(255, 255, 255, ${easedHeaderProgress * 0.76}), rgba(255, 255, 255, ${easedHeaderProgress * 0.3}))`;
       surface.style.backdropFilter = `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`;
-      surface.style.webkitBackdropFilter = `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`;
+      surface.style.setProperty('-webkit-backdrop-filter', `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`);
       surface.style.border = `1px solid rgba(255, 255, 255, ${easedHeaderProgress * 0.6})`;
       surface.style.boxShadow = `inset 0 1px 0 rgba(255, 255, 255, ${0.18 + easedHeaderProgress * 0.66}), inset 0 -1px 0 rgba(255, 255, 255, ${easedHeaderProgress * 0.2})`;
       surface.style.transform = `translate3d(0, ${easedHeaderProgress * 7}px, 0) scale(${1 - easedHeaderProgress * 0.02})`;
