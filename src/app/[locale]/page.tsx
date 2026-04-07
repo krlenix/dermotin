@@ -552,8 +552,8 @@ export default function HomePage() {
           )}
         </header>
 
-        <main className="relative pb-16 pt-28 md:pb-20 md:pt-34">
-          <section className="relative">
+        <main className="relative pb-16 pt-20 md:pb-20 md:pt-24">
+          <section className="relative pb-6 md:pb-8">
             <div className="container mx-auto px-4">
               <div className="section-card-strong overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10">
                 <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
@@ -827,23 +827,29 @@ export default function HomePage() {
             </div>
           </section>
 
+          <section id="faq" className="scroll-mt-28 py-8 md:py-10">
+            <div className="container mx-auto px-4">
+              <div className="max-w-6xl mx-auto">
+                <AdvancedFAQ countryCode={locale} className="section-card-strong p-4 md:p-8" />
+              </div>
+            </div>
+          </section>
+
           <section className="py-8 md:py-10">
             <div className="container mx-auto px-4">
               <div className="section-card-strong overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-9">
                 <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
-                  <div className="relative">
+                  <div className="relative flex justify-center">
                     <div className="absolute -left-4 top-8 hidden h-24 w-24 rounded-full bg-[#F3765D]/15 blur-2xl md:block" />
                     <div className="absolute -right-4 bottom-8 hidden h-28 w-28 rounded-full bg-[#358055]/15 blur-2xl md:block" />
-                    <div className="relative overflow-hidden rounded-[1.8rem] bg-[linear-gradient(180deg,#f8fbf9,#ffffff)] p-4">
-                      <Image
-                        src={HOMEPAGE_IMAGES.naturalScience.main}
-                        alt={t('homepage.nature_science_alt')}
-                        width={900}
-                        height={900}
-                        className="aspect-square w-full rounded-[1.4rem] object-cover"
-                        sizes="(max-width: 1024px) 100vw, 45vw"
-                      />
-                    </div>
+                    <Image
+                      src={HOMEPAGE_IMAGES.naturalScience.main}
+                      alt={t('homepage.nature_science_alt')}
+                      width={900}
+                      height={900}
+                      className="relative aspect-square w-full max-w-[30rem] rounded-[1.4rem] object-cover lg:max-w-[26rem]"
+                      sizes="(max-width: 1024px) 100vw, 45vw"
+                    />
                   </div>
 
                   <div className="space-y-5">
@@ -855,46 +861,41 @@ export default function HomePage() {
                     </h2>
                     <p className="text-lg leading-relaxed text-slate-600">{t('homepage.natural_science_subtitle')}</p>
 
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="section-card px-4 py-4">
-                        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#358055]">
-                          {t('homepage.fast_absorption')}
-                        </p>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">{t('homepage.fast_absorption_desc')}</p>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="rounded-[1.6rem] border border-[#358055]/10 bg-white px-5 py-5 shadow-[0_10px_26px_rgba(15,23,42,0.04)]">
+                        <div className="relative flex items-start gap-4">
+                          <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#358055] text-white shadow-[0_12px_22px_rgba(53,128,85,0.22)]">
+                            <Award className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-lg font-black leading-tight text-slate-950">
+                              {t('homepage.fast_absorption')}
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-slate-600">
+                              {t('homepage.fast_absorption_desc')}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="section-card px-4 py-4">
-                        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#358055]">
-                          {t('homepage.safe_formula')}
-                        </p>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">{t('homepage.safe_formula_desc')}</p>
+                      <div className="rounded-[1.6rem] border border-[#358055]/10 bg-white px-5 py-5 shadow-[0_10px_26px_rgba(15,23,42,0.04)]">
+                        <div className="relative flex items-start gap-4">
+                          <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F3765D] text-white shadow-[0_12px_22px_rgba(243,118,93,0.22)]">
+                            <Leaf className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-lg font-black leading-tight text-slate-950">
+                              {t('homepage.safe_formula')}
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-slate-600">
+                              {t('homepage.safe_formula_desc')}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="rounded-[1.6rem] bg-[#358055] px-5 py-5 text-white shadow-[0_20px_45px_rgba(53,128,85,0.22)]">
-                      <div className="flex items-start gap-3">
-                        <div className="rounded-full bg-white/15 p-2">
-                          <SupportIcon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-base font-black">{t('homepage.testimonials_cta')}</p>
-                          <p className="mt-1 text-sm leading-6 text-white/80">{supportLabel}</p>
-                          <a href={supportHref} className="mt-3 inline-flex items-center text-sm font-bold text-white">
-                            {t('navigation.contact')}
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </a>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </section>
-
-          <section id="faq" className="scroll-mt-28 py-8 md:py-10">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
-                <AdvancedFAQ countryCode={locale} className="section-card-strong p-4 md:p-8" />
               </div>
             </div>
           </section>

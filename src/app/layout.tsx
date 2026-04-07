@@ -80,7 +80,7 @@ export default async function RootLayout({
         <meta name="theme-color" content="#FF6B35" />
         <meta name="color-scheme" content="light" />
       </head>
-      <body className={`${montserrat.variable} ${playfairDisplay.variable} font-montserrat antialiased bg-background text-foreground`}>
+      <body className={`${montserrat.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
         <PerformanceOptimizer />
         <DebugPixelLoader />
         <NextIntlClientProvider messages={messages}>

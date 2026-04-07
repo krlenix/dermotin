@@ -612,8 +612,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         <div className="absolute top-[24rem] -left-20 h-80 w-80 rounded-full bg-[#F3765D]/8 blur-3xl" />
       </div>
 
-      <header className="fixed inset-x-0 top-0 z-[140]">
-          <div ref={headerFrameRef} className="relative" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0, paddingBottom: '4px' }}>
+      <header className="absolute inset-x-0 top-0 z-[140] md:fixed">
+          <div ref={headerFrameRef} className="relative" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0, paddingBottom: '8px' }}>
           <div ref={headerSeamRef} className="pointer-events-none absolute inset-x-0 top-full overflow-hidden" style={{ height: '32px', opacity: 0, willChange: 'height, opacity, transform', contain: 'paint' }}>
             <svg className="h-full w-full" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
               <defs>
@@ -634,14 +634,14 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
           <div
             ref={headerShellRef}
             className="mx-auto w-full"
-            style={{ width: 'calc(100% - 0px)', maxWidth: '2200px', willChange: 'width, max-width, transform', contain: 'layout paint style' }}
+            style={{ width: 'calc(100% - 0px)', maxWidth: '2200px', willChange: 'width, max-width, transform', contain: 'layout style' }}
           >
             <div
               ref={headerSurfaceRef}
               className="relative overflow-hidden flex items-center justify-between gap-3 px-4 py-3 md:px-6"
-              style={{ borderRadius: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0))', border: '1px solid rgba(255,255,255,0)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0), inset 0 -1px 0 rgba(255,255,255,0)', transform: 'translate3d(0, 0, 0) scale(1)', willChange: 'transform, border-radius, backdrop-filter, box-shadow, background, border', contain: 'paint' }}
+              style={{ borderRadius: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0))', border: '1px solid rgba(255,255,255,0)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0), inset 0 -1px 0 rgba(255,255,255,0)', transform: 'translate3d(0, 0, 0) scale(1)', willChange: 'transform, border-radius, backdrop-filter, box-shadow, background, border' }}
             >
-            <div ref={headerHighlightRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0, background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%)', transform: 'translate3d(0, -10px, 0) scale(1)', willChange: 'transform, opacity', contain: 'paint' }} />
+            <div ref={headerHighlightRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0, background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%)', transform: 'translate3d(0, -10px, 0) scale(1)', willChange: 'transform, opacity' }} />
             <div className="flex items-center gap-3 md:gap-5">
               <button
                 type="button"
