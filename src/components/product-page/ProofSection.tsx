@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
 import { Product } from '@/config/products';
+import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 
 interface ProofSectionProps {
   product: Product;
@@ -97,8 +98,8 @@ export function ProofSection({ product }: ProofSectionProps) {
                   {animatedProofNumber.toLocaleString('sr-RS')}+
                 </span>
               </div>
-              <p className="mt-4 max-w-xl text-2xl font-bold leading-tight text-slate-900">
-                Zadovoljni kupci vec prepoznaju rezultat i redovnu upotrebu <span className="highlight-block">{product.name}</span>
+              <p className="mt-4 max-w-xl text-lg md:text-xl font-bold leading-snug text-slate-900">
+                Zadovoljni kupci vec prepoznaju rezultat i redovnu upotrebu <AnimatedHighlight>{product.name}</AnimatedHighlight>
               </p>
               <p className="mt-3 text-base text-slate-600">
                 Preko <span className="font-semibold text-slate-900">{proofNumber.toLocaleString('sr-RS')} zadovoljnih kupaca</span>

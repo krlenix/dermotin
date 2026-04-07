@@ -379,7 +379,7 @@ export function CheckoutFormV2({
     <div className={cn('space-y-4', className)}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <section className="space-y-3">
-          <h3 className="text-center text-[2rem] font-black leading-none text-slate-950">
+          <h3 className="text-center text-xl font-bold text-slate-800">
             {t('checkout_v2.simpleTitle')}
           </h3>
 

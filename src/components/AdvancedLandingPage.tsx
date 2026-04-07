@@ -191,6 +191,17 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     }
   }, []);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
+
   // Animate the header from a flush, transparent bar into a detached glass pill.
   useEffect(() => {
     const frame = headerFrameRef.current;
@@ -215,6 +226,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
     highlight.style.transform = 'translate3d(0, -10px, 0) scale(1)';
 
     const applyHeaderProgress = (progress: number) => {
+      const isMobileViewport = window.innerWidth < 768;
       const easedHeaderProgress = 1 - Math.pow(1 - progress, 2.35);
       const squeezeProgress = Math.min(easedHeaderProgress / 0.52, 1);
       const bubbleProgress = Math.min(Math.max((easedHeaderProgress - 0.26) / 0.74, 0), 1);
@@ -224,9 +236,10 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       const membranePathValue = `M 0 0 L 100 0 L 100 6 C 90 6 79 ${Math.round(8 + seamDepth * 0.16)} 67 ${Math.round(10 + seamDepth * 0.34)} C 58 ${Math.round(12 + seamDepth * 0.48)} 42 ${Math.round(12 + seamDepth * 0.48)} 33 ${Math.round(10 + seamDepth * 0.34)} C 21 ${Math.round(8 + seamDepth * 0.16)} 10 6 0 6 Z`;
       const seamPathValue = `M 0 6 C 10 6 21 ${Math.round(8 + seamDepth * 0.16)} 33 ${Math.round(10 + seamDepth * 0.34)} C 42 ${Math.round(12 + seamDepth * 0.48)} 58 ${Math.round(12 + seamDepth * 0.48)} 67 ${Math.round(10 + seamDepth * 0.34)} C 79 ${Math.round(8 + seamDepth * 0.16)} 90 6 100 6`;
 
+      const horizontalFrameInset = isMobileViewport ? 4 : 14;
       frame.style.paddingTop = `${Math.round(bubbleProgress * 9)}px`;
-      frame.style.paddingLeft = `${Math.round(bubbleProgress * 14)}px`;
-      frame.style.paddingRight = `${Math.round(bubbleProgress * 14)}px`;
+      frame.style.paddingLeft = `${Math.round(bubbleProgress * horizontalFrameInset)}px`;
+      frame.style.paddingRight = `${Math.round(bubbleProgress * horizontalFrameInset)}px`;
 
       seam.style.height = `${Math.round(20 + seamDepth * 0.82)}px`;
       seam.style.opacity = `${tearProgress * 0.22}`;
@@ -239,19 +252,20 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       shadow.style.opacity = `${shadowProgress * 0.28}`;
       shadow.style.transform = `translate3d(-50%, ${2 + bubbleProgress * 4}px, 0) scaleX(${0.985 - bubbleProgress * 0.11})`;
 
-      shell.style.width = `calc(100% - ${Math.round(squeezeProgress * 10 + bubbleProgress * 28)}px)`;
-      shell.style.maxWidth = `${Math.round(2200 - bubbleProgress * 920)}px`;
+      const shellInset = isMobileViewport ? 16 : 28;
+      shell.style.width = `calc(100% - ${Math.round(squeezeProgress * 8 + bubbleProgress * shellInset)}px)`;
+      shell.style.maxWidth = `${Math.round(2200 - bubbleProgress * (isMobileViewport ? 760 : 920))}px`;
 
       surface.style.borderRadius = `${Math.round(easedHeaderProgress * 26)}px`;
       surface.style.background = `linear-gradient(135deg, rgba(255, 255, 255, ${easedHeaderProgress * 0.76}), rgba(255, 255, 255, ${easedHeaderProgress * 0.3}))`;
       surface.style.backdropFilter = `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`;
       surface.style.setProperty('-webkit-backdrop-filter', `blur(${Math.round(easedHeaderProgress * 24)}px) saturate(${Math.round(100 + easedHeaderProgress * 95)}%)`);
       surface.style.border = `1px solid rgba(255, 255, 255, ${easedHeaderProgress * 0.6})`;
-      surface.style.boxShadow = `inset 0 1px 0 rgba(255, 255, 255, ${0.18 + easedHeaderProgress * 0.66}), inset 0 -1px 0 rgba(255, 255, 255, ${easedHeaderProgress * 0.2})`;
+      surface.style.boxShadow = `inset 0 1px 0 rgba(255, 255, 255, ${easedHeaderProgress * 0.84}), inset 0 -1px 0 rgba(255, 255, 255, ${easedHeaderProgress * 0.2})`;
       surface.style.transform = `translate3d(0, ${easedHeaderProgress * 7}px, 0) scale(${1 - easedHeaderProgress * 0.02})`;
 
-      highlight.style.opacity = `${0.12 + easedHeaderProgress * 0.72}`;
-      highlight.style.background = `linear-gradient(180deg, rgba(255,255,255,${0.08 + easedHeaderProgress * 0.24}) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,${easedHeaderProgress * 0.24}) 0%, rgba(255,255,255,0) 58%)`;
+      highlight.style.opacity = `${easedHeaderProgress * 0.84}`;
+      highlight.style.background = `linear-gradient(180deg, rgba(255,255,255,${easedHeaderProgress * 0.32}) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,${easedHeaderProgress * 0.24}) 0%, rgba(255,255,255,0) 58%)`;
       highlight.style.transform = `translate3d(0, ${(1 - easedHeaderProgress) * -10}px, 0) scale(${1 + easedHeaderProgress * 0.02})`;
     };
 
@@ -272,18 +286,39 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
     };
 
+    const syncHeaderToScrollPosition = () => {
+      const targetProgress = Math.min(window.scrollY / 170, 1);
+
+      if (headerAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(headerAnimationFrameRef.current);
+        headerAnimationFrameRef.current = null;
+      }
+
+      headerProgressRef.current = targetProgress;
+      applyHeaderProgress(targetProgress);
+    };
+
     const handleScroll = () => {
       if (headerAnimationFrameRef.current === null) {
         headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
       }
     };
 
+    const handleViewportSync = () => {
+      syncHeaderToScrollPosition();
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleViewportSync);
+    window.addEventListener('pageshow', handleViewportSync);
     applyHeaderProgress(0);
 
     let prewarmFrameOne = 0;
     let prewarmFrameTwo = 0;
     let prewarmFrameThree = 0;
+    let syncFrameOne = 0;
+    let syncFrameTwo = 0;
+    const syncTimeouts: number[] = [];
 
     prewarmFrameOne = window.requestAnimationFrame(() => {
       applyHeaderProgress(0.035);
@@ -296,16 +331,34 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       });
     });
 
+    syncHeaderToScrollPosition();
+    syncFrameOne = window.requestAnimationFrame(() => {
+      syncHeaderToScrollPosition();
+      syncFrameTwo = window.requestAnimationFrame(() => {
+        syncHeaderToScrollPosition();
+      });
+    });
+    syncTimeouts.push(
+      window.setTimeout(syncHeaderToScrollPosition, 0),
+      window.setTimeout(syncHeaderToScrollPosition, 140),
+      window.setTimeout(syncHeaderToScrollPosition, 320)
+    );
+
     handleScroll();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleViewportSync);
+      window.removeEventListener('pageshow', handleViewportSync);
       if (headerAnimationFrameRef.current !== null) {
         window.cancelAnimationFrame(headerAnimationFrameRef.current);
       }
       window.cancelAnimationFrame(prewarmFrameOne);
       window.cancelAnimationFrame(prewarmFrameTwo);
       window.cancelAnimationFrame(prewarmFrameThree);
+      window.cancelAnimationFrame(syncFrameOne);
+      window.cancelAnimationFrame(syncFrameTwo);
+      syncTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
   }, []);
 
@@ -559,8 +612,8 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
         <div className="absolute top-[24rem] -left-20 h-80 w-80 rounded-full bg-[#F3765D]/8 blur-3xl" />
       </div>
 
-      <header className="fixed inset-x-0 top-0 z-40">
-        <div ref={headerFrameRef} className="relative" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0 }}>
+      <header className="fixed inset-x-0 top-0 z-[140]">
+          <div ref={headerFrameRef} className="relative" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0, paddingBottom: '4px' }}>
           <div ref={headerSeamRef} className="pointer-events-none absolute inset-x-0 top-full overflow-hidden" style={{ height: '32px', opacity: 0, willChange: 'height, opacity, transform', contain: 'paint' }}>
             <svg className="h-full w-full" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
               <defs>
@@ -588,12 +641,12 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
               className="relative overflow-hidden flex items-center justify-between gap-3 px-4 py-3 md:px-6"
               style={{ borderRadius: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0))', border: '1px solid rgba(255,255,255,0)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0), inset 0 -1px 0 rgba(255,255,255,0)', transform: 'translate3d(0, 0, 0) scale(1)', willChange: 'transform, border-radius, backdrop-filter, box-shadow, background, border', contain: 'paint' }}
             >
-            <div ref={headerHighlightRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0.12, background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%)', transform: 'translate3d(0, -10px, 0) scale(1)', willChange: 'transform, opacity', contain: 'paint' }} />
+            <div ref={headerHighlightRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0, background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 52%), radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%)', transform: 'translate3d(0, -10px, 0) scale(1)', willChange: 'transform, opacity', contain: 'paint' }} />
             <div className="flex items-center gap-3 md:gap-5">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#358055]/15 bg-white/80 text-slate-700 md:hidden"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/55 bg-white/92 text-slate-700 backdrop-blur-md md:hidden"
                 aria-label={t('ui.toggle_menu')}
               >
                 {mobileMenuOpen ? (
@@ -658,42 +711,48 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
             </div>
             </div>
 
-            {mobileMenuOpen && (
-              <div className="liquid-glass mt-3 rounded-[1.5rem] p-4 md:hidden">
-                <nav className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
-                  <Link href="/" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+          </div>
+        </div>
+        {mobileMenuOpen && (
+          <>
+            <div className="fixed inset-0 z-[180] bg-[rgba(15,23,42,0.18)] backdrop-blur-[2px] md:hidden" onClick={() => setMobileMenuOpen(false)} />
+            <div className="fixed inset-x-3 top-[4.7rem] bottom-3 z-[190] overflow-hidden rounded-[2rem] border border-white/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(244,248,246,0.94))] shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl md:hidden">
+              <div className="flex h-full flex-col p-4">
+                <nav className="flex flex-1 flex-col gap-2 text-base font-semibold text-slate-800">
+                  <Link href="/" onClick={() => setMobileMenuOpen(false)} className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6">
                     {t('navigation.home')}
                   </Link>
-                  <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+                  <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6">
                     {t('navigation.benefits')}
                   </a>
-                  <a href="#order" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+                  <a href="#order" onClick={() => setMobileMenuOpen(false)} className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6">
                     {t('navigation.order')}
                   </a>
-                  <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="rounded-xl px-3 py-2 hover:bg-[#358055]/5">
+                  <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6">
                     {t('navigation.testimonials')}
                   </a>
                 </nav>
+                <div className="mt-4 rounded-[1.4rem] border border-[#358055]/10 bg-[linear-gradient(135deg,rgba(53,128,85,0.08),rgba(243,118,93,0.08))] p-4">
+                  <p className="text-sm font-semibold text-slate-800">{countryConfig.company.phone || countryConfig.company.email}</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{t('common.order_now')}</p>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
+          </>
+        )}
       </header>
 
       <HeroSection product={product} countryConfig={countryConfig} onOrderClick={scrollToCheckout} ctaText={ctaButtonText} />
 
       <ProofSection product={product} />
 
-      {/* Bundle Selection & Checkout */}
+      <IngredientsShowcase product={product} />
+
+      {/* Checkout */}
       <section className="py-8 md:py-10">
         <div className="container mx-auto px-4">
-          <div className="section-card-strong px-5 py-6 md:px-8 md:py-8">
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="space-y-6">
-                <IngredientsShowcase product={product} />
-              </div>
-
-              <div id="order" className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+          <div className="mx-auto max-w-2xl">
+              <div id="order" className="space-y-4">
                 <div className="overflow-visible rounded-[2rem] border border-[#358055]/15 bg-white/90 p-4 shadow-[0_24px_70px_rgba(15,23,42,0.08)] md:p-5">
                   <div className="mb-4 overflow-visible px-1 pt-1">
                     <div className="mt-4">
@@ -704,7 +763,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                       <p className="inline-block border-b-[3px] border-[#358055] px-1 text-[2.05rem] font-black leading-none text-slate-950 md:text-[2.6rem]">
                         {t('checkout_v2.priceTitle')}
                       </p>
-                      <div className="mt-3 inline-block bg-[#358055] px-4 py-2 shadow-[0_10px_24px_rgba(53,128,85,0.25)]">
+                      <div className="mt-1.5 inline-block bg-[#358055] px-4 py-2 shadow-[0_10px_24px_rgba(53,128,85,0.25)]">
                         <p className="text-[3.1rem] font-black leading-none tracking-tight text-white [text-shadow:0_2px_0_rgba(0,0,0,0.18)] md:text-[4.1rem]">
                           {formatOfferPrice((isBogoActive ? baseVariant : selectedVariant).discountPrice ?? (isBogoActive ? baseVariant : selectedVariant).price)} {countryConfig.currencySymbol}
                         </p>
@@ -731,7 +790,6 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </section>

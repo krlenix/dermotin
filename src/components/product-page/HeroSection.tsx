@@ -4,6 +4,7 @@ import { CheckCircle2, ShieldCheck, Star } from 'lucide-react';
 import { Product } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
+import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 import { SATISFIED_CUSTOMERS } from '@/components/product-page/ProofSection';
 
 interface HeroSectionProps {
@@ -24,7 +25,7 @@ export function HeroSection({ product, countryConfig, onOrderClick, ctaText }: H
   const heroTitleAccent = hasHighlightedHeroTitle ? product.heroTitle.slice(heroTitlePrefix.length) : product.heroTitle;
 
   return (
-    <section id="hero" className="relative overflow-hidden pt-24 md:pt-30 lg:pt-34 pb-8 md:pb-10">
+    <section id="hero" className="relative overflow-hidden pt-24 md:pt-22 lg:pt-24 pb-8 md:pb-10">
       <div className="absolute inset-0 organic-hero-surface" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(96,142,126,0.14),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(255,107,53,0.08),transparent_20%)]" />
 
@@ -42,13 +43,13 @@ export function HeroSection({ product, countryConfig, onOrderClick, ctaText }: H
               </div>
 
               <div className="space-y-4">
-                <h1 className="max-w-3xl text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.14] tracking-[-0.01em] text-slate-900">
+                <h1 className="max-w-3xl text-[1.7rem] sm:text-4xl lg:text-5xl font-black leading-[1.18] tracking-[-0.01em] text-slate-900">
                   {hasHighlightedHeroTitle ? (
                     <>
-                      {heroTitleLead}
-                      <span className="inline-block rounded-[5px] bg-[#F3765D] px-[8px] py-[4px] mr-[5px] text-white md:px-[5px] md:py-[2px] lg:px-[4px] lg:py-[1px]">
+                      <span className="relative z-[1]">{heroTitleLead}</span>
+                      <AnimatedHighlight variant="orange" delayMs={200}>
                         {heroTitleAccent}
-                      </span>
+                      </AnimatedHighlight>
                     </>
                   ) : (
                     product.heroTitle

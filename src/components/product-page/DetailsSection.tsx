@@ -2,6 +2,7 @@
 
 import { AlertTriangle, CheckCircle2, Sparkles } from 'lucide-react';
 import { Product } from '@/config/products';
+import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 
 interface DetailsSectionProps {
   product: Product;
@@ -18,7 +19,7 @@ export function DetailsSection({ product }: DetailsSectionProps) {
           <div className="text-center">
             <span className="highlight-chip-orange">Detaljnije informacije</span>
             <h2 className="mt-4 text-3xl md:text-5xl font-black leading-tight text-slate-950">
-              Kako se koristi <span className="highlight-block">{product.name}</span> i sta je vazno da znate
+              Kako se koristi <AnimatedHighlight>{product.name}</AnimatedHighlight> i sta je vazno da znate
             </h2>
             <p className="mx-auto mt-4 max-w-3xl text-base md:text-lg text-slate-600">
               Umesto starog detaljnog akordeona, najvaznije informacije su sada sabrane u jednom preglednom bloku.

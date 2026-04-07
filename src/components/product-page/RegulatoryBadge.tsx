@@ -84,7 +84,7 @@ function SealStamp({ color, regNumber, date }: { color: 'green' | 'blue'; regNum
 
   return (
     <div
-      className="absolute -right-[28px] -top-[38px] z-10 pointer-events-none md:-right-[32px] md:-top-[42px]"
+      className="absolute -right-[16px] -top-[38px] z-10 pointer-events-none md:-right-[32px] md:-top-[42px]"
       style={{ width: 130, height: 130 }}
     >
       <svg viewBox="0 0 130 130" className="h-full w-full" style={{ transform: 'rotate(12deg)' }}>
@@ -157,18 +157,18 @@ export function RegulatoryBadge({ product, locale }: RegulatoryBadgeProps) {
 
     return (
       <CertificateShell accentColor="green">
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:gap-4 sm:text-left">
           <Image
             src="/images/regulatory/serbian-coat-of-arms.png"
             alt="Grb Republike Srbije"
             width={56}
             height={75}
-            className="h-[75px] w-auto shrink-0 object-contain"
+            className="h-[60px] w-auto shrink-0 object-contain sm:h-[75px]"
           />
 
-          <div className="min-w-0 flex-1">
-            <div className="mr-[100px]">
-              <p className="text-[15px] font-extrabold uppercase leading-snug tracking-[0.03em] text-emerald-950 md:text-base">
+          <div className="w-full min-w-0 sm:flex-1">
+            <div className="sm:mr-[100px]">
+              <p className="text-[13px] font-extrabold uppercase leading-snug tracking-[0.03em] text-emerald-950 sm:text-[15px] md:text-base">
                 Registrovano kod Ministarstva zdravlja Republike Srbije
               </p>
             </div>
@@ -176,15 +176,16 @@ export function RegulatoryBadge({ product, locale }: RegulatoryBadgeProps) {
               Broj i datum upisa u bazu podataka:
             </p>
 
-            <div className="mt-3 h-px bg-gradient-to-r from-emerald-900/20 via-emerald-900/10 to-transparent" />
+            <div className="mt-3 h-px bg-gradient-to-r from-emerald-900/20 via-emerald-900/10 to-transparent sm:bg-gradient-to-r" />
 
             <div className="mt-3 flex items-end justify-between gap-3">
-              <div>
-                <p className="mt-1 font-mono text-xl font-black tracking-wider text-emerald-900 md:text-2xl">{reg.number}</p>
+              <div className="text-left">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Broj upisa</p>
+                <p className="mt-1 font-mono text-sm font-black tracking-wider text-emerald-900 sm:text-base">{reg.number}</p>
               </div>
               <div className="text-right">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Datum upisa</p>
-                <p className="mt-1 font-mono text-base font-bold text-emerald-900/70">{reg.date}</p>
+                <p className="mt-1 font-mono text-sm font-bold text-emerald-900/70 sm:text-base">{reg.date}</p>
               </div>
             </div>
           </div>
@@ -209,14 +210,14 @@ export function RegulatoryBadge({ product, locale }: RegulatoryBadgeProps) {
 
   return (
     <CertificateShell accentColor="blue">
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:gap-4 sm:text-left">
         {isSerbian ? (
           <Image
             src="/images/regulatory/serbian-coat-of-arms.png"
             alt="Grb Republike Srbije"
             width={56}
             height={75}
-            className="h-[75px] w-auto shrink-0 object-contain"
+            className="h-[60px] w-auto shrink-0 object-contain sm:h-[75px]"
           />
         ) : (
           <Image
@@ -224,19 +225,16 @@ export function RegulatoryBadge({ product, locale }: RegulatoryBadgeProps) {
             alt="EU Flag"
             width={65}
             height={65}
-            className="h-[65px] w-[65px] shrink-0 object-contain"
+            className="h-[55px] w-[55px] shrink-0 object-contain sm:h-[65px] sm:w-[65px]"
           />
         )}
 
-        <div className="min-w-0 flex-1">
-          <div className="mr-[100px]">
+        <div className="w-full min-w-0 sm:flex-1">
+          <div className="sm:mr-[100px]">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-900/50">
-              {subtitleLine1}
+              {subtitleLine1} <span className="text-blue-900/30">•</span> {subtitleLine2}
             </p>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-900/50">
-              {subtitleLine2}
-            </p>
-            <p className="mt-2 text-[15px] font-extrabold uppercase leading-snug tracking-[0.03em] text-blue-950 md:text-base">
+            <p className="mt-2 text-[13px] font-extrabold uppercase leading-snug tracking-[0.03em] text-blue-950 sm:text-[15px] md:text-base">
               {title}
             </p>
           </div>
@@ -247,13 +245,13 @@ export function RegulatoryBadge({ product, locale }: RegulatoryBadgeProps) {
           <div className="mt-4 h-px bg-gradient-to-r from-blue-900/20 via-blue-900/10 to-transparent" />
 
           <div className="mt-4 flex items-end justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Identifikacioni broj</p>
-              <p className="mt-1 font-mono text-xl font-black tracking-wider text-blue-900 md:text-2xl">{reg.number}</p>
+            <div className="text-left">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">ID Broj</p>
+              <p className="mt-1 font-mono text-sm font-black tracking-wider text-blue-900 sm:text-base">{reg.number}</p>
             </div>
             <div className="text-right">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Datum</p>
-              <p className="mt-1 font-mono text-base font-bold text-blue-900/70">{reg.date}</p>
+              <p className="mt-1 font-mono text-sm font-bold text-blue-900/70 sm:text-base">{reg.date}</p>
             </div>
           </div>
         </div>

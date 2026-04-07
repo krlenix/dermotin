@@ -30,6 +30,7 @@ import { CountrySwitcher } from '@/components/features/CountrySwitcher';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
 import { BOGOLoadedBanner } from '@/components/features/BOGOLoadedBanner';
 import { Footer } from '@/components/ui/footer';
+import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 import { storeBOGOCookie, BOGO_CONFIG, initializeBOGO } from '@/utils/bogo-cookies';
@@ -143,6 +144,17 @@ export default function HomePage() {
   }, [countryConfig.currency, isClient, products, trackEvent]);
 
   useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
     const frame = headerFrameRef.current;
     const seam = headerSeamRef.current;
     const membranePath = headerMembranePathRef.current;
@@ -165,6 +177,7 @@ export default function HomePage() {
     highlight.style.transform = 'translate3d(0, -10px, 0) scale(1)';
 
     const applyHeaderProgress = (progress: number) => {
+      const isMobileViewport = window.innerWidth < 768;
       const easedHeaderProgress = 1 - Math.pow(1 - progress, 2.35);
       const squeezeProgress = Math.min(easedHeaderProgress / 0.52, 1);
       const bubbleProgress = Math.min(Math.max((easedHeaderProgress - 0.26) / 0.74, 0), 1);
@@ -174,9 +187,10 @@ export default function HomePage() {
       const membranePathValue = `M 0 0 L 100 0 L 100 6 C 90 6 79 ${Math.round(8 + seamDepth * 0.16)} 67 ${Math.round(10 + seamDepth * 0.34)} C 58 ${Math.round(12 + seamDepth * 0.48)} 42 ${Math.round(12 + seamDepth * 0.48)} 33 ${Math.round(10 + seamDepth * 0.34)} C 21 ${Math.round(8 + seamDepth * 0.16)} 10 6 0 6 Z`;
       const seamPathValue = `M 0 6 C 10 6 21 ${Math.round(8 + seamDepth * 0.16)} 33 ${Math.round(10 + seamDepth * 0.34)} C 42 ${Math.round(12 + seamDepth * 0.48)} 58 ${Math.round(12 + seamDepth * 0.48)} 67 ${Math.round(10 + seamDepth * 0.34)} C 79 ${Math.round(8 + seamDepth * 0.16)} 90 6 100 6`;
 
+      const horizontalFrameInset = isMobileViewport ? 4 : 14;
       frame.style.paddingTop = `${Math.round(bubbleProgress * 9)}px`;
-      frame.style.paddingLeft = `${Math.round(bubbleProgress * 14)}px`;
-      frame.style.paddingRight = `${Math.round(bubbleProgress * 14)}px`;
+      frame.style.paddingLeft = `${Math.round(bubbleProgress * horizontalFrameInset)}px`;
+      frame.style.paddingRight = `${Math.round(bubbleProgress * horizontalFrameInset)}px`;
 
       seam.style.height = `${Math.round(20 + seamDepth * 0.82)}px`;
       seam.style.opacity = `${tearProgress * 0.22}`;
@@ -189,8 +203,9 @@ export default function HomePage() {
       shadow.style.opacity = `${shadowProgress * 0.28}`;
       shadow.style.transform = `translate3d(-50%, ${2 + bubbleProgress * 4}px, 0) scaleX(${0.985 - bubbleProgress * 0.11})`;
 
-      shell.style.width = `calc(100% - ${Math.round(squeezeProgress * 10 + bubbleProgress * 28)}px)`;
-      shell.style.maxWidth = `${Math.round(2200 - bubbleProgress * 920)}px`;
+      const shellInset = isMobileViewport ? 16 : 28;
+      shell.style.width = `calc(100% - ${Math.round(squeezeProgress * 8 + bubbleProgress * shellInset)}px)`;
+      shell.style.maxWidth = `${Math.round(2200 - bubbleProgress * (isMobileViewport ? 760 : 920))}px`;
 
       surface.style.borderRadius = `${Math.round(easedHeaderProgress * 26)}px`;
       surface.style.background = `linear-gradient(135deg, rgba(255, 255, 255, ${easedHeaderProgress * 0.76}), rgba(255, 255, 255, ${easedHeaderProgress * 0.3}))`;
@@ -222,18 +237,39 @@ export default function HomePage() {
       headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
     };
 
+    const syncHeaderToScrollPosition = () => {
+      const targetProgress = Math.min(window.scrollY / 170, 1);
+
+      if (headerAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(headerAnimationFrameRef.current);
+        headerAnimationFrameRef.current = null;
+      }
+
+      headerProgressRef.current = targetProgress;
+      applyHeaderProgress(targetProgress);
+    };
+
     const handleScroll = () => {
       if (headerAnimationFrameRef.current === null) {
         headerAnimationFrameRef.current = window.requestAnimationFrame(animateHeader);
       }
     };
 
+    const handleViewportSync = () => {
+      syncHeaderToScrollPosition();
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleViewportSync);
+    window.addEventListener('pageshow', handleViewportSync);
     applyHeaderProgress(0);
 
     let prewarmFrameOne = 0;
     let prewarmFrameTwo = 0;
     let prewarmFrameThree = 0;
+    let syncFrameOne = 0;
+    let syncFrameTwo = 0;
+    const syncTimeouts: number[] = [];
 
     prewarmFrameOne = window.requestAnimationFrame(() => {
       applyHeaderProgress(0.035);
@@ -246,16 +282,34 @@ export default function HomePage() {
       });
     });
 
+    syncHeaderToScrollPosition();
+    syncFrameOne = window.requestAnimationFrame(() => {
+      syncHeaderToScrollPosition();
+      syncFrameTwo = window.requestAnimationFrame(() => {
+        syncHeaderToScrollPosition();
+      });
+    });
+    syncTimeouts.push(
+      window.setTimeout(syncHeaderToScrollPosition, 0),
+      window.setTimeout(syncHeaderToScrollPosition, 140),
+      window.setTimeout(syncHeaderToScrollPosition, 320)
+    );
+
     handleScroll();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleViewportSync);
+      window.removeEventListener('pageshow', handleViewportSync);
       if (headerAnimationFrameRef.current !== null) {
         window.cancelAnimationFrame(headerAnimationFrameRef.current);
       }
       window.cancelAnimationFrame(prewarmFrameOne);
       window.cancelAnimationFrame(prewarmFrameTwo);
       window.cancelAnimationFrame(prewarmFrameThree);
+      window.cancelAnimationFrame(syncFrameOne);
+      window.cancelAnimationFrame(syncFrameTwo);
+      syncTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
   }, []);
 
@@ -307,6 +361,20 @@ export default function HomePage() {
     ? `tel:${countryConfig.company.phone}`
     : `mailto:${countryConfig.company.email}`;
   const supportLabel = countryConfig.company.phone || countryConfig.company.email;
+  const heroTitle = t('homepage.hero_title');
+  const heroTitleFirstSplit = heroTitle.split('Bez hemije.');
+  const heroTitleSecondSplit = (heroTitleFirstSplit[1] ?? '').split('u Srbiji.');
+  const productsSectionTitle = t('homepage.products_section_title');
+  const productsSectionTitleWords = productsSectionTitle.split(' ');
+  const highlightedProductsTitle = productsSectionTitleWords.slice(0, 2).join(' ');
+  const remainingProductsTitle = productsSectionTitleWords.slice(2).join(' ');
+  const featuresTitle = t('homepage.features_title');
+  const featuresTitleParts = featuresTitle.split('Dermotin');
+  const beforeAfterTitle = t('homepage.before_after_title');
+  const beforeAfterTitleFirstSplit = beforeAfterTitle.split('70% kupaca');
+  const beforeAfterTitleSecondSplit = (beforeAfterTitleFirstSplit[1] ?? '').split('20 dana');
+  const naturalScienceTitle = t('homepage.natural_science_title');
+  const naturalScienceTitleParts = naturalScienceTitle.split('rešenja za sve');
 
   const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
@@ -349,7 +417,7 @@ export default function HomePage() {
           <div className="absolute bottom-0 right-1/4 h-72 w-72 rounded-full bg-[#358055]/7 blur-3xl" />
         </div>
 
-        <header className="fixed inset-x-0 top-0 z-40">
+        <header className="fixed inset-x-0 top-0 z-[140]">
           <div ref={headerFrameRef} className="relative" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0 }}>
             <div ref={headerSeamRef} className="pointer-events-none absolute inset-x-0 top-full overflow-hidden" style={{ height: '32px', opacity: 0, willChange: 'height, opacity, transform', contain: 'paint' }}>
               <svg className="h-full w-full" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
@@ -384,7 +452,7 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={() => setIsMenuOpen((open) => !open)}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#358055]/15 bg-white/80 text-slate-700 md:hidden"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/55 bg-white/92 text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.12)] backdrop-blur-md md:hidden"
                     aria-label={t('ui.toggle_menu')}
                   >
                     {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -436,43 +504,52 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {isMenuOpen && (
-                <div className="mt-3 rounded-[1.3rem] border border-white/60 bg-white/75 p-4 md:hidden">
-                  <nav className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
+              </div>
+            </div>
+          </div>
+          {isMenuOpen && (
+            <>
+              <div className="fixed inset-0 z-[180] bg-[rgba(15,23,42,0.18)] backdrop-blur-[2px] md:hidden" onClick={() => setIsMenuOpen(false)} />
+              <div className="fixed inset-x-3 top-[4.7rem] bottom-3 z-[190] overflow-hidden rounded-[2rem] border border-white/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(244,248,246,0.94))] shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl md:hidden">
+                <div className="flex h-full flex-col p-4">
+                  <nav className="flex flex-1 flex-col gap-2 text-base font-semibold text-slate-800">
                     <button
                       type="button"
                       onClick={(event) => handleMenuScroll(event, 'products')}
-                      className="rounded-xl px-3 py-2 text-left hover:bg-[#358055]/5"
+                      className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6"
                     >
                       {t('navigation.products')}
                     </button>
                     <button
                       type="button"
                       onClick={(event) => handleMenuScroll(event, 'story')}
-                      className="rounded-xl px-3 py-2 text-left hover:bg-[#358055]/5"
+                      className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6"
                     >
                       {t('homepage.features_title')}
                     </button>
                     <button
                       type="button"
                       onClick={(event) => handleMenuScroll(event, 'faq')}
-                      className="rounded-xl px-3 py-2 text-left hover:bg-[#358055]/5"
+                      className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6"
                     >
                       {t('navigation.faq')}
                     </button>
                     <Link
                       href={`/${locale}/contact`}
                       onClick={() => setIsMenuOpen(false)}
-                      className="rounded-xl px-3 py-2 hover:bg-[#358055]/5"
+                      className="rounded-[1.2rem] border border-transparent bg-white/66 px-4 py-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:border-[#358055]/12 hover:bg-[#358055]/6"
                     >
                       {t('navigation.contact')}
                     </Link>
                   </nav>
+                  <div className="mt-4 rounded-[1.4rem] border border-[#358055]/10 bg-[linear-gradient(135deg,rgba(53,128,85,0.08),rgba(243,118,93,0.08))] p-4">
+                    <p className="text-sm font-semibold text-slate-800">{supportLabel}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">{t('homepage.product_showcase_subtitle')}</p>
+                  </div>
                 </div>
-              )}
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </header>
 
         <main className="relative pb-16 pt-28 md:pb-20 md:pt-34">
@@ -493,7 +570,11 @@ export default function HomePage() {
 
                     <div className="space-y-4">
                       <h1 className="max-w-3xl text-4xl font-black leading-[1.12] tracking-[-0.02em] text-slate-900 sm:text-5xl lg:text-6xl">
-                        {t('homepage.hero_title')}
+                        {heroTitleFirstSplit[0]}
+                        <AnimatedHighlight delayMs={120}>Bez hemije.</AnimatedHighlight>
+                        {heroTitleSecondSplit[0] ?? ''}
+                        <AnimatedHighlight variant="orange" delayMs={720}>u Srbiji.</AnimatedHighlight>
+                        {heroTitleSecondSplit[1] ?? ''}
                       </h1>
                       <p className="max-w-2xl text-lg leading-relaxed text-slate-700 md:text-xl">
                         {t('homepage.hero_subtitle')}
@@ -582,10 +663,11 @@ export default function HomePage() {
           <section id="products" className="scroll-mt-28 py-8 md:py-10">
             <div className="container mx-auto px-4">
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div className="max-w-3xl">
+                <div className="max-w-5xl">
                   <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.featured_products')}</p>
-                  <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                    <span className="highlight-block-orange">{t('homepage.products_section_title')}</span>
+                  <h2 className="mt-3 text-[2.1rem] font-black leading-[1.04] tracking-[-0.03em] text-slate-950 md:text-[2.8rem] lg:text-[3.35rem]">
+                    <AnimatedHighlight variant="orange">{highlightedProductsTitle}</AnimatedHighlight>
+                    {remainingProductsTitle ? ` ${remainingProductsTitle}` : ''}
                   </h2>
                   <p className="mt-4 text-lg leading-relaxed text-slate-600">{t('homepage.product_showcase_subtitle')}</p>
                 </div>
@@ -600,7 +682,7 @@ export default function HomePage() {
               </div>
 
               {products.length > 0 && (
-                <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                   {products.map((product, index) => (
                     <Link
                       key={product.id}
@@ -628,9 +710,9 @@ export default function HomePage() {
                           imageClassName="object-contain object-center"
                         />
                         <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
-                          <div className="w-full rounded-[1rem] border border-white/38 bg-[linear-gradient(180deg,rgba(255,255,255,0.52),rgba(255,255,255,0.3))] px-3 py-2.5 shadow-[0_10px_22px_rgba(15,23,42,0.07)] backdrop-blur-lg md:rounded-[1.15rem] md:px-4 md:py-3">
-                            <p className="text-base font-black uppercase tracking-[0.02em] text-slate-950 md:text-lg">{product.name}</p>
-                            <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-700 md:text-sm">{product.shortDescription}</p>
+                          <div className="w-full rounded-[1rem] border border-white/42 bg-[linear-gradient(180deg,rgba(255,255,255,0.5),rgba(255,244,240,0.32))] px-3 py-2.5 shadow-[0_10px_22px_rgba(15,23,42,0.06)] backdrop-blur-lg md:rounded-[1.15rem] md:px-4 md:py-3">
+                            <p className="text-base font-black uppercase tracking-[0.02em] text-[#24553a] md:text-lg">{product.name}</p>
+                            <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-700/90 md:text-sm">{product.shortDescription}</p>
                           </div>
                         </div>
                       </div>
@@ -651,7 +733,11 @@ export default function HomePage() {
                     <div className="relative h-full">
                       <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.proven_results')}</p>
                       <h2 className="mt-4 text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                        {t('homepage.before_after_title')}
+                        {beforeAfterTitleFirstSplit[0]}
+                        <AnimatedHighlight>70% kupaca</AnimatedHighlight>
+                        {beforeAfterTitleSecondSplit[0] ?? ''}
+                        <AnimatedHighlight>20 dana</AnimatedHighlight>
+                        {beforeAfterTitleSecondSplit[1] ?? ''}
                       </h2>
                       <p className="mt-4 max-w-2xl text-lg leading-relaxed text-slate-600">
                         {t('homepage.before_after_subtitle')}
@@ -713,7 +799,9 @@ export default function HomePage() {
               <div className="mb-8 max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.dermatologically_approved')}</p>
                 <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                  {t('homepage.features_title')}
+                  {featuresTitleParts[0]}
+                  <AnimatedHighlight>Dermotin</AnimatedHighlight>
+                  {featuresTitleParts[1] ?? ''}
                 </h2>
                 <p className="mt-4 text-lg leading-relaxed text-slate-600">{t('homepage.features_subtitle')}</p>
               </div>
@@ -761,7 +849,9 @@ export default function HomePage() {
                   <div className="space-y-5">
                     <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.dermatologically_approved')}</p>
                     <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                      {t('homepage.natural_science_title')}
+                      {naturalScienceTitleParts[0]}
+                      <AnimatedHighlight>rešenja za sve</AnimatedHighlight>
+                      {naturalScienceTitleParts[1] ?? ''}
                     </h2>
                     <p className="text-lg leading-relaxed text-slate-600">{t('homepage.natural_science_subtitle')}</p>
 

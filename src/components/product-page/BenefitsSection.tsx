@@ -2,6 +2,7 @@
 
 import { FlaskConical, Leaf, Shield, Sparkles } from 'lucide-react';
 import { Product } from '@/config/products';
+import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 
 interface BenefitsSectionProps {
   product: Product;
@@ -18,7 +19,7 @@ export function BenefitsSection({ product }: BenefitsSectionProps) {
       <div className="container mx-auto px-4">
         <div className="text-center">
           <h2 className="text-3xl md:text-5xl font-black leading-tight text-slate-950">
-            Po cemu se <span className="highlight-block">{product.name}</span> izdvaja od drugih proizvoda?
+            Po cemu se <AnimatedHighlight>{product.name}</AnimatedHighlight> izdvaja od drugih proizvoda?
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-base md:text-lg text-slate-600">
             Tri kljucne prednosti zbog kojih ga kupci najcesce biraju za svoju svakodnevnu rutinu.

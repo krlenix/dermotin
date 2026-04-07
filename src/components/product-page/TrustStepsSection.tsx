@@ -2,6 +2,7 @@
 
 import { CircleCheckBig, ClipboardCheck, Headset, PackageCheck } from 'lucide-react';
 import { CountryConfig } from '@/config/countries';
+import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 
 interface TrustStepsSectionProps {
   countryConfig: CountryConfig;
@@ -33,7 +34,7 @@ export function TrustStepsSection({ countryConfig }: TrustStepsSectionProps) {
           <div className="text-center">
             <span className="highlight-chip">Jednostavan proces kupovine</span>
             <h2 className="mt-4 text-3xl md:text-5xl font-black leading-tight text-slate-950">
-              Evo kako porucujete u <span className="highlight-block">{countryConfig.name}</span>
+              Evo kako porucujete u <AnimatedHighlight>{countryConfig.name}</AnimatedHighlight>
             </h2>
             <p className="mx-auto mt-4 max-w-3xl text-base md:text-lg text-slate-600">
               Zavrsni donji deo stranice sada vise lici na referentni landing, sa jasnim koracima i dodatnim trust

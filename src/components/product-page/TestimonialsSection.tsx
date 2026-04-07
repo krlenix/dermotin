@@ -2,6 +2,7 @@
 
 import { MessageCircleMore, Star } from 'lucide-react';
 import { Product } from '@/config/products';
+import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 
 interface TestimonialsSectionProps {
   product: Product;
@@ -16,7 +17,7 @@ export function TestimonialsSection({ product }: TestimonialsSectionProps) {
         <div className="text-center">
           <span className="highlight-chip-orange">Sta nasi kupci kazu</span>
           <h2 className="mt-4 text-3xl md:text-5xl font-black leading-tight text-slate-950">
-            Vizuelno jaci blok za <span className="highlight-block">iskustva kupaca</span>
+            Vizuelno jaci blok za <AnimatedHighlight>iskustva kupaca</AnimatedHighlight>
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-base md:text-lg text-slate-600">
             Testimonials ostaju iz postojecih podataka za proizvod, ali sada sede u centralnom proof delu sa jacim

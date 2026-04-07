@@ -71,6 +71,17 @@ export default function ContactPage({ locale }: ContactPageProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMenuOpen]);
+
   const validateForm = (): boolean => {
     const errors: FormErrors = {};
 
@@ -166,7 +177,7 @@ export default function ContactPage({ locale }: ContactPageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Elegant Header - Matching Home Page */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <header className={`fixed top-0 left-0 right-0 z-[140] transition-all duration-300 ${
         scrollY > 50 ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
       }`}>
         <div className="container mx-auto px-4">
@@ -208,7 +219,7 @@ export default function ContactPage({ locale }: ContactPageProps) {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-800 hover:bg-gray-100"
+              className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/92 text-gray-800 shadow-[0_10px_24px_rgba(15,23,42,0.12)] backdrop-blur-md"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -216,24 +227,29 @@ export default function ContactPage({ locale }: ContactPageProps) {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className="md:hidden bg-white border-t border-gray-200 py-4 mt-4 rounded-b-lg shadow-lg">
-              <nav className="flex flex-col space-y-4">
-                <Button asChild className="bg-brand-orange hover:bg-brand-orange/90 text-white w-full">
-                  <Link href={`/${locale}`}>
-                    {t('navigation.home')}
-                  </Link>
-                </Button>
-                <Link href={`/${locale}#products`} className="text-gray-800 hover:text-brand-green font-medium transition-colors">
-                  {t('navigation.products')}
-                </Link>
-                <Link href={`/${locale}#testimonials`} className="text-gray-800 hover:text-brand-green font-medium transition-colors">
-                  {t('navigation.testimonials')}
-                </Link>
-                <Link href={`/${locale}/contact`} className="text-gray-800 hover:text-brand-green font-medium transition-colors">
-                  {t('navigation.contact')}
-                </Link>
-              </nav>
-            </div>
+            <>
+              <div className="fixed inset-0 z-[180] bg-[rgba(15,23,42,0.18)] backdrop-blur-[2px] md:hidden" onClick={() => setIsMenuOpen(false)} />
+              <div className="fixed inset-x-3 top-[4.9rem] bottom-3 z-[190] overflow-hidden rounded-[2rem] border border-white/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(244,248,246,0.95))] shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl md:hidden">
+                <div className="flex h-full flex-col p-4">
+                  <nav className="flex flex-1 flex-col gap-2">
+                    <Button asChild className="h-auto justify-start rounded-[1.2rem] bg-brand-orange px-4 py-4 text-white hover:bg-brand-orange/90">
+                      <Link href={`/${locale}`} onClick={() => setIsMenuOpen(false)}>
+                        {t('navigation.home')}
+                      </Link>
+                    </Button>
+                    <Link href={`/${locale}#products`} onClick={() => setIsMenuOpen(false)} className="rounded-[1.2rem] bg-white/66 px-4 py-4 font-medium text-gray-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-brand-green/5">
+                      {t('navigation.products')}
+                    </Link>
+                    <Link href={`/${locale}#testimonials`} onClick={() => setIsMenuOpen(false)} className="rounded-[1.2rem] bg-white/66 px-4 py-4 font-medium text-gray-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-brand-green/5">
+                      {t('navigation.testimonials')}
+                    </Link>
+                    <Link href={`/${locale}/contact`} onClick={() => setIsMenuOpen(false)} className="rounded-[1.2rem] bg-white/66 px-4 py-4 font-medium text-gray-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-colors hover:bg-brand-green/5">
+                      {t('navigation.contact')}
+                    </Link>
+                  </nav>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </header>
