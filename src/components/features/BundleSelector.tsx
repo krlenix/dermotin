@@ -16,6 +16,7 @@ interface BundleSelectorProps {
   selectedVariant: ProductVariant;
   onVariantChange: (variant: ProductVariant) => void;
   countryConfig: CountryConfig;
+  productImage?: string;
   className?: string;
   triggerShake?: boolean; // New prop to trigger shake animation
 }
@@ -25,6 +26,7 @@ export function BundleSelector({
   selectedVariant, 
   onVariantChange, 
   countryConfig,
+  productImage = '/images/products/fungel/fungel-box-only.png',
   className,
   triggerShake = false
 }: BundleSelectorProps) {
@@ -81,13 +83,13 @@ export function BundleSelector({
         isShaking ? 'animate-shake' : ''
       }`}
     >
-      <div className="text-center mb-4 md:mb-6">
-        <h3 id="bundle-title" className="text-2xl font-bold text-gray-900 mb-2 py-2 md:py-6">
+      <div className="mb-4 text-center">
+        <h3 id="bundle-title" className="py-2 text-2xl font-black text-slate-950">
           {t('bundles.choose_option')}
         </h3>
       </div>
 
-      <div className="space-y-6 overflow-visible mt-4 w-full">
+      <div className="mt-4 space-y-4 overflow-visible w-full">
         {variants.filter((_, index) => index < 3).map((variant, index) => {
           const isSelected = selectedVariant.id === variant.id;
           const badge = getBundleBadge(index);
@@ -102,15 +104,15 @@ export function BundleSelector({
               key={variant.id}
               className={`relative cursor-pointer transition-all duration-200 overflow-visible w-full ${
                 isSelected 
-                  ? 'border-2 border-brand-orange bg-orange-50/30' 
-                  : 'border border-gray-200 hover:border-gray-300 bg-white'
+                  ? 'border-2 border-brand-green bg-brand-green/5 shadow-[0_18px_35px_rgba(26,54,42,0.08)]' 
+                  : 'border border-brand-green/12 hover:border-brand-green/25 bg-white/90 shadow-none'
               }`}
               onClick={() => onVariantChange(variant)}
             >
               {/* Highlight Badge */}
               {highlight && (
                 <div className="absolute -top-3 left-4 z-10">
-                  <Badge className={`${index === 1 ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800 border-2 border-green-300 rounded-full shadow-md'} px-4 py-1 text-sm font-bold max-w-full`}>
+                  <Badge className={`${index === 1 ? 'bg-brand-orange text-white' : 'bg-brand-green text-white'} rounded-full px-4 py-1 text-xs font-bold max-w-full shadow-sm`}>
                     {highlight}
                   </Badge>
                 </div>
@@ -125,13 +127,13 @@ export function BundleSelector({
                 </div>
               )}
 
-              <div className="px-3 py-2">
+              <div className="px-4 py-4">
                 <div className="flex flex-row items-center justify-between w-full gap-3">
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                     {/* Product Image */}
-                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-lg shadow-sm overflow-visible flex-shrink-0">
+                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-xl border border-brand-green/10 overflow-visible flex-shrink-0">
                       <Image
-                        src="/images/products/fungel/fungel-box-only.png"
+                        src={productImage}
                         alt={t('ui.alt_package')}
                         fill
                         className="object-contain p-1"
@@ -143,17 +145,17 @@ export function BundleSelector({
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-base sm:text-lg text-gray-900 mb-1 truncate">
+                      <h4 className="font-bold text-base sm:text-lg text-slate-900 mb-1 truncate">
                         {variant.name}
                       </h4>
-                      <p className="text-xs sm:text-sm text-gray-600 mb-1">
+                      <p className="text-xs sm:text-sm text-slate-500 mb-1">
                         {variant.size}
                       </p>
                       {(() => {
                         const orderTotal = variant.discountPrice || variant.price;
                         const hasFreeShipping = orderTotal >= countryConfig.business.freeShippingThreshold;
                         return hasFreeShipping && (
-                          <p className="text-xs text-green-600 font-medium">
+                          <p className="text-xs text-brand-green font-semibold">
                             {t('bundles.free_shipping')}
                           </p>
                         );
@@ -163,15 +165,15 @@ export function BundleSelector({
 
                   <div className="text-right flex-shrink-0 min-w-fit">
                     {hasDiscount && (
-                      <p className="text-xs text-gray-400 line-through mb-1">
+                      <p className="mb-1 text-xs text-slate-400 line-through">
                         {formatPrice(originalPrice)}
                       </p>
                     )}
-                    <div className="text-lg sm:text-xl font-bold text-brand-orange mb-1">
+                    <div className="mb-1 text-lg sm:text-xl font-black text-brand-orange">
                       {formatPrice(discountPrice)}
                     </div>
                     {index > 0 && (
-                      <p className="text-xs sm:text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-slate-500">
                         {formatPrice(pricePerItem)} {t('bundles.per_item')}
                       </p>
                     )}
@@ -179,18 +181,18 @@ export function BundleSelector({
                 </div>
 
                 {/* Selection Indicator */}
-                <div className="flex items-center justify-center mt-3 gap-2">
+                <div className="mt-4 flex items-center justify-center gap-2">
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                     isSelected 
-                      ? 'bg-brand-orange border-brand-orange' 
-                      : 'border-gray-300'
+                      ? 'bg-brand-green border-brand-green' 
+                      : 'border-slate-300'
                   }`}>
                     {isSelected && (
                       <CheckCircle className="w-3 h-3 text-white" />
                     )}
                   </div>
                   {isSelected && (
-                    <span className="text-sm font-medium text-brand-orange">
+                    <span className="text-sm font-semibold text-brand-green">
                       {t('bundles.selected')}
                     </span>
                   )}

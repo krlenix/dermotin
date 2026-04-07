@@ -22,8 +22,8 @@
   --color-border: 240 5.9% 90%;
   --color-input: 240 5.9% 90%;
   --color-ring: 240 10% 3.9%;
-  --color-brand-orange: #FF6B35;
-  --color-brand-green: #608E7E;
+  --color-brand-orange: #F3765D;
+  --color-brand-green: #358055;
   --radius: 0.5rem;
 }
 
@@ -67,8 +67,8 @@
 
 /* Custom brand colors */
 :root {
-  --brand-orange: #FF6B35;
-  --brand-green: #608E7E;
+  --brand-orange: #F3765D;
+  --brand-green: #358055;
 }
 
 .text-brand-orange {
@@ -84,7 +84,7 @@
 }
 
 .hover\:bg-brand-orange\/90:hover {
-  background-color: rgb(255 107 53 / 0.9);
+  background-color: rgb(243 118 93 / 0.9);
 }
 
 .focus\:ring-brand-orange:focus {
@@ -122,32 +122,106 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translate3d(0, 28px, 0) scale(0.985);
+    filter: blur(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0) scale(0.96);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes ambientFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
   }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .animate-fadeInUp {
-  animation: fadeInUp 0.6s ease-out;
+  opacity: 0;
+  animation: fadeInUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+.animate-slideInScale {
+  opacity: 0;
+  animation: slideInScale 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+.animate-float {
+  animation: ambientFloat 6s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Optimized scroll animations */
-.animate-on-scroll {
+.animate-on-scroll,
+.animate-on-scroll-left,
+.animate-on-scroll-right {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  filter: blur(10px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity, filter;
 }
 
-.animate-on-scroll.animate {
+.animate-on-scroll {
+  transform: translate3d(0, 36px, 0) scale(0.985);
+}
+
+.animate-on-scroll-left {
+  transform: translate3d(-42px, 0, 0) scale(0.985);
+}
+
+.animate-on-scroll-right {
+  transform: translate3d(42px, 0, 0) scale(0.985);
+}
+
+.animate-on-scroll.animate,
+.animate-on-scroll-left.animate,
+.animate-on-scroll-right.animate {
   opacity: 1;
-  transform: translateY(0);
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeIn,
+  .animate-fadeInUp,
+  .animate-slideInScale,
+  .animate-float,
+  .animate-on-scroll,
+  .animate-on-scroll-left,
+  .animate-on-scroll-right {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
 }
 
 /* Responsive text sizes */
@@ -171,7 +245,7 @@
 }
 
 .shadow-glow {
-  box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 0 20px rgba(243, 118, 93, 0.3);
 }
 
 .gradient-text {
@@ -220,10 +294,10 @@
 /* Minimal essential animations for performance */
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+    box-shadow: 0 0 15px rgba(243, 118, 93, 0.2);
   }
   50% {
-    box-shadow: 0 0 25px rgba(255, 107, 53, 0.3);
+    box-shadow: 0 0 25px rgba(243, 118, 93, 0.3);
   }
 }
 
@@ -231,13 +305,144 @@
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
+.organic-grid-pattern {
+  background-image:
+    radial-gradient(circle at top left, rgba(53, 128, 85, 0.18), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(243, 118, 93, 0.14), transparent 26%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(244, 248, 245, 0.9));
+}
+
+.organic-hero-surface {
+  background-image:
+    linear-gradient(135deg, rgba(236, 246, 240, 0.98), rgba(247, 250, 248, 0.92)),
+    radial-gradient(circle at top right, rgba(53, 128, 85, 0.22), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(243, 118, 93, 0.12), transparent 24%);
+}
+
+.section-card {
+  border: 1px solid rgba(53, 128, 85, 0.18);
+  border-radius: 1.75rem;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 45px rgba(26, 54, 42, 0.08);
+}
+
+.section-card-strong {
+  border: 1px solid rgba(53, 128, 85, 0.24);
+  border-radius: 1.75rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 249, 247, 0.98));
+  box-shadow: 0 22px 60px rgba(26, 54, 42, 0.12);
+}
+
+.liquid-glass {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.34));
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 14px 40px rgba(26, 54, 42, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.liquid-glass-soft {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.42));
+  backdrop-filter: blur(16px) saturate(165%);
+  -webkit-backdrop-filter: blur(16px) saturate(165%);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow:
+    0 10px 28px rgba(26, 54, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.section-card-dark {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(180deg, rgba(19, 48, 37, 0.96), rgba(25, 63, 48, 0.94));
+  box-shadow: 0 20px 50px rgba(16, 24, 20, 0.28);
+}
+
+.cta-divider {
+  background:
+    linear-gradient(90deg, rgba(243, 118, 93, 0.95), rgba(224, 101, 77, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 28px rgba(243, 118, 93, 0.2);
+}
+
+.highlight-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.35rem 0.8rem;
+  background: #358055;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.highlight-chip-orange {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.35rem 0.8rem;
+  background: #F3765D;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.highlight-block {
+  display: inline;
+  border-radius: 0.5rem;
+  padding: 0.12rem 0.6rem 0.2rem;
+  margin-inline: 0.08em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  background: #358055;
+  color: #ffffff;
+}
+
+.highlight-block-orange {
+  display: inline;
+  border-radius: 0.5rem;
+  padding: 0.12rem 0.6rem 0.2rem;
+  margin-inline: 0.08em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  background: #F3765D;
+  color: #ffffff;
+}
+
+.leaf-divider {
+  position: relative;
+}
+
+.leaf-divider::before,
+.leaf-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 56px;
+  height: 2px;
+  border-radius: 9999px;
+  background: rgba(53, 128, 85, 0.28);
+}
+
+.leaf-divider::before {
+  right: calc(100% + 12px);
+}
+
+.leaf-divider::after {
+  left: calc(100% + 12px);
+}
+
 /* Green glow animation for GDPR accept button */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(96, 142, 126, 0.4), 0 0 40px rgba(96, 142, 126, 0.2);
+    box-shadow: 0 0 20px rgba(53, 128, 85, 0.4), 0 0 40px rgba(53, 128, 85, 0.2);
   }
   50% {
-    box-shadow: 0 0 30px rgba(96, 142, 126, 0.6), 0 0 60px rgba(96, 142, 126, 0.3);
+    box-shadow: 0 0 30px rgba(53, 128, 85, 0.6), 0 0 60px rgba(53, 128, 85, 0.3);
   }
 }
 
@@ -444,12 +649,45 @@ summary,
   stroke-linejoin: round;
   stroke-dasharray: 200;
   stroke-dashoffset: 200;
-  filter: drop-shadow(0 1px 2px rgba(255, 107, 53, 0.3));
+  filter: drop-shadow(0 1px 2px rgba(243, 118, 93, 0.3));
 }
 
 .hand-drawn-underline.animate svg path {
   animation: drawLine 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   animation-delay: 0.1s;
+}
+
+/* Marching ants animated border */
+@keyframes marchingAnts {
+  to { background-position: 20px 0, calc(100% - 0px) 20px, calc(100% - 20px) calc(100% - 0px), 0 calc(100% - 20px); }
+}
+
+.marching-ants-green {
+  position: relative;
+  border: none;
+  background-image:
+    linear-gradient(90deg, #059669 50%, transparent 50%),
+    linear-gradient(180deg, #059669 50%, transparent 50%),
+    linear-gradient(270deg, #059669 50%, transparent 50%),
+    linear-gradient(0deg, #059669 50%, transparent 50%);
+  background-size: 10px 2px, 2px 10px, 10px 2px, 2px 10px;
+  background-position: 0 0, calc(100% - 0px) 0, calc(100% - 0px) calc(100% - 0px), 0 calc(100% - 0px);
+  background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
+  animation: marchingAnts 0.4s linear infinite;
+}
+
+.marching-ants-blue {
+  position: relative;
+  border: none;
+  background-image:
+    linear-gradient(90deg, #3b82f6 50%, transparent 50%),
+    linear-gradient(180deg, #3b82f6 50%, transparent 50%),
+    linear-gradient(270deg, #3b82f6 50%, transparent 50%),
+    linear-gradient(0deg, #3b82f6 50%, transparent 50%);
+  background-size: 10px 2px, 2px 10px, 10px 2px, 2px 10px;
+  background-position: 0 0, calc(100% - 0px) 0, calc(100% - 0px) calc(100% - 0px), 0 calc(100% - 0px);
+  background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
+  animation: marchingAnts 0.4s linear infinite;
 }
 
 /* Prevent grid overflow on mobile */

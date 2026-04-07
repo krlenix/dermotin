@@ -122,7 +122,7 @@ export interface FulfillmentCenterInfo {
 export const COUNTRIES: Record<string, CountryConfig> = {
   rs: {
     code: 'rs',
-    name: 'Serbia',
+    name: 'Srbija',
     locale: 'sr-RS',
     currency: 'RSD',
     currencySymbol: 'din',
@@ -204,7 +204,7 @@ export const COUNTRIES: Record<string, CountryConfig> = {
   // Ready for future expansion:
   ba: {
     code: 'ba',
-    name: 'Bosnia and Herzegovina',
+    name: 'Bosna i Hercegovina',
     locale: 'bs-BA',
     currency: 'BAM',
     currencySymbol: 'KM',
@@ -282,88 +282,9 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     }
   },
 
-  hr: {
-    code: 'hr',
-    name: 'Croatia',
-    locale: 'hr-HR',
-    currency: 'EUR',
-    currencySymbol: '€',
-    region: 'EU',
-    isEU: true,
-    timezone: 'Europe/Zagreb',
-    logo: '/images/main/logo.png',
-    company: {
-      name: 'Dermotin',
-      legalName: 'CLICKY EOOD',
-      address: 'bul. Triadica br. 6, et. 3, ap. 310',
-      city: 'Sofija',
-      postalCode: '1000',
-      country: 'Bugarska',
-      taxNumber: '208072587',
-      email: 'support@dermotin.com',
-      registrationNumber: '208072587',
-      activityCode: '47.91',
-      activityDescription: 'Trgovina na malo posredstvom pošte ili preko interneta',
-      website: 'dermotin.com'
-    },
-    couriers: [
-      {
-        id: 'hrvatska-posta',
-        name: 'Hrvatska pošta',
-        displayName: 'kurirske službe Hrvatske pošte',
-        logo: '/images/couriers/hrvatska-posta.png',
-        deliveryTime: '5-7 dana',
-        trackingUrl: 'https://www.posta.hr/pracenje-posiljaka',
-        isDefault: true,
-        enabled: true,
-        shipping: {
-          cost: 6.9,
-          currency: '€'
-        }
-      }
-    ],
-    business: {
-      deliveryArea: 'teritoriji Republike Hrvatske',
-      freeShippingThreshold: 35,
-      deliveryTimeMin: 3,
-      deliveryTimeMax: 4,
-      deliveryTimeUnit: 'dana',
-      paymentMethods: ['gotovinom prilikom dostave (pouzećem)'],
-      returnPeriodDays: 14,
-      warrantyPeriodYears: 2,
-      complaintResponseDays: 8,
-      complaintResolutionDays: 15,
-      technicalComplaintResolutionDays: 30,
-      faqItems: ['delivery_time', 'delivery_cost', 'cash_on_delivery', 'payment_methods', 'returns', 'support', 'tracking', 'safety', 'warranty']
-    },
-    legal: {
-      lastUpdated: '2025-01-01',
-      copyrightLaw: 'Zakona o autorskom pravu i srodnim pravima',
-      criminalCode: 'Kaznenog zakona Republike Hrvatske',
-      consumerProtectionLaw: 'Zakona o zaštiti potrošača Republike Hrvatske',
-      dataProtectionLaw: 'Zakona o provedbi Opće uredbe o zaštiti podataka',
-      obligationsLaw: 'Zakona o obveznim odnosima',
-      ministryWebsite: 'https://mingor.gov.hr/',
-      disputeResolutionListUrl: 'https://potrosac.mingo.hr/'
-    },
-    webhooks: {
-      orders: {
-        url: process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL || '',
-        authMethod: 'signature',
-        webhookSecret: process.env.HR_ORDER_WEBHOOK_SECRET || ''
-      },
-      affiliateCodes: {
-        url: process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL 
-          ? process.env.NEXT_PUBLIC_HR_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
-          : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
-      }
-    }
-  },
-
   me: {
     code: 'me',
-    name: 'Montenegro',
+    name: 'Crna Gora',
     locale: 'sr-ME',
     currency: 'EUR',
     currencySymbol: '€',

@@ -216,53 +216,9 @@ export function EnhancedImageGallery({ images, productName, className, priority 
 
   return (
     <div className={cn("w-full", className)}>
-      {/* Desktop Layout: Side by side */}
-      <div className="hidden md:flex gap-4">
-        {/* Thumbnails - Left side on desktop - only show if multiple images */}
-        {!showSimplifiedLayout && (
-          <div className="flex flex-col gap-3 w-28">
-            {validImages.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => handleThumbnailClick(index)}
-              className={cn(
-                "relative aspect-square overflow-hidden rounded-lg border-2 transition-all duration-300 hover:scale-105",
-                "bg-white shadow-sm hover:shadow-md group/thumb",
-                selectedImage === index
-                  ? "border-brand-orange shadow-lg ring-2 ring-brand-orange/30 scale-105"
-                  : "border-gray-200 hover:border-brand-orange/50"
-              )}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-                                                           <Image
-                  src={image}
-                  alt={`${productName} ${index + 1}`}
-                  fill
-                  className={cn(
-                    "object-cover transition-all duration-300",
-                    "group-hover/thumb:scale-110 group-hover/thumb:brightness-110",
-                    selectedImage === index ? "scale-105" : "scale-100"
-                  )}
-                  sizes="112px"
-                  quality={60}
-                  loading="lazy"
-                />
-              {/* Active indicator with pulse */}
-              {selectedImage === index && (
-                <div className="absolute inset-0 bg-brand-orange/10 border border-brand-orange/30 rounded-lg animate-pulse" />
-              )}
-              {/* Click ripple effect */}
-              <div className="absolute inset-0 bg-brand-orange/0 group-active/thumb:bg-brand-orange/20 transition-colors duration-150 rounded-lg" />
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors duration-200 rounded-lg" />
-
-            </button>
-            ))}
-          </div>
-        )}
-
-        {/* Main Image Display - Desktop */}
-        <div className="flex-1 relative">
+      {/* Desktop Layout: Main image with thumbnails below */}
+      <div className="hidden md:block">
+        <div className="relative">
           <div 
             ref={imageContainerRef}
             className="relative aspect-square bg-gray-100 rounded-2xl shadow-2xl overflow-hidden group"
@@ -346,6 +302,44 @@ export function EnhancedImageGallery({ images, productName, className, priority 
             </div>
           </div>
         </div>
+
+        {!showSimplifiedLayout && (
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            {validImages.map((image, index) => (
+              <button
+                key={index}
+                onClick={() => handleThumbnailClick(index)}
+                className={cn(
+                  "relative h-24 w-24 overflow-hidden rounded-xl border-2 transition-all duration-300 hover:scale-105",
+                  "bg-white shadow-sm hover:shadow-md group/thumb",
+                  selectedImage === index
+                    ? "border-brand-orange shadow-lg ring-2 ring-brand-orange/30 scale-105"
+                    : "border-gray-200 hover:border-brand-orange/50"
+                )}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <Image
+                  src={image}
+                  alt={`${productName} ${index + 1}`}
+                  fill
+                  className={cn(
+                    "object-cover transition-all duration-300",
+                    "group-hover/thumb:scale-110 group-hover/thumb:brightness-110",
+                    selectedImage === index ? "scale-105" : "scale-100"
+                  )}
+                  sizes="96px"
+                  quality={60}
+                  loading="lazy"
+                />
+                {selectedImage === index && (
+                  <div className="absolute inset-0 rounded-xl border border-brand-orange/30 bg-brand-orange/10 animate-pulse" />
+                )}
+                <div className="absolute inset-0 rounded-xl bg-brand-orange/0 transition-colors duration-150 group-active/thumb:bg-brand-orange/20" />
+                <div className="absolute inset-0 rounded-xl bg-black/0 transition-colors duration-200 hover:bg-black/5" />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Mobile Layout: Thumbnails below main image */}

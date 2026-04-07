@@ -1,0 +1,610 @@
+﻿[
+    {
+        "sourceName":  "503497587_1400890704445339_7724686116401886017_n.jpg",
+        "category":  "raw-result-photos",
+        "targetPath":  "/images/reviews/source/raw-result-photos/review-result-001.jpg",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "503637528_1400889874445422_2148868873713486896_n.jpg",
+        "category":  "raw-result-photos",
+        "targetPath":  "/images/reviews/source/raw-result-photos/review-result-002.jpg",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "biomelis dlan.jpg",
+        "category":  "raw-result-photos",
+        "targetPath":  "/images/reviews/source/raw-result-photos/review-result-003.jpg",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "biomelis dlan2.jpg",
+        "category":  "raw-result-photos",
+        "targetPath":  "/images/reviews/source/raw-result-photos/review-result-004.jpg",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Pre i posle BIOWART 1.jpg",
+        "category":  "combined-before-after",
+        "targetPath":  "/images/reviews/source/combined-before-after/review-before-after-001.jpg",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Pre i posle BIOWART.jpg",
+        "category":  "combined-before-after",
+        "targetPath":  "/images/reviews/source/combined-before-after/review-before-after-002.jpg",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-05-30 094106.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-001.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-04 130934.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-002.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 130245.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-003.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 130306.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-004.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 130324.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-005.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 130425.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-006.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 130435 (1).png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-007.png",
+        "duplicateOf":  null,
+        "duplicateCount":  2,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 130435(1).png",
+        "category":  "duplicates",
+        "targetPath":  "/images/reviews/source/duplicates/duplicate-001.png",
+        "duplicateOf":  "Snimak ekrana 2025-06-14 130435 (1).png",
+        "duplicateCount":  0,
+        "privacyStatus":  "excluded-duplicate"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 130435.png",
+        "category":  "duplicates",
+        "targetPath":  "/images/reviews/source/duplicates/duplicate-002.png",
+        "duplicateOf":  "Snimak ekrana 2025-06-14 130435 (1).png",
+        "duplicateCount":  0,
+        "privacyStatus":  "excluded-duplicate"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-06-14 131737.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-008.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-07-02 102736.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-009.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 124024.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-010.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 130310.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-011.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141115.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-012.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141125 (1).png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-013.png",
+        "duplicateOf":  null,
+        "duplicateCount":  1,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141125.png",
+        "category":  "duplicates",
+        "targetPath":  "/images/reviews/source/duplicates/duplicate-003.png",
+        "duplicateOf":  "Snimak ekrana 2025-08-19 141125 (1).png",
+        "duplicateCount":  0,
+        "privacyStatus":  "excluded-duplicate"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141207.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-014.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141344.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-015.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141353.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-016.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141754.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-017.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141808.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-018.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141846 (1).png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-019.png",
+        "duplicateOf":  null,
+        "duplicateCount":  1,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141846.png",
+        "category":  "duplicates",
+        "targetPath":  "/images/reviews/source/duplicates/duplicate-004.png",
+        "duplicateOf":  "Snimak ekrana 2025-08-19 141846 (1).png",
+        "duplicateCount":  0,
+        "privacyStatus":  "excluded-duplicate"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-19 141934.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-020.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-29 092936.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-021.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-29 144726.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-022.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-08-30 121458.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-023.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-09-01 082509.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-024.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-09-01 082933.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-025.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-09-09 095646.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-026.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-09-09 095656.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-027.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-09-09 095708.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-028.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-09-25 133024.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-029.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-02 091326.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-030.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-02 091711.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-031.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-03 102131.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-032.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-07 091219.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-033.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-08 092009.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-034.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-15 092400.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-035.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-16 150305.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-036.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-16 150639.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-037.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-16 150806.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-038.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-27 124447.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-039.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-10-31 092908.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-040.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-03 083711.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-041.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-04 095359.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-042.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-04 095431.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-043.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-05 090929.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-044.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-12 093630.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-045.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-12 093701.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-046.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-12 093749.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-047.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-15 111355.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-048.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-15 111403.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-049.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-19 152929.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-050.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-22 112911.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-051.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-28 092617.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-052.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-28 092627.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-053.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-11-29 110313.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-054.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-12-12 091636.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-055.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-12-18 094012.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-056.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-12-29 084626.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-057.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2025-12-29 085437.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-058.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-01-05 083344.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-059.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-01-12 082019.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-060.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-01-12 082036.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-061.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-01-22 090501.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-062.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-01-22 090515.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-063.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-01-30 160303.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-064.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-02-02 083149.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-065.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    },
+    {
+        "sourceName":  "Snimak ekrana 2026-02-02 140341.png",
+        "category":  "screenshot-proofs",
+        "targetPath":  "/images/reviews/source/screenshot-proofs/review-screenshot-066.png",
+        "duplicateOf":  null,
+        "duplicateCount":  0,
+        "privacyStatus":  "needs-anonymization"
+    }
+]

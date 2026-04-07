@@ -6,12 +6,11 @@ import { Button } from '@/components/ui/button';
 
 export default function TestCountryModal() {
   const [forceShow, setForceShow] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState('hr');
+  const [selectedCountry, setSelectedCountry] = useState('rs');
 
   const countries = [
     { code: 'rs', name: 'Serbia' },
     { code: 'ba', name: 'Bosnia and Herzegovina' },
-    { code: 'hr', name: 'Croatia' },
     { code: 'me', name: 'Montenegro' },
   ];
 

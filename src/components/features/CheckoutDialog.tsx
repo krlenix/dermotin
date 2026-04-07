@@ -5,13 +5,14 @@ import { useTranslations } from 'next-intl';
 import { CountryConfig } from '@/config/countries';
 // Using custom modal instead of Dialog component for better visibility control
 import { Button } from '@/components/ui/button';
-import { 
-  CheckCircle, 
-  XCircle, 
-  Loader2, 
-  Mail, 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Loader2,
+  Mail,
   Phone,
-  AlertTriangle
+  ShieldCheck,
+  XCircle
 } from 'lucide-react';
 
 export type CheckoutDialogType = 'loading' | 'success' | 'error' | null;
@@ -63,16 +64,16 @@ export function CheckoutDialog({
 
   const renderLoadingDialog = () => (
     <div className="text-center">
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green/10">
+        <Loader2 className="h-8 w-8 animate-spin text-brand-green" />
       </div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-2">
+      <h2 className="mb-2 text-xl font-semibold text-slate-950">
         {t('checkout_dialog.processing_order')}
       </h2>
-      <p className="text-base text-gray-600">
+      <p className="text-base text-slate-600">
         {t('checkout_dialog.processing_message')}{dots}
         <br />
-        <span className="text-sm text-gray-500 mt-2 block">
+        <span className="mt-2 block text-sm text-slate-500">
           {t('checkout_dialog.please_wait')}
         </span>
       </p>
@@ -81,22 +82,22 @@ export function CheckoutDialog({
 
   const renderSuccessDialog = () => (
     <div className="text-center">
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-        <CheckCircle className="h-8 w-8 text-green-600" />
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-green/10">
+        <CheckCircle className="h-8 w-8 text-brand-green" />
       </div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-2">
+      <h2 className="mb-2 text-xl font-semibold text-slate-950">
         {t('checkout_dialog.order_confirmed')}
       </h2>
-      <div className="text-base text-gray-600 mb-6">
+      <div className="mb-6 text-base text-slate-600">
         <div className="space-y-2">
           <p>{t('checkout_dialog.success_message')}</p>
           {orderData?.orderId && (
-            <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-              <p className="text-sm font-medium text-green-800">
+            <div className="rounded-2xl border border-brand-green/20 bg-brand-green/5 p-4">
+              <p className="text-sm font-medium text-brand-green">
                 {t('checkout_dialog.order_number')}: <span className="font-mono">{orderData.orderId}</span>
               </p>
               {orderData.customerName && (
-                <p className="text-sm text-green-700 mt-1">
+                <p className="mt-1 text-sm text-slate-600">
                   {t('checkout_dialog.customer')}: {orderData.customerName}
                 </p>
               )}
@@ -104,10 +105,14 @@ export function CheckoutDialog({
           )}
         </div>
       </div>
+      <div className="mb-6 flex items-center justify-center gap-2 rounded-2xl border border-brand-green/10 bg-brand-green/5 px-4 py-3 text-sm font-medium text-slate-700">
+        <ShieldCheck className="h-4 w-4 text-brand-green" />
+        {t('order_summary.secure_purchase_guarantee')}
+      </div>
       <div className="flex justify-center">
         <Button 
           onClick={onClose}
-          className="bg-green-600 hover:bg-green-700 text-white px-8"
+          className="rounded-xl bg-brand-green px-8 text-white hover:bg-brand-green/90"
         >
           {t('checkout_dialog.continue')}
         </Button>
@@ -120,20 +125,20 @@ export function CheckoutDialog({
       <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
         <XCircle className="h-8 w-8 text-red-600" />
       </div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-2">
+      <h2 className="mb-2 text-xl font-semibold text-slate-950">
         {t('checkout_dialog.order_failed')}
       </h2>
-      <div className="text-base text-gray-600 mb-6">
+      <div className="mb-6 text-base text-slate-600">
         <div className="space-y-4">
-          <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
               <div className="space-y-2">
                 <p className="text-sm font-medium text-red-800">
                   {t('checkout_dialog.error_occurred')}
                 </p>
                 {errorMessage && (
-                  <p className="text-sm text-red-700 font-mono bg-red-100 p-2 rounded border">
+                  <p className="rounded-xl border bg-red-100 p-2 font-mono text-sm text-red-700">
                     {errorMessage}
                   </p>
                 )}
@@ -141,43 +146,43 @@ export function CheckoutDialog({
             </div>
           </div>
           
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <h4 className="text-sm font-semibold text-blue-800 mb-2">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <h4 className="mb-2 text-sm font-semibold text-slate-900">
               {t('checkout_dialog.need_help')}
             </h4>
-            <div className="space-y-2 text-sm text-blue-700">
+            <div className="space-y-2 text-sm text-slate-600">
               <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
+                <Mail className="h-4 w-4 text-brand-orange" />
                 <span>{t('checkout_dialog.contact_email')}: </span>
                 <a 
                   href={`mailto:${countryConfig.company.email}`}
-                  className="font-medium underline hover:no-underline"
+                  className="font-medium text-slate-900 underline hover:no-underline"
                 >
                   {countryConfig.company.email}
                 </a>
               </div>
               {countryConfig.company.phone && (
                 <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
+                  <Phone className="h-4 w-4 text-brand-orange" />
                   <span>{t('checkout_dialog.contact_phone')}: </span>
-                  <span className="font-medium">{countryConfig.company.phone}</span>
+                  <span className="font-medium text-slate-900">{countryConfig.company.phone}</span>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      <div className="flex gap-3 justify-center">
+      <div className="flex justify-center gap-3">
         <Button 
           variant="outline"
           onClick={onClose}
-          className="px-6"
+          className="rounded-xl px-6"
         >
           {t('checkout_dialog.try_again')}
         </Button>
         <Button 
           onClick={() => window.location.href = `mailto:${countryConfig.company.email}`}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+          className="rounded-xl bg-brand-green px-6 text-white hover:bg-brand-green/90"
         >
           <Mail className="h-4 w-4 mr-2" />
           {t('checkout_dialog.contact_support')}
@@ -194,28 +199,19 @@ export function CheckoutDialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+        className="fixed inset-0 bg-slate-950/55 backdrop-blur-sm"
         onClick={type !== 'loading' ? onClose : undefined}
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       />
       
       {/* Dialog content */}
       <div 
-        className="relative z-10 w-[90%] max-w-md mx-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-6 animate-in fade-in-0 zoom-in-95 duration-200"
-        style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          borderRadius: '0.5rem',
-          padding: '1.5rem'
-        }}
+        className="relative z-10 mx-4 w-[90%] max-w-md rounded-[1.6rem] border border-brand-green/10 bg-white p-6 shadow-[0_28px_80px_rgba(15,23,42,0.18)] animate-in fade-in-0 zoom-in-95 duration-200"
       >
         {/* Close button for non-loading states */}
         {type !== 'loading' && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-20"
-            style={{ zIndex: 20 }}
+            className="absolute right-4 top-4 z-20 text-slate-400 transition-colors hover:text-slate-700"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
+const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
   // Image optimization
@@ -17,7 +18,7 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 31536000, // 1 year
+    minimumCacheTTL: isDev ? 0 : 31536000,
     dangerouslyAllowSVG: false,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -49,9 +50,9 @@ const nextConfig: NextConfig = {
       {
         source: '/images/:path*',
         headers: [
-                  {
+        {
           key: 'Cache-Control',
-          value: 'public, max-age=31536000, immutable',
+          value: isDev ? 'no-store, no-cache, must-revalidate, max-age=0' : 'public, max-age=31536000, immutable',
         },
         {
           key: 'X-Content-Type-Options',
@@ -60,22 +61,22 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Ensure JS/CSS bundles are revalidated on each request
+        // Never cache local dev bundles; keep prod immutable.
         source: '/_next/static/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: isDev ? 'no-store, no-cache, must-revalidate, max-age=0' : 'public, max-age=31536000, immutable',
           },
         ],
       },
       {
-        // HTML pages should not be cached aggressively
-        source: '/:locale(rs|ba|hr|me)/:path*',
+        // HTML pages should always revalidate; local dev should never cache.
+        source: '/:locale(rs|ba|me)/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
+            value: isDev ? 'no-store, no-cache, must-revalidate, max-age=0' : 'public, max-age=0, must-revalidate',
           },
         ],
       },

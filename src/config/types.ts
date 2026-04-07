@@ -53,6 +53,7 @@ export interface Product {
   name: string;
   description: string;
   shortDescription: string;
+  heroTitle: string;
   purpose: string; // What the product is created for
   category: string;
   images: {

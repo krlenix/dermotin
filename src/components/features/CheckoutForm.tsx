@@ -481,7 +481,7 @@ export function CheckoutForm({
   const isSingleCourier = availableCouriers.length === 1;
   
   // Get supported countries for phone input (only countries we have configured)
-  const supportedCountries = Object.keys(COUNTRIES).map(code => code.toUpperCase()) as Array<'RS' | 'BA' | 'HR'>;
+  const supportedCountries = Object.keys(COUNTRIES).map(code => code.toUpperCase()) as Array<'RS' | 'BA' | 'ME'>;
   
   // Calculate shipping cost using selected courier and country threshold
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
@@ -505,14 +505,16 @@ export function CheckoutForm({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Checkout Form */}
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-gray-900">
-            <User className="h-5 w-5" />
+      <Card className="rounded-[1.6rem] border-brand-green/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,249,246,0.96))] py-3 shadow-none">
+        <CardHeader className="mx-3 rounded-[1.4rem] border border-brand-green/10 bg-brand-green/5 px-4 py-4">
+          <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.16em] text-brand-green">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand-orange shadow-sm">
+              <User className="h-4 w-4" />
+            </span>
             {t('order_summary.delivery_info')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 pb-3 md:px-4">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* URL Coupon Validation Status - Show while validating from URL */}
             {isValidatingUrlCoupon && (
@@ -692,7 +694,7 @@ export function CheckoutForm({
                   onChange={(value) => handleInputChange('phone', value || '')}
                   onBlur={() => handleBlur('phone')}
                   placeholder="Enter phone number"
-                  defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA' | 'HR'}
+                  defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA' | 'ME'}
                   countries={supportedCountries}
                   className={`focus:ring-brand-orange focus:border-brand-orange ${
                     formErrors.phone ? 'border-red-500 ring-2 ring-red-200' : ''
@@ -945,7 +947,7 @@ export function CheckoutForm({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-brand-green hover:bg-green-600 text-white font-bold py-6 px-8 text-xl rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 border-2 border-green-400/30 hover:border-green-300/50 transform hover:-translate-y-1 hover:scale-[1.02] group sword-shine focus:outline-none focus:ring-4 focus:ring-green-300/50"
+                className="w-full rounded-[1.4rem] border-2 border-green-400/30 bg-brand-green py-6 px-8 text-xl font-bold text-white shadow-[0_18px_40px_rgba(44,94,74,0.24)] transition-all duration-500 hover:-translate-y-1 hover:scale-[1.02] hover:border-green-300/50 hover:bg-green-600 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-green-300/50 group sword-shine"
                 size="lg"
               >
                 <span className="relative z-10">
@@ -961,7 +963,7 @@ export function CheckoutForm({
               </Button>
             </div>
 
-            <div className="flex items-center justify-center gap-2 p-2 text-center">
+            <div className="flex items-center justify-center gap-2 rounded-[1.2rem] border border-brand-green/10 bg-brand-green/5 p-3 text-center">
               <Shield className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-600 font-medium">
                 {t('order_summary.secure_purchase_guarantee')}

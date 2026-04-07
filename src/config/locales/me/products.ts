@@ -6,6 +6,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'FUNGEL',
     description: 'Namijenjena borbi protiv gljivičnih infekcija na stopalima i noktima. Pomaže u smanjenju neprijatnih simptoma kao što su zadebljali i žuti nokti, svrab, crvenilo i perutanje kože. Redovnom upotrebom doprinosi zdravijem izgledu kože i noktiju, sprečavajući ponovno širenje infekcije.',
     shortDescription: 'Blistavi nokti i koža stopala',
+    heroTitle: 'Recite stop gljivicama',
     purpose: 'Pomaže problematičnoj koži i noktima u borbi protiv gljivičnih infekcija',
     category: 'skincare',
     images: {
@@ -248,6 +249,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOMELIS',
     description: 'Ublažava tegobe izazvane ekcemima i psorijazom. Njegova biljna formula njeguje kožu, smanjuje upalu i osjećaj svraba. Pogodan je za svakodnevnu upotrebu i doprinosi obnavljanju prirodne barijere kože.',
     shortDescription: 'Umirujuća njega za osjetljivu kožu',
+    heroTitle: 'Recite stop ekcemu i psorijazi',
     purpose: 'Pomaže osjetljivoj koži u borbi protiv ekcema i psorijaze',
     category: 'skincare',
     images: {
@@ -483,6 +485,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOWART',
     description: 'Prirodna pomoć kod uklanjanja virusnih bradavica. Djeluje lokalno, ubrzava povlačenje promjena i regeneraciju kože. Redovnom primjenom smanjuje rizik od ponovnog pojavljivanja bradavica.',
     shortDescription: 'Biljna formula za ciljanu njegu kože',
+    heroTitle: 'Recite stop virusnim bradavicama',
     purpose: 'Podržava regeneraciju kože pogođene virusnim bradavicama',
     category: 'skincare',
     slug: 'biowart',
@@ -721,6 +724,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'FUNGOMAX',
     description: 'Djeluje dubinski na gljivične infekcije noktiju i kože stopala. Prodire u nokatnu ploču i pomaže u njenom jačanju i obnavljanju. Dugotrajnom upotrebom obezbijeđuje zaštitu i zdrav izgled noktiju.',
     shortDescription: 'Intenzivna njega noktiju i stopala',
+    heroTitle: 'Recite stop gljivicama na noktima',
     purpose: 'Pomaže koži i noktima sklonim gljivičnim infekcijama',
     category: 'skincare',
     images: {

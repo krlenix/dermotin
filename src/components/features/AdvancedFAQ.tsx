@@ -106,45 +106,6 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="text-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
-          {t('faq_ui.title')}
-        </h2>
-        <p className="text-gray-600">
-          {t('faq_ui.subtitle')}
-        </p>
-      </div>
-
-      {/* Category filters */}
-      <div className="flex flex-wrap gap-2 justify-center mb-6">
-        {(product 
-          ? ['usage', 'ingredients', 'effects', 'safety', 'storage', 'general']
-          : ['delivery', 'product', 'payment', 'returns', 'general']
-        ).map((category) => {
-          const count = faqItems.filter(item => item.category === category).length;
-          if (count === 0) return null;
-          
-          return (
-            <Badge key={category} variant="secondary" className={`${getCategoryColor(category)} px-3 py-1`}>
-              {getCategoryIcon(category)}
-              <span className="ml-1 capitalize">
-                {category === 'delivery' ? t('faq_ui.delivery') :
-                 category === 'product' ? t('faq_ui.product') :
-                 category === 'payment' ? t('faq_ui.payment') :
-                 category === 'returns' ? t('faq_ui.returns') :
-                 category === 'usage' ? t('faq_ui.usage') :
-                 category === 'ingredients' ? t('faq_ui.ingredients') :
-                 category === 'effects' ? t('faq_ui.effects') :
-                 category === 'safety' ? t('faq_ui.safety') :
-                 category === 'storage' ? t('faq_ui.storage') :
-                 t('faq_ui.general')}
-              </span>
-              <span className="ml-1">({count})</span>
-            </Badge>
-          );
-        })}
-      </div>
-
       {/* FAQ Items */}
       <div className="space-y-3">
         {faqItems.map((item: FAQItem | ProductFAQ, index: number) => {
@@ -153,20 +114,20 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
           return (
             <Card 
               key={index} 
-              className="border border-gray-200 hover:border-brand-orange/50 transition-colors cursor-pointer py-0"
+              className="cursor-pointer rounded-[1.4rem] border border-brand-green/12 bg-white/85 py-0 shadow-none transition-colors hover:border-brand-green/25"
               onClick={() => toggleItem(index.toString())}
             >
               <CardContent className="p-0">
-                <div className="w-full px-3 md:px-4 py-3 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                <div className="flex w-full items-center justify-between px-4 py-4 transition-colors hover:bg-brand-green/5">
                   <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
                     <div className="flex-shrink-0">
                       {getCategoryIcon(item.category)}
                     </div>
-                    <span className="font-semibold text-gray-900 text-sm md:text-base leading-tight">{item.question}</span>
+                    <span className="text-sm font-semibold leading-tight text-slate-900 md:text-base">{item.question}</span>
                   </div>
                   <div className="flex-shrink-0 ml-2">
                     <ChevronDown 
-                      className={`h-4 w-4 md:h-5 md:w-5 text-gray-500 transition-transform ${
+                      className={`h-4 w-4 text-slate-400 transition-transform md:h-5 md:w-5 ${
                         isOpen ? 'rotate-180' : ''
                       }`} 
                     />
@@ -174,9 +135,25 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
                 </div>
                 
                 {isOpen && (
-                  <div className="px-3 md:px-4 pb-3 md:pb-4">
-                    <div className="border-t border-gray-100 pt-3">
-                      <p className="text-gray-700 leading-relaxed text-sm md:text-base">{item.answer}</p>
+                  <div className="px-4 pb-4">
+                    <div className="border-t border-brand-green/10 pt-4">
+                      <div className="mb-3 flex flex-wrap gap-2">
+                        <Badge variant="secondary" className={`${getCategoryColor(item.category)} border-0 px-3 py-1`}>
+                          <span className="capitalize">
+                            {item.category === 'delivery' ? t('faq_ui.delivery') :
+                             item.category === 'product' ? t('faq_ui.product') :
+                             item.category === 'payment' ? t('faq_ui.payment') :
+                             item.category === 'returns' ? t('faq_ui.returns') :
+                             item.category === 'usage' ? t('faq_ui.usage') :
+                             item.category === 'ingredients' ? t('faq_ui.ingredients') :
+                             item.category === 'effects' ? t('faq_ui.effects') :
+                             item.category === 'safety' ? t('faq_ui.safety') :
+                             item.category === 'storage' ? t('faq_ui.storage') :
+                             t('faq_ui.general')}
+                          </span>
+                        </Badge>
+                      </div>
+                      <p className="text-sm leading-relaxed text-slate-600 md:text-base">{item.answer}</p>
                     </div>
                   </div>
                 )}
@@ -186,30 +163,29 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
         })}
       </div>
 
-      {/* Contact Section */}
-      <Card className="bg-gradient-to-r from-brand-green/10 to-brand-orange/10 border-brand-orange/20">
+      <Card className="rounded-[1.6rem] border border-brand-green/12 bg-[linear-gradient(180deg,rgba(245,250,247,0.92),rgba(255,255,255,0.98))] shadow-none">
         <CardContent className="p-3 md:p-4 text-center">
-          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">
+          <h3 className="mb-2 text-lg font-bold text-slate-900 md:mb-3 md:text-xl">
             {t('faq_ui.no_answer')}
           </h3>
-          <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">
+          <p className="mb-3 text-sm text-slate-600 md:mb-4 md:text-base">
             {t('faq_ui.support_team')}
           </p>
           
           <div className="grid md:grid-cols-2 gap-3 md:gap-4">
-            <div className="flex items-center justify-center gap-2 p-2 md:p-3 bg-white rounded-lg">
+            <div className="flex items-center justify-center gap-2 rounded-2xl bg-white p-3">
               <Phone className="h-4 w-4 md:h-5 md:w-5 text-brand-orange flex-shrink-0" />
               <div className="text-left">
                 <p className="font-semibold text-xs md:text-sm">{t('faq_ui.call_us')}</p>
-                <p className="text-xs md:text-sm text-gray-600">{t('faq_ui.working_hours')}</p>
+                <p className="text-xs text-slate-600 md:text-sm">{t('faq_ui.working_hours')}</p>
               </div>
             </div>
             
-            <div className="flex items-center justify-center gap-2 p-2 md:p-3 bg-white rounded-lg">
+            <div className="flex items-center justify-center gap-2 rounded-2xl bg-white p-3">
               <Mail className="h-4 w-4 md:h-5 md:w-5 text-brand-orange flex-shrink-0" />
               <div className="text-left">
                 <p className="font-semibold text-xs md:text-sm">{t('faq_ui.send_email')}</p>
-                <p className="text-xs md:text-sm text-gray-600">{t('faq_ui.response_time')}</p>
+                <p className="text-xs text-slate-600 md:text-sm">{t('faq_ui.response_time')}</p>
               </div>
             </div>
           </div>

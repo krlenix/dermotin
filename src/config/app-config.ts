@@ -82,7 +82,6 @@ export const FEATURE_FLAGS = {
       enabled: {
         rs: false,  // Disabled for RS locale
         ba: false,  // Disabled for BA locale
-        hr: false,  // Disabled for HR locale
         me: false,  // Disabled for ME locale
       }
     },

@@ -7,6 +7,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'FUNGEL',
     description: 'Namijenjena borbi protiv gljivičnih infekcija na stopalima i noktima. Pomaže u smanjenju neugodnih simptoma kao što su zadebljali i žuti nokti, svrbež, crvenilo i ljuštenje kože. Redovitom uporabom doprinosi zdravijem izgledu kože i noktiju, sprječavajući ponovno širenje infekcije.',
     shortDescription: 'Blistavi nokti i koža stopala',
+    heroTitle: 'Recite stop gljivicama',
     purpose: 'Pomaže problematičnoj koži i noktima u borbi protiv gljivičnih infekcija',
     category: 'skincare',
     images: {
@@ -277,6 +278,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOMELIS',
     description: 'Ublažava tegobe izazvane ekcemima i psorijazom. Njegova biljna formula njeguje kožu, smanjuje upalu i osjećaj svrbeža. Pogodan je za svakodnevnu upotrebu i doprinosi obnavljanju prirodne barijere kože.',
     shortDescription: 'Umirujuća nega za osjetljivu kožu',
+    heroTitle: 'Recite stop ekcemu i psorijazi',
     purpose: 'Pomaže osjetljivoj koži u borbi protiv ekcema i psorijaze',
     category: 'skincare',
     images: {
@@ -635,6 +637,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOWART',
     description: 'Prirodna pomoć kod uklanjanja virusnih bradavica. Deluje lokalno, ubrzava povlačenje promena i regeneraciju kože. Redovnom primenom smanjuje rizik od ponovnog pojavljivanja bradavica.',
     shortDescription: 'Biljna formula za ciljanu njegu kože',
+    heroTitle: 'Recite stop virusnim bradavicama',
     purpose: 'Podržava regeneraciju kože pogođene virusnim bradavicama',
     category: 'skincare',
     slug: 'biowart',

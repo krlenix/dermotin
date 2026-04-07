@@ -6,6 +6,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'FUNGEL',
     description: 'Namenjena borbi protiv gljivičnih infekcija na stopalima i noktima. Pomaže u smanjenju neprijatnih simptoma kao što su zadebljali i žuti nokti, svrab, crvenilo i perutanje kože. Redovnom upotrebom doprinosi zdravijem izgledu kože i noktiju, sprečavajući ponovno širenje infekcije.',
     shortDescription: 'Blistavi nokti i koža stopala',
+    heroTitle: 'Recite stop gljivicama',
     purpose: 'Pomaže problematičnoj koži i noktima u borbi protiv gljivičnih infekcija',
     category: 'skincare',
     images: {
@@ -276,6 +277,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOMELIS',
     description: 'Ublažava tegobe izazvane ekcemima i psorijazom. Njegova biljna formula neguje kožu, smanjuje upalu i osećaj svraba. Pogodan je za svakodnevnu upotrebu i doprinosi obnavljanju prirodne barijere kože.',
     shortDescription: 'Umirujuća nega za osetljivu kožu',
+    heroTitle: 'Recite stop ekcemu i psorijazi',
     purpose: 'Pomaže osetljivoj koži u borbi protiv ekcema i psorijaze',
     category: 'skincare',
     images: {
@@ -634,6 +636,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOWART',
     description: 'Prirodna pomoć kod uklanjanja virusnih bradavica. Deluje lokalno, ubrzava povlačenje promena i regeneraciju kože. Redovnom primenom smanjuje rizik od ponovnog pojavljivanja bradavica.',
     shortDescription: 'Biljna formula za ciljanu negu kože',
+    heroTitle: 'Recite stop virusnim bradavicama',
     purpose: 'Podržava regeneraciju kože pogođene virusnim bradavicama',
     category: 'skincare',
     slug: 'biowart',
@@ -856,6 +859,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOROID',
     description: 'Može da pruža olakšanje kod bola, svraba i peckanja izazvanih hemoroidima. Zahvaljujući biljnim ekstraktima pomaže u smanjenju otoka i iritacije. Redovna upotreba doprinosi regeneraciji tkiva i boljoj udobnosti tokom dana.',
     shortDescription: 'Blaga podrška osetljivim regijama',
+    heroTitle: 'Recite stop hemoroidima',
     purpose: 'Pomaže u nezi i zaštiti osetljive kože analnog područja',
     category: 'skincare',
     slug: 'bioroid',
@@ -1055,6 +1059,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOMELIS KAPI',
     description: 'Podržavaju prirodne procese detoksikacije u organizmu. Pomažu boljoj funkciji jetre i bubrega, podstičući izbacivanje toksina. Redovnim korišćenjem doprinose jačanju imuniteta i osećaju vitalnosti.',
     shortDescription: 'Prirodna biljna kombinacija',
+    heroTitle: 'Recite stop opterecenoj jetri',
     purpose: 'Podržava normalnu funkciju jetre i žlezuda',
     category: 'supplements',
     images: {
@@ -1277,6 +1282,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'BIOROID KAPI',
     description: 'Namenjene ublažavanju unutrašnjih tegoba izazvanih hemoroidima. Pomažu u smanjenju upale i jačanju krvnih sudova. Njihova prirodna formula doprinosi olakšanju i podržava normalnu cirkulaciju.',
     shortDescription: 'Tradicionalna biljna formula',
+    heroTitle: 'Recite stop hemoroidima',
     purpose: 'Podržava ublažavanje nelagodnosti kod hemoroida i analne iritacije',
     category: 'supplements',
     images: {
@@ -1486,6 +1492,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'IMMUNIS KAPI',
     description: 'Jačaju prirodni odbrambeni sistem organizma. Sadrže pažljivo odabrane biljne sastojke koji pomažu u povećanju otpornosti na infekcije. Pogodne su za preventivnu upotrebu u periodima oslabljenog imuniteta.',
     shortDescription: 'Biljna podrška organizmu',
+    heroTitle: 'Recite stop slabom imunitetu',
     purpose: 'Podržava prirodnu odbrambenu sposobnost organizma',
     category: 'supplements',
     images: {
@@ -1696,6 +1703,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'FUNGOMAX',
     description: 'Deluje dubinski na gljivične infekcije noktiju i kože stopala. Prodire u nokatnu ploču i pomaže u njenom jačanju i obnavljanju. Dugotrajnom upotrebom obezbeđuje zaštitu i zdrav izgled noktiju.',
     shortDescription: 'Intenzivna nega noktiju i stopala',
+    heroTitle: 'Recite stop gljivicama na noktima',
     purpose: 'Pomaže koži i noktima sklonim gljivičnim infekcijama',
     category: 'skincare',
     images: {

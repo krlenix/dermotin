@@ -14,18 +14,18 @@ export async function GET(request: NextRequest) {
       // Primary supported countries
       'RS': 'rs', // Serbia
       'BA': 'ba', // Bosnia and Herzegovina
-      'HR': 'hr', // Croatia
       'ME': 'me', // Montenegro
       // Fallback to closest locale for neighboring countries
+      'HR': 'rs', // Croatia -> Serbian
       'MK': 'rs', // North Macedonia -> Serbian
-      'SI': 'hr', // Slovenia -> Croatian (closer geographically and linguistically to EU standards)
+      'SI': 'rs', // Slovenia -> Serbian
       'AL': 'rs', // Albania -> Serbian
       'XK': 'rs', // Kosovo -> Serbian
       'BG': 'rs', // Bulgaria -> Serbian
       'RO': 'rs', // Romania -> Serbian
-      'HU': 'hr', // Hungary -> Croatian (EU member)
-      'AT': 'hr', // Austria -> Croatian (EU member)
-      'IT': 'hr', // Italy -> Croatian (EU member)
+      'HU': 'rs', // Hungary -> Serbian
+      'AT': 'rs', // Austria -> Serbian
+      'IT': 'rs', // Italy -> Serbian
       'GR': 'rs', // Greece -> Serbian
     };
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     const detectedLocale = geo.country ? countryToLocale[geo.country] || 'rs' : 'rs';
     
     // Log fallback usage for analytics
-    if (geo.country && !['RS', 'BA', 'HR', 'ME'].includes(geo.country) && countryToLocale[geo.country]) {
+    if (geo.country && !['RS', 'BA', 'ME'].includes(geo.country) && countryToLocale[geo.country]) {
       if (process.env.NODE_ENV === 'development') {
         console.log('🔀 Using fallback locale for country:', geo.country, '→', detectedLocale);
       }

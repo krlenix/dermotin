@@ -24,7 +24,6 @@ interface CountryOption {
 const countryToFlagCode: Record<string, string> = {
   rs: 'RS', // Serbia
   ba: 'BA', // Bosnia and Herzegovina
-  hr: 'HR', // Croatia
   me: 'ME', // Montenegro
 };
 

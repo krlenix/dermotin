@@ -12,7 +12,7 @@ interface AffiliateCodeResponse {
 
 /**
  * Fetch affiliate codes from the OMS API for a specific country
- * @param countryCode - The country code (rs, ba, hr, me)
+ * @param countryCode - The country code (rs, ba, me)
  * @returns Promise with array of coupons or null if fetch fails
  */
 export async function fetchAffiliateCodesFromAPI(countryCode: string): Promise<Coupon[] | null> {

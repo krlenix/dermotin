@@ -490,6 +490,43 @@
     "description": "Platite kada stigne paket - sigurno i pouzdano",
     "selected": "✓ Odabrano"
   },
+  "checkout_v2": {
+    "title": "Brza porudžbina",
+    "simpleTitle": "Podaci za isporuku",
+    "simpleAddressLabel": "Adresa i broj ulaza / kuće / stana",
+    "priceTitle": "Akcijska cena",
+    "pricePoint1": "Sigurna i jednostavna primena",
+    "pricePoint2": "Formulacija bazirana na prirodnim sastojcima",
+    "pricePoint3": "Bez parabena, veštačkih boja i mirisa",
+    "subtitle": "Završite porudžbinu za manje od minut",
+    "helper": "Unesite samo osnovne podatke, proverite iznos i pošaljite porudžbinu.",
+    "offerBadge": "Akcijska ponuda",
+    "orderNow": "Poručite odmah",
+    "shellHelper": "Izaberite paket, proverite uslove dostave i završite checkout bez suvišnih koraka.",
+    "startingFrom": "Već od",
+    "legalInfo": "Podaci prodavca",
+    "trustSecure": "Sigurna porudžbina",
+    "trustFast": "Brza dostava",
+    "trustCod": "Plaćanje pouzećem",
+    "deliveryToCountry": "Dostava za {country}",
+    "selectedPackage": "Izabrani paket",
+    "changePackage": "Promeni paket",
+    "contactStep": "Kontakt podaci",
+    "contactHelper": "Unesite podatke kako bismo mogli da potvrdimo i pošaljemo porudžbinu.",
+    "emailHelper": "Opciono, za potvrdu i obaveštenje o porudžbini.",
+    "deliveryStep": "Adresa i dostava",
+    "deliveryHelper": "Na ovu adresu kurir donosi paket.",
+    "reviewStep": "Pregled i potvrda",
+    "reviewHelper": "Pre slanja proverite dostavu, popust i ukupan iznos.",
+    "couponReveal": "Imate kod za popust?",
+    "upsellReveal": "Dodaj još proizvoda uz porudžbinu",
+    "upsellHide": "Sakrij dodatne proizvode",
+    "totalToPay": "Za uplatu",
+    "freeShippingActive": "Besplatna dostava je automatski obračunata za ovu porudžbinu.",
+    "discountLabel": "Popust",
+    "submitHint": "Klikom na dugme potvrđujete porudžbinu. Plaćanje vršite kuriru prilikom preuzimanja.",
+    "bogoSummary": "Plaćate {paid}, dobijate ukupno {total} komada"
+  },
   "placeholders": {
     "phone": "+381 60 123 4567",
     "email": "primer@email.com",
@@ -523,9 +560,7 @@
     "we_operate_in": "Poslujemo u",
     "serbia": "SRB",
     "bosnia": "BiH",
-    "croatia": "HR",
-    "montenegro": "ME",
-    "eu": "EU"
+    "montenegro": "ME"
   },
   "ui": {
     "toggle_menu": "Preklapanje menija",
@@ -702,7 +737,6 @@
     "countries": {
       "rs": "Srbija",
       "ba": "Bosna i Hercegovina",
-      "hr": "Hrvatska",
       "me": "Crna Gora"
     }
   },
@@ -721,13 +755,11 @@
     "countries": {
       "rs": "Srbiju",
       "ba": "Bosnu i Hercegovinu",
-      "hr": "Hrvatsku",
       "me": "Crnu Goru"
     },
     "countries_nominative": {
       "rs": "Srbija",
       "ba": "Bosna i Hercegovina",
-      "hr": "Hrvatska",
       "me": "Crna Gora"
     }
   }

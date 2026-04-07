@@ -17,14 +17,12 @@ import Image from 'next/image';
 
 // Import all message files
 import rsMessages from '@/messages/rs.json';
-import hrMessages from '@/messages/hr.json';
 import baMessages from '@/messages/ba.json';
 import meMessages from '@/messages/me.json';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const messages: Record<string, any> = {
   rs: rsMessages,
-  hr: hrMessages,
   ba: baMessages,
   me: meMessages,
 };
@@ -35,18 +33,18 @@ const DISMISSED_KEY = 'country-mismatch-dismissed';
 const countryToLocale: Record<string, string> = {
   RS: 'rs', // Serbia
   BA: 'ba', // Bosnia and Herzegovina
-  HR: 'hr', // Croatia
   ME: 'me', // Montenegro
   // Fallback to closest locale for neighboring countries
+  HR: 'rs', // Croatia -> Serbian
   MK: 'rs', // North Macedonia -> Serbian
-  SI: 'hr', // Slovenia -> Croatian (closer geographically and linguistically to EU standards)
+  SI: 'rs', // Slovenia -> Serbian
   AL: 'rs', // Albania -> Serbian
   XK: 'rs', // Kosovo -> Serbian
   BG: 'rs', // Bulgaria -> Serbian
   RO: 'rs', // Romania -> Serbian
-  HU: 'hr', // Hungary -> Croatian (EU member)
-  AT: 'hr', // Austria -> Croatian (EU member)
-  IT: 'hr', // Italy -> Croatian (EU member)
+  HU: 'rs', // Hungary -> Serbian
+  AT: 'rs', // Austria -> Serbian
+  IT: 'rs', // Italy -> Serbian
   GR: 'rs', // Greece -> Serbian
 };
 
@@ -54,7 +52,6 @@ const countryToLocale: Record<string, string> = {
 const localeToFlagCode: Record<string, string> = {
   rs: 'RS',
   ba: 'BA',
-  hr: 'HR',
   me: 'ME',
 };
 
@@ -89,20 +86,7 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
       return;
     }
 
-    // DEBUG: Force show on localhost for HR locale to test GDPR coordination
-    if (isDevMode && locale === 'hr') {
-      console.log('🧪 DEBUG MODE: Forcing geo modal for HR locale on localhost (ignoring dismissed state)');
-      // Clear dismissed state and force show every time on HR locale
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(DISMISSED_KEY);
-      }
-      setTimeout(() => {
-        setIsOpen(true);
-      }, 500);
-      return;
-    }
-
-    // Check if already dismissed (for non-HR locales)
+    // Check if already dismissed
     if (typeof window !== 'undefined') {
       const dismissed = localStorage.getItem(DISMISSED_KEY);
       if (dismissed === 'true') {
@@ -192,7 +176,7 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
       targetLocale = countryToLocale[geoData.country];
     } else if (showTestModal && isDevMode) {
       // Use test locale (different from current)
-      const testCountries = ['rs', 'hr', 'ba', 'me'];
+      const testCountries = ['rs', 'ba', 'me'];
       targetLocale = testCountries.find(c => c !== locale) || 'rs';
     }
     
@@ -237,21 +221,18 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
   if (forcedCountry) {
     // Use forced country for testing
     detectedLocale = forcedCountry;
-  } else if (isDevMode && locale === 'hr' && isOpen) {
-    // DEBUG: When on localhost with HR locale, show RS as detected
-    detectedLocale = 'rs';
   } else if (geoData && geoData.country) {
     // Use real detected country
     detectedLocale = countryToLocale[geoData.country];
   } else if (showTestModal && isDevMode) {
     // For localhost testing, use a different country than current
-    const testCountries = ['rs', 'hr', 'ba', 'me'];
+    const testCountries = ['rs', 'ba', 'me'];
     detectedLocale = testCountries.find(c => c !== locale) || 'rs';
   }
 
   // If no country detected and not in force mode or test mode, don't show
   if (!detectedLocale || !COUNTRIES[detectedLocale]) {
-    if (!forceShow && !showTestModal && !(isDevMode && locale === 'hr')) return null;
+    if (!forceShow && !showTestModal) return null;
     // For forceShow without country, default to 'rs' as an example
     detectedLocale = 'rs';
   }
@@ -278,8 +259,7 @@ export function CountryMismatchBanner({ forceShow = false, forcedCountry }: Coun
   const detectedFlagCode = localeToFlagCode[detectedLocale];
   const currentFlagCode = localeToFlagCode[locale];
 
-  // Show development notice on localhost (but not for HR locale - it auto-shows the modal)
-  if (isDevMode && !forceShow && !showTestModal && locale !== 'hr') {
+  if (isDevMode && !forceShow && !showTestModal) {
     const handleClearDismissed = () => {
       localStorage.removeItem(DISMISSED_KEY);
       console.log('✅ Cleared dismissed state - refresh page to test modal');

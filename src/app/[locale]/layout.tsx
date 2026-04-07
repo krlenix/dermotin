@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-const locales = ['rs', 'ba', 'hr', 'me'];
+const locales = ['rs', 'ba', 'me'];
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
