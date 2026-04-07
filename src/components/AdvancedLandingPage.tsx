@@ -405,13 +405,12 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
   // CTA Button text - configurable variable
   const ctaButtonText = t('common.order_now');
 
-  // Smooth scroll to delivery form (Podaci za dostavu)
+  // Smooth scroll to the beginning of the order block
   const scrollToCheckout = () => {
-    const deliverySection = document.getElementById('delivery-form');
-    if (deliverySection) {
-      // Calculate offset to show the entire form (scroll a bit above)
-      const elementTop = deliverySection.getBoundingClientRect().top;
-      const offsetPosition = elementTop + window.pageYOffset - 80; // 80px offset for better visibility
+    const orderSection = document.getElementById('order');
+    if (orderSection) {
+      const elementTop = orderSection.getBoundingClientRect().top;
+      const offsetPosition = elementTop + window.pageYOffset - 24;
       
       window.scrollTo({
         top: offsetPosition,
