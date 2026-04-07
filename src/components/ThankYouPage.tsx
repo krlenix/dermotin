@@ -1,16 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import {
+  CheckCircle2,
+  CreditCard,
+  Mail,
+  MapPin,
+  Package,
+  Phone,
+  ShieldCheck,
+  User,
+} from 'lucide-react';
 import { CountryConfig, getDefaultCourier } from '@/config/countries';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Package, MapPin, Phone, Mail, User, CreditCard, Star } from 'lucide-react';
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { Footer } from '@/components/ui/footer';
 import { OrderData } from '@/app/api/orders/route';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { PixelTracker } from '@/components/tracking/PixelTracker';
 
 interface ThankYouPageProps {
@@ -21,11 +29,21 @@ interface ThankYouPageProps {
 export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps) {
   const t = useTranslations();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
+  const courier = getDefaultCourier(countryConfig);
+
+  const formatMoney = (amount: number) =>
+    new Intl.NumberFormat('sr-RS', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount);
 
   useEffect(() => {
+    const previewMode = searchParams.get('preview') === '1';
+
     // Get order data from session storage
     const storedOrder = sessionStorage.getItem('completedOrder');
     if (storedOrder) {
@@ -34,14 +52,62 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
         setOrderData(order);
       } catch (error) {
         console.error('Error parsing order data:', error);
-        router.push('/rs');
+        if (previewMode) {
+          const previewShippingCost = courier.shipping.cost;
+          setOrderData({
+            orderId: '123456',
+            customerName: 'Pera Peric',
+            customerEmail: 'pera@example.com',
+            customerPhone: '061234567',
+            customerAddress: 'Bulevar 1',
+            customerCity: 'Beograd',
+            customerPostalCode: '11000',
+            productName: 'FUNGEL',
+            productVariant: '1 kom',
+            quantity: 1,
+            totalPrice: 1990 + previewShippingCost,
+            subtotal: 1990,
+            shippingCost: previewShippingCost,
+            currency: countryConfig.currencySymbol,
+            courierName: courier.name,
+            deliveryTime: courier.deliveryTime,
+            paymentMethod: 'cod',
+            bundleItems: {},
+            locale,
+          });
+        } else {
+          router.push(`/${locale}`);
+        }
       }
+    } else if (previewMode) {
+      const previewShippingCost = courier.shipping.cost;
+      setOrderData({
+        orderId: '123456',
+        customerName: 'Pera Peric',
+        customerEmail: 'pera@example.com',
+        customerPhone: '061234567',
+        customerAddress: 'Bulevar 1',
+        customerCity: 'Beograd',
+        customerPostalCode: '11000',
+        productName: 'FUNGEL',
+        productVariant: '1 kom',
+        quantity: 1,
+        totalPrice: 1990 + previewShippingCost,
+        subtotal: 1990,
+        shippingCost: previewShippingCost,
+        currency: countryConfig.currencySymbol,
+        courierName: courier.name,
+        deliveryTime: courier.deliveryTime,
+        paymentMethod: 'cod',
+        bundleItems: {},
+        locale,
+      });
     } else {
       // No order data found, redirect to homepage
-      router.push('/rs');
+      router.push(`/${locale}`);
     }
     setLoading(false);
-  }, [router]);
+  }, [countryConfig.currencySymbol, courier.deliveryTime, courier.name, locale, router, searchParams]);
 
 
   // Animated progress steps
@@ -55,10 +121,10 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,#f6f8f6_0%,#ffffff_30%,#f8fbf9_65%,#ffffff_100%)]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-brand-orange mx-auto"></div>
-          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
+          <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-[#358055]/15 border-t-[#F3765D]"></div>
+          <p className="mt-4 text-sm font-medium text-slate-500">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -69,296 +135,295 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Pixel Tracking */}
+    <div className="relative min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f6f8f6_0%,#ffffff_30%,#f8fbf9_65%,#ffffff_100%)]">
       <PixelTracker countryCode={countryConfig.code} />
-      
-      {/* Header - Same as AdvancedLandingPage */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-28 right-0 h-96 w-96 rounded-full bg-[#358055]/8 blur-3xl" />
+        <div className="absolute top-[26rem] -left-16 h-80 w-80 rounded-full bg-[#F3765D]/8 blur-3xl" />
+      </div>
+
+      <header className="absolute inset-x-0 top-0 z-[80] md:fixed">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
+          <div className="mx-auto mt-3 flex max-w-6xl items-center justify-between gap-4 rounded-full border border-white/55 bg-[linear-gradient(135deg,rgba(255,255,255,0.9),rgba(244,248,246,0.86))] px-4 py-3 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+            <Link href={`/${locale}`} className="inline-flex items-center">
               <Image
                 src={countryConfig.logo}
                 alt={t('ui.alt_logo')}
-                width={120}
+                width={140}
                 height={40}
-                className="h-8 w-auto"
+                className="h-8 w-auto md:h-9"
               />
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>{t('thank_you.order_completed')}</span>
-              </div>
+            </Link>
+            <div className="flex items-center gap-2 rounded-full border border-[#358055]/12 bg-white/82 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-[0_8px_18px_rgba(15,23,42,0.05)] md:text-sm">
+              <span className="h-2 w-2 rounded-full bg-[#358055]"></span>
+              <span>{t('thank_you.order_completed')}</span>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Hero Section - Similar to AdvancedLandingPage structure */}
-      <section className="pt-24 md:pt-24 pb-8 md:pb-12 relative overflow-hidden bg-gradient-to-br from-green-50 to-white">
-        {/* Background decoration */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-1/4 w-32 h-32 bg-green-200/30 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-1/4 w-24 h-24 bg-brand-orange/20 rounded-full blur-lg animate-pulse"></div>
-        </div>
-        
-        <div className="container mx-auto px-4 relative">
-          {/* Success Message */}
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-6">
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center shadow-lg">
-                <CheckCircle className="w-14 h-14 text-green-600" />
+      <main className="relative pb-16 pt-24 md:pb-20 md:pt-30">
+        <section className="pb-6 md:pb-8">
+          <div className="container mx-auto px-4">
+            <div className="section-card-strong mx-auto max-w-6xl overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10">
+              <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+                <div className="space-y-6">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="inline-flex items-center rounded-full border border-[#358055]/20 bg-[#358055]/10 px-3 py-1 text-[13px] font-extrabold tracking-[0.01em] text-[#2f6f4a]">
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      {t('thank_you.order_completed')}
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-[#F3765D]/20 bg-[#F3765D]/10 px-3 py-1 text-[13px] font-extrabold tracking-[0.01em] text-[#ba5a47]">
+                      #{orderData.orderId}
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-[#358055]/20 bg-white px-3 py-1 text-[13px] font-semibold text-slate-700">
+                      {t('thank_you.cod')}
+                    </span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h1 className="max-w-3xl text-4xl font-black leading-[1.08] tracking-[-0.02em] text-slate-950 sm:text-5xl lg:text-6xl">
+                      <span className="highlight-reveal highlight-reveal--green is-visible">Hvala vam</span> na porudžbini!
+                    </h1>
+                    <p className="max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
+                      {t('thank_you.order_confirmation')}. {t('thank_you.contact_soon')}
+                    </p>
+                  </div>
+
+                  <div className="max-w-md">
+                    <div className="rounded-[1.5rem] border border-[#358055]/10 bg-white px-5 py-5 shadow-[0_14px_34px_rgba(15,23,42,0.04)]">
+                      <div className="flex items-start gap-4">
+                        <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white shadow-[0_12px_22px_rgba(53,128,85,0.12)] ring-1 ring-[#358055]/10">
+                          <Image
+                            src={courier.logo}
+                            alt={courier.name}
+                            width={28}
+                            height={28}
+                            className="h-6 w-auto object-contain"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-lg font-black leading-tight text-slate-950">{courier.name}</p>
+                          <p className="mt-2 text-sm leading-6 text-slate-600">
+                            {t('thank_you.courier_delivery')} u roku od <span className="font-semibold text-[#358055]">{orderData.deliveryTime}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div className="relative mx-auto w-full max-w-2xl">
+                  <div className="absolute -top-5 -left-5 hidden h-24 w-24 rounded-full bg-[#F3765D]/15 blur-2xl md:block" />
+                  <div className="absolute -right-4 bottom-10 hidden h-28 w-28 rounded-full bg-[#358055]/15 blur-2xl md:block" />
+                  <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(242,247,244,0.94))] p-4 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+                    <div className="rounded-[1.6rem] bg-[radial-gradient(circle_at_top_left,rgba(53,128,85,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(243,118,93,0.12),transparent_24%),linear-gradient(180deg,rgba(248,251,249,1),rgba(255,255,255,1))] p-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('thank_you.what_happens_next')}</p>
+                          <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 md:text-[2.5rem]">
+                            Potvrda, pakovanje i <span className="highlight-reveal highlight-reveal--orange is-visible">brza dostava</span>
+                          </h2>
+                        </div>
+                        <div className="rounded-2xl bg-white/80 p-3 shadow-[0_10px_24px_rgba(53,128,85,0.08)]">
+                          <ShieldCheck className="h-6 w-6 text-[#358055]" />
+                        </div>
+                      </div>
+
+                      <div className="mt-6 space-y-3">
+                        {[t('thank_you.step_1'), t('thank_you.step_2'), t('thank_you.step_3'), t('thank_you.step_4')].map((step, index) => (
+                          <div
+                            key={step}
+                            className={`flex items-center gap-4 rounded-[1.4rem] border px-4 py-3 transition-all duration-500 ${
+                              activeStep === index
+                                ? 'border-[#F3765D]/20 bg-white shadow-[0_12px_26px_rgba(243,118,93,0.12)]'
+                                : 'border-white/70 bg-white/72'
+                            }`}
+                          >
+                            <div
+                              className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-black transition-all duration-500 ${
+                                activeStep === index
+                                  ? 'bg-[#F3765D] text-white shadow-[0_10px_22px_rgba(243,118,93,0.24)]'
+                                  : 'bg-[#358055]/10 text-[#358055]'
+                              }`}
+                            >
+                              {index + 1}
+                            </div>
+                            <p className={`text-sm font-semibold leading-6 ${activeStep === index ? 'text-slate-950' : 'text-slate-700'}`}>
+                              {step}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-5">
+                        <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#358055]/10">
+                          <div
+                            className="h-full rounded-full bg-[linear-gradient(90deg,#358055,#F3765D)] transition-all duration-1000 ease-in-out"
+                            style={{ width: `${((activeStep + 1) / 4) * 100}%` }}
+                          />
+                        </div>
+                        <p className="mt-3 text-sm font-semibold text-slate-500">
+                          Korak {activeStep + 1} / 4
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">
-              {t('thank_you.success_title')}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
-              {t('thank_you.order_confirmation')}
-            </p>
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="flex text-yellow-400">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="h-5 w-5 fill-current" />
-                ))}
+          </div>
+        </section>
+      </main>
+
+      <section className="pb-10 md:pb-14">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-8 lg:grid-cols-2 max-w-6xl mx-auto">
+            <div className="section-card px-5 py-6 md:px-6 md:py-7">
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#358055]/10 text-[#358055]">
+                  <Package className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#358055]">{t('thank_you.order_details')}</p>
+                  <h3 className="mt-1 text-2xl font-black text-slate-950">{t('thank_you.product_info')}</h3>
+                </div>
               </div>
-              <Badge variant="secondary" className="ml-2">
-                #{orderData.orderId}
-              </Badge>
+
+              <div className="mt-6 space-y-4">
+                <div className="flex items-center justify-between rounded-[1.2rem] bg-[#f7faf8] px-4 py-3">
+                  <span className="text-sm font-medium text-slate-500">{t('thank_you.order_number')}</span>
+                  <span className="text-base font-black text-slate-950">#{orderData.orderId}</span>
+                </div>
+
+                <div className="divide-y divide-[#358055]/8 rounded-[1.4rem] border border-[#358055]/10 bg-white">
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-slate-500">{t('thank_you.product')}</span>
+                    <span className="text-sm font-semibold text-slate-900">{orderData.productName}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-slate-500">{t('thank_you.variant')}</span>
+                    <span className="text-sm font-semibold text-slate-900">{orderData.productVariant}</span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-slate-500">{t('thank_you.quantity')}</span>
+                    <span className="text-sm font-semibold text-slate-900">{orderData.quantity} {t('thank_you.pieces')}</span>
+                  </div>
+                  {(orderData.isBOGO || orderData.bogoDetails) && (
+                    <div className="flex items-center justify-between px-4 py-3">
+                      <span className="text-sm text-slate-500">BOGO</span>
+                      <span className="text-sm font-semibold text-slate-900">
+                        {orderData.bogoDetails
+                          ? `${orderData.bogoDetails.paidQuantity}+${orderData.bogoDetails.freeQuantity}`
+                          : 'Aktivno'}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-slate-500">Cena proizvoda</span>
+                    <span className="text-sm font-semibold text-slate-900">
+                      {formatMoney(orderData.subtotal)} {orderData.currency}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm text-slate-500">Troškovi dostave ({orderData.courierName || courier.name})</span>
+                    <span className={`text-sm font-semibold ${orderData.shippingCost > 0 ? 'text-slate-900' : 'text-[#358055]'}`}>
+                      {orderData.shippingCost > 0
+                        ? `${formatMoney(orderData.shippingCost)} ${orderData.currency}`
+                        : t('order_summary.free')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-4">
+                    <span className="text-sm font-semibold text-slate-600">{t('thank_you.to_be_paid')}</span>
+                    <span className="text-lg font-black text-[#F3765D]">{formatMoney(orderData.totalPrice)} {orderData.currency}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-lg text-gray-500">
-              {t('thank_you.contact_soon')}
-            </p>
+
+            <div className="section-card px-5 py-6 md:px-6 md:py-7">
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F3765D]/10 text-[#F3765D]">
+                  <User className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#F3765D]">{t('thank_you.customer_info')}</p>
+                  <h3 className="mt-1 text-2xl font-black text-slate-950">{t('thank_you.customer_info')}</h3>
+                </div>
+              </div>
+
+              <div className="mt-6 divide-y divide-[#358055]/8 rounded-[1.4rem] border border-[#358055]/10 bg-white">
+                {orderData.customerName && (
+                  <div className="flex items-start gap-3 px-4 py-3">
+                    <User className="mt-0.5 h-4 w-4 text-slate-400" />
+                    <span className="text-sm font-medium text-slate-800">{orderData.customerName}</span>
+                  </div>
+                )}
+                {orderData.customerPhone && (
+                  <div className="flex items-start gap-3 px-4 py-3">
+                    <Phone className="mt-0.5 h-4 w-4 text-slate-400" />
+                    <span className="text-sm font-medium text-slate-800">{orderData.customerPhone}</span>
+                  </div>
+                )}
+                {orderData.customerEmail && (
+                  <div className="flex items-start gap-3 px-4 py-3">
+                    <Mail className="mt-0.5 h-4 w-4 text-slate-400" />
+                    <span className="text-sm font-medium text-slate-800">{orderData.customerEmail}</span>
+                  </div>
+                )}
+                {(orderData.customerAddress || orderData.customerCity || orderData.customerPostalCode) && (
+                  <div className="flex items-start gap-3 px-4 py-3">
+                    <MapPin className="mt-0.5 h-4 w-4 text-slate-400" />
+                    <div className="text-sm text-slate-700">
+                      {orderData.customerAddress && <p className="font-medium text-slate-800">{orderData.customerAddress}</p>}
+                      <p>
+                        {[orderData.customerPostalCode, orderData.customerCity].filter(Boolean).join(' ')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-start gap-3 px-4 py-3">
+                  <CreditCard className="mt-0.5 h-4 w-4 text-slate-400" />
+                  <span className="text-sm font-medium text-slate-800">
+                    {t('thank_you.payment_method')}: {t('thank_you.cod')}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="section-card mt-8 mx-auto max-w-4xl px-5 py-6 md:px-8 md:py-8">
+            <div className="text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#358055]">{t('thank_you.need_help')}</p>
+              <h3 className="mt-2 text-3xl font-black text-slate-950">{t('thank_you.contact_support')}</h3>
+            </div>
+
+            <div className={`mt-6 grid gap-4 ${countryConfig.company.phone ? 'md:grid-cols-2' : 'grid-cols-1'} max-w-2xl mx-auto`}>
+              {countryConfig.company.phone && (
+                <a
+                  href={`tel:${countryConfig.company.phone}`}
+                  className="flex items-center justify-center gap-3 rounded-[1.4rem] border border-[#358055]/10 bg-white px-5 py-4 text-slate-800 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-colors hover:border-[#F3765D]/25 hover:text-[#F3765D]"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span className="font-semibold">{countryConfig.company.phone}</span>
+                </a>
+              )}
+              <a
+                href={`mailto:${countryConfig.company.email}`}
+                className="flex items-center justify-center gap-3 rounded-[1.4rem] border border-[#358055]/10 bg-white px-5 py-4 text-slate-800 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-colors hover:border-[#F3765D]/25 hover:text-[#F3765D]"
+              >
+                <Mail className="h-4 w-4" />
+                <span className="font-semibold">{countryConfig.company.email}</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      <main className="container mx-auto px-4 py-8">{/* Order Details Section - Using Card components like AdvancedLandingPage */}
-
-        {/* Delivery Info Box - Right After Thank You Message */}
-        <div className="max-w-2xl mx-auto mb-8">
-          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-            <div className="flex items-center justify-between gap-4">
-              {/* Left: Courier Info */}
-              <div className="flex items-center gap-3">
-                <Image
-                  src={getDefaultCourier(countryConfig).logo}
-                  alt={getDefaultCourier(countryConfig).name}
-                  width={80}
-                  height={28}
-                  className="object-contain"
-                />
-                <div className="text-sm">
-                  <p className="font-semibold text-green-800">{getDefaultCourier(countryConfig).name}</p>
-                  <p className="text-green-600 text-xs">{t('thank_you.courier_delivery')}</p>
-                </div>
-              </div>
-              
-              {/* Right: Delivery Time */}
-              <div className="text-right">
-                <div className="flex items-center justify-end gap-2 mb-1">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="font-semibold text-green-800 text-sm">{t('thank_you.expected_delivery')}</span>
-                </div>
-                <p className="text-green-700 font-bold text-lg">{orderData.deliveryTime}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Order Details */}
-          <Card className="shadow-lg overflow-hidden py-0">
-            <CardHeader className="bg-brand-green text-white px-6 py-3 m-0 border-0">
-              <CardTitle className="flex items-center gap-2 text-lg font-semibold m-0 p-0">
-                <Package className="w-5 h-5" />
-                {t('thank_you.order_details')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">{t('thank_you.order_number')}:</span>
-                <Badge variant="secondary" className="text-lg px-3 py-1">
-                  #{orderData.orderId}
-                </Badge>
-              </div>
-              
-              <div className="border-t pt-4">
-                <h4 className="font-semibold mb-3 text-brand-green">{t('thank_you.product_info')}</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>{t('thank_you.product')}:</span>
-                    <span className="font-medium">{orderData.productName}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{t('thank_you.variant')}:</span>
-                    <span>{orderData.productVariant}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{t('thank_you.quantity')}:</span>
-                    <span>{orderData.quantity} {t('thank_you.pieces')}</span>
-                  </div>
-                  <div className="flex justify-between text-lg font-bold border-t pt-2 text-brand-orange">
-                    <span>{t('thank_you.to_be_paid')}:</span>
-                    <span>{orderData.totalPrice} {orderData.currency}</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Customer Information */}
-          <Card className="shadow-lg overflow-hidden py-0">
-            <CardHeader className="bg-brand-orange text-white px-6 py-3 m-0 border-0">
-              <CardTitle className="flex items-center gap-2 text-lg font-semibold m-0 p-0">
-                <User className="w-5 h-5" />
-                {t('thank_you.customer_info')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="space-y-3">
-                {orderData.customerName && (
-                  <div className="flex items-center gap-3">
-                    <User className="w-4 h-4 text-gray-500" />
-                    <span className="font-medium">{orderData.customerName}</span>
-                  </div>
-                )}
-                {orderData.customerEmail && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-gray-500" />
-                    <span>{orderData.customerEmail}</span>
-                  </div>
-                )}
-                {orderData.customerPhone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-gray-500" />
-                    <span>{orderData.customerPhone}</span>
-                  </div>
-                )}
-                {(orderData.customerAddress || orderData.customerCity) && (
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-gray-500 mt-1" />
-                    <div>
-                      {orderData.customerAddress && <div>{orderData.customerAddress}</div>}
-                      {orderData.customerCity && <div className="text-gray-600">{orderData.customerCity}</div>}
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              <div className="border-t pt-4">
-                <div className="flex items-center gap-3">
-                  <CreditCard className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium">{t('thank_you.payment_method')}: {t('thank_you.cod')}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-
-
-        {/* Progress Steps - Full Width Section */}
-        <Card className="shadow-lg max-w-6xl mx-auto mt-8 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-6 m-0 border-0">
-            <CardTitle className="text-center text-xl font-bold m-0 p-0">{t('thank_you.what_happens_next')}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-8">
-            {/* Responsive Progress Steps - Vertical on Mobile, Horizontal on Desktop */}
-            <div className="flex flex-col md:grid md:grid-cols-4 gap-4 mb-8">
-              {/* Step 1 */}
-              <div className={`flex md:flex-col items-center md:text-center p-4 rounded-xl transition-all duration-500 ${
-                activeStep === 0 ? 'bg-blue-600 text-white shadow-lg scale-105' : 'bg-blue-50 text-blue-700'
-              }`}>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl md:mb-3 mr-4 md:mr-0 transition-all duration-500 ${
-                  activeStep === 0 ? 'bg-white text-blue-600 animate-pulse' : 'bg-blue-200 text-blue-600'
-                }`}>
-                  1
-                </div>
-                <span className="font-semibold text-sm leading-tight">{t('thank_you.step_1')}</span>
-              </div>
-
-              {/* Step 2 */}
-              <div className={`flex md:flex-col items-center md:text-center p-4 rounded-xl transition-all duration-500 ${
-                activeStep === 1 ? 'bg-blue-600 text-white shadow-lg scale-105' : 'bg-blue-50 text-blue-700'
-              }`}>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl md:mb-3 mr-4 md:mr-0 transition-all duration-500 ${
-                  activeStep === 1 ? 'bg-white text-blue-600 animate-pulse' : 'bg-blue-200 text-blue-600'
-                }`}>
-                  2
-                </div>
-                <span className="font-semibold text-sm leading-tight">{t('thank_you.step_2')}</span>
-              </div>
-
-              {/* Step 3 */}
-              <div className={`flex md:flex-col items-center md:text-center p-4 rounded-xl transition-all duration-500 ${
-                activeStep === 2 ? 'bg-blue-600 text-white shadow-lg scale-105' : 'bg-blue-50 text-blue-700'
-              }`}>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl md:mb-3 mr-4 md:mr-0 transition-all duration-500 ${
-                  activeStep === 2 ? 'bg-white text-blue-600 animate-pulse' : 'bg-blue-200 text-blue-600'
-                }`}>
-                  3
-                </div>
-                <span className="font-semibold text-sm leading-tight">{t('thank_you.step_3')}</span>
-              </div>
-
-              {/* Step 4 */}
-              <div className={`flex md:flex-col items-center md:text-center p-4 rounded-xl transition-all duration-500 ${
-                activeStep === 3 ? 'bg-blue-600 text-white shadow-lg scale-105' : 'bg-blue-50 text-blue-700'
-              }`}>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl md:mb-3 mr-4 md:mr-0 transition-all duration-500 ${
-                  activeStep === 3 ? 'bg-white text-blue-600 animate-pulse' : 'bg-blue-200 text-blue-600'
-                }`}>
-                  4
-                </div>
-                <span className="font-semibold text-sm leading-tight">{t('thank_you.step_4')}</span>
-              </div>
-            </div>
-            
-            {/* Progress Bar */}
-            <div>
-              <div className="w-full bg-blue-200 rounded-full h-3">
-                <div 
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 h-3 rounded-full transition-all duration-1000 ease-in-out shadow-sm"
-                  style={{ width: `${((activeStep + 1) / 4) * 100}%` }}
-                ></div>
-              </div>
-              <p className="text-center text-blue-600 text-sm mt-3 font-semibold">
-                Korak {activeStep + 1} od 4
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Contact Information */}
-        <Card className="shadow-lg max-w-2xl mx-auto mt-8">
-          <CardHeader>
-            <CardTitle className="text-center text-brand-green">{t('thank_you.need_help')}</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center p-6">
-            <p className="text-gray-600 mb-4">{t('thank_you.contact_support')}</p>
-            <div className={`grid gap-4 ${countryConfig.company.phone ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
-              {countryConfig.company.phone && (
-                <div className="flex items-center justify-center gap-2">
-                  <Phone className="w-4 h-4 text-brand-orange" />
-                  <span className="font-medium">{countryConfig.company.phone}</span>
-                </div>
-              )}
-              <div className="flex items-center justify-center gap-2">
-                <Mail className="w-4 h-4 text-brand-orange" />
-                <span className="font-medium">{countryConfig.company.email}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-
-      {/* Footer */}
       <Footer countryConfig={countryConfig} locale={locale} />
-
-      {/* GDPR Cookie Consent for EU */}
       <CookieConsent isEU={countryConfig.isEU} />
     </div>
   );

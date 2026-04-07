@@ -16,15 +16,6 @@ const categoryColors = {
   other: 'from-slate-300 to-slate-500',
 } as const;
 
-const categoryLabels = {
-  herbal_extract: 'Lekovita biljka',
-  essential_oil: 'Etericno ulje',
-  active_compound: 'Aktivna supstanca',
-  base_component: 'Nosac formule',
-  preservative: 'Zastita formule',
-  other: 'Pomocna komponenta',
-} as const;
-
 export function IngredientsShowcase({ product }: IngredientsShowcaseProps) {
   const highlightedIngredients = product.ingredients
     .map((id) => INGREDIENTS[id])
@@ -48,7 +39,6 @@ export function IngredientsShowcase({ product }: IngredientsShowcaseProps) {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {highlightedIngredients.map((ingredient, index) => {
               const gradientColor = categoryColors[ingredient.category];
-              const label = categoryLabels[ingredient.category];
               const num = String(index + 1).padStart(2, '0');
 
               return (

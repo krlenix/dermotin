@@ -395,8 +395,6 @@ export default function HomePage() {
     scrollToSection('products');
   };
 
-  const SupportIcon = countryConfig.company.phone ? Phone : Mail;
-
   return (
     <>
       <BOGOLoadedBanner
@@ -571,9 +569,13 @@ export default function HomePage() {
                     <div className="space-y-4">
                       <h1 className="max-w-3xl text-4xl font-black leading-[1.12] tracking-[-0.02em] text-slate-900 sm:text-5xl lg:text-6xl">
                         {heroTitleFirstSplit[0]}
-                        <AnimatedHighlight delayMs={120}>Bez hemije.</AnimatedHighlight>
+                        <span className="inline-block whitespace-nowrap align-baseline">
+                          <AnimatedHighlight delayMs={120}>Bez hemije.</AnimatedHighlight>
+                        </span>
                         {heroTitleSecondSplit[0] ?? ''}
-                        <AnimatedHighlight variant="orange" delayMs={720}>u Srbiji.</AnimatedHighlight>
+                        <span className="inline-block whitespace-nowrap align-baseline">
+                          <AnimatedHighlight variant="orange" delayMs={720}>u Srbiji.</AnimatedHighlight>
+                        </span>
                         {heroTitleSecondSplit[1] ?? ''}
                       </h1>
                       <p className="max-w-2xl text-lg leading-relaxed text-slate-700 md:text-xl">

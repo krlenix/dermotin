@@ -196,16 +196,16 @@ export function CheckoutDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[220] flex items-center justify-center">
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-slate-950/55 backdrop-blur-sm"
+        className="fixed inset-0 z-[220] bg-slate-950/55 backdrop-blur-sm"
         onClick={type !== 'loading' ? onClose : undefined}
       />
       
       {/* Dialog content */}
       <div 
-        className="relative z-10 mx-4 w-[90%] max-w-md rounded-[1.6rem] border border-brand-green/10 bg-white p-6 shadow-[0_28px_80px_rgba(15,23,42,0.18)] animate-in fade-in-0 zoom-in-95 duration-200"
+        className="relative z-[221] mx-4 w-[90%] max-w-md rounded-[1.6rem] border border-brand-green/10 bg-white p-6 shadow-[0_28px_80px_rgba(15,23,42,0.18)] animate-in fade-in-0 zoom-in-95 duration-200"
       >
         {/* Close button for non-loading states */}
         {type !== 'loading' && (
