@@ -7,7 +7,7 @@ import { CountryConfig } from '@/config/countries';
 import { BOGO_CONFIG as BOGO_COUPON_CONFIG, calculateBOGODiscount } from '@/config/coupons';
 import { BOGO_CONFIG } from '@/utils/bogo-cookies';
 import { useTranslations } from 'next-intl';
-import { Gift, Clock } from 'lucide-react';
+import { Gift, Clock, Check, Package } from 'lucide-react';
 
 interface BOGOSelectorProps {
   baseVariant: ProductVariant; // The single unit variant (1 package)
