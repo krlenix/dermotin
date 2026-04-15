@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { useTranslations } from 'next-intl';
@@ -80,6 +80,7 @@ export function CheckoutFormV2({
   const [orderResult, setOrderResult] = useState<{ orderId?: string; customerName?: string; totalPrice?: number; currency?: string }>({});
   const [hasStartedCheckout, setHasStartedCheckout] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const submitInFlightRef = useRef(false);
 
   const formatPrice = (amount: number) =>
     `${new Intl.NumberFormat('sr-RS', {
@@ -272,8 +273,11 @@ export function CheckoutFormV2({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isSubmitting || submitInFlightRef.current) return;
+
     if (!validateForm()) return;
 
+    submitInFlightRef.current = true;
     setIsSubmitting(true);
     setDialogType('loading');
 
@@ -318,6 +322,7 @@ export function CheckoutFormV2({
         setDialogError(result.error || t('validation.order_submission_failed'));
         setDialogType('error');
         setIsSubmitting(false);
+        submitInFlightRef.current = false;
         return;
       }
 
@@ -359,6 +364,7 @@ export function CheckoutFormV2({
       setDialogError(error instanceof Error ? error.message : t('validation.order_submission_failed'));
       setDialogType('error');
       setIsSubmitting(false);
+      submitInFlightRef.current = false;
     }
   };
 
@@ -370,6 +376,7 @@ export function CheckoutFormV2({
 
     if (currentDialogType === 'error') {
       setIsSubmitting(false);
+      submitInFlightRef.current = false;
     } else if (currentDialogType === 'success') {
       window.location.replace(`/${countryConfig.code}/thank-you`);
     }

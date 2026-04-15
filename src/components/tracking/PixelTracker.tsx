@@ -10,6 +10,10 @@ interface PixelTrackerProps {
   countryCode: string;
 }
 
+interface MetaTrackOptions {
+  eventID?: string;
+}
+
 // Helper function to check if marketing cookies are allowed
 function hasMarketingConsent(countryCode: string): boolean {
   if (typeof window === 'undefined') return false;
@@ -81,7 +85,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
         
         // Track PageView with event ID
         // console.log('📊 Firing browser PageView with event ID:', pageViewEventId);
-        window.fbq('track', META_EVENTS.PAGE_VIEW, { eventID: pageViewEventId });
+        window.fbq('track', META_EVENTS.PAGE_VIEW, {}, { eventID: pageViewEventId });
         
         // Always send PageView to CAPI - let the server decide if it's enabled
         // (Browser can't check CAPI config because access tokens are server-only env vars)
@@ -325,19 +329,14 @@ export function usePixelTracking(countryCode: string) {
       
       // Prepare event data with event ID for deduplication
       const fullEventData = eventData ? { ...eventData } : {};
-      if (finalEventId) {
-        fullEventData.eventID = finalEventId; // Meta uses eventID (camelCase) for deduplication
-      }
+      const trackOptions: MetaTrackOptions | undefined = finalEventId
+        ? { eventID: finalEventId }
+        : undefined;
       
       // console.log(`📊 Firing browser ${metaEvent} with event ID:`, finalEventId);
       
-      if (Object.keys(fullEventData).length > 0) {
-        window.fbq('track', metaEvent, fullEventData);
-        // console.log(`✅ Browser ${metaEvent} fired with data:`, fullEventData);
-      } else {
-        window.fbq('track', metaEvent);
-        // console.log(`✅ Browser ${metaEvent} fired (no data)`);
-      }
+      window.fbq('track', metaEvent, fullEventData, trackOptions);
+      // console.log(`✅ Browser ${metaEvent} fired with data:`, fullEventData, trackOptions);
     }
 
     // Track TikTok Pixel event
@@ -403,7 +402,7 @@ export function usePixelTracking(countryCode: string) {
 // Global window interface extensions
 interface FacebookPixel {
   (command: 'init', pixelId: string): void;
-  (command: 'track', eventName: string, eventData?: Record<string, unknown>): void;
+  (command: 'track', eventName: string, eventData?: Record<string, unknown>, options?: MetaTrackOptions): void;
   (command: 'trackCustom', eventName: string, eventData?: Record<string, unknown>): void;
   loaded?: boolean;
   queue?: unknown[];

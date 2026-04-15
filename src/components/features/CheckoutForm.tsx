@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -123,6 +123,7 @@ export function CheckoutForm({
   const [dialogError, setDialogError] = useState<string>('');
   const [orderResult, setOrderResult] = useState<{orderId?: string; customerName?: string; totalPrice?: number; currency?: string}>({});
   const [hasStartedCheckout, setHasStartedCheckout] = useState(false);
+  const submitInFlightRef = useRef(false);
   
   // Coupon state
   const [couponCode, setCouponCode] = useState<string>('');
@@ -338,11 +339,16 @@ export function CheckoutForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isSubmitting || submitInFlightRef.current) {
+      return;
+    }
     
     if (!validateForm()) {
       return;
     }
     
+    submitInFlightRef.current = true;
     setIsSubmitting(true);
     setDialogType('loading');
     
@@ -431,12 +437,14 @@ export function CheckoutForm({
         setDialogError(result.error || t('validation.order_submission_failed'));
         setDialogType('error');
         setIsSubmitting(false);
+        submitInFlightRef.current = false;
       }
     } catch (error) {
       // Show error dialog
       setDialogError(error instanceof Error ? error.message : t('validation.order_submission_failed'));
       setDialogType('error');
       setIsSubmitting(false);
+      submitInFlightRef.current = false;
       console.error('Form submission error:', error);
     }
   };
@@ -448,6 +456,7 @@ export function CheckoutForm({
     
     if (currentDialogType === 'error') {
       setIsSubmitting(false);
+      submitInFlightRef.current = false;
     } else if (currentDialogType === 'success') {
       // If user manually closes success dialog, redirect immediately
       window.location.replace(`/${countryConfig.code}/thank-you`);
