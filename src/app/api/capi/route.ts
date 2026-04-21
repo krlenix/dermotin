@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
       pageUrl,
     } = body;
 
+  
+
     // Get client information
     const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 
                      request.headers.get('x-real-ip') || 
