@@ -1,18 +1,38 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Supabase configuration — required env vars, no fallback to avoid leaking
-// real credentials in the source code.
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+// Supabase configuration — required env vars, no hardcoded fallback to avoid
+// leaking real credentials in the source code. The client is created lazily
+// so missing env vars during build (e.g. static page collection) don't crash
+// the build — the error is raised only when the client is actually used at
+// request time.
+let _supabase: SupabaseClient | null = null;
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Set SUPABASE_URL and SUPABASE_ANON_KEY in your .env.local (or hosting env).'
-  );
+function getSupabase(): SupabaseClient {
+  if (_supabase) return _supabase;
+
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      'Missing Supabase environment variables. Set SUPABASE_URL and SUPABASE_ANON_KEY in your hosting env.'
+    );
+  }
+
+  _supabase = createClient(supabaseUrl, supabaseKey);
+  return _supabase;
 }
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Proxy that defers client creation until first property access. This keeps
+// `import { supabase } from '@/lib/supabase'` working everywhere while still
+// failing fast at runtime if env vars are missing.
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const client = getSupabase();
+    const value = (client as unknown as Record<string | symbol, unknown>)[prop];
+    return typeof value === 'function' ? (value as (...args: unknown[]) => unknown).bind(client) : value;
+  },
+});
 
 // Database types
 export interface LineItem {
