@@ -10,9 +10,15 @@ Create a `.env.local` file in your project root with the following variables:
 
 ```env
 # Supabase Configuration
-SUPABASE_URL=https://obarfilhvxbkejrwothi.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iYXJmaWxodnhia2VqcndvdGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNDUyMjAsImV4cCI6MjA3MjcyMTIyMH0.LnTbLzMD4F1FcXod-5IXyCKXRX8Es_AtBlihzg8ESMU
+# Get these from your Supabase project dashboard:
+#   Project Settings → API → Project URL and anon (public) key
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
+
+> ⚠️ Never commit real Supabase credentials to source control. Even though the
+> `anon` key is intended for client-side use, exposing it in a public repo
+> identifies your project to attackers and complicates key rotation.
 
 ### 2. Database Setup
 

@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     const clientUserAgent = request.headers.get('user-agent') || undefined;
     const referer = request.headers.get('referer') || undefined;
     const eventSourceUrl = pageUrl || referer;
-    console.log(`📊 CAPI [${eventType}] pageUrl=${pageUrl || 'MISSING'} referer=${referer || 'MISSING'} final=${eventSourceUrl || 'MISSING'}`);
 
     // Get Facebook tracking data from cookies
     const cookieHeader = request.headers.get('cookie');

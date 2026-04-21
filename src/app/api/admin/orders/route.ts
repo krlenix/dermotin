@@ -1,7 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OrderService } from '@/lib/supabase';
 
+/**
+ * Authenticate admin requests via Bearer token in the Authorization header.
+ * The token is compared against the ADMIN_API_KEY env var using constant-time
+ * comparison (via length-checked equality) to mitigate timing attacks.
+ *
+ * Returns null on success, or an error NextResponse on failure.
+ */
+function checkAdminAuth(request: NextRequest): NextResponse | null {
+  const expectedKey = process.env.ADMIN_API_KEY;
+
+  // If no admin key is configured on the server, refuse all access (fail-closed).
+  // This prevents accidental exposure when the env var is missing in production.
+  if (!expectedKey || expectedKey.trim().length < 16) {
+    console.error('🔒 ADMIN_API_KEY is not set or too short (<16 chars). Admin endpoint refused.');
+    return NextResponse.json(
+      { success: false, error: 'Admin endpoint not configured' },
+      { status: 503 }
+    );
+  }
+
+  const authHeader = request.headers.get('authorization') || '';
+  const providedKey = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+
+  if (!providedKey || providedKey.length !== expectedKey.length) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  // Constant-time comparison
+  let mismatch = 0;
+  for (let i = 0; i < expectedKey.length; i++) {
+    mismatch |= expectedKey.charCodeAt(i) ^ providedKey.charCodeAt(i);
+  }
+  if (mismatch !== 0) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  return null;
+}
+
 export async function GET(request: NextRequest) {
+  const authError = checkAdminAuth(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     
@@ -85,6 +133,9 @@ export async function GET(request: NextRequest) {
 
 // Get single order by ID
 export async function POST(request: NextRequest) {
+  const authError = checkAdminAuth(request);
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { orderId, action, status } = body;
