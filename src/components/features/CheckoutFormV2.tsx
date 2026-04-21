@@ -124,13 +124,15 @@ export function CheckoutFormV2({
     if (!hasStartedCheckout && nextValue.trim().length > 0) {
       setHasStartedCheckout(true);
 
+      // Use variant.sku so InitiateCheckout content_ids match the server-side Purchase
+      const productIdentifier = selectedVariant.sku || selectedVariant.id || mainProductId;
       trackEvent('initiate_checkout', {
         content_name: productName,
         content_category: 'Product',
-        content_ids: [selectedVariant.id || mainProductId],
+        content_ids: [productIdentifier],
         contents: [
           {
-            id: selectedVariant.id || mainProductId,
+            id: productIdentifier,
             quantity: 1,
             item_price: selectedVariant.discountPrice || selectedVariant.price,
           },
@@ -326,15 +328,17 @@ export function CheckoutFormV2({
         return;
       }
 
+      // Match server-side CAPI Purchase content_ids by using variant.sku
+      const purchaseProductId = selectedVariant.sku || selectedVariant.id || 'main-product';
       trackEvent(
         'purchase',
         {
           content_name: productName,
           content_category: 'Product',
-          content_ids: [selectedVariant.id || 'main-product'],
+          content_ids: [purchaseProductId],
           contents: [
             {
-              id: selectedVariant.id || 'main-product',
+              id: purchaseProductId,
               quantity: selectedVariant.quantity || 1,
               item_price: finalTotal,
             },

@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';
 import { getFAQForCountry, FAQItem } from '@/config/faq';
-import { getProductFAQ, ProductFAQ, Product } from '@/config/products';
+import type { ProductFAQ, Product } from '@/config/types';
 import { useTranslations } from 'next-intl';
 import { 
   ChevronDown, 
@@ -59,7 +59,7 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
   
   // Use product-specific FAQs if product is provided, otherwise use general FAQs
   const faqItems = product 
-    ? getProductFAQ(product)
+    ? (product.productFAQ || [])
     : getFAQForCountry(countryCode, translations);
 
   const toggleItem = (index: string) => {

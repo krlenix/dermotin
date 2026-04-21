@@ -459,6 +459,7 @@ export function AdvancedLandingPage({ product, countryConfig }: AdvancedLandingP
       fbp: orderData.fbp as string | undefined,
       fbc: orderData.fbc as string | undefined,
       eventId: orderData.eventId as string | undefined,
+      pageUrl: typeof window !== 'undefined' ? window.location.href : undefined,
       marketingParams: orderData.marketingParams,
       coupon: orderData.coupon,
       // BOGO-specific data

@@ -100,7 +100,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       enabled: !!isValidMetaPixel,
       capi: isValidMetaPixel ? {
         accessToken: capiAccessToken,
-        testEventCode: capiTestEventCode || undefined,
+        testEventCode: process.env.META_CAPI_TEST_CODE || capiTestEventCode || undefined,
         enabled: !!isValidCapiToken,
       } : undefined,
     },

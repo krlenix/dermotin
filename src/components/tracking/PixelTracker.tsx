@@ -104,6 +104,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
             eventData: {},
             countryCode,
             eventId: pageViewEventId,
+            pageUrl: window.location.href,
           }),
           keepalive: true,
         })
@@ -387,6 +388,7 @@ export function usePixelTracking(countryCode: string) {
           eventData: eventData || {},
           countryCode,
           eventId: finalEventId,
+          pageUrl: window.location.href,
         }),
         keepalive: true,
       })

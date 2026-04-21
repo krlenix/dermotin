@@ -281,12 +281,15 @@ export function CheckoutForm({
       setHasStartedCheckout(true);
       
       // Track the event with order data
+      // Use variant.sku (the canonical product SKU shared with the server-side
+      // Purchase event) so Meta can link InitiateCheckout → Purchase across the funnel.
+      const productIdentifier = selectedVariant.sku || selectedVariant.id || mainProductId;
       const eventData = {
         content_name: productName,
         content_category: 'Product',
-        content_ids: [selectedVariant.id || mainProductId],
+        content_ids: [productIdentifier],
         contents: [{
-          id: selectedVariant.id || mainProductId,
+          id: productIdentifier,
           quantity: 1,
           item_price: selectedVariant.discountPrice || selectedVariant.price
         }],
@@ -398,13 +401,15 @@ export function CheckoutForm({
       const result = await onOrderSubmit(orderData);
       
       if (result.success) {
-        // Track Purchase event immediately after successful order submission
+        // Track Purchase event immediately after successful order submission.
+        // Use variant.sku to match the server-side CAPI Purchase content_ids.
+        const purchaseProductId = selectedVariant.sku || selectedVariant.id || 'main-product';
         const purchaseEventData = {
           content_name: productName,
           content_category: 'Product',
-          content_ids: [selectedVariant.id || 'main-product'],
+          content_ids: [purchaseProductId],
           contents: [{
-            id: selectedVariant.id || 'main-product',
+            id: purchaseProductId,
             quantity: selectedVariant.quantity || 1,
             item_price: finalTotal
           }],

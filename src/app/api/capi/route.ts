@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
       eventData = {},
       countryCode,
       eventId,
+      pageUrl,
     } = body;
 
     // Get client information
@@ -22,15 +23,16 @@ export async function POST(request: NextRequest) {
                      undefined;
     const clientUserAgent = request.headers.get('user-agent') || undefined;
     const referer = request.headers.get('referer') || undefined;
+    const eventSourceUrl = pageUrl || referer;
 
     // Get Facebook tracking data from cookies
     const cookieHeader = request.headers.get('cookie');
     const fbData = getFacebookTrackingData(cookieHeader);
     
-    // If _fbc cookie doesn't exist, try to extract fbclid from referer URL
+    // If _fbc cookie doesn't exist, try to extract fbclid from page URL or referer
     let fbc = fbData.fbc;
-    if (!fbc && referer) {
-      fbc = getFbcFromUrl(referer);
+    if (!fbc && (pageUrl || referer)) {
+      fbc = getFbcFromUrl(pageUrl || referer);
       // if (fbc) {
       //   console.log('📊 Extracted fbclid from URL and created _fbc:', fbc);
       // }
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest) {
       eventName: capiEventName,
       eventTime: Math.floor(Date.now() / 1000),
       eventId: eventId || undefined,
-      eventSourceUrl: referer,
+      eventSourceUrl,
       actionSource: 'website',
       userData,
       customData,

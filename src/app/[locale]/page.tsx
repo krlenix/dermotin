@@ -130,11 +130,13 @@ export default function HomePage() {
     const featuredProducts = products.slice(0, 3);
     const totalValue = featuredProducts.reduce((sum, product) => sum + (product.variants[0]?.price || 0), 0);
 
+    // Use the canonical product SKU (from the first variant) so ViewContent
+    // content_ids align with InitiateCheckout / Purchase events downstream.
     trackEvent('view_content', {
       content_type: 'product',
-      content_ids: featuredProducts.map((product) => product.id),
+      content_ids: featuredProducts.map((product) => product.variants[0]?.sku || product.id),
       contents: featuredProducts.map((product) => ({
-        id: product.id,
+        id: product.variants[0]?.sku || product.id,
         quantity: 1,
         item_price: product.variants[0]?.price || 0,
       })),

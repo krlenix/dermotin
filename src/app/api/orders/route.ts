@@ -17,6 +17,22 @@ function roundPrice(price: number): number {
   return Math.round(price * 100) / 100;
 }
 
+// Idempotency cache: prevents duplicate CAPI Purchase events when the same
+// browser-generated eventId is submitted more than once (e.g. user double-clicks,
+// browser auto-retry, network jitter). Lives only in-memory per server instance —
+// fine for single-instance Next.js dev/prod, swap for Redis if you go multi-instance.
+const RECENT_EVENT_IDS = new Map<string, { orderId: string; timestamp: number }>();
+const IDEMPOTENCY_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+
+function pruneExpiredEventIds(): void {
+  const now = Date.now();
+  for (const [key, value] of RECENT_EVENT_IDS.entries()) {
+    if (now - value.timestamp > IDEMPOTENCY_WINDOW_MS) {
+      RECENT_EVENT_IDS.delete(key);
+    }
+  }
+}
+
 export interface CouponData {
   code: string;
   type: 'absolute' | 'percentage' | 'free_shipping' | 'bogo';
@@ -182,6 +198,7 @@ export async function POST(request: NextRequest) {
       fbp?: string; 
       fbc?: string;
       eventId?: string;
+      pageUrl?: string;
       marketingParams?: MarketingParams;
       coupon?: CouponData;
     } = await request.json();
@@ -207,7 +224,23 @@ export async function POST(request: NextRequest) {
     const marketingParams = hasBodyData ? orderData.marketingParams : cookieMarketingParams;
     console.log('📊 Final marketing parameters:', marketingParams);
     console.log('📊 Using source:', hasBodyData ? 'REQUEST BODY (sessionStorage or cookies)' : 'COOKIE HEADERS');
-    
+
+    // Idempotency guard — if the browser submits the same eventId twice, return
+    // the original orderId without re-running the webhook or re-firing CAPI Purchase.
+    pruneExpiredEventIds();
+    if (orderData.eventId) {
+      const existing = RECENT_EVENT_IDS.get(orderData.eventId);
+      if (existing) {
+        console.warn('⚠️ Duplicate submit detected for eventId', orderData.eventId, '— returning cached orderId', existing.orderId);
+        return NextResponse.json({
+          success: true,
+          orderId: existing.orderId,
+          message: 'Duplicate request — returning original order',
+          duplicate: true,
+        });
+      }
+    }
+
     // Generate order ID
     const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
@@ -220,6 +253,7 @@ export async function POST(request: NextRequest) {
                      'unknown';
     const clientUserAgent = request.headers.get('user-agent') || undefined;
     const referer = request.headers.get('referer') || undefined;
+    const eventSourceUrl = orderData.pageUrl || referer;
 
     // Check if this is a BOGO order
     const isBOGOOrder = orderData.isBOGO && orderData.bogoDetails;
@@ -378,7 +412,7 @@ export async function POST(request: NextRequest) {
     }
     console.log('🎟️ Line items with distributed discounts:', JSON.stringify(webhookPayload.line_items, null, 2));
 
-    // Initialize webhook status variables
+    // Initialize status variables
     let webhookStatus = 'pending';
     let webhookError = '';
     let webhookResult = null;
@@ -387,57 +421,6 @@ export async function POST(request: NextRequest) {
     let capiStatus = 'pending';
     let capiError = '';
     let capiEventId = '';
-
-    // Send Meta Conversion API (CAPI) Purchase event
-    try {
-      console.log('📤 Sending CAPI Purchase event for locale:', orderData.locale);
-      
-      // Split customer name into first and last name
-      const nameParts = orderData.customerName.trim().split(/\s+/);
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-      
-      const capiResult = await sendCapiPurchaseEvent(orderData.locale, {
-        orderId,
-        currency: countryConfig.currency,
-        totalPrice: roundPrice(orderData.totalPrice),
-        customerEmail: orderData.customerEmail || undefined,
-        customerPhone: orderData.customerPhone || undefined,
-        customerFirstName: firstName,
-        customerLastName: lastName,
-        customerCity: orderData.customerCity || undefined,
-        customerZip: orderData.customerPostalCode || undefined,
-        customerCountry: countryConfig.code.toUpperCase(),
-        clientIp,
-        clientUserAgent,
-        fbp: orderData.fbp,
-        fbc: orderData.fbc,
-        eventSourceUrl: referer,
-        eventId: orderData.eventId, // Use the same event ID from the browser pixel for deduplication
-        lineItems: webhookPayload.line_items?.map(item => ({
-          sku: item.sku,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price, // Already rounded in webhookPayload
-        })),
-      });
-      
-      if (capiResult.success) {
-        capiStatus = 'success';
-        capiEventId = capiResult.eventId || '';
-        console.log('✅ CAPI Purchase event sent successfully:', capiEventId);
-      } else {
-        capiStatus = 'failed';
-        capiError = capiResult.error || 'Unknown CAPI error';
-        console.error('❌ Failed to send CAPI event:', capiError);
-        // Continue with order processing even if CAPI fails
-      }
-    } catch (capiErr) {
-      capiStatus = 'failed';
-      capiError = capiErr instanceof Error ? capiErr.message : 'Unknown CAPI error';
-      console.error('❌ Unexpected CAPI error:', capiErr);
-      // Continue with order processing even if CAPI fails
-    }
 
     // First, insert order into Supabase database
     try {
@@ -462,31 +445,99 @@ export async function POST(request: NextRequest) {
       console.error('❌ Unexpected error saving to Supabase:', supabaseErr);
     }
 
-    // Send to webhook
+    // Send to webhook (skipped on local dev when WEBHOOK_DRY_RUN=true so the
+    // full success path — including CAPI Purchase + browser Pixel Purchase —
+    // can be verified end-to-end without hitting the production endpoint).
+    const webhookDryRun = process.env.WEBHOOK_DRY_RUN === 'true';
+    if (webhookDryRun) {
+      webhookStatus = 'skipped';
+      webhookResult = { dryRun: true, note: 'WEBHOOK_DRY_RUN=true — webhook not sent' };
+      console.log('🧪 WEBHOOK_DRY_RUN enabled — skipping webhook call for locale:', orderData.locale);
+    } else {
+      try {
+        console.log('🚀 Attempting to send webhook for locale:', orderData.locale);
+        console.log('🚀 Using domain:', currentDomain);
+        webhookResult = await sendToWebhook(webhookPayload, orderData.locale, currentDomain);
+        webhookStatus = 'success';
+        console.log('✅ Order sent to webhook successfully:', webhookResult);
+      } catch (webhookErr) {
+        webhookStatus = 'failed';
+        webhookError = webhookErr instanceof Error ? webhookErr.message : 'Unknown webhook error';
+        console.error('❌ Failed to send order to webhook:', webhookErr);
+        
+        // Return error if webhook fails — do NOT fire CAPI Purchase for a failed order.
+        // This is what prevents phantom Purchase events being recorded in Meta when the
+        // backend webhook fails (and prevents duplicates when the user retries).
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: 'Processing error',
+            details: webhookError,
+            webhookStatus,
+            supabaseStatus,
+            supabaseError: supabaseError || undefined,
+            orderId
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Order is confirmed at this point. Now (and only now) fire the CAPI Purchase.
+    // The same eventId was generated in the browser and will also be used by the
+    // browser-side fbq Purchase call → Meta deduplicates them as a single event.
     try {
-      console.log('🚀 Attempting to send webhook for locale:', orderData.locale);
-      console.log('🚀 Using domain:', currentDomain);
-      webhookResult = await sendToWebhook(webhookPayload, orderData.locale, currentDomain);
-      webhookStatus = 'success';
-      console.log('✅ Order sent to webhook successfully:', webhookResult);
-    } catch (webhookErr) {
-      webhookStatus = 'failed';
-      webhookError = webhookErr instanceof Error ? webhookErr.message : 'Unknown webhook error';
-      console.error('❌ Failed to send order to webhook:', webhookErr);
+      console.log('📤 Sending CAPI Purchase event for locale:', orderData.locale);
       
-      // Return error if webhook fails - don't allow order to proceed
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Processing error',
-          details: webhookError,
-          webhookStatus,
-          supabaseStatus,
-          supabaseError: supabaseError || undefined,
-          orderId
-        },
-        { status: 500 }
-      );
+      // Split customer name into first and last name
+      const nameParts = orderData.customerName.trim().split(/\s+/);
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      const capiResult = await sendCapiPurchaseEvent(orderData.locale, {
+        orderId,
+        currency: countryConfig.currency,
+        totalPrice: roundPrice(orderData.totalPrice),
+        customerEmail: orderData.customerEmail || undefined,
+        customerPhone: orderData.customerPhone || undefined,
+        customerFirstName: firstName,
+        customerLastName: lastName,
+        customerCity: orderData.customerCity || undefined,
+        customerZip: orderData.customerPostalCode || undefined,
+        customerCountry: countryConfig.code.toUpperCase(),
+        clientIp,
+        clientUserAgent,
+        fbp: orderData.fbp,
+        fbc: orderData.fbc,
+        eventSourceUrl,
+        eventId: orderData.eventId, // Use the same event ID from the browser pixel for deduplication
+        lineItems: webhookPayload.line_items?.map(item => ({
+          sku: item.sku,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price, // Already rounded in webhookPayload
+        })),
+      });
+      
+      if (capiResult.success) {
+        capiStatus = 'success';
+        capiEventId = capiResult.eventId || '';
+        console.log('✅ CAPI Purchase event sent successfully:', capiEventId);
+      } else {
+        capiStatus = 'failed';
+        capiError = capiResult.error || 'Unknown CAPI error';
+        console.error('❌ Failed to send CAPI event:', capiError);
+        // Continue — order itself is already accepted, CAPI failure is non-fatal
+      }
+    } catch (capiErr) {
+      capiStatus = 'failed';
+      capiError = capiErr instanceof Error ? capiErr.message : 'Unknown CAPI error';
+      console.error('❌ Unexpected CAPI error:', capiErr);
+    }
+
+    // Record the eventId so duplicate submits in the next 5min are short-circuited
+    if (orderData.eventId) {
+      RECENT_EVENT_IDS.set(orderData.eventId, { orderId, timestamp: Date.now() });
     }
 
     // Create complete order object
