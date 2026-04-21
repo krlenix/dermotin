@@ -269,6 +269,8 @@ export async function sendCapiEvent(
   // console.log('\n📦 Complete Payload Structure:');
   // console.log(JSON.stringify(payload, null, 2));
   
+  console.log(`📦 CAPI payload → event=${eventData.eventName} event_source_url=${eventData.eventSourceUrl || 'MISSING'}`);
+
   // Meta CAPI endpoint
   const apiUrl = `https://graph.facebook.com/v21.0/${pixelConfig.meta.pixelId}/events`;
   
