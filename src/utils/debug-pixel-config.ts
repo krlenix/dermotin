@@ -21,6 +21,8 @@ export function debugPixelConfig() {
   
   // Simple country-based configuration (no domain-specific logic)
   console.log('\n📋 Configuration Type: Country-based only');
+  const globalGoogleTag = process.env.NEXT_PUBLIC_GOOGLE_TAG;
+  console.log('  NEXT_PUBLIC_GOOGLE_TAG:', globalGoogleTag || '❌ Not set');
   
   // Check RS (Serbia)
   console.log('\n🇷🇸 Serbia (RS) Configuration:');
@@ -28,7 +30,7 @@ export function debugPixelConfig() {
   const rsGoogleTag = process.env.NEXT_PUBLIC_GOOGLE_TAG_RS;
   console.log('  NEXT_PUBLIC_META_PIXEL_RS:', rsPixel || '❌ Not set');
   console.log('  NEXT_PUBLIC_GOOGLE_TAG_RS:', rsGoogleTag || '❌ Not set');
-  console.log('  ✅ Using:', rsPixel || rsGoogleTag || '❌ None found');
+  console.log('  ✅ Using:', rsPixel || rsGoogleTag || globalGoogleTag || '❌ None found');
   
   // Check BA (Bosnia)
   console.log('\n🇧🇦 Bosnia (BA) Configuration:');
@@ -36,7 +38,7 @@ export function debugPixelConfig() {
   const baGoogleTag = process.env.NEXT_PUBLIC_GOOGLE_TAG_BA;
   console.log('  NEXT_PUBLIC_META_PIXEL_BA:', baPixel || '❌ Not set');
   console.log('  NEXT_PUBLIC_GOOGLE_TAG_BA:', baGoogleTag || '❌ Not set');
-  console.log('  ✅ Using:', baPixel || baGoogleTag || '❌ None found');
+  console.log('  ✅ Using:', baPixel || baGoogleTag || globalGoogleTag || '❌ None found');
   
   // Check if Meta Pixel is loaded
   console.log('\n📡 Meta Pixel Status:');
@@ -73,7 +75,7 @@ export function debugPixelConfig() {
   
   // Summary
   console.log('\n📊 Summary:');
-  const pixelConfigured = !!(rsPixel || baPixel || rsGoogleTag || baGoogleTag);
+  const pixelConfigured = !!(rsPixel || baPixel || rsGoogleTag || baGoogleTag || globalGoogleTag);
   const pixelLoaded = typeof window.fbq !== 'undefined' || typeof window.gtag !== 'undefined';
   
   if (pixelConfigured && pixelLoaded) {
@@ -86,7 +88,7 @@ export function debugPixelConfig() {
     console.log('❌ Pixel is NOT configured and NOT loaded');
     console.log('   1. Check your .env.local file');
     console.log('   2. Restart your development server');
-    console.log('   3. Make sure you have: NEXT_PUBLIC_META_PIXEL_RS or NEXT_PUBLIC_GOOGLE_TAG_RS');
+    console.log('   3. Make sure you have: NEXT_PUBLIC_META_PIXEL_RS or NEXT_PUBLIC_GOOGLE_TAG');
   }
 }
 

@@ -35,6 +35,7 @@ NEXT_PUBLIC_DOMAIN=dermotin.com
 NEXT_PUBLIC_APP_URL=https://dermotin.com
 
 # Tracking Pixels - Serbia
+NEXT_PUBLIC_GOOGLE_TAG=AW-16495784536
 NEXT_PUBLIC_META_PIXEL_RS=your_actual_meta_pixel_id
 NEXT_PUBLIC_TIKTOK_PIXEL_RS=your_actual_tiktok_pixel_id
 NEXT_PUBLIC_GOOGLE_TAG_RS=AW-16495784536
@@ -50,6 +51,7 @@ NEXT_PUBLIC_TIKTOK_PIXEL_BG=your_actual_tiktok_pixel_id_bg
 NEXT_PUBLIC_GOOGLE_TAG_BG=your_actual_google_tag_id_bg
 
 # Add more countries as needed following the pattern:
+# NEXT_PUBLIC_GOOGLE_TAG=AW-xxxxxxxxxx
 # NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}=pixel_id
 # NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}=pixel_id
 # NEXT_PUBLIC_GOOGLE_TAG_{COUNTRY_CODE}=AW-xxxxxxxxxx
@@ -63,7 +65,7 @@ NEXT_PUBLIC_YOUTUBE_URL=https://youtube.com/@dermotin
 **Important**: 
 - Replace the placeholder values with your actual pixel IDs
 - The system automatically enables/disables pixels based on whether valid IDs are provided
-- **Scalable Design**: Add any country by following the pattern `NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}`, `NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}`, and `NEXT_PUBLIC_GOOGLE_TAG_{COUNTRY_CODE}`
+- **Scalable Design**: Use `NEXT_PUBLIC_GOOGLE_TAG` for one Google tag across the whole site, or override by country with `NEXT_PUBLIC_GOOGLE_TAG_{COUNTRY_CODE}`. Meta and TikTok remain country-based with `NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}` and `NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}`.
 - Country codes are automatically converted to uppercase (e.g., `rs` → `RS`, `bg` → `BG`)
 
 ### 2. Enable/Disable Tracking

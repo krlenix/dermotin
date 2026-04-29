@@ -282,28 +282,6 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
         />
       )}
 
-      {/* Google Tag Script */}
-      {pixelConfig.google.enabled && pixelConfig.google.tagId && (
-        <>
-          <Script
-            id="google-tag-loader"
-            strategy="afterInteractive"
-            src={`https://www.googletagmanager.com/gtag/js?id=${pixelConfig.google.tagId}`}
-          />
-          <Script
-            id="google-tag"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${pixelConfig.google.tagId}');
-              `,
-            }}
-          />
-        </>
-      )}
     </>
   );
 }
