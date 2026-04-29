@@ -64,6 +64,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
     
     let metaInitialized = initializedRef.current;
     let tiktokInitialized = false;
+    let googleInitialized = false;
     
     // Initialize Meta Pixel
     const initMetaPixel = () => {
@@ -136,6 +137,22 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
         tiktokInitialized = true;
       }
     };
+
+    // Initialize Google tag
+    const initGoogleTag = () => {
+      if (googleInitialized || !pixelConfig.google.enabled || !pixelConfig.google.tagId) return;
+      
+      // Check for marketing consent
+      if (!hasMarketingConsent(countryCode)) {
+        return;
+      }
+      
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('js', new Date());
+        window.gtag('config', pixelConfig.google.tagId);
+        googleInitialized = true;
+      }
+    };
     
     // Event listeners for script load events
     const handleMetaPixelLoaded = () => {
@@ -145,11 +162,16 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
     const handleTikTokPixelLoaded = () => {
       setTimeout(initTikTokPixel, 100); // Small delay to ensure script is fully ready
     };
+
+    const handleGoogleTagLoaded = () => {
+      setTimeout(initGoogleTag, 100); // Small delay to ensure script is fully ready
+    };
     
     // Add event listeners
     if (typeof window !== 'undefined') {
       window.addEventListener('metaPixelLoaded', handleMetaPixelLoaded);
       window.addEventListener('tiktokPixelLoaded', handleTikTokPixelLoaded);
+      window.addEventListener('googleTagLoaded', handleGoogleTagLoaded);
     }
     
     // Try immediate initialization (in case scripts are already loaded)
@@ -163,6 +185,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       }
       initMetaPixel();
       initTikTokPixel();
+      initGoogleTag();
     }, 500);
     
     // Listen for storage changes (when consent is granted/changed)
@@ -174,9 +197,11 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
             // Consent granted - reinitialize pixels
             metaInitialized = false;
             tiktokInitialized = false;
+            googleInitialized = false;
             setTimeout(() => {
               initMetaPixel();
               initTikTokPixel();
+              initGoogleTag();
             }, 100);
           }
         } catch {
@@ -190,9 +215,11 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       if (hasMarketingConsent(countryCode)) {
         metaInitialized = false;
         tiktokInitialized = false;
+        googleInitialized = false;
         setTimeout(() => {
           initMetaPixel();
           initTikTokPixel();
+          initGoogleTag();
         }, 100);
       }
     };
@@ -207,11 +234,12 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       if (typeof window !== 'undefined') {
         window.removeEventListener('metaPixelLoaded', handleMetaPixelLoaded);
         window.removeEventListener('tiktokPixelLoaded', handleTikTokPixelLoaded);
+        window.removeEventListener('googleTagLoaded', handleGoogleTagLoaded);
         window.removeEventListener('storage', handleStorageChange);
         window.removeEventListener('cookieConsentUpdated', handleConsentChange);
       }
     };
-  }, [isClient, pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId, countryCode]);
+  }, [isClient, pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId, pixelConfig.google.enabled, pixelConfig.google.tagId, countryCode]);
   
   // Mark as initialized after first render
   useEffect(() => {
@@ -280,6 +308,31 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
             `,
           }}
         />
+      )}
+
+      {/* Google Tag Script */}
+      {pixelConfig.google.enabled && pixelConfig.google.tagId && (
+        <>
+          <Script
+            id="google-tag-loader"
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${pixelConfig.google.tagId}`}
+            onLoad={() => {
+              window.dispatchEvent(new CustomEvent('googleTagLoaded'));
+            }}
+          />
+          <Script
+            id="google-tag"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = window.gtag || gtag;
+              `,
+            }}
+          />
+        </>
       )}
     </>
   );
@@ -416,13 +469,21 @@ interface TikTokPixel {
   track: (eventName: string, eventData?: Record<string, unknown>) => void;
 }
 
+interface GoogleTag {
+  (command: 'js', date: Date): void;
+  (command: 'config', tagId: string): void;
+}
+
 declare global {
   interface Window {
     fbq: FacebookPixel;
     ttq: TikTokPixel;
+    dataLayer: unknown[];
+    gtag: GoogleTag;
   }
   
   interface WindowEventMap {
     cookieConsentUpdated: CustomEvent;
+    googleTagLoaded: CustomEvent;
   }
 }

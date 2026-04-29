@@ -37,18 +37,22 @@ NEXT_PUBLIC_APP_URL=https://dermotin.com
 # Tracking Pixels - Serbia
 NEXT_PUBLIC_META_PIXEL_RS=your_actual_meta_pixel_id
 NEXT_PUBLIC_TIKTOK_PIXEL_RS=your_actual_tiktok_pixel_id
+NEXT_PUBLIC_GOOGLE_TAG_RS=AW-16495784536
 
 # Tracking Pixels - Bosnia
 NEXT_PUBLIC_META_PIXEL_BA=your_actual_meta_pixel_id_ba
 NEXT_PUBLIC_TIKTOK_PIXEL_BA=your_actual_tiktok_pixel_id_ba
+NEXT_PUBLIC_GOOGLE_TAG_BA=your_actual_google_tag_id_ba
 
 # Tracking Pixels - Bulgaria (example for future expansion)
 NEXT_PUBLIC_META_PIXEL_BG=your_actual_meta_pixel_id_bg
 NEXT_PUBLIC_TIKTOK_PIXEL_BG=your_actual_tiktok_pixel_id_bg
+NEXT_PUBLIC_GOOGLE_TAG_BG=your_actual_google_tag_id_bg
 
 # Add more countries as needed following the pattern:
 # NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}=pixel_id
 # NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}=pixel_id
+# NEXT_PUBLIC_GOOGLE_TAG_{COUNTRY_CODE}=AW-xxxxxxxxxx
 
 # Social Media (Optional)
 NEXT_PUBLIC_FACEBOOK_URL=https://facebook.com/dermotin
@@ -59,7 +63,7 @@ NEXT_PUBLIC_YOUTUBE_URL=https://youtube.com/@dermotin
 **Important**: 
 - Replace the placeholder values with your actual pixel IDs
 - The system automatically enables/disables pixels based on whether valid IDs are provided
-- **Scalable Design**: Add any country by following the pattern `NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}` and `NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}`
+- **Scalable Design**: Add any country by following the pattern `NEXT_PUBLIC_META_PIXEL_{COUNTRY_CODE}`, `NEXT_PUBLIC_TIKTOK_PIXEL_{COUNTRY_CODE}`, and `NEXT_PUBLIC_GOOGLE_TAG_{COUNTRY_CODE}`
 - Country codes are automatically converted to uppercase (e.g., `rs` → `RS`, `bg` → `BG`)
 
 ### 2. Enable/Disable Tracking
@@ -81,13 +85,18 @@ To disable tracking for a specific platform/country:
 # Keep TikTok pixel enabled for Serbia
 NEXT_PUBLIC_TIKTOK_PIXEL_RS=your_actual_tiktok_pixel_id
 
+# Enable Google Ads tag for Serbia
+NEXT_PUBLIC_GOOGLE_TAG_RS=AW-16495784536
+
 # Example: Adding support for Bulgaria
 NEXT_PUBLIC_META_PIXEL_BG=your_bulgaria_meta_pixel_id
 NEXT_PUBLIC_TIKTOK_PIXEL_BG=your_bulgaria_tiktok_pixel_id
+NEXT_PUBLIC_GOOGLE_TAG_BG=your_bulgaria_google_tag_id
 
 # Example: Adding support for Croatia
 NEXT_PUBLIC_META_PIXEL_HR=your_croatia_meta_pixel_id
 NEXT_PUBLIC_TIKTOK_PIXEL_HR=your_croatia_tiktok_pixel_id
+NEXT_PUBLIC_GOOGLE_TAG_HR=your_croatia_google_tag_id
 ```
 
 ## 📊 Events Tracked
@@ -97,6 +106,7 @@ NEXT_PUBLIC_TIKTOK_PIXEL_HR=your_croatia_tiktok_pixel_id
 - **Where**: All pages with PixelTracker component
 - **Meta Event**: `PageView`
 - **TikTok Event**: `ViewContent`
+- **Google Tag**: `gtag('config', 'AW-...')`
 
 ### 2. InitiateCheckout
 - **When**: User starts filling the checkout form (first input with content)

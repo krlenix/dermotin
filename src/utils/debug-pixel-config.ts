@@ -25,14 +25,18 @@ export function debugPixelConfig() {
   // Check RS (Serbia)
   console.log('\n🇷🇸 Serbia (RS) Configuration:');
   const rsPixel = process.env.NEXT_PUBLIC_META_PIXEL_RS;
+  const rsGoogleTag = process.env.NEXT_PUBLIC_GOOGLE_TAG_RS;
   console.log('  NEXT_PUBLIC_META_PIXEL_RS:', rsPixel || '❌ Not set');
-  console.log('  ✅ Using:', rsPixel || '❌ None found');
+  console.log('  NEXT_PUBLIC_GOOGLE_TAG_RS:', rsGoogleTag || '❌ Not set');
+  console.log('  ✅ Using:', rsPixel || rsGoogleTag || '❌ None found');
   
   // Check BA (Bosnia)
   console.log('\n🇧🇦 Bosnia (BA) Configuration:');
   const baPixel = process.env.NEXT_PUBLIC_META_PIXEL_BA;
+  const baGoogleTag = process.env.NEXT_PUBLIC_GOOGLE_TAG_BA;
   console.log('  NEXT_PUBLIC_META_PIXEL_BA:', baPixel || '❌ Not set');
-  console.log('  ✅ Using:', baPixel || '❌ None found');
+  console.log('  NEXT_PUBLIC_GOOGLE_TAG_BA:', baGoogleTag || '❌ Not set');
+  console.log('  ✅ Using:', baPixel || baGoogleTag || '❌ None found');
   
   // Check if Meta Pixel is loaded
   console.log('\n📡 Meta Pixel Status:');
@@ -41,6 +45,15 @@ export function debugPixelConfig() {
     console.log('  Pixel queue length:', window.fbq.queue?.length || 0);
   } else {
     console.log('  ❌ Meta Pixel (fbq) is NOT loaded');
+  }
+
+  // Check if Google tag is loaded
+  console.log('\n📡 Google Tag Status:');
+  if (typeof window.gtag !== 'undefined') {
+    console.log('  ✅ Google tag (gtag) is loaded');
+    console.log('  Data layer length:', window.dataLayer?.length || 0);
+  } else {
+    console.log('  ❌ Google tag (gtag) is NOT loaded');
   }
   
   // Check cookies
@@ -60,8 +73,8 @@ export function debugPixelConfig() {
   
   // Summary
   console.log('\n📊 Summary:');
-  const pixelConfigured = !!(rsPixel || baPixel);
-  const pixelLoaded = typeof window.fbq !== 'undefined';
+  const pixelConfigured = !!(rsPixel || baPixel || rsGoogleTag || baGoogleTag);
+  const pixelLoaded = typeof window.fbq !== 'undefined' || typeof window.gtag !== 'undefined';
   
   if (pixelConfigured && pixelLoaded) {
     console.log('✅ Pixel is configured and loaded correctly');
@@ -73,7 +86,7 @@ export function debugPixelConfig() {
     console.log('❌ Pixel is NOT configured and NOT loaded');
     console.log('   1. Check your .env.local file');
     console.log('   2. Restart your development server');
-    console.log('   3. Make sure you have: NEXT_PUBLIC_META_PIXEL_RS');
+    console.log('   3. Make sure you have: NEXT_PUBLIC_META_PIXEL_RS or NEXT_PUBLIC_GOOGLE_TAG_RS');
   }
 }
 
