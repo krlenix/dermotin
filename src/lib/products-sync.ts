@@ -75,7 +75,7 @@ function collectProductImages(product: Product, baseUrl: string): ProductsSyncIm
     product.images.thumbnail,
     product.images.fallback,
     ...product.images.gallery,
-  ].filter(Boolean);
+  ].filter((url): url is string => Boolean(url));
 
   const seen = new Set<string>();
 
