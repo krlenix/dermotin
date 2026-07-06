@@ -47,6 +47,13 @@ export interface CouponData {
   bogoTotalItems?: number;
 }
 
+export interface CartOrderItem {
+  sku: string;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
 export interface OrderData {
   orderId: string;
   customerName: string;
@@ -71,6 +78,9 @@ export interface OrderData {
   bundleItems?: Record<string, number>;
   locale: string;
   coupon?: CouponData;
+  // Multi-item cart orders (classic shop checkout). When present, line items
+  // are built directly from this array instead of the single-product fields.
+  cartItems?: CartOrderItem[];
   // BOGO-specific fields
   isBOGO?: boolean;
   bogoDetails?: {
@@ -276,10 +286,26 @@ export async function POST(request: NextRequest) {
       console.log('🎟️ No coupon applied to this order');
     }
     
+    // Check if this is a multi-item cart order (classic shop checkout)
+    const isCartOrder = Array.isArray(orderData.cartItems) && orderData.cartItems.length > 0;
+
     // Build line items based on order type
     const lineItems: LineItem[] = [];
     
-    if (isBOGOOrder && orderData.bogoDetails) {
+    if (isCartOrder && orderData.cartItems) {
+      // Cart order: one line item per cart line
+      orderData.cartItems.forEach((item) => {
+        lineItems.push({
+          sku: item.sku || 'UNKNOWN',
+          name: item.name,
+          quantity: item.quantity,
+          price: roundPrice(item.price),
+          item_total_price: roundPrice(item.price * item.quantity),
+          discount: 0
+        });
+      });
+      console.log('🛒 Cart order line items created:', lineItems.length, 'items');
+    } else if (isBOGOOrder && orderData.bogoDetails) {
       // BOGO order: create separate line items for paid and free items
       const { unitPrice, paidQuantity, freeQuantity } = orderData.bogoDetails;
       

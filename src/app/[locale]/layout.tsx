@@ -1,6 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { CartProvider } from '@/contexts/CartContext';
 
 const locales = ['rs', 'ba', 'me'];
 
@@ -29,7 +30,9 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      {children}
+      <CartProvider locale={locale}>
+        {children}
+      </CartProvider>
     </NextIntlClientProvider>
   );
 }

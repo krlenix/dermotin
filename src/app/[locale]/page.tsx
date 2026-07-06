@@ -29,6 +29,8 @@ import { CountryMismatchBanner } from '@/components/features/CountryMismatchBann
 import { CountrySwitcher } from '@/components/features/CountrySwitcher';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
 import { BOGOLoadedBanner } from '@/components/features/BOGOLoadedBanner';
+import { CartButton } from '@/components/cart/CartButton';
+import { CartDrawer } from '@/components/cart/CartDrawer';
 import { Footer } from '@/components/ui/footer';
 import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
 import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
@@ -497,10 +499,11 @@ export default function HomePage() {
                   </a>
                   <Link
                     href={`/${locale}/contact`}
-                    className="inline-flex items-center justify-center rounded-full bg-[#F3765D] px-4 py-2 text-sm font-extrabold text-white shadow-lg transition-colors hover:bg-[#e0654d]"
+                    className="hidden items-center justify-center rounded-full bg-[#F3765D] px-4 py-2 text-sm font-extrabold text-white shadow-lg transition-colors hover:bg-[#e0654d] md:inline-flex"
                   >
                     {t('navigation.contact')}
                   </Link>
+                  <CartButton />
                 </div>
               </div>
 
@@ -690,7 +693,7 @@ export default function HomePage() {
                   {products.map((product, index) => (
                     <Link
                       key={product.id}
-                      href={`/${locale}/checkouts/${product.slug}`}
+                      href={`/${locale}/products/${product.slug}`}
                       className="group relative overflow-hidden rounded-[1.35rem] border border-[#d7e6de] bg-[linear-gradient(180deg,#f7faf8_0%,#eef4f0_100%)] shadow-[0_14px_34px_rgba(15,23,42,0.05)] transition-transform duration-300 hover:-translate-y-1 md:rounded-[1.65rem]"
                     >
                       <div className="relative aspect-square overflow-hidden bg-[linear-gradient(180deg,#fafafa_0%,#ececec_100%)]">
@@ -906,6 +909,7 @@ export default function HomePage() {
         </main>
 
         <Footer countryConfig={countryConfig} locale={locale} />
+        <CartDrawer />
         <PixelTracker countryCode={countryConfig.code} />
         <CookieConsent isEU={countryConfig.isEU} />
       </div>

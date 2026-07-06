@@ -275,6 +275,35 @@
     "recommended": "Preporučeno",
     "shipping": "dostava"
   },
+  "cart": {
+    "title": "Korpa",
+    "open_cart": "Otvori korpu",
+    "close": "Zatvori",
+    "empty_title": "Vaša korpa je prazna",
+    "empty_subtitle": "Dodajte proizvode u korpu i oni će se pojaviti ovdje.",
+    "browse_products": "Pogledaj proizvode",
+    "subtotal": "Međuzbir",
+    "you_save": "Ušteda",
+    "shipping_calculated": "Troškovi dostave se obračunavaju prilikom plaćanja.",
+    "free_shipping_progress": "Dodajte još {amount} za besplatnu dostavu",
+    "free_shipping_unlocked": "Ostvarili ste besplatnu dostavu!",
+    "checkout": "Nastavi na plaćanje",
+    "continue_shopping": "Nastavi kupovinu",
+    "remove": "Ukloni",
+    "quantity": "Količina"
+  },
+  "shop": {
+    "products_title": "Naši proizvodi",
+    "choose_variant": "Izaberite pakovanje",
+    "from_price": "od",
+    "related_products": "Preporučujemo i ove proizvode",
+    "view_all": "Pogledaj sve",
+    "details_title": "Sve što treba da znate o proizvodu",
+    "free_shipping_over": "Besplatna dostava za porudžbine preko {amount}",
+    "delivery_time": "Isporuka za {time}",
+    "cod_payment": "Plaćanje pouzećem - bez rizika",
+    "return_policy": "{days} dana za povraćaj novca"
+  },
   "navigation": {
     "home": "Početna",
     "product": "Proizvod", 
