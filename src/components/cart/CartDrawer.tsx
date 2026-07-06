@@ -127,7 +127,11 @@ export function CartDrawer() {
               </div>
               <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-[#358055]/10">
                 <div
-                  className="h-full rounded-full bg-[linear-gradient(90deg,#358055,#F3765D)] transition-all duration-500"
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    hasFreeShipping
+                      ? 'bg-[#358055]'
+                      : 'bg-[linear-gradient(90deg,#F3765D,#358055)]'
+                  }`}
                   style={{ width: `${freeShippingProgress}%` }}
                 />
               </div>

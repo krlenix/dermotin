@@ -5,13 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 import {
   Check,
   ChevronRight,
   CreditCard,
-  Minus,
-  Plus,
   RotateCcw,
   ShieldCheck,
   ShoppingBag,
@@ -26,6 +23,7 @@ import {
   getProductVariantsForCountry,
 } from '@/config/products';
 import { CountryConfig, getDefaultCourier } from '@/config/countries';
+import { qualifiesForFreeShipping } from '@/utils/shipping';
 import { useCart } from '@/contexts/CartContext';
 import { ShopHeader } from '@/components/shop/ShopHeader';
 import { Footer } from '@/components/ui/footer';
@@ -63,8 +61,21 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
   const defaultVariant = variants.find((v) => v.isDefault) || variants[0];
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(defaultVariant);
-  const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+
+  // Variant with the biggest absolute savings gets the highlight badge
+  const maxSavingsVariantId = useMemo(() => {
+    let bestId: string | null = null;
+    let bestSavings = 0;
+    for (const variant of variants) {
+      const savings = variant.discountPrice ? variant.price - variant.discountPrice : 0;
+      if (savings > bestSavings) {
+        bestSavings = savings;
+        bestId = variant.id;
+      }
+    }
+    return bestId;
+  }, [variants]);
 
   const courier = getDefaultCourier(countryConfig);
   const reviewCount = product.testimonials?.length ?? 0;
@@ -134,21 +145,20 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
       content_type: 'product',
       content_name: product.name,
       content_ids: [selectedVariant.sku],
-      contents: [{ id: selectedVariant.sku, quantity, item_price: unitPrice }],
+      contents: [{ id: selectedVariant.sku, quantity: 1, item_price: unitPrice }],
       currency: countryConfig.currency,
-      value: unitPrice * quantity,
+      value: unitPrice,
     });
   };
 
   const handleAddToCart = () => {
-    addItem(buildCartItem(), quantity);
+    addItem(buildCartItem(), 1);
     trackAddToCart();
-    toast.success(t('product.add_to_cart_success'));
     openDrawer();
   };
 
   const handleBuyNow = () => {
-    addItem(buildCartItem(), quantity);
+    addItem(buildCartItem(), 1);
     trackAddToCart();
     router.push(`/${locale}/checkout`);
   };
@@ -275,11 +285,14 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                       <p className="text-sm font-bold uppercase tracking-[0.08em] text-slate-700">
                         {t('shop.choose_variant')}
                       </p>
-                      <div className="grid gap-2.5">
+                      <div className="grid gap-3">
                         {variants.map((variant) => {
                           const isSelected = variant.id === selectedVariant.id;
                           const variantPrice = variant.discountPrice ?? variant.price;
                           const variantHasDiscount = Boolean(variant.discountPrice && variant.discountPrice < variant.price);
+                          const variantSavings = variantHasDiscount ? variant.price - variantPrice : 0;
+                          const isBestValue = variant.id === maxSavingsVariantId && variants.length > 1;
+                          const variantFreeShipping = qualifiesForFreeShipping(variantPrice, countryConfig);
 
                           return (
                             <button
@@ -287,36 +300,60 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                               type="button"
                               onClick={() => setSelectedVariant(variant)}
                               className={cn(
-                                'flex items-center justify-between gap-3 rounded-[1.1rem] border-2 bg-white px-4 py-3 text-left transition-all duration-200',
+                                'relative rounded-[1.2rem] border-2 bg-white px-4 pb-3.5 text-left transition-all duration-200',
+                                isBestValue ? 'pt-5' : 'pt-3.5',
                                 isSelected
-                                  ? 'border-[#358055] shadow-[0_10px_24px_rgba(53,128,85,0.14)]'
-                                  : 'border-[#358055]/12 hover:border-[#358055]/40'
+                                  ? 'border-[#358055] bg-[#358055]/[0.03] shadow-[0_12px_28px_rgba(53,128,85,0.16)]'
+                                  : 'border-[#358055]/12 hover:-translate-y-0.5 hover:border-[#358055]/40 hover:shadow-[0_10px_24px_rgba(15,23,42,0.06)]'
                               )}
                             >
-                              <div className="flex items-center gap-3">
-                                <span
-                                  className={cn(
-                                    'inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
-                                    isSelected ? 'border-[#358055] bg-[#358055]' : 'border-slate-300 bg-white'
-                                  )}
-                                >
-                                  {isSelected && <Check className="h-3 w-3 text-white" />}
+                              {isBestValue && (
+                                <span className="absolute -top-3 left-4 inline-flex items-center rounded-full bg-[#F3765D] px-3 py-1 text-[11px] font-black tracking-[0.06em] text-white shadow-[0_8px_18px_rgba(243,118,93,0.35)]">
+                                  {t('bundles.biggest_savings')}
                                 </span>
-                                <div>
-                                  <p className="text-sm font-bold text-slate-900">{variant.name}</p>
-                                  {(variant.quantity ?? 1) > 1 && (
-                                    <p className="text-xs font-medium text-[#358055]">
-                                      {formatPrice(Math.round((variantPrice / (variant.quantity ?? 1)) * 100) / 100)} {t('bundles.per_item')}
-                                    </p>
+                              )}
+
+                              <div className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                  <span
+                                    className={cn(
+                                      'inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+                                      isSelected ? 'border-[#358055] bg-[#358055]' : 'border-slate-300 bg-white'
+                                    )}
+                                  >
+                                    {isSelected && <Check className="h-3 w-3 text-white" />}
+                                  </span>
+                                  <div>
+                                    <p className="text-sm font-bold text-slate-900">{variant.name}</p>
+                                    {(variant.quantity ?? 1) > 1 && (
+                                      <p className="text-xs font-medium text-[#358055]">
+                                        {formatPrice(Math.round((variantPrice / (variant.quantity ?? 1)) * 100) / 100)} {t('bundles.per_item')}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  {variantHasDiscount && (
+                                    <p className="text-xs text-slate-400 line-through">{formatPrice(variant.price)}</p>
                                   )}
+                                  <p className="text-lg font-black leading-tight text-slate-950">{formatPrice(variantPrice)}</p>
                                 </div>
                               </div>
-                              <div className="text-right">
-                                {variantHasDiscount && (
-                                  <p className="text-xs text-slate-400 line-through">{formatPrice(variant.price)}</p>
-                                )}
-                                <p className="text-base font-black text-slate-950">{formatPrice(variantPrice)}</p>
-                              </div>
+
+                              {(variantSavings > 0 || variantFreeShipping) && (
+                                <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pl-8">
+                                  {variantSavings > 0 && (
+                                    <span className="inline-flex items-center rounded-full bg-[#358055]/10 px-2.5 py-0.5 text-[11px] font-extrabold text-[#2f6f4a]">
+                                      {t('bundles.save_amount', { amount: formatPrice(variantSavings) })}
+                                    </span>
+                                  )}
+                                  {variantFreeShipping && (
+                                    <span className="inline-flex items-center rounded-full bg-[#F3765D]/10 px-2.5 py-0.5 text-[11px] font-extrabold text-[#ba5a47]">
+                                      {t('bundles.free_shipping')}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                             </button>
                           );
                         })}
@@ -324,33 +361,8 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                     </div>
                   )}
 
-                  {/* Quantity + actions */}
+                  {/* Actions */}
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <p className="text-sm font-bold uppercase tracking-[0.08em] text-slate-700">
-                        {t('cart.quantity')}
-                      </p>
-                      <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white shadow-[0_6px_14px_rgba(15,23,42,0.04)]">
-                        <button
-                          type="button"
-                          onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                          aria-label="-"
-                          className="inline-flex h-11 w-11 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        <span className="min-w-10 text-center text-base font-black text-slate-900">{quantity}</span>
-                        <button
-                          type="button"
-                          onClick={() => setQuantity((prev) => Math.min(99, prev + 1))}
-                          aria-label="+"
-                          className="inline-flex h-11 w-11 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-
                     <div className="flex flex-col gap-2.5 sm:flex-row">
                       <button
                         type="button"

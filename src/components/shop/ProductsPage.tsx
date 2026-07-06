@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 import { ShoppingBag, Sparkles } from 'lucide-react';
 import { Product, getProductVariantsForCountry } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
@@ -60,7 +59,6 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
       value: variant.discountPrice ?? variant.price,
     });
 
-    toast.success(t('product.add_to_cart_success'));
     openDrawer();
   };
 
