@@ -1,23 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-
-import { Badge } from '@/components/ui/badge';
 import { getFAQForCountry, FAQItem } from '@/config/faq';
 import type { ProductFAQ, Product } from '@/config/types';
 import { useTranslations } from 'next-intl';
-import { 
-  ChevronDown, 
-  Truck, 
-  CreditCard, 
-  Shield, 
-  Package, 
+import { cn } from '@/lib/utils';
+import {
+  ChevronDown,
+  Truck,
+  CreditCard,
+  Shield,
+  Package,
   HelpCircle,
   Phone,
   Mail,
   Leaf,
-  Award
+  Award,
 } from 'lucide-react';
 
 interface AdvancedFAQProps {
@@ -30,7 +28,7 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
   const t = useTranslations();
   const tFaq = useTranslations('faq_ui');
   const [openItems, setOpenItems] = useState<string[]>(['0']); // First item open by default
-  
+
   // Create a proper translations object by manually building it
   // This bypasses the useTranslations issue by creating the structure we need
   const translations = {
@@ -52,145 +50,177 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
       safety_question: tFaq.raw('safety_question'),
       safety_answer: tFaq.raw('safety_answer'),
       warranty_question: tFaq.raw('warranty_question'),
-      warranty_answer: tFaq.raw('warranty_answer')
-    }
+      warranty_answer: tFaq.raw('warranty_answer'),
+    },
   };
-  
-  
+
   // Use product-specific FAQs if product is provided, otherwise use general FAQs
-  const faqItems = product 
-    ? (product.productFAQ || [])
-    : getFAQForCountry(countryCode, translations);
+  const faqItems = product ? product.productFAQ || [] : getFAQForCountry(countryCode, translations);
 
   const toggleItem = (index: string) => {
-    setOpenItems(prev => 
-      prev.includes(index) 
-        ? prev.filter(item => item !== index)
-        : [...prev, index]
+    setOpenItems((prev) =>
+      prev.includes(index) ? prev.filter((item) => item !== index) : [...prev, index]
     );
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'delivery': return <Truck className="h-5 w-5 text-blue-600" />;
-      case 'payment': return <CreditCard className="h-5 w-5 text-green-600" />;
-      case 'returns': return <Shield className="h-5 w-5 text-blue-600" />;
-      case 'product': return <Package className="h-5 w-5 text-orange-600" />;
-      // Product-specific categories
-      case 'usage': return <Package className="h-5 w-5 text-purple-600" />;
-      case 'ingredients': return <Leaf className="h-5 w-5 text-green-600" />;
-      case 'effects': return <Award className="h-5 w-5 text-yellow-600" />;
-      case 'safety': return <Shield className="h-5 w-5 text-red-600" />;
-      case 'storage': return <Package className="h-5 w-5 text-gray-600" />;
-      case 'general': return <HelpCircle className="h-5 w-5 text-gray-600" />;
-      default: return <HelpCircle className="h-5 w-5 text-gray-600" />;
+      case 'delivery':
+        return <Truck className="h-4 w-4" />;
+      case 'payment':
+        return <CreditCard className="h-4 w-4" />;
+      case 'returns':
+        return <Shield className="h-4 w-4" />;
+      case 'product':
+        return <Package className="h-4 w-4" />;
+      case 'usage':
+        return <Package className="h-4 w-4" />;
+      case 'ingredients':
+        return <Leaf className="h-4 w-4" />;
+      case 'effects':
+        return <Award className="h-4 w-4" />;
+      case 'safety':
+        return <Shield className="h-4 w-4" />;
+      case 'storage':
+        return <Package className="h-4 w-4" />;
+      default:
+        return <HelpCircle className="h-4 w-4" />;
     }
   };
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryLabel = (category: string) => {
     switch (category) {
-      case 'delivery': return 'bg-blue-100 text-blue-800';
-      case 'payment': return 'bg-green-100 text-green-800';
-      case 'returns': return 'bg-blue-100 text-blue-800';
-      case 'product': return 'bg-orange-100 text-orange-800';
-      // Product-specific categories
-      case 'usage': return 'bg-purple-100 text-purple-800';
-      case 'ingredients': return 'bg-green-100 text-green-800';
-      case 'effects': return 'bg-yellow-100 text-yellow-800';
-      case 'safety': return 'bg-red-100 text-red-800';
-      case 'storage': return 'bg-gray-100 text-gray-800';
-      case 'general': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'delivery':
+        return t('faq_ui.delivery');
+      case 'product':
+        return t('faq_ui.product');
+      case 'payment':
+        return t('faq_ui.payment');
+      case 'returns':
+        return t('faq_ui.returns');
+      case 'usage':
+        return t('faq_ui.usage');
+      case 'ingredients':
+        return t('faq_ui.ingredients');
+      case 'effects':
+        return t('faq_ui.effects');
+      case 'safety':
+        return t('faq_ui.safety');
+      case 'storage':
+        return t('faq_ui.storage');
+      default:
+        return t('faq_ui.general');
     }
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={cn('space-y-6', className)}>
+      {/* Section header */}
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">FAQ</p>
+        <h2 className="mt-2 text-3xl font-black leading-tight text-slate-950 md:text-4xl">
+          {t('faq_ui.title')}
+        </h2>
+        <p className="mt-3 text-base leading-relaxed text-slate-600 md:text-lg">
+          {t('faq_ui.subtitle')}
+        </p>
+      </div>
+
       {/* FAQ Items */}
       <div className="space-y-3">
         {faqItems.map((item: FAQItem | ProductFAQ, index: number) => {
           const isOpen = openItems.includes(index.toString());
-          
+
           return (
-            <Card 
-              key={index} 
-              className="cursor-pointer rounded-[1.4rem] border border-brand-green/12 bg-white/85 py-0 shadow-none transition-colors hover:border-brand-green/25"
-              onClick={() => toggleItem(index.toString())}
+            <div
+              key={index}
+              className={cn(
+                'overflow-hidden rounded-[1.4rem] border bg-white transition-all duration-300',
+                isOpen
+                  ? 'border-[#358055]/25 shadow-[0_16px_40px_rgba(26,54,42,0.07)]'
+                  : 'border-[#358055]/12 hover:border-[#358055]/25'
+              )}
             >
-              <CardContent className="p-0">
-                <div className="flex w-full items-center justify-between px-4 py-4 transition-colors hover:bg-brand-green/5">
-                  <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
-                    <div className="flex-shrink-0">
-                      {getCategoryIcon(item.category)}
-                    </div>
-                    <span className="text-sm font-semibold leading-tight text-slate-900 md:text-base">{item.question}</span>
-                  </div>
-                  <div className="flex-shrink-0 ml-2">
-                    <ChevronDown 
-                      className={`h-4 w-4 text-slate-400 transition-transform md:h-5 md:w-5 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`} 
-                    />
+              <button
+                type="button"
+                onClick={() => toggleItem(index.toString())}
+                className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-[#358055]/[0.04] md:px-5"
+                aria-expanded={isOpen}
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <span
+                    className={cn(
+                      'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors',
+                      isOpen ? 'bg-[#358055] text-white' : 'bg-[#358055]/10 text-[#358055]'
+                    )}
+                  >
+                    {getCategoryIcon(item.category)}
+                  </span>
+                  <span className="text-sm font-bold leading-snug text-slate-900 md:text-base">
+                    {item.question}
+                  </span>
+                </div>
+                <span
+                  className={cn(
+                    'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-200',
+                    isOpen
+                      ? 'rotate-180 border-[#358055]/25 bg-[#358055]/8 text-[#358055]'
+                      : 'border-[#358055]/12 bg-white text-slate-400'
+                  )}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </span>
+              </button>
+
+              <div
+                className={cn(
+                  'grid transition-all duration-300 ease-in-out',
+                  isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                )}
+              >
+                <div className="overflow-hidden">
+                  <div className="border-t border-[#358055]/10 px-4 py-4 md:px-5">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#358055]/8 px-3 py-1 text-[11px] font-bold text-[#2f6f4a]">
+                      {getCategoryLabel(item.category)}
+                    </span>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-600 md:text-base">
+                      {item.answer}
+                    </p>
                   </div>
                 </div>
-                
-                {isOpen && (
-                  <div className="px-4 pb-4">
-                    <div className="border-t border-brand-green/10 pt-4">
-                      <div className="mb-3 flex flex-wrap gap-2">
-                        <Badge variant="secondary" className={`${getCategoryColor(item.category)} border-0 px-3 py-1`}>
-                          <span className="capitalize">
-                            {item.category === 'delivery' ? t('faq_ui.delivery') :
-                             item.category === 'product' ? t('faq_ui.product') :
-                             item.category === 'payment' ? t('faq_ui.payment') :
-                             item.category === 'returns' ? t('faq_ui.returns') :
-                             item.category === 'usage' ? t('faq_ui.usage') :
-                             item.category === 'ingredients' ? t('faq_ui.ingredients') :
-                             item.category === 'effects' ? t('faq_ui.effects') :
-                             item.category === 'safety' ? t('faq_ui.safety') :
-                             item.category === 'storage' ? t('faq_ui.storage') :
-                             t('faq_ui.general')}
-                          </span>
-                        </Badge>
-                      </div>
-                      <p className="text-sm leading-relaxed text-slate-600 md:text-base">{item.answer}</p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           );
         })}
       </div>
 
-      <Card className="rounded-[1.6rem] border border-brand-green/12 bg-[linear-gradient(180deg,rgba(245,250,247,0.92),rgba(255,255,255,0.98))] shadow-none">
-        <CardContent className="p-3 md:p-4 text-center">
-          <h3 className="mb-2 text-lg font-bold text-slate-900 md:mb-3 md:text-xl">
-            {t('faq_ui.no_answer')}
-          </h3>
-          <p className="mb-3 text-sm text-slate-600 md:mb-4 md:text-base">
-            {t('faq_ui.support_team')}
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-3 md:gap-4">
-            <div className="flex items-center justify-center gap-2 rounded-2xl bg-white p-3">
-              <Phone className="h-4 w-4 md:h-5 md:w-5 text-brand-orange flex-shrink-0" />
-              <div className="text-left">
-                <p className="font-semibold text-xs md:text-sm">{t('faq_ui.call_us')}</p>
-                <p className="text-xs text-slate-600 md:text-sm">{t('faq_ui.working_hours')}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-center gap-2 rounded-2xl bg-white p-3">
-              <Mail className="h-4 w-4 md:h-5 md:w-5 text-brand-orange flex-shrink-0" />
-              <div className="text-left">
-                <p className="font-semibold text-xs md:text-sm">{t('faq_ui.send_email')}</p>
-                <p className="text-xs text-slate-600 md:text-sm">{t('faq_ui.response_time')}</p>
-              </div>
+      {/* Contact CTA */}
+      <div className="rounded-[1.6rem] border border-[#358055]/12 bg-[linear-gradient(135deg,rgba(53,128,85,0.07),rgba(243,118,93,0.06))] p-5 text-center md:p-6">
+        <h3 className="text-lg font-black text-slate-950 md:text-xl">{t('faq_ui.no_answer')}</h3>
+        <p className="mt-1.5 text-sm text-slate-600 md:text-base">{t('faq_ui.support_team')}</p>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-2 md:gap-4">
+          <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/70 bg-white px-4 py-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F3765D]/10">
+              <Phone className="h-[18px] w-[18px] text-[#F3765D]" />
+            </span>
+            <div className="text-left">
+              <p className="text-sm font-bold text-slate-900">{t('faq_ui.call_us')}</p>
+              <p className="text-xs text-slate-500 md:text-sm">{t('faq_ui.working_hours')}</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/70 bg-white px-4 py-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F3765D]/10">
+              <Mail className="h-[18px] w-[18px] text-[#F3765D]" />
+            </span>
+            <div className="text-left">
+              <p className="text-sm font-bold text-slate-900">{t('faq_ui.send_email')}</p>
+              <p className="text-xs text-slate-500 md:text-sm">{t('faq_ui.response_time')}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

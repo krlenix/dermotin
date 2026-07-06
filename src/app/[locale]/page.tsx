@@ -15,12 +15,14 @@ import {
   Menu,
   Phone,
   ShieldCheck,
+  ShoppingBag,
   Sparkles,
   Star,
   Truck,
   X,
 } from 'lucide-react';
-import { getProductsForCountry, type Product } from '@/config/products';
+import { getProductsForCountry, getProductVariantsForCountry, type Product } from '@/config/products';
+import { useCart } from '@/contexts/CartContext';
 import { getCountryConfig } from '@/config/countries';
 import { HOMEPAGE_IMAGES } from '@/config/images';
 import { CookieConsent } from '@/components/features/CookieConsent';
@@ -29,6 +31,7 @@ import { CountryMismatchBanner } from '@/components/features/CountryMismatchBann
 import { CountrySwitcher } from '@/components/features/CountrySwitcher';
 import { ProductImageHover } from '@/components/features/ProductImageHover';
 import { BOGOLoadedBanner } from '@/components/features/BOGOLoadedBanner';
+import { TrustMarquee } from '@/components/features/TrustMarquee';
 import { CartButton } from '@/components/cart/CartButton';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { Footer } from '@/components/ui/footer';
@@ -56,6 +59,7 @@ export default function HomePage() {
   const t = useTranslations();
   const countryConfig = getCountryConfig(locale);
   const { trackEvent } = usePixelTracking(countryConfig.code);
+  const { addItem, openDrawer } = useCart();
 
   const [products, setProducts] = useState<Product[]>([]);
   const headerProgressRef = useRef(0);
@@ -380,6 +384,45 @@ export default function HomePage() {
   const naturalScienceTitle = t('homepage.natural_science_title');
   const naturalScienceTitleParts = naturalScienceTitle.split('rešenja za sve');
 
+  const formatPrice = (amount: number) =>
+    `${new Intl.NumberFormat('sr-RS', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount)} ${countryConfig.currencySymbol}`;
+
+  const handleQuickAdd = (event: MouseEvent<HTMLButtonElement>, product: Product) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const variants = getProductVariantsForCountry(product, locale);
+    const variant = variants.find((v) => v.isDefault) || variants[0];
+    if (!variant) return;
+
+    addItem({
+      productId: product.id,
+      productSlug: product.slug,
+      variantId: variant.id,
+      sku: variant.sku,
+      productName: product.name,
+      variantName: variant.name,
+      image: product.images.main,
+      unitPrice: variant.discountPrice ?? variant.price,
+      regularPrice: variant.price,
+      currency: countryConfig.currency,
+    });
+
+    trackEvent('add_to_cart', {
+      content_type: 'product',
+      content_name: product.name,
+      content_ids: [variant.sku],
+      contents: [{ id: variant.sku, quantity: 1, item_price: variant.discountPrice ?? variant.price }],
+      currency: countryConfig.currency,
+      value: variant.discountPrice ?? variant.price,
+    });
+
+    openDrawer();
+  };
+
   const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
 
@@ -665,6 +708,8 @@ export default function HomePage() {
             </div>
           </section>
 
+          <TrustMarquee className="my-2 md:my-3" />
+
           <CountriesHeader />
 
           <section id="products" className="scroll-mt-28 py-8 md:py-10">
@@ -689,44 +734,127 @@ export default function HomePage() {
               </div>
 
               {products.length > 0 && (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                  {products.map((product, index) => (
-                    <Link
-                      key={product.id}
-                      href={`/${locale}/products/${product.slug}`}
-                      className="group relative overflow-hidden rounded-[1.35rem] border border-[#d7e6de] bg-[linear-gradient(180deg,#f7faf8_0%,#eef4f0_100%)] shadow-[0_14px_34px_rgba(15,23,42,0.05)] transition-transform duration-300 hover:-translate-y-1 md:rounded-[1.65rem]"
-                    >
-                      <div className="relative aspect-square overflow-hidden bg-[linear-gradient(180deg,#fafafa_0%,#ececec_100%)]">
-                        {isBOGOActive && index === 0 && (
-                          <div className="absolute left-3 top-3 z-10 rounded-full bg-[#358055] px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-white">
-                            1+1 GRATIS
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  {products.map((product, index) => {
+                    const variants = getProductVariantsForCountry(product, locale);
+                    const defaultVariant = variants.find((v) => v.isDefault) || variants[0];
+                    const price = defaultVariant ? defaultVariant.discountPrice ?? defaultVariant.price : null;
+                    const hasDiscount = Boolean(
+                      defaultVariant?.discountPrice && defaultVariant.discountPrice < defaultVariant.price
+                    );
+                    const discountPercent = hasDiscount
+                      ? Math.round((1 - defaultVariant.discountPrice! / defaultVariant.price) * 100)
+                      : 0;
+                    const reviews = product.testimonials ?? [];
+                    const reviewCount = reviews.length;
+                    const averageRating =
+                      reviewCount > 0
+                        ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount
+                        : null;
+
+                    return (
+                      <Link
+                        key={product.id}
+                        href={`/${locale}/products/${product.slug}`}
+                        className="group relative flex flex-col overflow-hidden rounded-[1.5rem] border border-[#d7e6de] bg-white shadow-[0_14px_34px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#358055]/30 hover:shadow-[0_22px_50px_rgba(15,23,42,0.1)]"
+                      >
+                        <div className="relative aspect-square overflow-hidden bg-[linear-gradient(180deg,#fafafa_0%,#efefef_100%)]">
+                          <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1.5">
+                            {isBOGOActive && index === 0 && (
+                              <span className="rounded-full bg-[#358055] px-3 py-1 text-[11px] font-black tracking-[0.12em] text-white shadow-[0_8px_18px_rgba(53,128,85,0.35)]">
+                                1+1 GRATIS
+                              </span>
+                            )}
+                            {hasDiscount && (
+                              <span className="rounded-full bg-[#F3765D] px-3 py-1 text-[11px] font-black tracking-[0.06em] text-white shadow-[0_8px_18px_rgba(243,118,93,0.35)]">
+                                -{discountPercent}%
+                              </span>
+                            )}
+                            {index === 0 && (
+                              <span className="rounded-full border border-[#358055]/15 bg-white/90 px-3 py-1 text-[11px] font-bold text-[#2f6f4a] backdrop-blur-sm">
+                                {t('homepage.bestseller')}
+                              </span>
+                            )}
                           </div>
-                        )}
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.45),rgba(255,255,255,0.12)_34%,transparent_62%)]" />
-                        <ProductImageHover
-                          mainImage={product.images.main}
-                          hoverImage={
-                            product.images.gallery && product.images.gallery.length > 0
-                              ? product.images.gallery[product.images.gallery.length - 1] || product.images.main
-                              : product.images.main
-                          }
-                          productName={product.name}
-                          width={520}
-                          height={520}
-                          className="h-full w-full transition-transform duration-500 group-hover:scale-[1.01]"
-                          imageClassName="object-contain object-center"
-                        />
-                        <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
-                          <div className="w-full rounded-[1rem] border border-white/42 bg-[linear-gradient(180deg,rgba(255,255,255,0.5),rgba(255,244,240,0.32))] px-3 py-2.5 shadow-[0_10px_22px_rgba(15,23,42,0.06)] backdrop-blur-lg md:rounded-[1.15rem] md:px-4 md:py-3">
-                            <p className="text-base font-black uppercase tracking-[0.02em] text-[#24553a] md:text-lg">{product.name}</p>
-                            <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-700/90 md:text-sm">{product.shortDescription}</p>
+                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.45),rgba(255,255,255,0.12)_34%,transparent_62%)]" />
+                          <ProductImageHover
+                            mainImage={product.images.main}
+                            hoverImage={
+                              product.images.gallery && product.images.gallery.length > 0
+                                ? product.images.gallery[product.images.gallery.length - 1] || product.images.main
+                                : product.images.main
+                            }
+                            productName={product.name}
+                            width={520}
+                            height={520}
+                            className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]"
+                            imageClassName="object-contain object-center"
+                          />
+                        </div>
+
+                        <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-3.5 md:px-5">
+                          <div className="flex-1">
+                            {averageRating !== null && (
+                              <div className="flex items-center gap-1.5">
+                                <div className="flex text-amber-400">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={`h-3.5 w-3.5 ${
+                                        star <= Math.round(averageRating) ? 'fill-current' : 'fill-slate-200 text-slate-200'
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-xs font-semibold text-slate-500">
+                                  {averageRating.toFixed(1)} ({reviewCount} {t('homepage.reviews_count')})
+                                </span>
+                              </div>
+                            )}
+                            <h3 className="mt-1.5 text-lg font-black uppercase tracking-[0.02em] text-[#24553a] transition-colors group-hover:text-[#F3765D]">
+                              {product.name}
+                            </h3>
+                            <p className="mt-1 line-clamp-2 text-sm font-medium leading-5 text-slate-600">
+                              {product.shortDescription}
+                            </p>
+                          </div>
+
+                          <div className="flex items-end justify-between gap-3 border-t border-[#358055]/8 pt-3">
+                            <div>
+                              {hasDiscount && (
+                                <p className="text-xs font-medium text-slate-400 line-through">
+                                  {formatPrice(defaultVariant.price)}
+                                </p>
+                              )}
+                              {price !== null && (
+                                <p className="text-xl font-black leading-tight text-slate-950">{formatPrice(price)}</p>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(event) => handleQuickAdd(event, product)}
+                              aria-label={`${t('common.add_to_cart')} - ${product.name}`}
+                              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F3765D] text-white shadow-[0_12px_24px_rgba(243,118,93,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e0654d]"
+                            >
+                              <ShoppingBag className="h-5 w-5" />
+                            </button>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
+
+              <div className="mt-8 flex justify-center">
+                <Link
+                  href={`/${locale}/products`}
+                  className="inline-flex items-center justify-center rounded-full border border-[#358055]/20 bg-white px-8 py-3.5 text-sm font-extrabold tracking-[0.04em] text-[#2f6f4a] shadow-[0_10px_26px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#358055] hover:bg-[#358055]/5"
+                >
+                  {t('homepage.view_all_products')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
             </div>
           </section>
 

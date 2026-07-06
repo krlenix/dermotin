@@ -1,12 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react';
+import { ArrowRight, Heart, Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { getCountryConfig } from '@/config/countries';
+import {
+  getProductsForCountry,
+  getProductVariantsForCountry,
+  type Product,
+} from '@/config/products';
 import { getAmountForFreeShipping, qualifiesForFreeShipping } from '@/utils/shipping';
 
 export function CartDrawer() {
@@ -21,13 +26,55 @@ export function CartDrawer() {
     closeDrawer,
     updateQuantity,
     removeItem,
+    addItem,
   } = useCart();
+
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const formatPrice = (amount: number) =>
     `${new Intl.NumberFormat('sr-RS', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(amount)} ${countryConfig.currencySymbol}`;
+
+  useEffect(() => {
+    if (!isDrawerOpen || allProducts.length > 0) return;
+
+    let cancelled = false;
+    getProductsForCountry(locale, locale)
+      .then((loaded) => {
+        if (!cancelled) setAllProducts(loaded);
+      })
+      .catch((error) => console.error('Failed to load cross-sell products:', error));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isDrawerOpen, allProducts.length, locale]);
+
+  const suggestions = useMemo(() => {
+    const productIdsInCart = new Set(items.map((line) => line.productId));
+    return allProducts.filter((product) => !productIdsInCart.has(product.id)).slice(0, 6);
+  }, [allProducts, items]);
+
+  const handleSuggestionAdd = (product: Product) => {
+    const variants = getProductVariantsForCountry(product, locale);
+    const variant = variants.find((v) => v.isDefault) || variants[0];
+    if (!variant) return;
+
+    addItem({
+      productId: product.id,
+      productSlug: product.slug,
+      variantId: variant.id,
+      sku: variant.sku,
+      productName: product.name,
+      variantName: variant.name,
+      image: product.images.main,
+      unitPrice: variant.discountPrice ?? variant.price,
+      regularPrice: variant.price,
+      currency: countryConfig.currency,
+    });
+  };
 
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
   const amountForFreeShipping = getAmountForFreeShipping(subtotal, countryConfig);
@@ -217,6 +264,69 @@ export function CartDrawer() {
                   </div>
                 ))}
               </div>
+
+              {/* Cross-sell: you may also like */}
+              {suggestions.length > 0 && (
+                <div className="mt-6">
+                  <p className="flex items-center gap-2 text-sm font-black text-slate-900">
+                    <Heart className="h-4 w-4 text-[#F3765D]" />
+                    {t('cart.you_may_also_like')}
+                  </p>
+                  <div className="scrollbar-hide -mx-1 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1">
+                    {suggestions.map((product) => {
+                      const variants = getProductVariantsForCountry(product, locale);
+                      const variant = variants.find((v) => v.isDefault) || variants[0];
+                      if (!variant) return null;
+                      const price = variant.discountPrice ?? variant.price;
+                      const hasItemDiscount = Boolean(
+                        variant.discountPrice && variant.discountPrice < variant.price
+                      );
+
+                      return (
+                        <div
+                          key={product.id}
+                          className="w-36 shrink-0 snap-start rounded-[1.1rem] border border-[#358055]/10 bg-white p-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]"
+                        >
+                          <div className="relative">
+                            <Link
+                              href={`/${locale}/products/${product.slug}`}
+                              onClick={closeDrawer}
+                              className="relative block aspect-square overflow-hidden rounded-[0.85rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]"
+                            >
+                              <Image
+                                src={product.images.main}
+                                alt={product.name}
+                                fill
+                                className="object-contain p-1.5"
+                                sizes="144px"
+                              />
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => handleSuggestionAdd(product)}
+                              aria-label={`${t('common.add_to_cart')} - ${product.name}`}
+                              className="absolute -bottom-1.5 -right-1.5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#358055] text-white shadow-[0_8px_16px_rgba(53,128,85,0.35)] transition-all duration-200 hover:scale-110 hover:bg-[#2d6d48]"
+                            >
+                              <Plus className="h-4 w-4" strokeWidth={3} />
+                            </button>
+                          </div>
+                          <p className="mt-2.5 truncate text-xs font-black uppercase tracking-[0.01em] text-slate-900">
+                            {product.name}
+                          </p>
+                          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5">
+                            <span className="text-sm font-black text-[#F3765D]">{formatPrice(price)}</span>
+                            {hasItemDiscount && (
+                              <span className="text-[11px] text-slate-400 line-through">
+                                {formatPrice(variant.price)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Summary footer */}

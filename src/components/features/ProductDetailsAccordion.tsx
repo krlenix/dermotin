@@ -4,21 +4,17 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Product, INGREDIENTS } from '@/config/products';
 import { cn } from '@/lib/utils';
-import { 
-  ChevronDown, 
-  Leaf, 
-  Shield, 
-  Book, 
+import {
+  ChevronDown,
+  Leaf,
+  Book,
   AlertTriangle,
   Sparkles,
   Beaker,
-  Heart,
-  CheckCircle,
+  Droplets,
   Star,
   ChevronLeft,
   ChevronRight,
-  Pause,
-  Play
 } from 'lucide-react';
 
 interface ProductDetailsAccordionProps {
@@ -31,12 +27,13 @@ interface AccordionItem {
   title: string;
   icon: React.ReactNode;
   content: React.ReactNode;
-  defaultOpen?: boolean;
 }
+
+const ITEMS_PER_PAGE = 6;
 
 export function ProductDetailsAccordion({ product, className }: ProductDetailsAccordionProps) {
   const t = useTranslations();
-  const [openItems, setOpenItems] = useState<Set<string>>(new Set(['ingredients'])); // Default open
+  const [openItems, setOpenItems] = useState<Set<string>>(new Set(['ingredients']));
 
   const toggleItem = (id: string) => {
     const newOpenItems = new Set(openItems);
@@ -48,58 +45,33 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
     setOpenItems(newOpenItems);
   };
 
-  // Smart tabbed ingredients interface - compact and organized
-  const [activeTab, setActiveTab] = useState('key');
+  const [activeTab, setActiveTab] = useState<'key' | 'all'>('key');
   const [currentPage, setCurrentPage] = useState(0);
   const [currentAllPage, setCurrentAllPage] = useState(0);
-  const [isAutoPlay, setIsAutoPlay] = useState(false);
-  
-  // Auto-scroll effect
-  useEffect(() => {
-    const ITEMS_PER_PAGE = 6;
-    const keyIngredients = product.ingredients.filter(id => {
-      const ingredient = INGREDIENTS[id];
-      return ingredient?.category === 'herbal_extract' || ingredient?.category === 'essential_oil' || ingredient?.category === 'active_compound';
-    });
-    const totalPages = Math.ceil(keyIngredients.length / ITEMS_PER_PAGE);
-    
-    if (!isAutoPlay || activeTab !== 'key' || totalPages <= 1) return;
-    
-    const interval = setInterval(() => {
-      setCurrentPage((prev) => (prev + 1) % totalPages);
-    }, 4000); // Change page every 4 seconds
 
-    return () => clearInterval(interval);
-  }, [isAutoPlay, activeTab, product.ingredients]);
-
-  // Reset to first page when changing tabs
   useEffect(() => {
     setCurrentPage(0);
     setCurrentAllPage(0);
   }, [activeTab]);
-  
+
   const renderIngredients = () => {
-    const ITEMS_PER_PAGE = 6; // Show 6 ingredients per page (3x2 grid)
-    // Smart grouping: Key ingredients vs Full list
-    const keyIngredients = product.ingredients.filter(id => {
+    const keyIngredients = product.ingredients.filter((id) => {
       const ingredient = INGREDIENTS[id];
-      return ingredient?.category === 'herbal_extract' || ingredient?.category === 'essential_oil' || ingredient?.category === 'active_compound';
+      return (
+        ingredient?.category === 'herbal_extract' ||
+        ingredient?.category === 'essential_oil' ||
+        ingredient?.category === 'active_compound'
+      );
     });
 
-    // const supportingIngredients = product.ingredients.filter(id => {
-    //   const ingredient = INGREDIENTS[id];
-    //   return ingredient?.category === 'base_component' || ingredient?.category === 'preservative' || ingredient?.category === 'other';
-    // });
-
-    // Pagination logic for both tabs
     const totalPages = Math.ceil(keyIngredients.length / ITEMS_PER_PAGE);
     const totalAllPages = Math.ceil(product.ingredients.length / ITEMS_PER_PAGE);
-    
+
     const currentPageIngredients = keyIngredients.slice(
       currentPage * ITEMS_PER_PAGE,
       (currentPage + 1) * ITEMS_PER_PAGE
     );
-    
+
     const currentAllPageIngredients = product.ingredients.slice(
       currentAllPage * ITEMS_PER_PAGE,
       (currentAllPage + 1) * ITEMS_PER_PAGE
@@ -107,13 +79,14 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
 
     const getCategoryIcon = (category: string) => {
       switch (category) {
-        case 'herbal_extract': return <Leaf className="h-4 w-4 text-green-500" />;
-        case 'essential_oil': return <Sparkles className="h-4 w-4 text-purple-500" />;
-        case 'active_compound': return <Beaker className="h-4 w-4 text-blue-500" />;
-        case 'base_component': return <Shield className="h-4 w-4 text-gray-500" />;
-        case 'preservative': return <CheckCircle className="h-4 w-4 text-orange-500" />;
-        case 'other': return <Heart className="h-4 w-4 text-gray-500" />;
-        default: return <Leaf className="h-4 w-4 text-gray-400" />;
+        case 'herbal_extract':
+          return <Leaf className="h-4 w-4 text-[#358055]" />;
+        case 'essential_oil':
+          return <Droplets className="h-4 w-4 text-[#F3765D]" />;
+        case 'active_compound':
+          return <Beaker className="h-4 w-4 text-[#2f6f4a]" />;
+        default:
+          return <Sparkles className="h-4 w-4 text-slate-400" />;
       }
     };
 
@@ -122,199 +95,156 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
       if (!ingredient) return null;
 
       return (
-        <div 
-          key={ingredientId} 
-          className="p-3 bg-white rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all duration-200"
+        <div
+          key={ingredientId}
+          className="rounded-[1.1rem] border border-[#358055]/10 bg-white p-3.5 shadow-[0_6px_16px_rgba(15,23,42,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#358055]/25 hover:shadow-[0_10px_24px_rgba(15,23,42,0.06)]"
         >
-          <div className="flex items-start gap-2">
-            {getCategoryIcon(ingredient.category)}
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900 text-sm leading-tight">
+          <div className="flex items-start gap-2.5">
+            <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#358055]/8">
+              {getCategoryIcon(ingredient.category)}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold leading-tight text-slate-900">
                 {ingredient.serbianName}
               </p>
-              <p className="text-xs text-gray-500 font-mono mb-1">
+              <p className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.03em] text-slate-400">
                 {ingredient.inciName}
               </p>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                {ingredient.description}
-              </p>
+              <p className="mt-1.5 text-xs leading-5 text-slate-600">{ingredient.description}</p>
             </div>
           </div>
         </div>
       );
     };
 
+    const renderPagination = (
+      page: number,
+      total: number,
+      setPage: (updater: (prev: number) => number) => void
+    ) =>
+      total > 1 && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setPage((prev) => (prev - 1 + total) % total)}
+            aria-label="Previous"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#358055]/12 bg-white text-slate-600 transition-colors hover:border-[#F3765D]/40 hover:text-[#F3765D]"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+          <span className="min-w-[40px] text-center text-xs font-semibold text-slate-500">
+            {page + 1} / {total}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((prev) => (prev + 1) % total)}
+            aria-label="Next"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#358055]/12 bg-white text-slate-600 transition-colors hover:border-[#F3765D]/40 hover:text-[#F3765D]"
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      );
+
+    const renderDots = (page: number, total: number, setPage: (index: number) => void) =>
+      total > 1 && (
+        <div className="mt-4 flex justify-center gap-2">
+          {Array.from({ length: total }, (_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setPage(i)}
+              aria-label={`Page ${i + 1}`}
+              className={cn(
+                'h-2 rounded-full transition-all duration-300',
+                i === page ? 'w-6 bg-[#F3765D]' : 'w-2 bg-slate-300 hover:bg-slate-400'
+              )}
+            />
+          ))}
+        </div>
+      );
+
     return (
       <div className="space-y-4">
-        {/* Header info */}
-        <div className="p-4 bg-green-50 rounded-lg border border-green-100">
+        {/* Formula summary */}
+        <div className="rounded-[1.2rem] border border-[#358055]/12 bg-[linear-gradient(135deg,rgba(53,128,85,0.08),rgba(243,118,93,0.06))] p-4">
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-green-600" />
+            <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#358055] text-white shadow-[0_8px_18px_rgba(53,128,85,0.25)]">
+              <Sparkles className="h-4 w-4" />
             </div>
             <div>
-              <h4 className="font-medium text-green-900 mb-1">
-                Kompletna formula sastojaka
-              </h4>
-              <p className="text-sm text-green-700 leading-relaxed">
-                6 medicinskih biljnih ekstrakata + 5 eteričnih ulja + aktivni sastojci + pomoćne komponente
+              <h4 className="font-black text-slate-950">Kompletna formula sastojaka</h4>
+              <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                6 medicinskih biljnih ekstrakata + 5 eteričnih ulja + aktivni sastojci + pomoćne
+                komponente
               </p>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-1 p-1 bg-gray-100 rounded-lg">
+        {/* Tab navigation */}
+        <div className="flex gap-1 rounded-full border border-[#358055]/10 bg-[#358055]/6 p-1">
           <button
+            type="button"
             onClick={() => setActiveTab('key')}
-            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={cn(
+              'flex-1 rounded-full px-4 py-2 text-sm font-bold transition-all duration-200',
               activeTab === 'key'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
+                ? 'bg-[#358055] text-white shadow-[0_8px_18px_rgba(53,128,85,0.25)]'
+                : 'text-slate-600 hover:text-[#358055]'
+            )}
           >
-            <div className="flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               <Star className="h-4 w-4" />
               Ključni sastojci ({keyIngredients.length})
-            </div>
+            </span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('all')}
-            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={cn(
+              'flex-1 rounded-full px-4 py-2 text-sm font-bold transition-all duration-200',
               activeTab === 'all'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
+                ? 'bg-[#358055] text-white shadow-[0_8px_18px_rgba(53,128,85,0.25)]'
+                : 'text-slate-600 hover:text-[#358055]'
+            )}
           >
-            <div className="flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               <Book className="h-4 w-4" />
               Potpuna lista ({product.ingredients.length})
-            </div>
+            </span>
           </button>
         </div>
 
-        {/* Tab Content */}
-        <div className="min-h-[300px]">
+        {/* Tab content */}
+        <div>
           {activeTab === 'key' && (
-            <div className="space-y-4">
-              {/* Header with controls */}
-              <div className="flex items-center justify-between py-2">
-                <p className="text-sm text-gray-600">
-                  Najbitniji sastojci koji čine srce formule
-                </p>
-                {totalPages > 1 && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setIsAutoPlay(!isAutoPlay)}
-                      className="p-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
-                      title={isAutoPlay ? 'Pauziraj auto-prikaz' : 'Pokreni auto-prikaz'}
-                    >
-                      {isAutoPlay ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages)}
-                      className="p-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
-                    >
-                      <ChevronLeft className="h-3 w-3" />
-                    </button>
-                    <span className="text-xs text-gray-500 min-w-[40px] text-center">
-                      {currentPage + 1} / {totalPages}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage((prev) => (prev + 1) % totalPages)}
-                      className="p-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
-                    >
-                      <ChevronRight className="h-3 w-3" />
-                    </button>
-                  </div>
-                )}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-3 py-1">
+                <p className="text-sm text-slate-500">Najbitniji sastojci koji čine srce formule</p>
+                {renderPagination(currentPage, totalPages, setCurrentPage)}
               </div>
 
-              {/* Ingredients Grid with Animation */}
-              <div className="relative">
-                <div 
-                  className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 transition-all duration-500 ease-in-out"
-                  key={currentPage} // Force re-render for smooth transition
-                >
-                  {currentPageIngredients.map(renderCompactIngredient)}
-                </div>
-
-                {/* Page Indicators */}
-                {totalPages > 1 && (
-                  <div className="flex justify-center mt-4 gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentPage(i)}
-                        className={cn(
-                          "w-2 h-2 rounded-full transition-all duration-300",
-                          i === currentPage 
-                            ? "bg-brand-orange w-6" 
-                            : "bg-gray-300 hover:bg-gray-400"
-                        )}
-                      />
-                    ))}
-                  </div>
-                )}
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" key={currentPage}>
+                {currentPageIngredients.map(renderCompactIngredient)}
               </div>
+
+              {renderDots(currentPage, totalPages, setCurrentPage)}
             </div>
           )}
 
           {activeTab === 'all' && (
-            <div className="space-y-4">
-              {/* Header with controls */}
-              <div className="flex items-center justify-between py-2">
-                <p className="text-sm text-gray-600">
-                  Kompletan INCI spisak svih sastojaka
-                </p>
-                {totalAllPages > 1 && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setCurrentAllPage((prev) => (prev - 1 + totalAllPages) % totalAllPages)}
-                      className="p-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
-                    >
-                      <ChevronLeft className="h-3 w-3" />
-                    </button>
-                    <span className="text-xs text-gray-500 min-w-[40px] text-center">
-                      {currentAllPage + 1} / {totalAllPages}
-                    </span>
-                    <button
-                      onClick={() => setCurrentAllPage((prev) => (prev + 1) % totalAllPages)}
-                      className="p-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
-                    >
-                      <ChevronRight className="h-3 w-3" />
-                    </button>
-                  </div>
-                )}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-3 py-1">
+                <p className="text-sm text-slate-500">Kompletan INCI spisak svih sastojaka</p>
+                {renderPagination(currentAllPage, totalAllPages, setCurrentAllPage)}
               </div>
 
-              {/* Ingredients Grid with Animation */}
-              <div className="relative">
-                <div 
-                  className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 transition-all duration-500 ease-in-out"
-                  key={`all-${currentAllPage}`} // Force re-render for smooth transition
-                >
-                  {currentAllPageIngredients.map(renderCompactIngredient)}
-                </div>
-
-                {/* Page Indicators */}
-                {totalAllPages > 1 && (
-                  <div className="flex justify-center mt-4 gap-2">
-                    {Array.from({ length: totalAllPages }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentAllPage(i)}
-                        className={cn(
-                          "w-2 h-2 rounded-full transition-all duration-300",
-                          i === currentAllPage 
-                            ? "bg-brand-orange w-6" 
-                            : "bg-gray-300 hover:bg-gray-400"
-                        )}
-                      />
-                    ))}
-                  </div>
-                )}
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" key={`all-${currentAllPage}`}>
+                {currentAllPageIngredients.map(renderCompactIngredient)}
               </div>
+
+              {renderDots(currentAllPage, totalAllPages, setCurrentAllPage)}
             </div>
           )}
         </div>
@@ -322,74 +252,62 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
     );
   };
 
-  // Enhanced usage instructions
   const renderUsage = () => {
+    const steps =
+      product.usageSteps && product.usageSteps.length > 0
+        ? product.usageSteps
+        : [t('product.usage_step_1'), t('product.usage_step_2'), t('product.usage_step_3')];
+
     return (
       <div className="space-y-4">
-        <div className="prose prose-sm max-w-none">
-          <p className="text-gray-700 leading-relaxed">{product.usage}</p>
-        </div>
-        
-        <div className="grid gap-3 mt-4">
-          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-blue-600">1</span>
+        <p className="leading-relaxed text-slate-600">{product.usage}</p>
+
+        <div className="grid gap-2.5">
+          {steps.map((step, index) => (
+            <div
+              key={step}
+              className="flex items-center gap-3 rounded-[1.1rem] border border-[#358055]/10 bg-[#358055]/[0.04] px-4 py-3"
+            >
+              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#358055] text-sm font-black text-white shadow-[0_6px_14px_rgba(53,128,85,0.25)]">
+                {index + 1}
+              </span>
+              <span className="text-sm font-medium leading-5 text-slate-700">{step}</span>
             </div>
-            <span className="text-sm text-gray-700">{t('product.usage_step_1')}</span>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-blue-600">2</span>
-            </div>
-            <span className="text-sm text-gray-700">{t('product.usage_step_2')}</span>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-blue-600">3</span>
-            </div>
-            <span className="text-sm text-gray-700">{t('product.usage_step_3')}</span>
-          </div>
+          ))}
         </div>
       </div>
     );
   };
 
-  // Enhanced warnings section with danger styling
   const renderWarnings = () => {
     return (
       <div className="space-y-4">
-        {/* Important warning header */}
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="rounded-[1.2rem] border border-red-200 bg-red-50 p-4">
+          <div className="mb-2 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-600" />
-            <h4 className="font-semibold text-red-800">
-              {t('product.important_warnings')}
-            </h4>
+            <h4 className="font-bold text-red-800">{t('product.important_warnings')}</h4>
           </div>
-          <p className="text-sm text-red-700">
+          <p className="text-sm leading-relaxed text-red-700">
             {t('product.read_carefully')}
             <br />
             {t('product.consult_doctor')}
           </p>
         </div>
 
-        {/* Individual warnings */}
-        <div className="space-y-3">
+        <div className="grid gap-2.5 sm:grid-cols-2">
           {product.warnings.map((warning, index) => (
-            <div 
+            <div
               key={index}
-              className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200"
+              className="flex items-start gap-2.5 rounded-[1.1rem] border border-amber-200 bg-amber-50 px-3.5 py-3"
             >
-              <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-800 leading-relaxed">{warning}</p>
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <p className="text-sm leading-5 text-amber-800">{warning}</p>
             </div>
           ))}
         </div>
-        
       </div>
     );
   };
-
 
   const accordionItems: AccordionItem[] = [
     {
@@ -397,69 +315,74 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
       title: t('product.ingredients'),
       icon: <Leaf className="h-5 w-5" />,
       content: renderIngredients(),
-      defaultOpen: true
     },
     {
       id: 'usage',
       title: t('product.usage'),
       icon: <Book className="h-5 w-5" />,
-      content: renderUsage()
+      content: renderUsage(),
     },
     {
       id: 'warnings',
       title: t('product.warnings'),
       icon: <AlertTriangle className="h-5 w-5" />,
-      content: renderWarnings()
-    }
+      content: renderWarnings(),
+    },
   ];
 
   return (
-    <div className={cn("w-full max-w-3xl mx-auto", className)}>
-      <div className="space-y-2">
+    <div className={cn('mx-auto w-full max-w-3xl', className)}>
+      <div className="space-y-3">
         {accordionItems.map((item) => {
           const isOpen = openItems.has(item.id);
-          
+
           return (
             <div
               key={item.id}
-              className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
+              className={cn(
+                'overflow-hidden rounded-[1.4rem] border bg-white transition-all duration-300',
+                isOpen
+                  ? 'border-[#358055]/25 shadow-[0_16px_40px_rgba(26,54,42,0.08)]'
+                  : 'border-[#358055]/12 shadow-[0_8px_20px_rgba(15,23,42,0.03)] hover:border-[#358055]/25'
+              )}
             >
-              {/* Accordion Header */}
               <button
+                type="button"
                 onClick={() => toggleItem(item.id)}
-                className="w-full px-6 py-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors"
+                className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-[#358055]/[0.04] md:px-6"
               >
                 <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "flex items-center justify-center w-8 h-8 rounded-full transition-colors",
-                    isOpen 
-                      ? item.id === 'ingredients' 
-                        ? "bg-green-100 text-green-600" 
-                        : "bg-orange-100 text-orange-600"
-                      : "bg-gray-100 text-gray-500"
-                  )}>
+                  <span
+                    className={cn(
+                      'inline-flex h-10 w-10 items-center justify-center rounded-2xl transition-colors',
+                      isOpen ? 'bg-[#358055] text-white' : 'bg-[#358055]/10 text-[#358055]'
+                    )}
+                  >
                     {item.icon}
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-left">
-                    {item.title}
-                  </h3>
+                  </span>
+                  <h3 className="font-black text-slate-950">{item.title}</h3>
                 </div>
-                
-                <ChevronDown
+
+                <span
                   className={cn(
-                    "h-5 w-5 text-gray-500 transition-transform duration-200",
-                    isOpen && "rotate-180"
+                    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-200',
+                    isOpen
+                      ? 'rotate-180 border-[#358055]/25 bg-[#358055]/8 text-[#358055]'
+                      : 'border-[#358055]/12 bg-white text-slate-400'
                   )}
-                />
+                >
+                  <ChevronDown className="h-[18px] w-[18px]" />
+                </span>
               </button>
 
-              {/* Accordion Content */}
-              <div className={cn(
-                "overflow-hidden transition-all duration-300 ease-in-out",
-                isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-              )}>
-                <div className="px-6 py-4 border-t border-gray-100">
-                  {item.content}
+              <div
+                className={cn(
+                  'grid transition-all duration-300 ease-in-out',
+                  isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                )}
+              >
+                <div className="overflow-hidden">
+                  <div className="border-t border-[#358055]/10 px-5 py-5 md:px-6">{item.content}</div>
                 </div>
               </div>
             </div>

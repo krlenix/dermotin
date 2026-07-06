@@ -290,11 +290,13 @@
     "checkout": "Nastavi na plaćanje",
     "continue_shopping": "Nastavi kupovinu",
     "remove": "Ukloni",
-    "quantity": "Količina"
+    "quantity": "Količina",
+    "you_may_also_like": "Možda ti se svidi"
   },
   "shop": {
     "products_title": "Naši proizvodi",
     "choose_variant": "Izaberite pakovanje",
+    "save_percent": "Uštedi {percent}%",
     "from_price": "od",
     "related_products": "Preporučujemo i ove proizvode",
     "view_all": "Pogledaj sve",
@@ -413,6 +415,10 @@
     "secure_purchase_guarantee": "Sigurna kupovina sa garancijom povraćaja novca."
   },
   "testimonials_ui": {
+    "customer_reviews": "Recenzije kupaca",
+    "review_count_label": "Broj recenzija: {count}",
+    "verified_buyer": "Verifikovani kupac",
+    "verified_note": "Recenzije sa oznakom „Verifikovani kupac“ dolaze od kupaca koji su zaista kupili proizvod.",
     "verified": "Verifikovano",
     "used_product": "Koristio:",
     "before": "PRIJE",

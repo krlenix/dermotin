@@ -771,6 +771,27 @@ summary,
   animation: marchingAnts 0.4s linear infinite;
 }
 
+/* Infinite trust marquee ribbon */
+@keyframes trustMarquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-trust-marquee {
+  animation: trustMarquee 32s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-trust-marquee {
+    animation: none !important;
+  }
+}
+
 /* Prevent grid overflow on mobile */
 @media (max-width: 1024px) {
   #order {

@@ -6,9 +6,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
+  Award,
   Check,
   ChevronRight,
   CreditCard,
+  Droplets,
+  Leaf,
   RotateCcw,
   ShieldCheck,
   ShoppingBag,
@@ -31,7 +34,7 @@ import { CookieConsent } from '@/components/features/CookieConsent';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { ProductDetailsAccordion } from '@/components/features/ProductDetailsAccordion';
 import { AdvancedFAQ } from '@/components/features/AdvancedFAQ';
-import { ProofSection } from '@/components/product-page/ProofSection';
+import { ReviewsSection } from '@/components/product-page/ReviewsSection';
 import { BenefitsSection } from '@/components/product-page/BenefitsSection';
 import { IngredientsShowcase } from '@/components/product-page/IngredientsShowcase';
 import { RegulatoryBadge } from '@/components/product-page/RegulatoryBadge';
@@ -79,6 +82,13 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
 
   const courier = getDefaultCourier(countryConfig);
   const reviewCount = product.testimonials?.length ?? 0;
+  const averageRating = useMemo(() => {
+    if (!product.testimonials || product.testimonials.length === 0) return null;
+    return (
+      product.testimonials.reduce((sum, review) => sum + review.rating, 0) /
+      product.testimonials.length
+    );
+  }, [product.testimonials]);
 
   const unitPrice = selectedVariant.discountPrice ?? selectedVariant.price;
   const hasDiscount = Boolean(selectedVariant.discountPrice && selectedVariant.discountPrice < selectedVariant.price);
@@ -249,17 +259,30 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                     </h1>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
                       <div className="flex items-center gap-1.5">
+                        <span className="font-black text-slate-900">
+                          {(averageRating ?? 4.97).toFixed(1)}/5
+                        </span>
                         <div className="flex text-amber-400">
                           {[1, 2, 3, 4, 5].map((star) => (
-                            <Star key={star} className="h-4 w-4 fill-current" />
+                            <Star
+                              key={star}
+                              className={cn(
+                                'h-4 w-4',
+                                star <= Math.round(averageRating ?? 5)
+                                  ? 'fill-current'
+                                  : 'fill-slate-200 text-slate-200'
+                              )}
+                            />
                           ))}
                         </div>
-                        <span className="font-semibold text-slate-800">4.97/5</span>
                       </div>
                       {reviewCount > 0 && (
-                        <span className="text-slate-500">
-                          {t('sections.based_on_reviews', { count: reviewCount })}
-                        </span>
+                        <a
+                          href="#testimonials"
+                          className="font-semibold text-slate-700 underline decoration-slate-300 underline-offset-4 transition-colors hover:text-[#358055] hover:decoration-[#358055]"
+                        >
+                          {t('testimonials_ui.review_count_label', { count: reviewCount })}
+                        </a>
                       )}
                     </div>
                     <p className="text-base leading-relaxed text-slate-600 md:text-lg">
@@ -268,13 +291,23 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                   </div>
 
                   {/* Price */}
-                  <div className="flex flex-wrap items-end gap-3">
-                    <span className="text-4xl font-black leading-none text-[#358055] md:text-[2.8rem]">
+                  <div className="flex flex-wrap items-center gap-3">
+                    {hasDiscount && (
+                      <span className="text-xl font-semibold text-slate-400 line-through">
+                        {formatPrice(selectedVariant.price)}
+                      </span>
+                    )}
+                    <span
+                      className={cn(
+                        'text-4xl font-black leading-none md:text-[2.8rem]',
+                        hasDiscount ? 'text-[#F3765D]' : 'text-[#358055]'
+                      )}
+                    >
                       {formatPrice(unitPrice)}
                     </span>
                     {hasDiscount && (
-                      <span className="pb-1 text-xl font-semibold text-slate-400 line-through">
-                        {formatPrice(selectedVariant.price)}
+                      <span className="inline-flex items-center rounded-md bg-[#F3765D] px-2.5 py-1 text-sm font-black text-white shadow-[0_8px_18px_rgba(243,118,93,0.3)]">
+                        {t('shop.save_percent', { percent: discountPercent })}
                       </span>
                     )}
                   </div>
@@ -403,6 +436,29 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                     })}
                   </div>
 
+                  {/* Product attribute icons (Waterdrop-style) */}
+                  <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[1.4rem] border border-[#358055]/10 bg-[#358055]/8">
+                    {[
+                      { icon: Leaf, label: t('homepage.trust_natural_ingredients') },
+                      { icon: ShieldCheck, label: t('homepage.trust_dermatologically_tested') },
+                      { icon: Droplets, label: t('homepage.trust_no_parabens') },
+                      { icon: Award, label: t('homepage.trust_clinically_proven') },
+                    ].map((attribute) => {
+                      const Icon = attribute.icon;
+                      return (
+                        <div
+                          key={attribute.label}
+                          className="flex items-center gap-2.5 bg-white px-4 py-3"
+                        >
+                          <Icon className="h-[18px] w-[18px] shrink-0 text-[#358055]" />
+                          <span className="text-[13px] font-semibold leading-4 text-slate-700">
+                            {attribute.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
                   <RegulatoryBadge product={product} locale={locale} />
                 </div>
               </div>
@@ -413,7 +469,7 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
         {/* Informative sections reused from the funnel pages */}
         <BenefitsSection product={product} />
 
-        <ProofSection product={product} />
+        <ReviewsSection product={product} />
 
         <IngredientsShowcase product={product} />
 
@@ -460,19 +516,42 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {relatedProducts.map((related) => {
                   const relatedVariants = getProductVariantsForCountry(related, locale);
                   const relatedDefault = relatedVariants.find((v) => v.isDefault) || relatedVariants[0];
                   const relatedPrice = relatedDefault.discountPrice ?? relatedDefault.price;
+                  const relatedHasDiscount = Boolean(
+                    relatedDefault.discountPrice && relatedDefault.discountPrice < relatedDefault.price
+                  );
+                  const relatedDiscountPercent = relatedHasDiscount
+                    ? Math.round((1 - relatedDefault.discountPrice! / relatedDefault.price) * 100)
+                    : 0;
+                  const relatedReviews = related.testimonials ?? [];
+                  const relatedRating =
+                    relatedReviews.length > 0
+                      ? relatedReviews.reduce((sum, review) => sum + review.rating, 0) /
+                        relatedReviews.length
+                      : null;
 
                   return (
                     <Link
                       key={related.id}
                       href={`/${locale}/products/${related.slug}`}
-                      className="group relative overflow-hidden rounded-[1.35rem] border border-[#d7e6de] bg-[linear-gradient(180deg,#f7faf8_0%,#eef4f0_100%)] shadow-[0_14px_34px_rgba(15,23,42,0.05)] transition-transform duration-300 hover:-translate-y-1"
+                      className="group relative flex flex-col overflow-hidden rounded-[1.5rem] border border-[#d7e6de] bg-white shadow-[0_14px_34px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#358055]/30 hover:shadow-[0_22px_50px_rgba(15,23,42,0.1)]"
                     >
-                      <div className="relative aspect-square overflow-hidden bg-[linear-gradient(180deg,#fafafa_0%,#ececec_100%)]">
+                      <div className="relative aspect-square overflow-hidden bg-[linear-gradient(180deg,#fafafa_0%,#efefef_100%)]">
+                        {relatedHasDiscount && (
+                          <span className="absolute left-3 top-3 z-10 rounded-full bg-[#F3765D] px-3 py-1 text-[11px] font-black tracking-[0.04em] text-white shadow-[0_8px_18px_rgba(243,118,93,0.35)]">
+                            {t('shop.save_percent', { percent: relatedDiscountPercent })}
+                          </span>
+                        )}
+                        {relatedRating !== null && (
+                          <span className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 rounded-full border border-[#358055]/10 bg-white/90 px-2.5 py-1 text-[11px] font-black text-slate-800 backdrop-blur-sm">
+                            {relatedRating.toFixed(1)}/5
+                            <Star className="h-3 w-3 fill-current text-amber-400" />
+                          </span>
+                        )}
                         <Image
                           src={related.images.main}
                           alt={related.name}
@@ -480,14 +559,26 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                           className="object-contain transition-transform duration-500 group-hover:scale-[1.03]"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
-                        <div className="absolute inset-x-0 bottom-0 p-3">
-                          <div className="w-full rounded-[1rem] border border-white/42 bg-[linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,244,240,0.42))] px-3 py-2.5 shadow-[0_10px_22px_rgba(15,23,42,0.06)] backdrop-blur-lg">
-                            <p className="text-base font-black uppercase tracking-[0.02em] text-[#24553a]">{related.name}</p>
-                            <p className="mt-0.5 text-sm font-bold text-[#F3765D]">
-                              {t('shop.from_price')} {formatPrice(relatedPrice)}
-                            </p>
-                          </div>
+                      </div>
+                      <div className="px-4 pb-4 pt-3">
+                        <p className="text-base font-black uppercase tracking-[0.02em] text-[#24553a] transition-colors group-hover:text-[#F3765D]">
+                          {related.name}
+                        </p>
+                        <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
+                          <span
+                            className={`text-lg font-black ${relatedHasDiscount ? 'text-[#F3765D]' : 'text-slate-950'}`}
+                          >
+                            {t('shop.from_price')} {formatPrice(relatedPrice)}
+                          </span>
+                          {relatedHasDiscount && (
+                            <span className="text-sm text-slate-400 line-through">
+                              {formatPrice(relatedDefault.price)}
+                            </span>
+                          )}
                         </div>
+                        <p className="mt-1 line-clamp-1 text-xs font-medium text-slate-500">
+                          {related.shortDescription}
+                        </p>
                       </div>
                     </Link>
                   );
