@@ -11,7 +11,7 @@ import {
 } from 'react';
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
-import { Gift, PartyPopper, Sparkles, X } from 'lucide-react';
+import { Check, Gift, Minus, PartyPopper, Sparkles, X } from 'lucide-react';
 import { getCountryConfig } from '@/config/countries';
 import {
   getProductsForCountry,
@@ -31,7 +31,7 @@ interface PendingBogoOffer {
 
 interface BogoPairContextValue {
   /**
-   * Add to cart — if 1+1 is active, opens modal to pick the free product.
+   * Add to cart — if 1+1 is active, opens modal to pick the free product(s).
    * Returns true when the modal took over (caller should not also open drawer).
    */
   requestAdd: (
@@ -56,7 +56,7 @@ interface BogoPairProviderProps {
 }
 
 export function BogoPairProvider({ children }: BogoPairProviderProps) {
-  const { items, addItem, addBogoPair, closeDrawer } = useCart();
+  const { items, addItem, addBogoGroup, closeDrawer } = useCart();
   const [pending, setPending] = useState<PendingBogoOffer | null>(null);
 
   const requestAdd = useCallback(
@@ -87,14 +87,14 @@ export function BogoPairProvider({ children }: BogoPairProviderProps) {
   }, [addItem, pending]);
 
   const handleSelect = useCallback(
-    (secondary: CartItemInput) => {
+    (secondaries: CartItemInput[]) => {
       if (!pending) return;
-      addBogoPair(pending.primary, secondary);
+      addBogoGroup(pending.primary, secondaries);
       const { onAfterAdd } = pending;
       setPending(null);
       onAfterAdd?.();
     },
-    [addBogoPair, pending]
+    [addBogoGroup, pending]
   );
 
   const value = useMemo(
@@ -121,7 +121,7 @@ export function BogoPairProvider({ children }: BogoPairProviderProps) {
 
 interface BogoPairModalProps {
   primary: CartItemInput;
-  onSelect: (secondary: CartItemInput) => void;
+  onSelect: (secondaries: CartItemInput[]) => void;
   /** Also used when closing the modal — primary still goes to cart at full price */
   onSkip: () => void;
 }
@@ -133,6 +133,8 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  /** Izabrani gratis proizvodi — isti proizvod može više puta */
+  const [selected, setSelected] = useState<Product[]>([]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setVisible(true));
@@ -163,6 +165,17 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
     };
   }, [locale, primary.productId]);
 
+  // Broj gratis izbora = broj pakovanja u plaćenoj varijanti (2 PAKOVANJA → 2 gratis)
+  const freeCount = useMemo(() => {
+    const primaryProduct = products.find((p) => p.id === primary.productId);
+    if (!primaryProduct) return 1;
+    const variants = getProductVariantsForCountry(primaryProduct, locale);
+    const variant = variants.find((v) => v.id === primary.variantId);
+    return Math.max(1, variant?.quantity ?? 1);
+  }, [products, primary.productId, primary.variantId, locale]);
+
+  const remaining = freeCount - selected.length;
+
   const formatPrice = (amount: number) =>
     `${new Intl.NumberFormat('sr-RS', {
       minimumFractionDigits: 0,
@@ -187,11 +200,34 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
     };
   };
 
-  const handlePick = (product: Product) => {
-    const secondary = buildSecondaryItem(product);
-    if (!secondary) return;
-    onSelect(secondary);
+  const finishWith = (finalSelection: Product[]) => {
+    // Mora tačan broj gratis izbora (npr. 2-pak → tačno 2)
+    if (finalSelection.length !== freeCount) return;
+    const secondaries = finalSelection
+      .map((product) => buildSecondaryItem(product))
+      .filter((item): item is CartItemInput => item !== null);
+    if (secondaries.length !== freeCount) return;
+    onSelect(secondaries);
   };
+
+  const handlePick = (product: Product) => {
+    if (remaining <= 0) return;
+    const next = [...selected, product];
+    if (next.length >= freeCount) {
+      finishWith(next);
+      return;
+    }
+    setSelected(next);
+  };
+
+  const handleUnpick = (product: Product) => {
+    const index = selected.findIndex((p) => p.id === product.id);
+    if (index === -1) return;
+    setSelected((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const selectedCountFor = (productId: string) =>
+    selected.filter((p) => p.id === productId).length;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4">
@@ -213,7 +249,7 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
       >
         {/* Header */}
         <div
-          className="relative shrink-0 overflow-hidden px-4 pb-4 text-white sm:px-7 sm:pb-5"
+          className="relative shrink-0 overflow-hidden px-4 pb-3.5 text-white sm:px-7 sm:pb-4"
           style={{
             background: 'linear-gradient(135deg, #358055 0%, #2a6844 55%, #1f5236 100%)',
             paddingTop: 'max(1rem, env(safe-area-inset-top))',
@@ -240,19 +276,57 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
             <PartyPopper className="mt-0.5 h-7 w-7 shrink-0 text-amber-300 sm:mt-1 sm:h-9 sm:w-9" />
             <div className="pr-8">
               <h2 id="bogo-pair-title" className="text-xl font-black leading-tight sm:text-3xl">
-                {t('bogo.pair_congrats')}
+                {freeCount > 1
+                  ? t('bogo.pair_congrats_multi', { count: freeCount })
+                  : t('bogo.pair_congrats')}
               </h2>
               <p className="mt-1 text-sm font-semibold text-white/90 sm:text-base">
-                {t('bogo.pair_pick_free')}
+                {freeCount > 1
+                  ? t('bogo.pair_pick_free_multi', { count: freeCount })
+                  : t('bogo.pair_pick_free')}
               </p>
             </div>
           </div>
+
+          {/* Šta je kupljeno — jasno i za netehničke korisnike */}
+          <div className="relative mt-2.5 flex items-center gap-2.5 rounded-xl bg-white/12 px-3 py-2 sm:mt-3">
+            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-white">
+              <Image src={primary.image} alt={primary.productName} fill className="object-contain p-0.5" sizes="36px" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[13px] font-black leading-tight">{primary.productName}</p>
+              <p className="truncate text-[11px] font-semibold text-white/80">{primary.variantName}</p>
+            </div>
+            <span className="shrink-0 rounded-full bg-amber-300 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-[#1f5236]">
+              {t('bogo.pair_in_cart_badge', { count: freeCount })}
+            </span>
+          </div>
         </div>
 
-        {/* Product grid — tap = done */}
+        {/* Brojač izbora — vidljiv samo kad se bira više gratis proizvoda */}
+        {freeCount > 1 && (
+          <div className="flex shrink-0 items-center justify-center gap-2 border-b border-[#358055]/10 bg-[#f3faf6] px-4 py-2.5">
+            <Gift className="h-4 w-4 text-[#358055]" />
+            <p className="text-sm font-black text-[#358055]">
+              {t('bogo.pair_progress', { selected: selected.length, total: freeCount })}
+            </p>
+            <div className="ml-1 flex items-center gap-1">
+              {Array.from({ length: freeCount }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                    i < selected.length ? 'bg-[#358055]' : 'bg-[#358055]/20'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Product grid */}
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 sm:px-7 sm:py-4">
           <p className="mb-2.5 text-center text-[13px] font-bold text-slate-600 sm:mb-3 sm:text-sm">
-            {t('bogo.pair_tap_hint')}
+            {freeCount > 1 ? t('bogo.pair_tap_hint_multi', { count: freeCount }) : t('bogo.pair_tap_hint')}
           </p>
 
           {loading ? (
@@ -269,17 +343,52 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
                 if (!variant) return null;
                 const full = variant.discountPrice ?? variant.price;
                 const isSameAsPrimary = product.id === primary.productId;
+                const pickedCount = selectedCountFor(product.id);
+                const isPicked = pickedCount > 0;
 
                 return (
                   <button
                     key={product.id}
                     type="button"
                     onClick={() => handlePick(product)}
-                    className="group relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-white p-2.5 pb-3 text-left transition hover:-translate-y-0.5 hover:border-[#358055] hover:shadow-[0_14px_30px_rgba(53,128,85,0.2)] active:scale-[0.98] sm:p-3 sm:pb-4"
+                    className={`group relative overflow-hidden rounded-2xl border-2 bg-white p-2.5 pb-3 text-left transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(53,128,85,0.2)] active:scale-[0.98] sm:p-3 sm:pb-4 ${
+                      isPicked
+                        ? 'border-[#358055] shadow-[0_10px_24px_rgba(53,128,85,0.18)]'
+                        : 'border-slate-200 hover:border-[#358055]'
+                    }`}
                   >
-                    {isSameAsPrimary && (
+                    {isSameAsPrimary && !isPicked && (
                       <span className="absolute left-2 top-2 z-10 rounded-full bg-[#F3765D] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-white">
                         {t('bogo.pair_same_product')}
+                      </span>
+                    )}
+                    {isPicked && (
+                      <span className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full bg-[#358055] px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-white">
+                        <Check className="h-3 w-3" />
+                        {pickedCount > 1
+                          ? t('bogo.pair_picked_count', { count: pickedCount })
+                          : t('bogo.pair_picked')}
+                      </span>
+                    )}
+                    {isPicked && (
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleUnpick(product);
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleUnpick(product);
+                          }
+                        }}
+                        aria-label={t('bogo.pair_remove_one')}
+                        className="absolute right-2 top-2 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-900/70 text-white transition hover:bg-red-500"
+                      >
+                        <Minus className="h-3.5 w-3.5" />
                       </span>
                     )}
                     <div className="relative mx-auto mb-1.5 aspect-square w-full max-w-[92px] sm:mb-2 sm:max-w-[110px]">
@@ -314,8 +423,13 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
           )}
         </div>
 
-        {/* Footer — only the skip link, always visible */}
+        {/* Footer — skip only; mora se izabrati tačan broj gratis proizvoda */}
         <div className="shrink-0 border-t border-slate-100 bg-white px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5 text-center sm:px-7 sm:pb-3 sm:pt-2">
+          {freeCount > 1 && selected.length > 0 && remaining > 0 && (
+            <p className="mb-1.5 text-xs font-bold text-[#F3765D]">
+              {t('bogo.pair_must_pick_all', { remaining, total: freeCount })}
+            </p>
+          )}
           <button
             type="button"
             onClick={onSkip}

@@ -11,7 +11,6 @@ import {
   ChevronRight,
   CreditCard,
   Droplets,
-  Gift,
   Leaf,
   RotateCcw,
   ShieldCheck,
@@ -101,6 +100,9 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
       product.testimonials.length
     );
   }, [product.testimonials]);
+
+  const bogoActive = isBOGOActive();
+  const selectedPackCount = Math.max(1, selectedVariant.quantity ?? 1);
 
   const unitPrice = selectedVariant.discountPrice ?? selectedVariant.price;
   const hasDiscount = Boolean(selectedVariant.discountPrice && selectedVariant.discountPrice < selectedVariant.price);
@@ -454,10 +456,19 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                                   </span>
                                   <div>
                                     <p className="text-sm font-bold text-slate-900">{variant.name}</p>
-                                    {(variant.quantity ?? 1) > 1 && (
-                                      <p className="text-xs font-medium text-[#358055]">
-                                        {formatPrice(Math.round((variantFinalPrice / (variant.quantity ?? 1)) * 100) / 100)} {t('bundles.per_item')}
+                                    {bogoActive ? (
+                                      <p className="mt-0.5 text-xs font-extrabold text-[#F3765D]">
+                                        {t('bogo.variant_gratis_line', { count: variant.quantity ?? 1 })}
                                       </p>
+                                    ) : (
+                                      (variant.quantity ?? 1) > 1 && (
+                                        <p className="text-xs font-medium text-[#358055]">
+                                          {formatPrice(
+                                            Math.round((variantFinalPrice / (variant.quantity ?? 1)) * 100) / 100
+                                          )}{' '}
+                                          {t('bundles.per_item')}
+                                        </p>
+                                      )
                                     )}
                                   </div>
                                 </div>
@@ -476,24 +487,31 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                                 </div>
                               </div>
 
-                              {(variantSavings > 0 || variantCouponDiscount > 0 || variantFreeShipping) && (
-                                <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pl-8">
-                                  {variantSavings > 0 && (
-                                    <span className="inline-flex items-center rounded-full bg-[#358055]/10 px-2.5 py-0.5 text-[11px] font-extrabold text-[#2f6f4a]">
-                                      {t('bundles.save_amount', { amount: formatPrice(variantSavings) })}
-                                    </span>
-                                  )}
-                                  {variantCouponDiscount > 0 && (
-                                    <span className="inline-flex items-center rounded-full bg-[#358055] px-2.5 py-0.5 text-[11px] font-extrabold text-white">
-                                      {t('coupons.with_coupon', { code: activeCoupon!.code })}
-                                    </span>
-                                  )}
-                                  {variantFreeShipping && (
-                                    <span className="inline-flex items-center rounded-full bg-[#F3765D]/10 px-2.5 py-0.5 text-[11px] font-extrabold text-[#ba5a47]">
-                                      {t('bundles.free_shipping')}
-                                    </span>
-                                  )}
-                                </div>
+                              {/* Jedan signal ispod — bez gomile bedževa */}
+                              {!bogoActive &&
+                                (variantSavings > 0 || variantCouponDiscount > 0 || variantFreeShipping) && (
+                                  <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pl-8">
+                                    {variantSavings > 0 && (
+                                      <span className="inline-flex items-center rounded-full bg-[#358055]/10 px-2.5 py-0.5 text-[11px] font-extrabold text-[#2f6f4a]">
+                                        {t('bundles.save_amount', { amount: formatPrice(variantSavings) })}
+                                      </span>
+                                    )}
+                                    {variantCouponDiscount > 0 && (
+                                      <span className="inline-flex items-center rounded-full bg-[#358055] px-2.5 py-0.5 text-[11px] font-extrabold text-white">
+                                        {t('coupons.with_coupon', { code: activeCoupon!.code })}
+                                      </span>
+                                    )}
+                                    {variantFreeShipping && (
+                                      <span className="inline-flex items-center rounded-full bg-[#F3765D]/10 px-2.5 py-0.5 text-[11px] font-extrabold text-[#ba5a47]">
+                                        {t('bundles.free_shipping')}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              {bogoActive && variantFreeShipping && (
+                                <p className="mt-1.5 pl-8 text-[11px] font-semibold text-[#358055]">
+                                  {t('bundles.free_shipping')}
+                                </p>
                               )}
                             </button>
                           );
@@ -504,24 +522,18 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
 
                   {/* Actions */}
                   <div className="space-y-3">
-                    {isBOGOActive() && (
-                      <div
-                        className="relative overflow-hidden rounded-[1.25rem] p-4 text-white shadow-[0_16px_34px_rgba(53,128,85,0.28)]"
-                        style={{ background: 'linear-gradient(120deg, #358055 0%, #2a6844 40%, #F3765D 100%)' }}
-                      >
-                        <div className="pointer-events-none absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/15 blur-2xl" />
-                        <div className="relative flex items-start gap-3">
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/15">
-                            <Gift className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="text-xs font-black uppercase tracking-[0.16em] text-white/85">
-                              {t('bogo.offer_badge')}
-                            </p>
-                            <p className="mt-1 text-lg font-black leading-tight">{t('bogo.pair_headline')}</p>
-                            <p className="mt-1 text-sm text-white/85">{t('bogo.pair_subheadline')}</p>
-                          </div>
-                        </div>
+                    {bogoActive && (
+                      <div className="rounded-[1.1rem] border border-[#358055]/25 bg-[#f3faf6] px-4 py-3">
+                        <p className="text-sm font-black text-[#2a6844]">
+                          {selectedPackCount > 1
+                            ? t('bogo.pair_headline_multi', { count: selectedPackCount })
+                            : t('bogo.pair_headline')}
+                        </p>
+                        <p className="mt-0.5 text-xs font-medium text-slate-600">
+                          {selectedPackCount > 1
+                            ? t('bogo.pair_subheadline_multi', { count: selectedPackCount })
+                            : t('bogo.pair_subheadline')}
+                        </p>
                       </div>
                     )}
                     <div className="flex flex-col gap-2.5 sm:flex-row">

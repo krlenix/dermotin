@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -43,6 +43,7 @@ import {
 } from '@/utils/coupon-cookies';
 import { calculateCouponDiscount, validateCouponWithAPI, type Coupon } from '@/config/coupons';
 import { BOGO_CONFIG } from '@/utils/bogo-cookies';
+import { groupCartItemsForDisplay } from '@/utils/bogo-pair';
 
 interface CartCheckoutPageProps {
   countryConfig: CountryConfig;
@@ -111,6 +112,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
 
   // 1+1 par u korpi — kupon 1PLUS1 se smatra primenjenim (cene su već prepolovljene po stavci)
   const hasBogoPair = items.some((line) => Boolean(line.bogoPairId));
+  const displayGroups = useMemo(() => groupCartItemsForDisplay(items), [items]);
   const bogoGratisValue = roundPrice(
     items
       .filter((line) => line.bogoRole === 'free')
@@ -665,48 +667,137 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                   <h2 className="text-xl font-black text-slate-900">{t('order_summary.title')}</h2>
 
                   <div className="mt-4 space-y-3">
-                    {items.map((line) => (
-                      <div
-                        key={line.lineId}
-                        className={`flex gap-3 rounded-[1.1rem] border p-3 ${
-                          line.bogoPairId
-                            ? 'border-[#358055]/35 bg-[linear-gradient(135deg,#f3faf6_0%,#ffffff_60%)]'
-                            : 'border-[#358055]/10 bg-white'
-                        }`}
-                      >
-                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
-                          <Image src={line.image} alt={line.productName} fill className="object-contain p-1" sizes="64px" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              {line.bogoPairId && (
-                                <span
-                                  className={`mb-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-white ${
-                                    line.bogoRole === 'free' ? 'bg-[#F3765D]' : 'bg-[#358055]'
-                                  }`}
-                                >
-                                  {line.bogoRole === 'free' ? t('bogo.pair_badge_free') : t('bogo.pair_badge_paid')}
-                                </span>
-                              )}
-                              <p className="truncate text-sm font-black uppercase text-slate-900">{line.productName}</p>
-                              <p className="truncate text-xs font-medium text-slate-500">{line.variantName}</p>
+                    {displayGroups.map((group) => {
+                      if (group.type === 'bogo') {
+                        const { paid, free } = group;
+                        return (
+                          <div
+                            key={paid.bogoPairId}
+                            className="overflow-hidden rounded-[1.1rem] border border-[#358055]/30 bg-white"
+                          >
+                            <div className="flex gap-3 p-3">
+                              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
+                                <Image
+                                  src={paid.image}
+                                  alt={paid.productName}
+                                  fill
+                                  className="object-contain p-1"
+                                  sizes="64px"
+                                />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="min-w-0">
+                                    <p className="truncate text-sm font-black uppercase text-slate-900">
+                                      {paid.productName}
+                                    </p>
+                                    <p className="truncate text-xs font-medium text-slate-500">
+                                      {paid.variantName}
+                                    </p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeItem(paid.lineId)}
+                                    aria-label={t('cart.remove')}
+                                    className="shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </div>
+                                <div className="mt-2 flex items-center justify-between gap-2">
+                                  <span className="text-xs font-semibold text-[#358055]">
+                                    {t('bogo.pair_includes_gratis', { count: free.length })}
+                                  </span>
+                                  <div className="text-right">
+                                    {paid.regularPrice >
+                                      (paid.bogoOriginalUnitPrice ?? paid.unitPrice) && (
+                                      <p className="text-xs text-slate-400 line-through">
+                                        {formatPrice(paid.regularPrice * paid.quantity)}
+                                      </p>
+                                    )}
+                                    <p className="text-sm font-black text-slate-950">
+                                      {formatPrice(
+                                        (paid.bogoOriginalUnitPrice ?? paid.unitPrice) *
+                                          paid.quantity
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => removeItem(line.lineId)}
-                              aria-label={t('cart.remove')}
-                              className="shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
+                            {free.length > 0 && (
+                              <div className="border-t border-[#358055]/10 bg-[#f3faf6] px-3 py-2">
+                                <ul className="space-y-1.5">
+                                  {free.map((line) => (
+                                    <li key={line.lineId} className="flex items-center gap-2 pl-1.5">
+                                      <span
+                                        className="h-7 w-0.5 shrink-0 rounded-full bg-[#358055]/35"
+                                        aria-hidden
+                                      />
+                                      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-white">
+                                        <Image
+                                          src={line.image}
+                                          alt={line.productName}
+                                          fill
+                                          className="object-contain p-0.5"
+                                          sizes="36px"
+                                        />
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <p className="truncate text-xs font-bold text-slate-800">
+                                          {line.productName}
+                                        </p>
+                                        <p className="truncate text-[11px] text-slate-500">
+                                          {line.variantName}
+                                        </p>
+                                      </div>
+                                      <span className="shrink-0 text-[11px] font-black uppercase text-[#358055]">
+                                        {t('bogo.pair_gratis')}
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                           </div>
-                          <div className="mt-2 flex items-center justify-between gap-2">
-                            {line.bogoPairId ? (
-                              <span className="rounded-full bg-[#358055]/10 px-3 py-1 text-xs font-bold text-[#358055]">
-                                {t('bogo.pair_badge_pill')}
-                              </span>
-                            ) : (
+                        );
+                      }
+
+                      const line = group.line;
+                      return (
+                        <div
+                          key={line.lineId}
+                          className="flex gap-3 rounded-[1.1rem] border border-[#358055]/10 bg-white p-3"
+                        >
+                          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
+                            <Image
+                              src={line.image}
+                              alt={line.productName}
+                              fill
+                              className="object-contain p-1"
+                              sizes="64px"
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-black uppercase text-slate-900">
+                                  {line.productName}
+                                </p>
+                                <p className="truncate text-xs font-medium text-slate-500">
+                                  {line.variantName}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeItem(line.lineId)}
+                                aria-label={t('cart.remove')}
+                                className="shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                            <div className="mt-2 flex items-center justify-between gap-2">
                               <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
                                 <button
                                   type="button"
@@ -716,7 +807,9 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                                 >
                                   <Minus className="h-3 w-3" />
                                 </button>
-                                <span className="min-w-6 text-center text-sm font-bold text-slate-900">{line.quantity}</span>
+                                <span className="min-w-6 text-center text-sm font-bold text-slate-900">
+                                  {line.quantity}
+                                </span>
                                 <button
                                   type="button"
                                   onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
@@ -726,34 +819,21 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                                   <Plus className="h-3 w-3" />
                                 </button>
                               </div>
-                            )}
-                            <div className="text-right">
-                              {line.bogoRole === 'free' ? (
-                                <>
+                              <div className="text-right">
+                                {line.regularPrice > line.unitPrice && (
                                   <p className="text-xs text-slate-400 line-through">
-                                    {formatPrice((line.bogoOriginalUnitPrice ?? line.regularPrice) * line.quantity)}
+                                    {formatPrice(line.regularPrice * line.quantity)}
                                   </p>
-                                  <p className="text-sm font-black uppercase text-[#358055]">
-                                    {t('bogo.pair_gratis')}
-                                  </p>
-                                </>
-                              ) : (
-                                <>
-                                  {line.regularPrice > (line.bogoOriginalUnitPrice ?? line.unitPrice) && (
-                                    <p className="text-xs text-slate-400 line-through">
-                                      {formatPrice(line.regularPrice * line.quantity)}
-                                    </p>
-                                  )}
-                                  <p className="text-sm font-black text-slate-950">
-                                    {formatPrice((line.bogoOriginalUnitPrice ?? line.unitPrice) * line.quantity)}
-                                  </p>
-                                </>
-                              )}
+                                )}
+                                <p className="text-sm font-black text-slate-950">
+                                  {formatPrice(line.unitPrice * line.quantity)}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
                   {!hasFreeShipping && amountForFreeShipping > 0 && (

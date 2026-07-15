@@ -31,7 +31,9 @@ import {
   getActiveCouponCode,
 } from '@/utils/coupon-cookies';
 import { getAmountForFreeShipping, qualifiesForFreeShipping } from '@/utils/shipping';
+import { groupCartItemsForDisplay } from '@/utils/bogo-pair';
 import { CouponBanner } from '@/components/shop/CouponBanner';
+import type { CartLineItem } from '@/contexts/CartContext';
 
 export function CartDrawer() {
   const t = useTranslations();
@@ -68,11 +70,182 @@ export function CartDrawer() {
     el.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
   };
 
+  const displayGroups = useMemo(() => groupCartItemsForDisplay(items), [items]);
+
   const formatPrice = (amount: number) =>
     `${new Intl.NumberFormat('sr-RS', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(amount)} ${countryConfig.currencySymbol}`;
+
+  const renderRegularLine = (line: CartLineItem) => (
+    <div
+      key={line.lineId}
+      className="flex gap-3 rounded-[1.2rem] border border-[#358055]/10 bg-white p-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]"
+    >
+      <Link
+        href={`/${locale}/products/${line.productSlug}`}
+        onClick={closeDrawer}
+        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[0.9rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]"
+      >
+        <Image
+          src={line.image}
+          alt={line.productName}
+          fill
+          className="object-contain p-1"
+          sizes="80px"
+        />
+      </Link>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <Link
+              href={`/${locale}/products/${line.productSlug}`}
+              onClick={closeDrawer}
+              className="block truncate text-sm font-black uppercase tracking-[0.01em] text-slate-900 transition-colors hover:text-[#F3765D]"
+            >
+              {line.productName}
+            </Link>
+            <p className="mt-0.5 truncate text-xs font-medium text-slate-500">{line.variantName}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => removeItem(line.lineId)}
+            aria-label={t('cart.remove')}
+            className="shrink-0 rounded-full p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="mt-2.5 flex items-center justify-between gap-2">
+          <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
+            <button
+              type="button"
+              onClick={() => updateQuantity(line.lineId, line.quantity - 1)}
+              aria-label="-"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+            >
+              <Minus className="h-3.5 w-3.5" />
+            </button>
+            <span className="min-w-7 text-center text-sm font-bold text-slate-900">{line.quantity}</span>
+            <button
+              type="button"
+              onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
+              aria-label="+"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div className="text-right">
+            {line.regularPrice > line.unitPrice && (
+              <p className="text-xs text-slate-400 line-through">
+                {formatPrice(line.regularPrice * line.quantity)}
+              </p>
+            )}
+            <p className="text-sm font-black text-slate-950">
+              {formatPrice(line.unitPrice * line.quantity)}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderBogoGroup = (paid: CartLineItem, free: CartLineItem[]) => (
+    <div
+      key={paid.bogoPairId}
+      className="overflow-hidden rounded-[1.2rem] border border-[#358055]/30 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)]"
+    >
+      {/* Plaćeni proizvod */}
+      <div className="flex gap-3 p-3">
+        <Link
+          href={`/${locale}/products/${paid.productSlug}`}
+          onClick={closeDrawer}
+          className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[0.9rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]"
+        >
+          <Image
+            src={paid.image}
+            alt={paid.productName}
+            fill
+            className="object-contain p-1"
+            sizes="80px"
+          />
+        </Link>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <Link
+                href={`/${locale}/products/${paid.productSlug}`}
+                onClick={closeDrawer}
+                className="block truncate text-sm font-black uppercase tracking-[0.01em] text-slate-900 transition-colors hover:text-[#F3765D]"
+              >
+                {paid.productName}
+              </Link>
+              <p className="mt-0.5 truncate text-xs font-medium text-slate-500">{paid.variantName}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => removeItem(paid.lineId)}
+              aria-label={t('cart.remove')}
+              className="shrink-0 rounded-full p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="mt-2.5 flex items-center justify-between gap-2">
+            <span className="text-xs font-semibold text-[#358055]">
+              {t('bogo.pair_includes_gratis', { count: free.length })}
+            </span>
+            <div className="text-right">
+              {paid.regularPrice > (paid.bogoOriginalUnitPrice ?? paid.unitPrice) && (
+                <p className="text-xs text-slate-400 line-through">
+                  {formatPrice(paid.regularPrice * paid.quantity)}
+                </p>
+              )}
+              <p className="text-sm font-black text-slate-950">
+                {formatPrice((paid.bogoOriginalUnitPrice ?? paid.unitPrice) * paid.quantity)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ugnježdeni gratis proizvodi */}
+      {free.length > 0 && (
+        <div className="border-t border-[#358055]/10 bg-[#f3faf6] px-3 py-2.5">
+          <ul className="space-y-2">
+            {free.map((line) => (
+              <li key={line.lineId} className="flex items-center gap-2.5 pl-2">
+                <span className="h-8 w-0.5 shrink-0 rounded-full bg-[#358055]/35" aria-hidden />
+                <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-white">
+                  <Image
+                    src={line.image}
+                    alt={line.productName}
+                    fill
+                    className="object-contain p-0.5"
+                    sizes="44px"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-bold text-slate-800">{line.productName}</p>
+                  <p className="truncate text-[11px] text-slate-500">{line.variantName}</p>
+                </div>
+                <span className="shrink-0 text-xs font-black uppercase tracking-wide text-[#358055]">
+                  {t('bogo.pair_gratis')}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 
   useEffect(() => {
     if (!isDrawerOpen || allProducts.length > 0) return;
@@ -310,114 +483,11 @@ export function CartDrawer() {
             {/* Items */}
             <div className="flex-1 overflow-y-auto px-5 py-4">
               <div className="space-y-3">
-                {items.map((line) => (
-                  <div
-                    key={line.lineId}
-                    className={`flex gap-3 rounded-[1.2rem] border p-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${
-                      line.bogoPairId
-                        ? 'border-[#358055]/35 bg-[linear-gradient(135deg,#f3faf6_0%,#ffffff_60%)]'
-                        : 'border-[#358055]/10 bg-white'
-                    }`}
-                  >
-                    <Link
-                      href={`/${locale}/products/${line.productSlug}`}
-                      onClick={closeDrawer}
-                      className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[0.9rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]"
-                    >
-                      <Image
-                        src={line.image}
-                        alt={line.productName}
-                        fill
-                        className="object-contain p-1"
-                        sizes="80px"
-                      />
-                    </Link>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          {line.bogoPairId && (
-                            <span
-                              className={`mb-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-white ${
-                                line.bogoRole === 'free' ? 'bg-[#F3765D]' : 'bg-[#358055]'
-                              }`}
-                            >
-                              {line.bogoRole === 'free' ? t('bogo.pair_badge_free') : t('bogo.pair_badge_paid')}
-                            </span>
-                          )}
-                          <Link
-                            href={`/${locale}/products/${line.productSlug}`}
-                            onClick={closeDrawer}
-                            className="block truncate text-sm font-black uppercase tracking-[0.01em] text-slate-900 transition-colors hover:text-[#F3765D]"
-                          >
-                            {line.productName}
-                          </Link>
-                          <p className="mt-0.5 truncate text-xs font-medium text-slate-500">{line.variantName}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeItem(line.lineId)}
-                          aria-label={t('cart.remove')}
-                          className="shrink-0 rounded-full p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-
-                      <div className="mt-2.5 flex items-center justify-between gap-2">
-                        {line.bogoPairId ? (
-                          <span className="rounded-full bg-[#358055]/10 px-3 py-1.5 text-xs font-bold text-[#358055]">
-                            {t('bogo.pair_badge_pill')}
-                          </span>
-                        ) : (
-                          <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
-                            <button
-                              type="button"
-                              onClick={() => updateQuantity(line.lineId, line.quantity - 1)}
-                              aria-label="-"
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                            >
-                              <Minus className="h-3.5 w-3.5" />
-                            </button>
-                            <span className="min-w-7 text-center text-sm font-bold text-slate-900">{line.quantity}</span>
-                            <button
-                              type="button"
-                              onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
-                              aria-label="+"
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                            >
-                              <Plus className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        )}
-
-                        <div className="text-right">
-                          {line.bogoRole === 'free' ? (
-                            <>
-                              <p className="text-xs text-slate-400 line-through">
-                                {formatPrice((line.bogoOriginalUnitPrice ?? line.regularPrice) * line.quantity)}
-                              </p>
-                              <p className="text-sm font-black uppercase text-[#358055]">
-                                {t('bogo.pair_gratis')}
-                              </p>
-                            </>
-                          ) : (
-                            <>
-                              {line.regularPrice > (line.bogoOriginalUnitPrice ?? line.unitPrice) && (
-                                <p className="text-xs text-slate-400 line-through">
-                                  {formatPrice(line.regularPrice * line.quantity)}
-                                </p>
-                              )}
-                              <p className="text-sm font-black text-slate-950">
-                                {formatPrice((line.bogoOriginalUnitPrice ?? line.unitPrice) * line.quantity)}
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                {displayGroups.map((group) =>
+                  group.type === 'bogo'
+                    ? renderBogoGroup(group.paid, group.free)
+                    : renderRegularLine(group.line)
+                )}
               </div>
 
               {/* Cross-sell: you may also like */}

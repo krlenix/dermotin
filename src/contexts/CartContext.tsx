@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { buildBogoPairLines } from '@/utils/bogo-pair';
+import { buildBogoGroupLines } from '@/utils/bogo-pair';
 
 export interface CartLineItem {
   /** Stable unique key per cart row (needed when 1+1 duplicates the same SKU) */
@@ -47,8 +47,8 @@ interface CartContextValue {
   isHydrated: boolean;
   isDrawerOpen: boolean;
   addItem: (item: CartItemInput, quantity?: number) => void;
-  /** Add both halves of a 1+1 pair (each at price/2). */
-  addBogoPair: (primary: CartItemInput, secondary: CartItemInput) => string;
+  /** Add a 1+1 group: paid variant + one gratis line per selected product (group total = paid price). */
+  addBogoGroup: (primary: CartItemInput, secondaries: CartItemInput[]) => string;
   updateQuantity: (lineId: string, quantity: number) => void;
   removeItem: (lineId: string) => void;
   clearCart: () => void;
@@ -73,12 +73,31 @@ function newLineId(): string {
 
 function normalizeStoredItems(parsed: unknown): CartLineItem[] {
   if (!Array.isArray(parsed)) return [];
-  return parsed
+  const items: CartLineItem[] = parsed
     .filter((item) => item && typeof item.variantId === 'string' && item.quantity > 0)
     .map((item) => ({
       ...item,
       lineId: typeof item.lineId === 'string' ? item.lineId : newLineId(),
     }));
+
+  // Integritet 1+1 grupa: svaka mora imati tačno jednu plaćenu i bar jednu gratis
+  // liniju — nepotpune grupe (npr. ručno menjan localStorage) se odbacuju cele.
+  const invalidGroupIds = new Set<string>();
+  const groups = new Map<string, CartLineItem[]>();
+  for (const item of items) {
+    if (!item.bogoPairId) continue;
+    const group = groups.get(item.bogoPairId) ?? [];
+    group.push(item);
+    groups.set(item.bogoPairId, group);
+  }
+  for (const [groupId, lines] of groups) {
+    const paidCount = lines.filter((line) => line.bogoRole === 'paid').length;
+    const freeCount = lines.filter((line) => line.bogoRole === 'free').length;
+    if (paidCount !== 1 || freeCount < 1) {
+      invalidGroupIds.add(groupId);
+    }
+  }
+  return items.filter((item) => !item.bogoPairId || !invalidGroupIds.has(item.bogoPairId));
 }
 
 interface CartProviderProps {
@@ -135,16 +154,15 @@ export function CartProvider({ locale, children }: CartProviderProps) {
     });
   }, []);
 
-  const addBogoPair = useCallback((primary: CartItemInput, secondary: CartItemInput) => {
+  const addBogoGroup = useCallback((primary: CartItemInput, secondaries: CartItemInput[]) => {
     const { lineId: _p, ...primaryRest } = primary;
-    const { lineId: _s, ...secondaryRest } = secondary;
-    const [paidLine, freeLine] = buildBogoPairLines(primaryRest, secondaryRest);
+    const secondariesRest = secondaries.map(({ lineId: _s, ...rest }) => rest);
+    const groupLines = buildBogoGroupLines(primaryRest, secondariesRest);
     setItems((prev) => [
       ...prev,
-      { ...paidLine, lineId: newLineId(), quantity: 1 },
-      { ...freeLine, lineId: newLineId(), quantity: 1 },
+      ...groupLines.map((line) => ({ ...line, lineId: newLineId(), quantity: 1 })),
     ]);
-    return paidLine.bogoPairId as string;
+    return groupLines[0].bogoPairId as string;
   }, []);
 
   const updateQuantity = useCallback((lineId: string, quantity: number) => {
@@ -153,10 +171,10 @@ export function CartProvider({ locale, children }: CartProviderProps) {
       if (!target) return prev;
 
       if (target.bogoPairId) {
+        // 1+1 grupa: količina je fiksna; quantity <= 0 = ukloni celu grupu
         if (quantity <= 0) {
           return prev.filter((line) => line.bogoPairId !== target.bogoPairId);
         }
-        // 1+1 quantity is fixed
         return prev;
       }
 
@@ -212,7 +230,7 @@ export function CartProvider({ locale, children }: CartProviderProps) {
       isHydrated,
       isDrawerOpen,
       addItem,
-      addBogoPair,
+      addBogoGroup,
       updateQuantity,
       removeItem,
       clearCart,
@@ -227,7 +245,7 @@ export function CartProvider({ locale, children }: CartProviderProps) {
       isHydrated,
       isDrawerOpen,
       addItem,
-      addBogoPair,
+      addBogoGroup,
       updateQuantity,
       removeItem,
       clearCart,
