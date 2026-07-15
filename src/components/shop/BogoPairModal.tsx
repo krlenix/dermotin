@@ -207,15 +207,17 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="bogo-pair-title"
-        className={`relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-t-[1.75rem] bg-white shadow-2xl transition-all duration-300 sm:rounded-[1.75rem] ${
+        className={`relative z-10 flex h-full max-h-[100dvh] w-full max-w-2xl flex-col overflow-hidden rounded-none bg-white shadow-2xl transition-all duration-300 sm:h-auto sm:max-h-[min(92vh,780px)] sm:rounded-[1.75rem] ${
           visible ? 'translate-y-0 opacity-100 sm:scale-100' : 'translate-y-8 opacity-0 sm:translate-y-4 sm:scale-95'
         }`}
-        style={{ maxHeight: 'min(92dvh, 780px)' }}
       >
         {/* Header */}
         <div
-          className="relative shrink-0 overflow-hidden px-4 py-4 text-white sm:px-7 sm:py-5"
-          style={{ background: 'linear-gradient(135deg, #358055 0%, #2a6844 55%, #1f5236 100%)' }}
+          className="relative shrink-0 overflow-hidden px-4 pb-4 text-white sm:px-7 sm:pb-5"
+          style={{
+            background: 'linear-gradient(135deg, #358055 0%, #2a6844 55%, #1f5236 100%)',
+            paddingTop: 'max(1rem, env(safe-area-inset-top))',
+          }}
         >
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <div className="pointer-events-none absolute -bottom-12 left-10 h-36 w-36 rounded-full bg-[#F3765D]/30 blur-2xl" />
@@ -291,6 +293,9 @@ function BogoPairModal({ primary, onSelect, onSkip }: BogoPairModalProps) {
                     </div>
                     <p className="line-clamp-2 text-center text-[13px] font-black text-slate-900 sm:text-sm">
                       {product.name}
+                    </p>
+                    <p className="mt-0.5 line-clamp-2 min-h-[2rem] text-center text-[11px] leading-4 text-slate-500 sm:text-xs">
+                      {product.shortDescription || product.purpose}
                     </p>
                     <p className="mt-0.5 text-center text-xs text-slate-400 line-through sm:mt-1">
                       {formatPrice(full)}
