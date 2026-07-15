@@ -1,6 +1,6 @@
 import { getProductBySlug, getProductsForCountry } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
-import { AdvancedLandingPage } from '@/components/AdvancedLandingPage';
+import { ClassicProductPage } from '@/components/shop/ClassicProductPage';
 import { notFound } from 'next/navigation';
 
 interface ProductPageProps {
@@ -16,13 +16,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  return (
-    <AdvancedLandingPage 
-      product={product} 
-      countryConfig={countryConfig}
-      slug={slug}
-    />
-  );
+  // Stari funnel lander (AdvancedLandingPage) je penzionisan — legacy checkout
+  // URL-ovi služe novu product stranicu sa korpom.
+  return <ClassicProductPage product={product} countryConfig={countryConfig} locale="rs" />;
 }
 
 export async function generateStaticParams() {

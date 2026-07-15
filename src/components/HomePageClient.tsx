@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { getProductsForCountry, getProductVariantsForCountry, type Product } from '@/config/products';
 import { useCart } from '@/contexts/CartContext';
+import { useBogoPair } from '@/components/shop/BogoPairModal';
 import { getCountryConfig } from '@/config/countries';
 import { HOMEPAGE_IMAGES } from '@/config/images';
 import { CookieConsent } from '@/components/features/CookieConsent';
@@ -53,13 +54,14 @@ const HERO_IMAGES = {
   desktop: HOMEPAGE_IMAGES.hero.main,
 };
 
-export default function HomePage() {
+export default function HomePageClient() {
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations();
   const countryConfig = getCountryConfig(locale);
   const { trackEvent } = usePixelTracking(countryConfig.code);
-  const { addItem, openDrawer } = useCart();
+  const { openDrawer } = useCart();
+  const { requestAdd } = useBogoPair();
 
   const [products, setProducts] = useState<Product[]>([]);
   const headerProgressRef = useRef(0);
@@ -370,19 +372,13 @@ export default function HomePage() {
     : `mailto:${countryConfig.company.email}`;
   const supportLabel = countryConfig.company.phone || countryConfig.company.email;
   const heroTitle = t('homepage.hero_title');
-  const heroTitleFirstSplit = heroTitle.split('Bez hemije.');
-  const heroTitleSecondSplit = (heroTitleFirstSplit[1] ?? '').split('u Srbiji.');
   const productsSectionTitle = t('homepage.products_section_title');
   const productsSectionTitleWords = productsSectionTitle.split(' ');
   const highlightedProductsTitle = productsSectionTitleWords.slice(0, 2).join(' ');
   const remainingProductsTitle = productsSectionTitleWords.slice(2).join(' ');
   const featuresTitle = t('homepage.features_title');
   const featuresTitleParts = featuresTitle.split('Dermotin');
-  const beforeAfterTitle = t('homepage.before_after_title');
-  const beforeAfterTitleFirstSplit = beforeAfterTitle.split('70% kupaca');
-  const beforeAfterTitleSecondSplit = (beforeAfterTitleFirstSplit[1] ?? '').split('20 dana');
   const naturalScienceTitle = t('homepage.natural_science_title');
-  const naturalScienceTitleParts = naturalScienceTitle.split('rešenja za sve');
 
   const formatPrice = (amount: number) =>
     `${new Intl.NumberFormat('sr-RS', {
@@ -398,7 +394,8 @@ export default function HomePage() {
     const variant = variants.find((v) => v.isDefault) || variants[0];
     if (!variant) return;
 
-    addItem({
+    const unitPrice = variant.discountPrice ?? variant.price;
+    const item = {
       productId: product.id,
       productSlug: product.slug,
       variantId: variant.id,
@@ -406,21 +403,22 @@ export default function HomePage() {
       productName: product.name,
       variantName: variant.name,
       image: product.images.main,
-      unitPrice: variant.discountPrice ?? variant.price,
+      unitPrice,
       regularPrice: variant.price,
       currency: countryConfig.currency,
-    });
+    };
 
     trackEvent('add_to_cart', {
       content_type: 'product',
       content_name: product.name,
       content_ids: [variant.sku],
-      contents: [{ id: variant.sku, quantity: 1, item_price: variant.discountPrice ?? variant.price }],
+      contents: [{ id: variant.sku, quantity: 1, item_price: unitPrice }],
       currency: countryConfig.currency,
-      value: variant.discountPrice ?? variant.price,
+      value: unitPrice,
     });
 
-    openDrawer();
+    const tookOver = requestAdd(item, { onAfterAdd: () => openDrawer() });
+    if (!tookOver) openDrawer();
   };
 
   const scrollToSection = (id: string) => {
@@ -616,15 +614,7 @@ export default function HomePage() {
 
                     <div className="space-y-4">
                       <h1 className="max-w-3xl text-4xl font-black leading-[1.12] tracking-[-0.02em] text-slate-900 sm:text-5xl lg:text-6xl">
-                        {heroTitleFirstSplit[0]}
-                        <span className="inline-block whitespace-nowrap align-baseline">
-                          <AnimatedHighlight delayMs={120}>Bez hemije.</AnimatedHighlight>
-                        </span>
-                        {heroTitleSecondSplit[0] ?? ''}
-                        <span className="inline-block whitespace-nowrap align-baseline">
-                          <AnimatedHighlight variant="orange" delayMs={720}>u Srbiji.</AnimatedHighlight>
-                        </span>
-                        {heroTitleSecondSplit[1] ?? ''}
+                        {heroTitle}
                       </h1>
                       <p className="max-w-2xl text-lg leading-relaxed text-slate-700 md:text-xl">
                         {t('homepage.hero_subtitle')}
@@ -632,14 +622,6 @@ export default function HomePage() {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700">
-                      <div className="liquid-glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2">
-                        <div className="flex text-amber-400">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star key={star} className="h-4 w-4 fill-current" />
-                          ))}
-                        </div>
-                        <span className="font-semibold">4.97/5</span>
-                      </div>
                       <div className="liquid-glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2">
                         <ShieldCheck className="h-4 w-4 text-[#358055]" />
                         <span className="font-medium">{t('homepage.trust_dermatologically_tested')}</span>
@@ -858,77 +840,6 @@ export default function HomePage() {
             </div>
           </section>
 
-          <section id="story" className="scroll-mt-28 py-8 md:py-10">
-            <div className="container mx-auto px-4">
-              <div className="section-card overflow-hidden">
-                <div className="grid gap-0 lg:grid-cols-[0.92fr_1.08fr]">
-                  <div className="relative overflow-hidden px-6 py-6 md:px-8 md:py-8">
-                    <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(250,252,251,0.98)_0%,rgba(241,247,244,0.96)_36%,rgba(252,247,243,0.95)_100%)]" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(96,142,126,0.24),transparent_34%),radial-gradient(circle_at_85%_18%,rgba(255,107,53,0.14),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.18),transparent_58%)]" />
-                    <div className="relative h-full">
-                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.proven_results')}</p>
-                      <h2 className="mt-4 text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                        {beforeAfterTitleFirstSplit[0]}
-                        <AnimatedHighlight>70% kupaca</AnimatedHighlight>
-                        {beforeAfterTitleSecondSplit[0] ?? ''}
-                        <AnimatedHighlight>20 dana</AnimatedHighlight>
-                        {beforeAfterTitleSecondSplit[1] ?? ''}
-                      </h2>
-                      <p className="mt-4 max-w-2xl text-lg leading-relaxed text-slate-600">
-                        {t('homepage.before_after_subtitle')}
-                      </p>
-
-                      <div className="mt-6 grid gap-3">
-                        {[
-                          {
-                            title: t('homepage.visible_results'),
-                            description: t('homepage.visible_results_desc'),
-                          },
-                          {
-                            title: t('homepage.safe_all_skin'),
-                            description: t('homepage.safe_all_skin_desc'),
-                          },
-                          {
-                            title: t('homepage.no_side_effects'),
-                            description: t('homepage.no_side_effects_desc'),
-                          },
-                        ].map((item) => (
-                          <div
-                            key={item.title}
-                            className="rounded-2xl border border-white/70 bg-white/82 px-4 py-4 shadow-[0_10px_24px_rgba(53,128,85,0.05)]"
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="rounded-full bg-[#358055]/10 p-1.5">
-                                <Check className="h-4 w-4 text-[#358055]" />
-                              </div>
-                              <div>
-                                <p className="font-semibold text-slate-900">{item.title}</p>
-                                <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="px-6 py-6 md:px-8 md:py-8">
-                    <div className="relative h-full overflow-hidden rounded-[1.8rem] bg-[linear-gradient(180deg,#f8fbf9,#ffffff)] p-4">
-                      <Image
-                        src={HOMEPAGE_IMAGES.beforeAfter.main}
-                        alt={t('homepage.before_after_alt')}
-                        width={900}
-                        height={720}
-                        className="h-full w-full rounded-[1.4rem] object-cover"
-                        sizes="(max-width: 1024px) 100vw, 50vw"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
           <section className="py-8 md:py-10">
             <div className="container mx-auto px-4">
               <div className="mb-8 max-w-3xl">
@@ -990,9 +901,7 @@ export default function HomePage() {
                   <div className="space-y-5">
                     <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('homepage.dermatologically_approved')}</p>
                     <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                      {naturalScienceTitleParts[0]}
-                      <AnimatedHighlight>rešenja za sve</AnimatedHighlight>
-                      {naturalScienceTitleParts[1] ?? ''}
+                      {naturalScienceTitle}
                     </h2>
                     <p className="text-lg leading-relaxed text-slate-600">{t('homepage.natural_science_subtitle')}</p>
 

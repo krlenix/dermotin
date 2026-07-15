@@ -1,30 +1,73 @@
 @import "tailwindcss";
+/* Enter/exit animacije (animate-in/out, fade-*, zoom-*, slide-in-from-*) koje koriste
+   svi shadcn overlay-i (dialog, dropdown, popover, select, navigation-menu).
+   Tailwind v4 zamena za stari "tailwindcss-animate" plugin — bez ovoga te klase
+   uopšte ne postoje u generisanom CSS-u. */
+@import "tw-animate-css";
 @import "react-phone-number-input/style.css" layer(components);
 @import "../styles/wheel-animations.css" layer(components);
 
 @theme inline {
-  --color-background: 0 0% 100%;
-  --color-foreground: 240 10% 3.9%;
-  --color-card: 0 0% 100%;
-  --color-card-foreground: 240 10% 3.9%;
-  --color-popover: 0 0% 100%;
-  --color-popover-foreground: 240 10% 3.9%;
-  --color-primary: 240 9% 9%;
-  --color-primary-foreground: 0 0% 98%;
-  --color-secondary: 240 4.8% 95.9%;
-  --color-secondary-foreground: 240 5.9% 10%;
-  --color-muted: 240 4.8% 95.9%;
-  --color-muted-foreground: 240 3.8% 46.1%;
-  --color-accent: 240 4.8% 95.9%;
-  --color-accent-foreground: 240 5.9% 10%;
-  --color-destructive: 0 84.2% 60.2%;
-  --color-destructive-foreground: 0 0% 98%;
-  --color-border: 240 5.9% 90%;
-  --color-input: 240 5.9% 90%;
-  --color-ring: 240 10% 3.9%;
+  /* VAŽNO: Tailwind v4 tokeni moraju biti KOMPLETNE boje (hsl(...)), ne HSL
+     fragmenti — fragment proizvodi nevalidan CSS pa bg-background/bg-popover
+     ispadnu providni (npr. modali i dropdown-i bez pozadine). */
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(240 10% 3.9%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(240 10% 3.9%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(240 10% 3.9%);
+  --color-primary: hsl(240 9% 9%);
+  --color-primary-foreground: hsl(0 0% 98%);
+  --color-secondary: hsl(240 4.8% 95.9%);
+  --color-secondary-foreground: hsl(240 5.9% 10%);
+  --color-muted: hsl(240 4.8% 95.9%);
+  --color-muted-foreground: hsl(240 3.8% 46.1%);
+  --color-accent: hsl(240 4.8% 95.9%);
+  --color-accent-foreground: hsl(240 5.9% 10%);
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+  --color-border: hsl(240 5.9% 90%);
+  --color-input: hsl(240 5.9% 90%);
+  --color-ring: hsl(240 10% 3.9%);
   --color-brand-orange: #F3765D;
   --color-brand-green: #358055;
   --radius: 0.5rem;
+
+  /* Marquee trake (MarqueeText komponenta) — pomeraj od tačno jedne kopije teksta
+     (komponenta renderuje 5 identičnih kopija → -20% daje besprekidnu petlju).
+     U v4 --animate-* token automatski generiše animate-* utility. */
+  --animate-marquee-slow: marquee 45s linear infinite;
+  --animate-marquee-medium: marquee 30s linear infinite;
+  --animate-marquee-fast: marquee 15s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 30s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-20%);
+    }
+  }
+
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-20%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
+/* Utility klase iz starog v3 config-a koje v4 ne poznaje */
+@utility animation-paused {
+  animation-play-state: paused;
+}
+
+@utility origin-top-center {
+  transform-origin: top center;
 }
 
 /* Define CSS variables for compatibility */
@@ -52,12 +95,12 @@
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--border);
   }
   body {
     font-family: ui-sans-serif, system-ui, sans-serif;
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--background);
+    color: var(--foreground);
     scroll-behavior: smooth;
   }
 
@@ -113,16 +156,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--muted));
+  background: var(--muted);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground));
+  background: var(--muted-foreground);
 }
 
 /* Critical Animation classes - optimized for performance */
@@ -816,4 +859,57 @@ summary,
     overflow-x: hidden;
     max-width: 100%;
   }
+}
+/* Kupon animacije (banner + obračun cene na product stranici) */
+@keyframes coupon-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes coupon-price-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes coupon-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.coupon-banner-animate {
+  animation: coupon-slide-in 0.45s ease-out both;
+}
+
+.coupon-price-animate {
+  animation: coupon-price-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.coupon-shimmer {
+  background-image: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 65%
+  );
+  background-size: 200% 100%;
+  animation: coupon-shimmer 2.4s ease-in-out infinite;
 }

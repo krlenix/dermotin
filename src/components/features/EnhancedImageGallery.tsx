@@ -287,7 +287,7 @@ export function EnhancedImageGallery({ images, productName, className, priority 
               </div>
             )}
 
-            {/* Corner Ribbon - 100% Prirodno */}
+            {/* Corner Ribbon - biljni sastojci */}
             <div className="absolute top-0 right-0 z-20">
               <div 
                 className="text-white text-xs font-bold leading-[1.8] px-[1lh] bg-brand-green"
@@ -297,7 +297,7 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                   transformOrigin: '0% 100%'
                 }}
               >
-                100% Prirodno
+                Biljni sastojci
               </div>
             </div>
           </div>
@@ -423,7 +423,7 @@ export function EnhancedImageGallery({ images, productName, className, priority 
                   transformOrigin: '0% 100%'
                 }}
               >
-                100% Prirodno
+                Biljni sastojci
               </div>
             </div>
           </div>

@@ -1,29 +1,41 @@
 import { Product, ProductFAQ, ProductVariant } from '../types';
 import { getCountryConfig, convertCurrency, SupportedCurrency } from '../countries';
 
+// Draft proizvodi (published: false) su vidljivi samo u admin panelu,
+// nikada na javnom sajtu (stranice, sitemap, feed-ovi, korpa).
+function onlyPublished(products: Record<string, Product>): Record<string, Product> {
+  const published: Record<string, Product> = {};
+  for (const [key, product] of Object.entries(products)) {
+    if (product.published !== false) {
+      published[key] = product;
+    }
+  }
+  return published;
+}
+
 // Dynamic imports for locale-specific products
 export async function getProductsForLocale(locale: string): Promise<Record<string, Product>> {
   try {
     switch (locale) {
       case 'rs':
         const { PRODUCTS: rsProducts } = await import('./rs/products');
-        return rsProducts;
+        return onlyPublished(rsProducts);
       case 'ba':
         const { PRODUCTS: baProducts } = await import('./ba/products');
-        return baProducts;
+        return onlyPublished(baProducts);
       case 'me':
         const { PRODUCTS: meProducts } = await import('./me/products');
-        return meProducts;
+        return onlyPublished(meProducts);
       default:
         // Fallback to Serbian
         const { PRODUCTS: defaultProducts } = await import('./rs/products');
-        return defaultProducts;
+        return onlyPublished(defaultProducts);
     }
   } catch (error) {
     console.error(`Failed to load products for locale ${locale}:`, error);
     // Fallback to Serbian products
     const { PRODUCTS: fallbackProducts } = await import('./rs/products');
-    return fallbackProducts;
+    return onlyPublished(fallbackProducts);
   }
 }
 

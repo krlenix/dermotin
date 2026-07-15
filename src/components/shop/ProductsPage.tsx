@@ -6,6 +6,7 @@ import { ShoppingBag, Sparkles } from 'lucide-react';
 import { Product, getProductVariantsForCountry } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { useCart } from '@/contexts/CartContext';
+import { useBogoPair } from '@/components/shop/BogoPairModal';
 import { ShopHeader } from '@/components/shop/ShopHeader';
 import { Footer } from '@/components/ui/footer';
 import { CookieConsent } from '@/components/features/CookieConsent';
@@ -21,7 +22,8 @@ interface ProductsPageProps {
 
 export function ProductsPage({ products, countryConfig, locale }: ProductsPageProps) {
   const t = useTranslations();
-  const { addItem, openDrawer } = useCart();
+  const { openDrawer } = useCart();
+  const { requestAdd } = useBogoPair();
   const { trackEvent } = usePixelTracking(countryConfig.code);
 
   useMarketingTracking();
@@ -37,7 +39,8 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
     const variant = variants.find((v) => v.isDefault) || variants[0];
     if (!variant) return;
 
-    addItem({
+    const unitPrice = variant.discountPrice ?? variant.price;
+    const item = {
       productId: product.id,
       productSlug: product.slug,
       variantId: variant.id,
@@ -45,21 +48,22 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
       productName: product.name,
       variantName: variant.name,
       image: product.images.main,
-      unitPrice: variant.discountPrice ?? variant.price,
+      unitPrice,
       regularPrice: variant.price,
       currency: countryConfig.currency,
-    });
+    };
 
     trackEvent('add_to_cart', {
       content_type: 'product',
       content_name: product.name,
       content_ids: [variant.sku],
-      contents: [{ id: variant.sku, quantity: 1, item_price: variant.discountPrice ?? variant.price }],
+      contents: [{ id: variant.sku, quantity: 1, item_price: unitPrice }],
       currency: countryConfig.currency,
-      value: variant.discountPrice ?? variant.price,
+      value: unitPrice,
     });
 
-    openDrawer();
+    const tookOver = requestAdd(item, { onAfterAdd: () => openDrawer() });
+    if (!tookOver) openDrawer();
   };
 
   return (

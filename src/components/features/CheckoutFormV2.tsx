@@ -17,6 +17,7 @@ import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, qualifiesForFreeShipping } from '@/utils/shipping';
 import { usePixelTracking } from '@/components/tracking/PixelTracker';
 import { CheckoutDialog, CheckoutDialogType } from './CheckoutDialog';
+import { UpsellCrossSell } from './UpsellCrossSell';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
 import { calculateBOGODiscount, calculateCouponDiscount, isBOGOCoupon, type Coupon, validateCouponWithAPI } from '@/config/coupons';
@@ -52,6 +53,7 @@ export function CheckoutFormV2({
   productName,
   bundleItems = {},
   onOrderSubmit,
+  onAddToBundle,
   className,
   mainProductId,
   selectedCourier,
@@ -107,6 +109,11 @@ export function CheckoutFormV2({
         return value.trim().length < VALIDATION_RULES.minCityLength ? tValidation.city_min_length : '';
       case 'postalCode':
         return /^\d{5}$/.test(value) ? '' : tValidation.postal_code_invalid || 'Poštanski broj mora imati tačno 5 cifara';
+      case 'email':
+        // Optional field - validate format only when filled in
+        return value.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+          ? t('forms.invalid_email')
+          : '';
       default:
         return '';
     }
@@ -164,7 +171,7 @@ export function CheckoutFormV2({
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
-    const fieldsToValidate = ['firstName', 'lastName', 'phone', 'address', 'city', 'postalCode'];
+    const fieldsToValidate = ['firstName', 'lastName', 'phone', 'address', 'city', 'postalCode', 'email'];
 
     fieldsToValidate.forEach((field) => {
       const error = validateField(field, formData[field as keyof typeof formData] as string);
@@ -290,6 +297,7 @@ export function CheckoutFormV2({
 
       const orderData = {
         ...formData,
+        email: formData.email.trim(),
         variant: selectedVariant,
         bundleItems,
         country: countryConfig.code,
@@ -566,9 +574,47 @@ export function CheckoutFormV2({
                     <ChevronDown className="ml-auto h-4 w-4 text-slate-500" />
                   </div>
                 </div>
+
+                <div className="space-y-1.5 md:col-span-2">
+                  <div className="relative">
+                    <Label
+                      htmlFor="email"
+                      className={cn(
+                        'pointer-events-none absolute left-3 right-3 z-10 origin-left truncate font-medium text-[#7d7d7d] transition-all duration-150',
+                        isFieldActive('email')
+                          ? 'top-[3px] text-[10px] uppercase tracking-[0.02em]'
+                          : 'top-1/2 -translate-y-1/2 text-[20px]',
+                      )}
+                    >
+                      {t('forms.email')} ({t('forms.optional')})
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      inputMode="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      onBlur={() => handleBlur('email')}
+                      aria-invalid={Boolean(formErrors.email)}
+                      placeholder=""
+                      className="h-[56px] rounded-[6px] border-[#d9d0c5] px-3 pb-0 pt-[3px] !text-[20px] font-medium leading-[56px] text-slate-900 shadow-none placeholder:text-transparent"
+                    />
+                  </div>
+                  <FieldError message={formErrors.email} />
+                </div>
             </div>
           </div>
         </section>
+
+        {/* Cross-sell ponuda (proizvodi iz product.crossSells — uređuje se u admin panelu) */}
+        {onAddToBundle && (
+          <UpsellCrossSell
+            mainProductId={mainProductId}
+            onAddToBundle={onAddToBundle}
+            countryConfig={countryConfig}
+          />
+        )}
 
         <div className="rounded-[1rem] border border-[#358055]/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.99),rgba(247,251,248,0.98))] p-4 shadow-[0_10px_24px_rgba(53,128,85,0.08)]">
           <div className="flex items-start gap-3">

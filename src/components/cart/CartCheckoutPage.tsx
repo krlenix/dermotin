@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -8,6 +8,7 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 import {
   ArrowRight,
   ChevronDown,
+  Gift,
   Minus,
   Plus,
   ShieldCheck,
@@ -33,6 +34,15 @@ import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTrack
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 import { getFacebookTrackingData } from '@/utils/facebook-cookies';
 import { getMarketingCookies } from '@/utils/marketing-cookies';
+import { CouponBanner } from '@/components/shop/CouponBanner';
+import {
+  clearCouponCookie,
+  COUPON_CLEARED_EVENT,
+  getActiveCouponCode,
+  storeCouponCookie,
+} from '@/utils/coupon-cookies';
+import { calculateCouponDiscount, validateCouponWithAPI, type Coupon } from '@/config/coupons';
+import { BOGO_CONFIG } from '@/utils/bogo-cookies';
 
 interface CartCheckoutPageProps {
   countryConfig: CountryConfig;
@@ -77,6 +87,13 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
   const [hasStartedCheckout, setHasStartedCheckout] = useState(false);
   const submitInFlightRef = useRef(false);
 
+  // Kupon (npr. POPUST20 iz reklame — auto-primena iz URL-a/kolačića + ručni unos)
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [couponInput, setCouponInput] = useState('');
+  const [couponError, setCouponError] = useState('');
+  const [couponApplying, setCouponApplying] = useState(false);
+  const [couponDismissed, setCouponDismissed] = useState(false);
+
   const courier = getDefaultCourier(countryConfig);
   const supportedCountries = Object.keys(COUNTRIES).map((code) => code.toUpperCase()) as Array<'RS' | 'BA' | 'ME'>;
 
@@ -89,9 +106,86 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
     }).format(amount)} ${countryConfig.currencySymbol}`;
 
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
-  const shippingCost = hasFreeShipping ? 0 : roundPrice(calculateShippingCost(subtotal, courier, countryConfig));
-  const total = roundPrice(subtotal + shippingCost);
+  const baseShippingCost = hasFreeShipping ? 0 : roundPrice(calculateShippingCost(subtotal, courier, countryConfig));
   const amountForFreeShipping = getAmountForFreeShipping(subtotal, countryConfig);
+
+  // 1+1 par u korpi — kupon 1PLUS1 se smatra primenjenim (cene su već prepolovljene po stavci)
+  const hasBogoPair = items.some((line) => Boolean(line.bogoPairId));
+  const bogoGratisValue = roundPrice(
+    items
+      .filter((line) => line.bogoRole === 'free')
+      .reduce((sum, line) => sum + (line.bogoOriginalUnitPrice ?? line.regularPrice) * line.quantity, 0)
+  );
+
+  // Obračun kupona — minOrderValue se proverava dinamički jer se korpa menja.
+  // 1+1 se ne kombinuje sa drugim kuponima.
+  const couponMinNotMet = Boolean(appliedCoupon?.minOrderValue && subtotal < appliedCoupon.minOrderValue);
+  const couponAmounts =
+    appliedCoupon && !couponMinNotMet && !hasBogoPair
+      ? calculateCouponDiscount(appliedCoupon, subtotal, baseShippingCost)
+      : { productDiscount: 0, shippingDiscount: 0, totalDiscount: 0 };
+  const shippingCost = roundPrice(Math.max(0, baseShippingCost - couponAmounts.shippingDiscount));
+  const total = roundPrice(Math.max(0, subtotal - couponAmounts.productDiscount) + shippingCost);
+
+  const applyCoupon = async (code: string, source: 'auto' | 'manual') => {
+    const normalized = code.trim().toUpperCase();
+    if (!normalized || couponApplying) return;
+
+    setCouponApplying(true);
+    setCouponError('');
+    try {
+      const result = await validateCouponWithAPI(normalized, subtotal, countryConfig.code);
+      // BOGO kupon (1PLUS1) se ne obračunava ovde — popust je već u prepolovljenim cenama para
+      if (result.valid && result.coupon?.type === 'bogo') {
+        if (source === 'manual') {
+          setCouponInput('');
+          setCouponError('');
+        }
+        return;
+      }
+      if (result.valid && result.coupon) {
+        setAppliedCoupon(result.coupon);
+        setCouponDismissed(false);
+        storeCouponCookie(normalized, source === 'manual' ? 'manual' : 'url');
+        if (source === 'manual') setCouponInput('');
+      } else if (source === 'manual') {
+        if (result.error === 'min_order_not_met' && result.coupon?.minOrderValue) {
+          setCouponError(t('coupons.min_order_not_met', { amount: formatPrice(result.coupon.minOrderValue) }));
+        } else if (result.error === 'not_valid_country') {
+          setCouponError(t('coupons.not_valid_country'));
+        } else {
+          setCouponError(t('coupons.invalid_code'));
+        }
+      }
+    } catch (error) {
+      console.error('Coupon validation failed:', error);
+      if (source === 'manual') setCouponError(t('coupons.invalid_code'));
+    } finally {
+      setCouponApplying(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    clearCouponCookie();
+    setAppliedCoupon(null);
+    setCouponDismissed(true);
+    setCouponError('');
+  };
+
+  // Auto-primena kupona iz URL-a (?coupon_code=) ili ranije upamćenog kolačića.
+  // Preskače se kada je 1+1 par u korpi — ta akcija isključuje druge kupone.
+  useEffect(() => {
+    if (!isHydrated || items.length === 0 || appliedCoupon || couponDismissed || hasBogoPair) return;
+    const code = getActiveCouponCode();
+    if (code) applyCoupon(code, 'auto');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHydrated, items.length, hasBogoPair]);
+
+  useEffect(() => {
+    const handleCouponCleared = () => setAppliedCoupon(null);
+    window.addEventListener(COUPON_CLEARED_EVENT, handleCouponCleared);
+    return () => window.removeEventListener(COUPON_CLEARED_EVENT, handleCouponCleared);
+  }, []);
 
   const validateField = (field: string, value: string): string => {
     const tValidation = t.raw('validation');
@@ -109,6 +203,10 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
         return value.trim().length < VALIDATION_RULES.minCityLength ? tValidation.city_min_length : '';
       case 'postalCode':
         return /^\d{5}$/.test(value) ? '' : tValidation.postal_code_invalid;
+      case 'email':
+        return value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+          ? t('forms.invalid_email')
+          : '';
       default:
         return '';
     }
@@ -157,7 +255,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
-    const fieldsToValidate = ['firstName', 'lastName', 'phone', 'address', 'city', 'postalCode'];
+    const fieldsToValidate = ['firstName', 'lastName', 'phone', 'address', 'city', 'postalCode', 'email'];
 
     fieldsToValidate.forEach((field) => {
       const error = validateField(field, formData[field as keyof typeof formData]);
@@ -190,12 +288,16 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
           ? items[0].productName
           : `${items[0].productName} + ${items.length - 1}`;
       const variantSummary = items
-        .map((line) => `${line.productName} - ${line.variantName} x${line.quantity}`)
+        .map((line) => {
+          const bogoNote =
+            line.bogoRole === 'free' ? ' [1+1 gratis]' : line.bogoPairId ? ' [1+1]' : '';
+          return `${line.productName} - ${line.variantName} x${line.quantity}${bogoNote}`;
+        })
         .join(', ');
 
       const apiOrderData = {
         customerName: `${formData.firstName} ${formData.lastName}`,
-        customerEmail: formData.email,
+        customerEmail: formData.email.trim(),
         customerPhone: formData.phone,
         customerAddress: formData.address,
         customerCity: formData.city,
@@ -212,6 +314,25 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
         deliveryTime: courier.deliveryTime,
         paymentMethod: 'cod',
         bundleItems: {},
+        coupon:
+          appliedCoupon && couponAmounts.totalDiscount > 0
+            ? {
+                code: appliedCoupon.code,
+                type: appliedCoupon.type,
+                productDiscount: couponAmounts.productDiscount,
+                shippingDiscount: couponAmounts.shippingDiscount,
+                totalDiscount: couponAmounts.totalDiscount,
+              }
+            : hasBogoPair
+              ? {
+                  // Tag only — prices are already halved on line items (no extra discount)
+                  code: BOGO_CONFIG.couponCode,
+                  type: 'bogo' as const,
+                  productDiscount: 0,
+                  shippingDiscount: 0,
+                  totalDiscount: 0,
+                }
+              : undefined,
         locale: countryConfig.code,
         fbp: fbTrackingData.fbp || undefined,
         fbc: fbTrackingData.fbc || undefined,
@@ -222,6 +343,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
           sku: line.sku,
           name: `${line.productName} - ${line.variantName}`,
           quantity: line.quantity,
+          // 1+1: unitPrice is already regular/2 for both lines
           price: roundPrice(line.unitPrice),
         })),
       };
@@ -269,6 +391,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
       );
 
       clearCart();
+      clearCouponCookie();
 
       setOrderResult({
         orderId: result.orderId,
@@ -500,10 +623,13 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                           autoComplete="email"
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
+                          onBlur={() => handleBlur('email')}
+                          aria-invalid={Boolean(formErrors.email)}
                           placeholder=""
                           className={inputClass}
                         />
                       </div>
+                      <FieldError message={formErrors.email} />
                     </div>
                   </div>
                 </div>
@@ -541,8 +667,12 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                   <div className="mt-4 space-y-3">
                     {items.map((line) => (
                       <div
-                        key={line.variantId}
-                        className="flex gap-3 rounded-[1.1rem] border border-[#358055]/10 bg-white p-3"
+                        key={line.lineId}
+                        className={`flex gap-3 rounded-[1.1rem] border p-3 ${
+                          line.bogoPairId
+                            ? 'border-[#358055]/35 bg-[linear-gradient(135deg,#f3faf6_0%,#ffffff_60%)]'
+                            : 'border-[#358055]/10 bg-white'
+                        }`}
                       >
                         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
                           <Image src={line.image} alt={line.productName} fill className="object-contain p-1" sizes="64px" />
@@ -550,12 +680,21 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
+                              {line.bogoPairId && (
+                                <span
+                                  className={`mb-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-white ${
+                                    line.bogoRole === 'free' ? 'bg-[#F3765D]' : 'bg-[#358055]'
+                                  }`}
+                                >
+                                  {line.bogoRole === 'free' ? t('bogo.pair_badge_free') : t('bogo.pair_badge_paid')}
+                                </span>
+                              )}
                               <p className="truncate text-sm font-black uppercase text-slate-900">{line.productName}</p>
                               <p className="truncate text-xs font-medium text-slate-500">{line.variantName}</p>
                             </div>
                             <button
                               type="button"
-                              onClick={() => removeItem(line.variantId)}
+                              onClick={() => removeItem(line.lineId)}
                               aria-label={t('cart.remove')}
                               className="shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
                             >
@@ -563,28 +702,54 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                             </button>
                           </div>
                           <div className="mt-2 flex items-center justify-between gap-2">
-                            <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
-                              <button
-                                type="button"
-                                onClick={() => updateQuantity(line.variantId, line.quantity - 1)}
-                                aria-label="-"
-                                className="inline-flex h-7 w-7 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </button>
-                              <span className="min-w-6 text-center text-sm font-bold text-slate-900">{line.quantity}</span>
-                              <button
-                                type="button"
-                                onClick={() => updateQuantity(line.variantId, line.quantity + 1)}
-                                aria-label="+"
-                                className="inline-flex h-7 w-7 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
+                            {line.bogoPairId ? (
+                              <span className="rounded-full bg-[#358055]/10 px-3 py-1 text-xs font-bold text-[#358055]">
+                                {t('bogo.pair_badge_pill')}
+                              </span>
+                            ) : (
+                              <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(line.lineId, line.quantity - 1)}
+                                  aria-label="-"
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </button>
+                                <span className="min-w-6 text-center text-sm font-bold text-slate-900">{line.quantity}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
+                                  aria-label="+"
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </button>
+                              </div>
+                            )}
+                            <div className="text-right">
+                              {line.bogoRole === 'free' ? (
+                                <>
+                                  <p className="text-xs text-slate-400 line-through">
+                                    {formatPrice((line.bogoOriginalUnitPrice ?? line.regularPrice) * line.quantity)}
+                                  </p>
+                                  <p className="text-sm font-black uppercase text-[#358055]">
+                                    {t('bogo.pair_gratis')}
+                                  </p>
+                                </>
+                              ) : (
+                                <>
+                                  {line.regularPrice > (line.bogoOriginalUnitPrice ?? line.unitPrice) && (
+                                    <p className="text-xs text-slate-400 line-through">
+                                      {formatPrice(line.regularPrice * line.quantity)}
+                                    </p>
+                                  )}
+                                  <p className="text-sm font-black text-slate-950">
+                                    {formatPrice((line.bogoOriginalUnitPrice ?? line.unitPrice) * line.quantity)}
+                                  </p>
+                                </>
+                              )}
                             </div>
-                            <p className="text-sm font-black text-slate-950">
-                              {formatPrice(line.unitPrice * line.quantity)}
-                            </p>
                           </div>
                         </div>
                       </div>
@@ -598,6 +763,64 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                     </div>
                   )}
 
+                  {/* 1+1 kupon — automatski primenjen kada je par u korpi */}
+                  {hasBogoPair && (
+                    <div
+                      className="coupon-banner-animate mt-4 flex items-center gap-3 rounded-[1.1rem] p-3 text-white shadow-[0_14px_30px_rgba(53,128,85,0.28)]"
+                      style={{ background: 'linear-gradient(120deg, #358055 0%, #2a6844 100%)' }}
+                    >
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/15">
+                        <Gift className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-black uppercase tracking-wide">
+                          {t('bogo.coupon_applied', { code: BOGO_CONFIG.couponCode })}
+                        </p>
+                        <p className="text-xs font-semibold text-white/85">
+                          {t('bogo.coupon_applied_note', { amount: formatPrice(bogoGratisValue) })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Kupon — sakriven kada je 1+1 aktivan (akcije se ne kombinuju) */}
+                  {!hasBogoPair &&
+                    (appliedCoupon ? (
+                      <div className="mt-4 space-y-2">
+                        <CouponBanner coupon={appliedCoupon} formatPrice={formatPrice} onRemove={removeCoupon} />
+                        {couponMinNotMet && appliedCoupon.minOrderValue && (
+                          <p className="rounded-[0.8rem] bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700">
+                            {t('coupons.min_order_not_met', { amount: formatPrice(appliedCoupon.minOrderValue) })}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mt-4 rounded-[1.1rem] border border-[#358055]/10 bg-white p-3">
+                        <p className="text-sm font-bold text-slate-700">{t('coupons.have_coupon')}</p>
+                        <div className="mt-2 flex gap-2">
+                          <Input
+                            value={couponInput}
+                            onChange={(e) => {
+                              setCouponInput(e.target.value.toUpperCase());
+                              if (couponError) setCouponError('');
+                            }}
+                            placeholder={t('coupons.placeholder')}
+                            className="h-10 uppercase"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            disabled={couponApplying || !couponInput.trim()}
+                            onClick={() => applyCoupon(couponInput, 'manual')}
+                            className="h-10 shrink-0 border-[#358055]/30 font-bold text-[#358055] hover:bg-[#358055]/5"
+                          >
+                            {couponApplying ? t('coupons.validating') : t('coupons.apply')}
+                          </Button>
+                        </div>
+                        {couponError && <p className="mt-1.5 text-xs font-medium text-red-600">{couponError}</p>}
+                      </div>
+                    ))}
+
                   <div className="mt-4 divide-y divide-[#358055]/8 rounded-[1.2rem] border border-[#358055]/10 bg-white">
                     {totalSavings > 0 && (
                       <div className="flex items-center justify-between px-4 py-3">
@@ -609,6 +832,26 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                       <span className="text-sm text-slate-500">{t('cart.subtotal')}</span>
                       <span className="text-sm font-semibold text-slate-900">{formatPrice(subtotal)}</span>
                     </div>
+                    {hasBogoPair && (
+                      <div className="flex items-center justify-between px-4 py-3">
+                        <span className="text-sm text-slate-500">
+                          {t('bogo.coupon_row_label', { code: BOGO_CONFIG.couponCode })}
+                        </span>
+                        <span className="text-sm font-black uppercase text-[#358055]">
+                          {t('bogo.pair_gratis')}
+                        </span>
+                      </div>
+                    )}
+                    {couponAmounts.productDiscount > 0 && appliedCoupon && (
+                      <div className="coupon-banner-animate flex items-center justify-between px-4 py-3">
+                        <span className="text-sm text-slate-500">
+                          {t('checkout_v2.discountLabel')} ({appliedCoupon.code})
+                        </span>
+                        <span className="text-sm font-bold text-[#358055]">
+                          -{formatPrice(couponAmounts.productDiscount)}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between px-4 py-3">
                       <span className="text-sm text-slate-500">{t('order_summary.delivery')}</span>
                       <span className={`text-sm font-semibold ${shippingCost > 0 ? 'text-slate-900' : 'text-[#358055]'}`}>

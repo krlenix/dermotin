@@ -9,17 +9,10 @@ interface ProofSectionProps {
   product: Product;
 }
 
-export const SATISFIED_CUSTOMERS = 20000;
-
 export function ProofSection({ product }: ProofSectionProps) {
-  const proofNumber = SATISFIED_CUSTOMERS;
   const testimonials = (product.testimonials?.filter((item) => item.featured) ?? product.testimonials ?? []).slice(0, 5);
-  const benefitFallbacks = [
-    'Pogodan za svakodnevnu upotrebu i jednostavnu rutinu',
-    'Formula ostaje na kozi i deluje bez ispiranja',
-    'Biljna nega za osetljivu i problematicnu kozu',
-  ];
-  const benefits = (product.benefits.slice(3, 6).length === 3 ? product.benefits.slice(3, 6) : benefitFallbacks).slice(0, 3);
+  const proofNumber = testimonials.length;
+  const benefits = product.benefits.slice(0, 3);
   const [activeIndex, setActiveIndex] = useState(0);
   const [animatedProofNumber, setAnimatedProofNumber] = useState(0);
   const [hasStartedCounting, setHasStartedCounting] = useState(false);
@@ -74,6 +67,10 @@ export function ProofSection({ product }: ProofSectionProps) {
     return () => cancelAnimationFrame(frameId);
   }, [hasStartedCounting, proofNumber]);
 
+  if (testimonials.length === 0) {
+    return null;
+  }
+
   const showPrev = () => {
     setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
@@ -92,17 +89,17 @@ export function ProofSection({ product }: ProofSectionProps) {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(96,142,126,0.24),transparent_34%),radial-gradient(circle_at_85%_18%,rgba(255,107,53,0.14),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.18),transparent_58%)]" />
               <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-[#358055]/12 to-transparent" />
               <div className="relative">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">Dokaz poverenja</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">Iskustva kupaca</p>
               <div className="mt-4 flex items-end gap-3">
                 <span ref={proofNumberRef} className="text-6xl md:text-7xl font-black leading-none text-slate-950">
-                  {animatedProofNumber.toLocaleString('sr-RS')}+
+                  {animatedProofNumber.toLocaleString('sr-RS')}
                 </span>
               </div>
               <p className="mt-4 max-w-xl text-lg md:text-xl font-bold leading-snug text-slate-900">
-                Zadovoljni kupci vec prepoznaju rezultat i redovnu upotrebu <AnimatedHighlight>{product.name}</AnimatedHighlight>
+                Objavljena iskustva kupaca sa proizvodom <AnimatedHighlight>{product.name}</AnimatedHighlight>
               </p>
               <p className="mt-3 text-base text-slate-600">
-                Preko <span className="font-semibold text-slate-900">{proofNumber.toLocaleString('sr-RS')} zadovoljnih kupaca</span>
+                Broj objavljenih iskustava: <span className="font-semibold text-slate-900">{proofNumber.toLocaleString('sr-RS')}</span>
               </p>
 
               <div className="mt-6 grid gap-3">

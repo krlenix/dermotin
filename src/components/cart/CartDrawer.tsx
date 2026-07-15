@@ -1,18 +1,37 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { ArrowRight, Heart, Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  Truck,
+  X,
+} from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useBogoPair } from '@/components/shop/BogoPairModal';
 import { getCountryConfig } from '@/config/countries';
 import {
   getProductsForCountry,
   getProductVariantsForCountry,
   type Product,
 } from '@/config/products';
+import { calculateCouponDiscount, validateCouponWithAPI, type Coupon } from '@/config/coupons';
+import {
+  clearCouponCookie,
+  COUPON_CLEARED_EVENT,
+  getActiveCouponCode,
+} from '@/utils/coupon-cookies';
 import { getAmountForFreeShipping, qualifiesForFreeShipping } from '@/utils/shipping';
+import { CouponBanner } from '@/components/shop/CouponBanner';
 
 export function CartDrawer() {
   const t = useTranslations();
@@ -26,10 +45,28 @@ export function CartDrawer() {
     closeDrawer,
     updateQuantity,
     removeItem,
-    addItem,
   } = useCart();
+  const { requestAdd } = useBogoPair();
 
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const suggestionsScrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [activeCoupon, setActiveCoupon] = useState<Coupon | null>(null);
+
+  const updateSuggestionArrows = useCallback(() => {
+    const el = suggestionsScrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  const scrollSuggestions = (direction: 'left' | 'right') => {
+    const el = suggestionsScrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.8;
+    el.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
 
   const formatPrice = (amount: number) =>
     `${new Intl.NumberFormat('sr-RS', {
@@ -54,15 +91,32 @@ export function CartDrawer() {
 
   const suggestions = useMemo(() => {
     const productIdsInCart = new Set(items.map((line) => line.productId));
-    return allProducts.filter((product) => !productIdsInCart.has(product.id)).slice(0, 6);
+    // Cross-sell proizvodi artikala iz korpe imaju prednost u predlozima
+    const crossSellIds = new Set(
+      items.flatMap((line) => allProducts.find((p) => p.id === line.productId)?.crossSells ?? [])
+    );
+    const available = allProducts.filter((product) => !productIdsInCart.has(product.id));
+    const prioritized = available.filter((product) => crossSellIds.has(product.id));
+    const rest = available.filter((product) => !crossSellIds.has(product.id));
+    return [...prioritized, ...rest].slice(0, 6);
   }, [allProducts, items]);
+
+  useEffect(() => {
+    const el = suggestionsScrollRef.current;
+    if (!isDrawerOpen || !el) return;
+
+    updateSuggestionArrows();
+    const observer = new ResizeObserver(updateSuggestionArrows);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isDrawerOpen, suggestions.length, updateSuggestionArrows]);
 
   const handleSuggestionAdd = (product: Product) => {
     const variants = getProductVariantsForCountry(product, locale);
     const variant = variants.find((v) => v.isDefault) || variants[0];
     if (!variant) return;
 
-    addItem({
+    requestAdd({
       productId: product.id,
       productSlug: product.slug,
       variantId: variant.id,
@@ -78,10 +132,69 @@ export function CartDrawer() {
 
   const hasFreeShipping = qualifiesForFreeShipping(subtotal, countryConfig);
   const amountForFreeShipping = getAmountForFreeShipping(subtotal, countryConfig);
+  const couponAmounts = activeCoupon
+    ? calculateCouponDiscount(activeCoupon, subtotal, 0)
+    : { productDiscount: 0, shippingDiscount: 0, totalDiscount: 0 };
+  const subtotalWithCoupon = Math.max(
+    0,
+    Math.round((subtotal - couponAmounts.productDiscount) * 100) / 100
+  );
+  const totalSavingsWithCoupon = Math.round(
+    (totalSavings + couponAmounts.productDiscount) * 100
+  ) / 100;
   const freeShippingProgress = Math.min(
     (subtotal / countryConfig.business.freeShippingThreshold) * 100,
     100
   );
+
+  useEffect(() => {
+    if (!isDrawerOpen || subtotal <= 0) {
+      if (subtotal <= 0) setActiveCoupon(null);
+      return;
+    }
+
+    // 1+1 se ne kombinuje sa drugim kuponima
+    if (items.some((line) => Boolean(line.bogoPairId))) {
+      setActiveCoupon(null);
+      return;
+    }
+
+    const code = getActiveCouponCode();
+    if (!code) {
+      setActiveCoupon(null);
+      return;
+    }
+
+    let cancelled = false;
+    validateCouponWithAPI(code, subtotal, countryConfig.code)
+      .then((result) => {
+        if (cancelled) return;
+        setActiveCoupon(
+          result.valid && result.coupon && result.coupon.type !== 'bogo'
+            ? result.coupon
+            : null
+        );
+      })
+      .catch((error) => {
+        console.error('Cart coupon validation failed:', error);
+        if (!cancelled) setActiveCoupon(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [countryConfig.code, isDrawerOpen, subtotal, items]);
+
+  useEffect(() => {
+    const handleCouponCleared = () => setActiveCoupon(null);
+    window.addEventListener(COUPON_CLEARED_EVENT, handleCouponCleared);
+    return () => window.removeEventListener(COUPON_CLEARED_EVENT, handleCouponCleared);
+  }, []);
+
+  const removeCoupon = () => {
+    clearCouponCookie();
+    setActiveCoupon(null);
+  };
 
   useEffect(() => {
     if (!isDrawerOpen) return;
@@ -184,13 +297,27 @@ export function CartDrawer() {
               </div>
             </div>
 
+            {activeCoupon && (
+              <div className="border-b border-[#358055]/10 px-5 py-4">
+                <CouponBanner
+                  coupon={activeCoupon}
+                  formatPrice={formatPrice}
+                  onRemove={removeCoupon}
+                />
+              </div>
+            )}
+
             {/* Items */}
             <div className="flex-1 overflow-y-auto px-5 py-4">
               <div className="space-y-3">
                 {items.map((line) => (
                   <div
-                    key={line.variantId}
-                    className="flex gap-3 rounded-[1.2rem] border border-[#358055]/10 bg-white p-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]"
+                    key={line.lineId}
+                    className={`flex gap-3 rounded-[1.2rem] border p-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${
+                      line.bogoPairId
+                        ? 'border-[#358055]/35 bg-[linear-gradient(135deg,#f3faf6_0%,#ffffff_60%)]'
+                        : 'border-[#358055]/10 bg-white'
+                    }`}
                   >
                     <Link
                       href={`/${locale}/products/${line.productSlug}`}
@@ -209,6 +336,15 @@ export function CartDrawer() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
+                          {line.bogoPairId && (
+                            <span
+                              className={`mb-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-white ${
+                                line.bogoRole === 'free' ? 'bg-[#F3765D]' : 'bg-[#358055]'
+                              }`}
+                            >
+                              {line.bogoRole === 'free' ? t('bogo.pair_badge_free') : t('bogo.pair_badge_paid')}
+                            </span>
+                          )}
                           <Link
                             href={`/${locale}/products/${line.productSlug}`}
                             onClick={closeDrawer}
@@ -220,7 +356,7 @@ export function CartDrawer() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => removeItem(line.variantId)}
+                          onClick={() => removeItem(line.lineId)}
                           aria-label={t('cart.remove')}
                           className="shrink-0 rounded-full p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
                         >
@@ -229,35 +365,54 @@ export function CartDrawer() {
                       </div>
 
                       <div className="mt-2.5 flex items-center justify-between gap-2">
-                        <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(line.variantId, line.quantity - 1)}
-                            aria-label="-"
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                          >
-                            <Minus className="h-3.5 w-3.5" />
-                          </button>
-                          <span className="min-w-7 text-center text-sm font-bold text-slate-900">{line.quantity}</span>
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(line.variantId, line.quantity + 1)}
-                            aria-label="+"
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
-                          >
-                            <Plus className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
+                        {line.bogoPairId ? (
+                          <span className="rounded-full bg-[#358055]/10 px-3 py-1.5 text-xs font-bold text-[#358055]">
+                            {t('bogo.pair_badge_pill')}
+                          </span>
+                        ) : (
+                          <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(line.lineId, line.quantity - 1)}
+                              aria-label="-"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+                            >
+                              <Minus className="h-3.5 w-3.5" />
+                            </button>
+                            <span className="min-w-7 text-center text-sm font-bold text-slate-900">{line.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
+                              aria-label="+"
+                              className="inline-flex h-8 w-8 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        )}
 
                         <div className="text-right">
-                          {line.regularPrice > line.unitPrice && (
-                            <p className="text-xs text-slate-400 line-through">
-                              {formatPrice(line.regularPrice * line.quantity)}
-                            </p>
+                          {line.bogoRole === 'free' ? (
+                            <>
+                              <p className="text-xs text-slate-400 line-through">
+                                {formatPrice((line.bogoOriginalUnitPrice ?? line.regularPrice) * line.quantity)}
+                              </p>
+                              <p className="text-sm font-black uppercase text-[#358055]">
+                                {t('bogo.pair_gratis')}
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              {line.regularPrice > (line.bogoOriginalUnitPrice ?? line.unitPrice) && (
+                                <p className="text-xs text-slate-400 line-through">
+                                  {formatPrice(line.regularPrice * line.quantity)}
+                                </p>
+                              )}
+                              <p className="text-sm font-black text-slate-950">
+                                {formatPrice((line.bogoOriginalUnitPrice ?? line.unitPrice) * line.quantity)}
+                              </p>
+                            </>
                           )}
-                          <p className="text-sm font-black text-slate-950">
-                            {formatPrice(line.unitPrice * line.quantity)}
-                          </p>
                         </div>
                       </div>
                     </div>
@@ -268,11 +423,39 @@ export function CartDrawer() {
               {/* Cross-sell: you may also like */}
               {suggestions.length > 0 && (
                 <div className="mt-6">
-                  <p className="flex items-center gap-2 text-sm font-black text-slate-900">
-                    <Heart className="h-4 w-4 text-[#F3765D]" />
-                    {t('cart.you_may_also_like')}
-                  </p>
-                  <div className="scrollbar-hide -mx-1 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="flex items-center gap-2 text-sm font-black text-slate-900">
+                      <Heart className="h-4 w-4 text-[#F3765D]" />
+                      {t('cart.you_may_also_like')}
+                    </p>
+                    {(canScrollLeft || canScrollRight) && (
+                      <div className="hidden items-center gap-1.5 sm:flex">
+                        <button
+                          type="button"
+                          onClick={() => scrollSuggestions('left')}
+                          disabled={!canScrollLeft}
+                          aria-label={t('common.previous')}
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#358055]/15 bg-white text-slate-600 transition-colors hover:border-[#358055]/40 hover:text-[#358055] disabled:cursor-default disabled:opacity-35 disabled:hover:border-[#358055]/15 disabled:hover:text-slate-600"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => scrollSuggestions('right')}
+                          disabled={!canScrollRight}
+                          aria-label={t('common.next')}
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#358055]/15 bg-white text-slate-600 transition-colors hover:border-[#358055]/40 hover:text-[#358055] disabled:cursor-default disabled:opacity-35 disabled:hover:border-[#358055]/15 disabled:hover:text-slate-600"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    ref={suggestionsScrollRef}
+                    onScroll={updateSuggestionArrows}
+                    className="scrollbar-hide -mx-1 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1"
+                  >
                     {suggestions.map((product) => {
                       const variants = getProductVariantsForCountry(product, locale);
                       const variant = variants.find((v) => v.isDefault) || variants[0];
@@ -331,15 +514,34 @@ export function CartDrawer() {
 
             {/* Summary footer */}
             <div className="border-t border-[#358055]/10 bg-white px-5 py-4 shadow-[0_-10px_30px_rgba(15,23,42,0.04)]">
-              {totalSavings > 0 && (
+              {totalSavingsWithCoupon > 0 && (
                 <div className="mb-2 flex items-center justify-between text-sm">
                   <span className="font-medium text-slate-500">{t('cart.you_save')}</span>
-                  <span className="font-bold text-[#358055]">-{formatPrice(totalSavings)}</span>
+                  <span className="font-bold text-[#358055]">-{formatPrice(totalSavingsWithCoupon)}</span>
+                </div>
+              )}
+              {couponAmounts.productDiscount > 0 && activeCoupon && (
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="font-medium text-slate-500">
+                    {t('checkout_v2.discountLabel')} ({activeCoupon.code})
+                  </span>
+                  <span className="font-bold text-[#358055]">
+                    -{formatPrice(couponAmounts.productDiscount)}
+                  </span>
                 </div>
               )}
               <div className="flex items-center justify-between">
                 <span className="text-base font-semibold text-slate-700">{t('cart.subtotal')}</span>
-                <span className="text-xl font-black text-slate-950">{formatPrice(subtotal)}</span>
+                <div className="text-right">
+                  {couponAmounts.productDiscount > 0 && (
+                    <span className="mr-2 text-sm text-slate-400 line-through">
+                      {formatPrice(subtotal)}
+                    </span>
+                  )}
+                  <span className="text-xl font-black text-slate-950">
+                    {formatPrice(subtotalWithCoupon)}
+                  </span>
+                </div>
               </div>
               <p className="mt-1 text-xs text-slate-400">{t('cart.shipping_calculated')}</p>
 

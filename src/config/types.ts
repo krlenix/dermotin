@@ -48,6 +48,12 @@ export interface ProductFAQByCountry {
   [countryCode: string]: ProductFAQ[];
 }
 
+export interface BundleItem {
+  productId: string; // Product ID from the same locale catalog
+  variantId?: string; // Specific variant included in the bundle (defaults to the default variant)
+  quantity: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -89,13 +95,16 @@ export interface Product {
   crossSells?: string[]; // Product IDs
   productFAQ?: ProductFAQ[]; // Localized FAQs for this locale
   testimonials?: Testimonial[]; // Localized testimonials for this product
+  published?: boolean; // false = draft, hidden from the storefront (default: true)
+  isBundle?: boolean; // Bundle/set product composed of other products
+  bundleItems?: BundleItem[]; // Components of the bundle (informational + admin)
+  // Per-product override of ingredient descriptions (ingredient ID → text).
+  // Shared INGREDIENTS descriptions are written for one product context (e.g. topical
+  // skincare); oral products or products with different approved claims override here.
+  ingredientDescriptions?: Record<string, string>;
 }
 
 export const PRODUCT_CATEGORIES = {
-  antifungal: {
-    name: 'Antifungalni proizvodi',
-    description: 'Proizvodi za lečenje gljivičnih infekcija'
-  },
   sensitive: {
     name: 'Nega osetljive kože',
     description: 'Proizvodi za negu najdelikatnije kože'
@@ -111,5 +120,9 @@ export const PRODUCT_CATEGORIES = {
   haircare: {
     name: 'Nega kose',
     description: 'Proizvodi za negu kose i vlasišta'
+  },
+  bundle: {
+    name: 'Setovi',
+    description: 'Setovi više proizvoda po povoljnijoj ceni'
   }
 } as const;

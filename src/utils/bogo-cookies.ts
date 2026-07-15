@@ -30,14 +30,14 @@ export const BOGO_CONFIG = {
   
   // Expiration date and time (local time)
   // Format: 'YYYY-MM-DDTHH:mm:ss'
-  expirationDate: '2025-11-28T23:59:59',
+  expirationDate: '2026-08-31T23:59:59',
   
   // Maximum quantity for BOGO (e.g., 3 means max 3+3)
   maxQuantity: 3,
   
   // Config version - INCREMENT THIS when you change any setting above
   // This helps invalidate browser localStorage cache
-  configVersion: 1,
+  configVersion: 2,
 };
 
 // ============================================================

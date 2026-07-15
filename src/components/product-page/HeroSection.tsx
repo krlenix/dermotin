@@ -1,11 +1,10 @@
 'use client';
 
-import { CheckCircle2, ShieldCheck, Star } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { Product } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { EnhancedImageGallery } from '@/components/features/EnhancedImageGallery';
 import { AnimatedHighlight } from '@/components/ui/AnimatedHighlight';
-import { SATISFIED_CUSTOMERS } from '@/components/product-page/ProofSection';
 
 interface HeroSectionProps {
   product: Product;
@@ -14,11 +13,8 @@ interface HeroSectionProps {
   ctaText: string;
 }
 
-export function HeroSection({ product, countryConfig, onOrderClick, ctaText }: HeroSectionProps) {
-  const reviewCount = product.testimonials?.length ?? 0;
+export function HeroSection({ product, onOrderClick, ctaText }: HeroSectionProps) {
   const benefitPreview = product.benefits.slice(0, 3);
-  const featuredVariant = product.variants[0];
-  const featuredPrice = featuredVariant.discountPrice ?? featuredVariant.price;
   const heroTitlePrefix = 'Recite stop ';
   const hasHighlightedHeroTitle = product.heroTitle.startsWith(heroTitlePrefix);
   const heroTitleLead = hasHighlightedHeroTitle ? heroTitlePrefix : '';
@@ -58,23 +54,6 @@ export function HeroSection({ product, countryConfig, onOrderClick, ctaText }: H
                 <p className="max-w-2xl text-lg md:text-xl text-slate-700 leading-relaxed">
                   {product.description}
                 </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4 text-sm text-slate-700">
-                <div className="liquid-glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2">
-                  <div className="flex text-amber-400">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <span className="font-semibold">4.97/5</span>
-                </div>
-                <div className="liquid-glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2">
-                  <ShieldCheck className="h-4 w-4 text-[#358055]" />
-                  <span className="font-medium">
-                    Preko {SATISFIED_CUSTOMERS.toLocaleString('sr-RS')} zadovoljnih kupaca
-                  </span>
-                </div>
               </div>
 
               <div className="divide-y divide-[#358055]/10">

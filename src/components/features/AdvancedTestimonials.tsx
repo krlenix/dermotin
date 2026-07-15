@@ -13,13 +13,6 @@ interface AdvancedTestimonialsProps {
   productId?: string; // Optional: if provided, show only testimonials for this product
 }
 
-// Business metrics - easy to update
-const BUSINESS_METRICS = {
-  SATISFIED_CUSTOMERS: 20000,
-  AVERAGE_RATING: 4.97,
-  RECOMMENDATION_RATE: 98
-};
-
 export function AdvancedTestimonials({ countryCode, className, productId }: AdvancedTestimonialsProps) {
   const t = useTranslations();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -380,6 +373,9 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
     );
   }
 
+  const averageRating =
+    testimonials.reduce((sum, testimonial) => sum + testimonial.rating, 0) / testimonials.length;
+
   return (
     <section className={`py-16 bg-gradient-to-br from-gray-50 to-blue-50 w-full overflow-hidden ${className}`}>
       <div className="w-full">
@@ -395,7 +391,7 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
                   <Star key={star} className="h-6 w-6 fill-current" />
                 ))}
               </div>
-              <span className="text-lg font-medium">{BUSINESS_METRICS.AVERAGE_RATING}/5</span>
+              <span className="text-lg font-medium">{averageRating.toFixed(1)}/5</span>
             </div>
             <p className="text-gray-600">
               {t('testimonials.social_media_subtitle')}
@@ -567,24 +563,18 @@ export function AdvancedTestimonials({ countryCode, className, productId }: Adva
         </div>
         
         {/* Trust Indicators */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto px-4">
+        <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-3xl mx-auto px-4">
           <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-orange-100">
             <div className="text-4xl font-bold text-brand-orange mb-2">
-              {BUSINESS_METRICS.SATISFIED_CUSTOMERS.toLocaleString('sr')}+
+              {testimonials.length.toLocaleString('sr')}
             </div>
             <p className="text-gray-700 font-medium">{t('testimonials_ui.satisfied_customers')}</p>
           </div>
           <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-green-100">
             <div className="text-4xl font-bold text-brand-green mb-2">
-              {BUSINESS_METRICS.AVERAGE_RATING}/5
+              {averageRating.toFixed(1)}/5
             </div>
             <p className="text-gray-700 font-medium">{t('testimonials_ui.average_rating')}</p>
-          </div>
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-blue-100">
-            <div className="text-4xl font-bold text-blue-600 mb-2">
-              {BUSINESS_METRICS.RECOMMENDATION_RATE}%
-            </div>
-            <p className="text-gray-700 font-medium">{t('testimonials_ui.recommends_friends')}</p>
           </div>
         </div>
       </div>

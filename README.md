@@ -87,16 +87,14 @@ dermotin.com/[country]/checkouts/[product-slug]/
 Examples:
 - dermotin.com/rs/checkouts/fungel/
 - dermotin.com/ba/checkouts/fungel-promo/
-- dermotin.com/me/checkouts/antifungal-gel/
-- dermotin.com/eu/checkouts/gljivice-stopala/
+- dermotin.com/me/checkouts/nega-noktiju/
 ```
 
 ### Multiple Slugs Support
 Products can have multiple slugs pointing to different landing page variants:
 - `fungel` - Standard product page
 - `fungel-promo` - Promotional landing page
-- `antifungal-gel` - SEO-optimized slug
-- `gljivice-stopala` - Localized slug
+- `nega-noktiju` - SEO-optimized slug (neutral wording — no medical claims in URLs)
 
 ## 🚀 Quick Start
 

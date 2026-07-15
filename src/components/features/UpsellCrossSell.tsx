@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getProduct, Product } from '@/config/products';
+import { getProduct, getProductVariantForCountry, Product } from '@/config/products';
 
 import { useTranslations } from 'next-intl';
 import { Plus, Star, Gift, Sparkles, Check } from 'lucide-react';
@@ -34,15 +34,18 @@ export function UpsellCrossSell({ mainProductId, onAddToBundle, className, count
   const [mainProduct, setMainProduct] = useState<Product | null>(null);
   const [crossSellProducts, setCrossSellProducts] = useState<Product[]>([]);
 
+  // Lokal/država određuje i katalog i valutu cena
+  const locale = countryConfig?.code ?? 'rs';
+
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const product = await getProduct(mainProductId);
+        const product = await getProduct(mainProductId, locale);
         setMainProduct(product || null);
-        
+
         if (product?.crossSells) {
           const crossSells = await Promise.all(
-            product.crossSells.map(id => getProduct(id))
+            product.crossSells.map(id => getProduct(id, locale))
           );
           setCrossSellProducts(crossSells.filter(Boolean) as Product[]);
         }
@@ -52,9 +55,9 @@ export function UpsellCrossSell({ mainProductId, onAddToBundle, className, count
         setCrossSellProducts([]);
       }
     };
-    
+
     loadProducts();
-  }, [mainProductId]);
+  }, [mainProductId, locale]);
 
   if (!mainProduct?.crossSells) return null;
 
@@ -94,7 +97,8 @@ export function UpsellCrossSell({ mainProductId, onAddToBundle, className, count
           if (!product) return null;
           
           const isSelected = selectedItems.includes(product.id);
-          const variant = product.variants[0];
+          // Default varijanta sa cenom konvertovanom u valutu države
+          const variant = getProductVariantForCountry(product, locale) ?? product.variants[0];
           const price = variant.discountPrice || variant.price;
           
           return (

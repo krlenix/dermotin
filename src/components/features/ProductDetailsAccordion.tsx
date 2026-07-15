@@ -110,7 +110,9 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
               <p className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.03em] text-slate-400">
                 {ingredient.inciName}
               </p>
-              <p className="mt-1.5 text-xs leading-5 text-slate-600">{ingredient.description}</p>
+              <p className="mt-1.5 text-xs leading-5 text-slate-600">
+                {product.ingredientDescriptions?.[ingredientId] ?? ingredient.description}
+              </p>
             </div>
           </div>
         </div>

@@ -12,7 +12,7 @@ export interface Coupon {
   description?: string;
   minOrderValue?: number; // Minimum order value to apply coupon (before shipping)
   maxDiscount?: number; // Maximum discount amount for percentage coupons
-  validUntil?: Date; // Expiration date (optional)
+  validUntil?: string; // Datum isteka u ISO formatu, npr. '2026-12-31T23:59:59' (opciono)
   countries?: string[]; // If specified, only valid for these countries (e.g., ['rs', 'ba'])
   enabled: boolean;
 }
@@ -31,63 +31,70 @@ export const BOGO_CONFIG: BOGOConfig = {
   maxQuantity: BOGO_COOKIE_CONFIG.maxQuantity
 };
 
-// Centralized coupon list
-// NOTE: Most static coupons are commented out - system now uses API-only validation from OMS
-// BOGO coupons are handled locally as they require special UI treatment
+// Centralizovana lista kupona — uređuje se kroz admin panel (/admin/kuponi).
+// Statički kuponi imaju PREDNOST nad OMS API kodovima (API sve kodove tretira
+// kao generičkih 10%, pa kuponi sa drugim vrednostima moraju biti definisani ovde).
+// BOGO kuponi se obrađuju lokalno jer zahtevaju poseban UI tok.
 export const COUPONS: Record<string, Coupon> = {
-  // BOGO (Buy One Get One) coupon - 1+1 offer for all products
-  // Note: This coupon's enabled state is controlled by BOGO_CONFIG in bogo-cookies.ts
   '1PLUS1': {
     code: '1PLUS1',
     type: 'bogo',
-    value: 0, // Not used for BOGO, discount is calculated based on free items
+    value: 0,
     description: 'Buy 1 Get 1 Free - BOGO offer',
     minOrderValue: 0,
-    enabled: true, // Actual availability is controlled by isBOGOActive()
+    enabled: true
   },
-  // 'WELCOME10': {
-  //   code: 'WELCOME10',
-  //   type: 'percentage',
-  //   value: 10,
-  //   description: 'Welcome discount - 10% off',
-  //   minOrderValue: 0,
-  //   maxDiscount: 500, // Max 500 RSD/BAM/EUR discount
-  //   enabled: true,
-  // },
-  // 'SAVE20': {
-  //   code: 'SAVE20',
-  //   type: 'percentage',
-  //   value: 20,
-  //   description: 'Special promotion - 20% off',
-  //   minOrderValue: 2000,
-  //   maxDiscount: 1000,
-  //   enabled: true,
-  // },
-  // 'FREESHIP': {
-  //   code: 'FREESHIP',
-  //   type: 'free_shipping',
-  //   value: 0,
-  //   description: 'Free shipping on all orders',
-  //   minOrderValue: 0,
-  //   enabled: true,
-  // },
-  // 'ABSOLUTE500': {
-  //   code: 'ABSOLUTE500',
-  //   type: 'absolute',
-  //   value: 500,
-  //   description: '500 off your order',
-  //   minOrderValue: 3000,
-  //   enabled: true,
-  // },
-  // 'LOYAL15': {
-  //   code: 'LOYAL15',
-  //   type: 'percentage',
-  //   value: 15,
-  //   description: 'Loyalty discount - 15% off',
-  //   minOrderValue: 1500,
-  //   maxDiscount: 750,
-  //   enabled: true,
-  // },
+  POPUST20: {
+    code: 'POPUST20',
+    type: 'percentage',
+    value: 20,
+    description: '20% popusta na porudžbinu (reklamni kupon)',
+    minOrderValue: 0,
+    enabled: true
+  },
+  WELCOME10: {
+    code: 'WELCOME10',
+    type: 'percentage',
+    value: 10,
+    description: 'Popust dobrodošlice - 10%',
+    minOrderValue: 0,
+    maxDiscount: 500,
+    enabled: false
+  },
+  SAVE20: {
+    code: 'SAVE20',
+    type: 'percentage',
+    value: 20,
+    description: 'Specijalna promocija - 20%',
+    minOrderValue: 2000,
+    maxDiscount: 1000,
+    enabled: false
+  },
+  FREESHIP: {
+    code: 'FREESHIP',
+    type: 'free_shipping',
+    value: 0,
+    description: 'Besplatna dostava na sve porudžbine',
+    minOrderValue: 0,
+    enabled: false
+  },
+  ABSOLUTE500: {
+    code: 'ABSOLUTE500',
+    type: 'absolute',
+    value: 500,
+    description: '500 dinara popusta na porudžbinu',
+    minOrderValue: 3000,
+    enabled: false
+  },
+  LOYAL15: {
+    code: 'LOYAL15',
+    type: 'percentage',
+    value: 15,
+    description: 'Popust za verne kupce - 15%',
+    minOrderValue: 1500,
+    maxDiscount: 750,
+    enabled: false
+  }
 };
 
 // Helper function to get coupon by code
@@ -100,10 +107,10 @@ export function getCouponByCode(code: string): Coupon | null {
   }
   
   // Check if coupon is expired
-  if (coupon.validUntil && new Date() > coupon.validUntil) {
+  if (coupon.validUntil && new Date() > new Date(coupon.validUntil)) {
     return null;
   }
-  
+
   return coupon;
 }
 
@@ -208,7 +215,7 @@ export function getBOGOCoupon(code: string): Coupon | null {
   }
   
   // Check if coupon has its own expiration (in addition to global BOGO expiration)
-  if (coupon.validUntil && new Date() > coupon.validUntil) {
+  if (coupon.validUntil && new Date() > new Date(coupon.validUntil)) {
     return null;
   }
   
@@ -220,37 +227,34 @@ export function getAllActiveCoupons(): Coupon[] {
   return Object.values(COUPONS).filter(coupon => coupon.enabled);
 }
 
-// Get coupon from API only (no static fallback at the moment)
+// Razrešavanje kupona: statička lista (admin panel) ima prednost, pa OMS API.
+// Razlog: API sve afilijacijske kodove mapira na generičkih 10%, a kuponi poput
+// POPUST20 imaju tačno definisanu vrednost u statičkoj listi.
 export async function getCouponWithAPI(
-  code: string, 
+  code: string,
   countryCode: string
 ): Promise<Coupon | null> {
-  // Fetch coupon from API only
+  // 1) Statički kuponi (uključeni kroz /admin/kuponi)
+  const staticCoupon = getCouponByCode(code);
+  if (staticCoupon && staticCoupon.type !== 'bogo') {
+    console.log(`✅ Using static coupon "${code}" (admin panel)`);
+    return staticCoupon;
+  }
+
+  // 2) OMS API afilijacijski kodovi
   try {
     const { validateCouponFromAPI } = await import('@/utils/affiliate-codes');
-    
-    // Get coupon from API
+
     const apiCoupon = await validateCouponFromAPI(code, countryCode);
     if (apiCoupon) {
       console.log(`✅ Using coupon "${code}" from API`);
       return apiCoupon;
     }
-    
+
     console.log(`❌ Coupon "${code}" not found in API`);
     return null;
-    
-    // NOTE: Static coupon fallback is disabled for now
-    // Uncomment below to enable fallback to static COUPONS when API doesn't have the code
-    // console.log(`📋 Checking static coupons for "${code}"`);
-    // return getCouponByCode(code);
   } catch (error) {
     console.error('Error fetching coupon from API:', error);
-    
-    // NOTE: API error fallback to static coupons is disabled
-    // Uncomment below to enable fallback when API fails
-    // console.log('📋 Falling back to static coupons due to API error');
-    // return getCouponByCode(code);
-    
     return null;
   }
 }

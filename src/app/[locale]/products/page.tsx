@@ -3,16 +3,32 @@ import { getProductsForCountry } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
 import { ProductsPage } from '@/components/shop/ProductsPage';
 import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
+import { SITE_LOCALES, buildLanguageAlternates, getSiteUrl } from '@/lib/seo';
 
 interface ProductsRouteProps {
   params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({ params }: ProductsRouteProps): Promise<Metadata> {
-  await params;
+  const { locale } = await params;
+  const title = 'Svi proizvodi – prirodna nega kože i suplementi';
+  const description =
+    'Pregledajte kompletnu DERMOTIN ponudu: prirodni kozmetički preparati za negu kože i dijetetski suplementi. Plaćanje pouzećem, brza isporuka.';
+  const canonical = `${getSiteUrl()}/${locale}/products`;
+
   return {
-    title: 'DERMOTIN | Proizvodi',
-    description: 'Prirodni kozmetički preparati i dijetetski suplementi - DERMOTIN',
+    title,
+    description,
+    alternates: {
+      canonical,
+      languages: buildLanguageAlternates(SITE_LOCALES, (l) => `/${l}/products`),
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+    },
   };
 }
 

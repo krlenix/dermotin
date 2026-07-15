@@ -4,10 +4,10 @@ export const PRODUCTS: Record<string, Product> = {
   fungel: {
     id: 'fungel',
     name: 'FUNGEL',
-    description: 'Namijenjena borbi protiv gljivičnih infekcija na stopalima i noktima. Pomaže u smanjenju neprijatnih simptoma kao što su zadebljali i žuti nokti, svrab, crvenilo i perutanje kože. Redovnom upotrebom doprinosi zdravijem izgledu kože i noktiju, sprečavajući ponovno širenje infekcije.',
-    shortDescription: 'Blistavi nokti i koža stopala',
-    heroTitle: 'Recite stop gljivicama',
-    purpose: 'Pomaže problematičnoj koži i noktima u borbi protiv gljivičnih infekcija',
+    description: 'Krema za njegu kože i noktiju osoba sklonih pojavi gljivica. Kombinuje 6 biljnih ekstrakata i 5 eteričnih ulja sa panthenolom, ureom i vitaminima A i E. Redovnom upotrebom, 2 puta dnevno, doprinosi njegovanom i urednom izgledu kože i noktiju.',
+    shortDescription: 'Njega kože i noktiju sklonih gljivicama',
+    heroTitle: 'Njegovana koža i uredni nokti, bez kompromisa',
+    purpose: 'Za njegu kože i noktiju osoba sklonih pojavi gljivica',
     category: 'skincare',
     images: {
       main: '/images/products/fungel/fungel-old-product-image.png',
@@ -53,14 +53,14 @@ export const PRODUCTS: Record<string, Product> = {
       }
     ],
     benefits: [
-      'Podržava njegu problematične kože',
-      'Smiruje iritacije i podržava obnovu oštećene kože',
-      'Pruža hidrataciju i pomaže u održavanju zdravlja kože',
-      'Pogodan za svakodnevnu upotrebu, čak i na osjetljivoj koži',
-      'Bez parabena, veštačkih boja i mirisa',
-      'Idealan za prirodnu i bezbjednu njegu kože',
-      'Leave-on formula - ne ispira se, djeluje kontinuirano',
-      'Sadrži 6 ljekovitih biljaka i 5 eteričnih ulja'
+      'Namjenski razvijen za njegu kože i noktiju sklonih pojavi gljivica',
+      'Sadrži 6 biljnih ekstrakata: neven, rusa, žalfija, ehinacea, ivanjsko cvijeće i kantarion',
+      '5 eteričnih ulja: čajno drvo, origano, lavandin, žalfija i eukaliptus',
+      'Panthenol, urea i glicerin doprinose hidrataciji kože',
+      'Obogaćen vitaminima A i E i uljem slatkog badema',
+      'Bez parabena i bez vještačkih boja',
+      'Leave-on formula - nanosi se 2x dnevno i ne ispira se',
+      'Bezbjednosno procijenjen u skladu sa EU regulativom (EC) 1223/2009'
     ],
     ingredients: [
       // Key active ingredients first
@@ -98,163 +98,89 @@ export const PRODUCTS: Record<string, Product> = {
       'sodium-benzoate',
       'potassium-sorbate'
     ],
-    usage: 'Nanositi 2 puta dnevno na problematične dijelove kože ili noktiju. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 3 sedmice redovne upotrebe).',
+    usage: 'Nanositi 2 puta dnevno na dijelove kože ili noktiju. Ne ispirati nakon nanošenja. Sadržaj: 50ml.',
     usageSteps: [
-      'Očistite i osušite pogođeno mjesto',
-      'Nanesite tanak sloj FUNGEL-a na problematičnu kožu ili nokte',
-      'Nežno umasirajte dok se potpuno ne upije',
+      'Očistite i osušite kožu ili nokte prije nanošenja',
+      'Nanesite tanak sloj FUNGEL-a na željeno mjesto',
+      'Nježno umasirajte dok se ne upije',
       'Koristite 2 puta dnevno (ujutru i navečer)',
-      'Ne ispirati nakon nanošenja - ostaviti da djeluje',
-      'Redovno koristiti najmanje 2-4 sedmice za najbolje rezultate'
+      'Ne ispirati nakon nanošenja',
+      'Za najbolji efekat njege koristite redovno'
     ],
     warnings: [
-      'Samo za spoljašnju upotrebu',
-      'Oprati ruke nakon upotrebe',
+      'Samo za vanjsku upotrebu',
+      'Obratiti pažnju na preosjetljivost na bilo koji sastojak',
+      'Oprati ruke nakon nanošenja',
       'Ne koristiti na ranama',
-      'Izbegavati kontakt sa očima',
-      'Prestati sa upotrebom ako dođe do iritacije',
+      'Izbjegavati kontakt sa očima; u slučaju kontakta odmah isprati vodom',
+      'Prekinuti upotrebu i javiti se ljekaru ako dođe do iritacije',
       'Čuvati na hladnom, suhom mjestu',
-      'Sadrži prirodne alergene iz eteričnih ulja',
-      'Preporučuje se zaštita od sunca tokom upotrebe'
+      'Sadrži prirodne alergene iz eteričnih ulja (Limonene, Linalool)'
     ],
     slug: 'fungel',
-    alternativeSlugs: ['fungel-promo', 'antifungal-gel', 'gljivice-stopala'],
+    alternativeSlugs: ['fungel-promo', 'njega-noktiju', 'gljivice-stopala'],
     availableCountries: ['rs', 'ba'],
-    seoTitle: 'FUNGEL - Emulzija za kožu sa 6 biljnih ekstrakata + 5 eteričnih ulja | DERMOTIN',
-    seoDescription: 'FUNGEL od DERMOTIN brenda kombinuje 6 biljnih ekstrakata sa 5 eteričnih ulja (čajno drvo, origano). Obogaćena panthenolom, vitaminima A&E. Prirodna njega problematične kože i noktiju. 50ml.',
-    urgencyElements: {
-      limitedStock: 47,
-      limitedTime: '24h',
-      socialProof: {
-        recentPurchases: 127,
-        timeFrame: 'posljednja 24h'
-      }
+    seoTitle: 'FUNGEL - Krema za njegu kože i noktiju sklonih gljivicama | DERMOTIN',
+    seoDescription: 'FUNGEL od DERMOTIN brenda - krema za njegu kože i noktiju osoba sklonih pojavi gljivica. 6 biljnih ekstrakata i 5 eteričnih ulja (čajno drvo, origano), panthenol, urea, vitamini A i E. Bez parabena. 50ml.',
+    // Povezani proizvodi: FUNGOMAX (ista namjena, serum za nokte), BIOWART (njega kože)
+    upsells: {
+      products: ['fungomax'],
+      discountPercentage: 10
     },
+    crossSells: ['fungomax', 'biowart'],
+    urgencyElements: {},
     productFAQ: [
       {
         question: "Kako se koristi FUNGEL?",
-        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno na problemske dijelove kože ili noktiju. Ne treba da se ispira - samo ostaviti da se upije. Jedna tubica od 50ml traje oko 3 sedmice pri redovnoj upotrebi.",
+        answer: "Vrlo jednostavno! Nanesite tanak sloj 2 puta dnevno na kožu ili nokte i nježno umasirajte. Ne ispira se - samo ostavite da se upije. Pakovanje sadrži 50ml.",
         category: "usage"
       },
       {
-        question: "Kada ću vidjeti prve rezultate?",
-        answer: "Budite realni - pravi rezultati se vide nakon 2-4 sedmice redovne upotrebe. Svaka koža je drugačija, pa budite strpljivi i ne očekujte čuda preko noći!",
-        category: "effects"
-      },
-      {
-        question: "Da li je FUNGEL prirodan?",
-        answer: "Da! Prirodna formula koja podržava njegu problematične kože. Sadrži 6 ljekovitih biljaka plus 5 eteričnih ulja. Bez parabena, veštačkih boja i mirisa - idealan za prirodnu i bezbjednu njegu.",
+        question: "Šta FUNGEL sadrži?",
+        answer: "6 biljnih ekstrakata (neven, rusa, žalfija, ehinacea, ivanjsko cvijeće i kantarion) i 5 eteričnih ulja (čajno drvo, origano, lavandin, žalfija i eukaliptus), uz panthenol, ureu, glicerin i vitamine A i E.",
         category: "ingredients"
       },
       {
-        question: "Da li je bezbedan za svakodnevnu upotrebu?",
-        answer: "Apsolutno! FUNGEL je testiran i odobren za svakodnevnu upotrebu. Prirodni sastojci su blagi prema koži, a formula je pH balansirana.",
+        question: "Da li je FUNGEL lijek?",
+        answer: "Ne. FUNGEL je kozmetički proizvod za njegu kože i noktiju osoba sklonih pojavi gljivica. Ako imate zdravstveni problem, obratite se ljekaru ili farmaceutu.",
+        category: "safety"
+      },
+      {
+        question: "Da li je bezbjedan za svakodnevnu upotrebu?",
+        answer: "Da, FUNGEL je namijenjen redovnoj upotrebi 2 puta dnevno. Prošao je bezbjednosnu procjenu u skladu sa EU regulativom o kozmetičkim proizvodima (EC) 1223/2009, a pH formule je 6,7.",
         category: "safety"
       },
       {
         question: "Mogu li ga koristiti ako imam osjetljivu kožu?",
-        answer: "FUNGEL sadrži prirodne sastojke, ali ako imate vrlo osjetljivu kožu, preporučujemo da prvo testirate na maloj površini. Ako osjećate bilo kakvu iritaciju, prestanite sa upotrebom.",
+        answer: "Ako imate vrlo osjetljivu kožu, preporučujemo da prvo testirate na maloj površini. Proizvod sadrži prirodne alergene iz eteričnih ulja (limonen, linalol). Ako dođe do iritacije, prekinite upotrebu i posavjetujte se sa ljekarom.",
         category: "safety"
       },
       {
         question: "Kako da čuvam FUNGEL?",
-        answer: "Čuvajte na hladnom, suhom mjestu, daleko od djece. Zatvorite dobro nakon upotrebe. Rok trajanja je označen na pakovanju.",
+        answer: "Čuvajte na hladnom, suhom mjestu, van domašaja djece. Zatvorite dobro nakon upotrebe. Rok trajanja je označen na pakovanju.",
         category: "storage"
       },
       {
-        question: "Mogu li da koristim FUNGEL sa drugim kremovima?",
-        answer: "Možete, ali sačekajte da se FUNGEL upije prije nanošenja drugih proizvoda. Također, preporučujemo zaštitu od sunca tokom korišćenja.",
+        question: "Mogu li da koristim FUNGEL sa drugim kremama?",
+        answer: "Možete - sačekajte da se FUNGEL upije prije nanošenja drugih proizvoda. Za nokte se odlično uklapa u rutinu sa FUNGOMAX serumom.",
         category: "usage"
       },
       {
-        question: "Šta čini FUNGEL tako efikasnim?",
-        answer: "Prirodna formula koja podržava njegu problematične kože. Smiruje iritacije, podržava obnovu kože i pruža dugotrajnu hidrataciju. Sve prirodno, bez štetnih kemikalija!",
-        category: "ingredients"
+        question: "Da li je FUNGEL namijenjen djeci?",
+        answer: "Ne, FUNGEL je namijenjen odraslima. To je definirano bezbjednosnom procjenom proizvoda.",
+        category: "safety"
       }
     ],
-    testimonials: [
-      {
-        id: "ba1",
-        name: "Amela H.",
-        city: "Sarajevo",
-        rating: 5,
-        text: "FUNGEL mi je pomogao kada ništa drugo nije. Imala sam hronične probleme sa kožom i ovaj prirodni proizvod je konačno donio olakšanje. Preporučujem svima koji traže efikasno rešenje.",
-        verified: true,
-        productUsed: "FUNGEL",
-        dateAdded: "2024-12-12",
-        featured: true,
-        likes: 43
-      },
-      {
-        id: "ba2",
-        name: "Emir K.",
-        city: "Tuzla",
-        rating: 5,
-        text: "Kao čovjek koji radi fizički posao, često imam problema sa kožom na rukama. FUNGEL sa čajnim drvetom i origanom je bio prava stvar. Prirodan, bez kemikalija i stvarno efikasan.",
-        verified: true,
-        productUsed: "FUNGEL",
-        dateAdded: "2024-12-09",
-        featured: true,
-        likes: 39
-      },
-      {
-        id: "ba3",
-        name: "Selma B.",
-        city: "Zenica",
-        rating: 5,
-        text: "Moj sin je imao problematičnu kožu oko noktiju. FUNGEL je jedini proizvod koji je stvarno pomogao. Prirodni sastojci su mi bili važni, a rezultati su vidljivi već nakon nedelju dana.",
-        verified: true,
-        productUsed: "FUNGEL",
-        dateAdded: "2024-12-06",
-        featured: true,
-        likes: 36
-      },
-      {
-        id: "ba4",
-        name: "Adnan M.",
-        city: "Banja Luka",
-        rating: 4,
-        text: "Dobar proizvod, radi postupno ali sigurno. Trebalo mi je oko tri sedmice da vidim potpunu promjenu, ali vrijedi čekanja. Cijena je prihvatljiva za kvalitet.",
-        verified: true,
-        productUsed: "FUNGEL",
-        dateAdded: "2024-12-03",
-        featured: false,
-        likes: 30
-      },
-      {
-        id: "ba5",
-        name: "Lejla S.",
-        city: "Mostar",
-        rating: 5,
-        text: "Radim u vlažnoj sredini i često imam problema sa kožom. FUNGEL mi je ne samo riješio problem, već i učinio kožu mekšom i zdravijom. Sada ga koristim preventivno.",
-        verified: true,
-        productUsed: "FUNGEL",
-        dateAdded: "2024-11-30",
-        featured: true,
-        likes: 33
-      },
-      {
-        id: "ba6",
-        name: "Mirsad J.",
-        city: "Bijeljina",
-        rating: 5,
-        text: "Skeptičan sam bio prema prirodnim proizvodima, ali FUNGEL me pozitivno iznenadio. Brzo djeluje, nema neželjenih efekata i stvarno pomaže. Već sam preporučio dvojici prijatelja.",
-        verified: true,
-        productUsed: "FUNGEL",
-        dateAdded: "2024-11-27",
-        featured: false,
-        likes: 27
-      }
-    ]
+    testimonials: []
   },
 
   biomelis: {
     id: 'biomelis',
     name: 'BIOMELIS',
-    description: 'Ublažava tegobe izazvane ekcemima i psorijazom. Njegova biljna formula njeguje kožu, smanjuje upalu i osjećaj svraba. Pogodan je za svakodnevnu upotrebu i doprinosi obnavljanju prirodne barijere kože.',
-    shortDescription: 'Umirujuća njega za osjetljivu kožu',
-    heroTitle: 'Recite stop ekcemu i psorijazi',
-    purpose: 'Pomaže osjetljivoj koži u borbi protiv ekcema i psorijaze',
+    description: 'Krema za njegu kože osoba sklonih ekcemima i psorijazi. Formula sa 8 biljnih ekstrakata i 5 eteričnih ulja, obogaćena panthenolom, ureom i vitaminima A i E, njeguje i hidrira kožu i doprinosi osjećaju komfora. Pogodna za svakodnevnu upotrebu.',
+    shortDescription: 'Njega kože sklone ekcemima i psorijazi',
+    heroTitle: 'Svakodnevna njega za kožu koja traži više',
+    purpose: 'Za njegu kože osoba sklonih ekcemima i psorijazi',
     category: 'skincare',
     images: {
       main: '/images/products/biomelis/biomelis-old-product-image.png',
@@ -300,14 +226,14 @@ export const PRODUCTS: Record<string, Product> = {
       }
     ],
     benefits: [
-      'Podržava njegu osjetljive kože',
-      'Smiruje crvenilo, svrab i iritacije',
-      'Podržava regeneraciju oštećene kože',
-      'Pruža zaštitu od spoljašnjih uticaja i dugotrajnu hidrataciju',
-      'Pogodan za svakodnevnu upotrebu, čak i za najosjetljiviju kožu',
-      'Bez parabena, veštačkih boja i mirisa',
-      'Idealan izbor za prirodnu i bezbjednu njegu kože',
-      'Sadrži 8 ljekovitih biljaka i 5 eteričnih ulja'
+      'Namjenski razvijena za njegu kože sklone ekcemima i psorijazi',
+      'Sadrži 8 biljnih ekstrakata: neven, rusa, žalfija, hajdučka trava, rastavić, ivanjsko cvijeće, kantarion i hrastova kora',
+      '5 eteričnih ulja: žalfija, eukaliptus, lavandin, ruzmarin i timijan',
+      'Panthenol, urea i glicerin doprinose hidrataciji i mekšem osjećaju kože',
+      'Obogaćena vitaminima A i E i uljem slatkog badema',
+      'Bez parabena i bez vještačkih boja',
+      'Pogodna za svakodnevnu upotrebu, 2 puta dnevno',
+      'Bezbjednosno procijenjena u skladu sa EU regulativom (EC) 1223/2009'
     ],
     ingredients: [
       // Herbal extracts - 8 medicinal plants
@@ -318,8 +244,8 @@ export const PRODUCTS: Record<string, Product> = {
       'equisetum-extract',
       'galium-extract',
       'hypericum-extract',
-      'quercus-extract',
-      // Essential oils - 5 therapeutic oils
+      'quercus-bark-extract',
+      // Essential oils - 5 oils per CPSR
       'sage-oil',
       'eucalyptus-oil',
       'lavender-oil',
@@ -349,165 +275,94 @@ export const PRODUCTS: Record<string, Product> = {
       'sodium-benzoate',
       'potassium-sorbate'
     ],
-    usage: 'Nanositi 2 puta dnevno na pogođene dijelove kože i nežno masirati. Ne ispirati nakon nanošenja. Sadržaj: 50ml (dovoljno za 3 sedmice redovne upotrebe).',
+    usage: 'Nanositi 2 puta dnevno na kožu i nježno utrljati. Ne ispirati nakon nanošenja. Sadržaj: 50ml.',
     usageSteps: [
-      'Očistite kožu blagim sapunom i osušite',
-      'Nanesite malu količinu BIOMELIS-a na pogođeno mjesto',
-      'Nežno umasirajte kružnim pokretima dok se ne upije',
-      'Koristite 2-3 puta dnevno ili prema potrebi',
-      'Za najbolje rezultate koristiti redovno 3-4 sedmice',
-      'Može se koristiti i preventivno na osjetljivim dijelovima kože'
+      'Očistite kožu blagim sredstvom za pranje i osušite',
+      'Nanesite malu količinu BIOMELIS-a na željeno mjesto',
+      'Nježno umasirajte kružnim pokretima dok se ne upije',
+      'Koristite 2 puta dnevno (ujutru i navečer)',
+      'Ne ispirati nakon nanošenja',
+      'Za najbolji efekat njege koristite redovno'
     ],
     warnings: [
-      'Samo za spoljašnju upotrebu',
-      'Nanositi samo na zdravu kožu',
-      'Izbegavati kontakt sa očima',
-      'U slučaju kontakta sa očima isprati vodom',
-      'Prestati sa upotrebom ako dođe do iritacije',
+      'Samo za vanjsku upotrebu',
+      'Obratiti pažnju na preosjetljivost na bilo koji sastojak',
+      'Nanositi samo na neoštećenu kožu',
+      'Izbjegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'Ako iritacija ne prestane, potražiti savjet ljekara',
       'Čuvati na hladnom, suhom mjestu',
       'Sadrži prirodne alergene iz eteričnih ulja (Limonene, Linalool)',
-      'U slučaju iritacije konsultovati ljekara'
+      'Čuvati van domašaja djece'
     ],
     slug: 'biomelis',
     alternativeSlugs: ['biomelis-melem', 'ekcem-psorijaza', 'osjetljiva-koza'],
     availableCountries: ['rs', 'ba'],
-    seoTitle: 'BIOMELIS - Prirodna podrška protiv ekcema i psorijaze | DERMOTIN',
-    seoDescription: 'BIOMELIS od DERMOTIN brenda - prirodna formula koja podržava njegu osjetljive kože. Smiruje crvenilo, svrab i iritacije. 8 biljnih ekstrakata, bez parabena. 50ml.',
-    urgencyElements: {
-      limitedStock: 32,
-      limitedTime: '24h',
-      socialProof: {
-        recentPurchases: 89,
-        timeFrame: 'posljednja 24h'
-      }
-    },
+    seoTitle: 'BIOMELIS - Krema za njegu kože sklone ekcemima i psorijazi | DERMOTIN',
+    seoDescription: 'BIOMELIS od DERMOTIN brenda - krema za njegu kože osoba sklonih ekcemima i psorijazi. 8 biljnih ekstrakata i 5 eteričnih ulja, panthenol, urea, vitamini A i E. Bez parabena. 50ml.',
+    // Povezani proizvod: FUNGEL (srodna njega kože; kapi ne postoje u BA katalogu)
+    crossSells: ['fungel'],
+    urgencyElements: {},
     productFAQ: [
       {
         question: "Kako se koristi BIOMELIS?",
-        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno na očišćenu kožu i nežno masirati. Ne treba da se ispira - samo ostaviti da se upije. Jedna tuba od 50ml traje oko 3 sedmice pri redovnoj upotrebi.",
+        answer: "Vrlo jednostavno! Nanesite malu količinu 2 puta dnevno na očišćenu, neoštećenu kožu i nježno utrljajte. Ne ispira se - samo ostavite da se upije. Pakovanje sadrži 50ml.",
         category: "usage"
       },
       {
-        question: "Kada ću vidjeti prve rezultate?",
-        answer: "Budite realni - pravi rezultati se vide nakon 2-4 sedmice redovne upotrebe. Svaka koža je drugačija, pa budite strpljivi i ne očekujte čuda preko noći!",
-        category: "effects"
-      },
-      {
-        question: "Da li je BIOMELIS prirodan?",
-        answer: "Da! Prirodna formula koja podržava njegu osjetljive kože. Sadrži 8 ljekovitih biljaka plus 5 eteričnih ulja. Bez parabena, veštačkih boja i mirisa - idealan za prirodnu i bezbjednu njegu.",
+        question: "Šta BIOMELIS sadrži?",
+        answer: "8 biljnih ekstrakata (neven, rusa, žalfija, hajdučka trava, rastavić, ivanjsko cvijeće, kantarion i hrastova kora) i 5 eteričnih ulja (žalfija, eukaliptus, lavandin, ruzmarin i timijan), uz panthenol, ureu, glicerin i vitamine A i E.",
         category: "ingredients"
       },
       {
-        question: "Da li je bezbedan za osjetljivu kožu?",
-        answer: "Apsolutno! BIOMELIS je kreiran za najosjetljiviju kožu. Pogodan za svakodnevnu upotrebu, čak i za najdelikatniju kožu. Bez parabena i veštačkih dodataka.",
+        question: "Da li je BIOMELIS lijek?",
+        answer: "Ne. BIOMELIS je kozmetički proizvod za njegu kože osoba sklonih ekcemima i psorijazi i ne zamjenjuje terapiju koju je propisao ljekar. Za zdravstvene tegobe obratite se ljekaru.",
         category: "safety"
       },
       {
-        question: "Pomaže li kod osjetljive kože?",
-        answer: "BIOMELIS podržava njegu osjetljive kože. Smiruje crvenilo, svrab i iritacije, dok podržava regeneraciju oštećene kože.",
+        question: "Da li je BIOMELIS pogodan za svakodnevnu upotrebu?",
+        answer: "Da, BIOMELIS je namijenjen redovnoj upotrebi 2 puta dnevno. Prošao je bezbjednosnu procjenu u skladu sa EU regulativom o kozmetičkim proizvodima (EC) 1223/2009, a pH formule je 6,7.",
+        category: "safety"
+      },
+      {
+        question: "Šta mogu da očekujem od BIOMELIS-a?",
+        answer: "BIOMELIS njeguje i hidrira kožu - panthenol, urea i glicerin doprinose hidrataciji i mekšem osjećaju kože, dok biljni ekstrakti i eterična ulja doprinose osjećaju komfora i njegovanom izgledu.",
         category: "effects"
       },
       {
         question: "Kako da čuvam BIOMELIS?",
-        answer: "Čuvajte na hladnom, suhom mjestu, daleko od djece. Zatvorite dobro nakon upotrebe. Rok trajanja je označen na pakovanju.",
+        answer: "Čuvajte na hladnom, suhom mjestu, van domašaja djece. Zatvorite dobro nakon upotrebe. Rok trajanja je označen na pakovanju.",
         category: "storage"
       },
       {
         question: "Da li mogu da koristim BIOMELIS sa drugim proizvodima?",
-        answer: "Možete, ali sačekajte da se BIOMELIS upije prije nanošenja drugih proizvoda. Zbog prirodnih sastojaka, preporučujemo da testirate na maloj površini prvo.",
+        answer: "Možete - sačekajte da se BIOMELIS upije prije nanošenja drugih proizvoda. Ako imate vrlo osjetljivu kožu, prvo testirajte na maloj površini jer proizvod sadrži prirodne alergene iz eteričnih ulja.",
         category: "usage"
       },
       {
-        question: "Šta čini BIOMELIS posebnim?",
-        answer: "Prirodna formula koja može da smiri crvenilo, svrab i iritacije. Pruža zaštitu od spoljašnjih uticaja i dugotrajnu hidrataciju. Bez parabena i veštačkih dodataka - čisto prirodno!",
-        category: "ingredients"
+        question: "Da li je BIOMELIS namijenjen djeci?",
+        answer: "Ne, BIOMELIS je namijenjen odraslima. To je definirano bezbjednosnom procjenom proizvoda.",
+        category: "safety"
       }
     ],
-    testimonials: [
-      {
-        id: "bab1",
-        name: "Amira S.",
-        city: "Sarajevo",
-        rating: 5,
-        text: "BIOMELIS mi je spasio kožu! Imala sam hronične probleme sa ekcemom i ništa nije pomagalo. Nakon 3 sedmice korišćenja, koža mi je konačno mirna i zdrava. Prirodni sastojci su ono što sam tražila.",
-        verified: true,
-        productUsed: "BIOMELIS",
-        dateAdded: "2024-12-13",
-        featured: true,
-        likes: 44
-      },
-      {
-        id: "bab2",
-        name: "Kemal H.",
-        city: "Tuzla",
-        rating: 5,
-        text: "Kao neko ko se bori sa psorijazom godinama, mogu reći da je BIOMELIS najbolji proizvod koji sam probao. Smiruje svrab i crvenilo, a koža postaje mekša. Preporučujem svima!",
-        verified: true,
-        productUsed: "BIOMELIS",
-        dateAdded: "2024-12-10",
-        featured: true,
-        likes: 40
-      },
-      {
-        id: "bab3",
-        name: "Merima K.",
-        city: "Zenica",
-        rating: 5,
-        text: "Moja kćerka ima atopijski dermatitis i BIOMELIS je jedini proizvod koji joj stvarno pomaže. Prirodan je, bez kemikalija, a rezultati su vidljivi već nakon sedmicu dana korišćenja.",
-        verified: true,
-        productUsed: "BIOMELIS",
-        dateAdded: "2024-12-08",
-        featured: true,
-        likes: 37
-      },
-      {
-        id: "bab4",
-        name: "Haris M.",
-        city: "Mostar",
-        rating: 4,
-        text: "Koristim BIOMELIS već mjesec dana za problematičnu kožu na rukama. Vidim poboljšanje, manje je iritacije i crvenila. Trebalo mi je malo vremena, ali vrijedi.",
-        verified: true,
-        productUsed: "BIOMELIS",
-        dateAdded: "2024-12-05",
-        featured: false,
-        likes: 31
-      },
-      {
-        id: "bab5",
-        name: "Lejla P.",
-        city: "Banja Luka",
-        rating: 5,
-        text: "Imala sam osjetljivu kožu koja je reagovala na sve. BIOMELIS je bio blag i efikasan - konačno proizvod koji ne izaziva dodatne iritacije. Koža mi je sada zdrava i hidratisana.",
-        verified: true,
-        productUsed: "BIOMELIS",
-        dateAdded: "2024-12-02",
-        featured: true,
-        likes: 35
-      }
-    ]
+    testimonials: []
   },
 
   biowart: {
     id: 'biowart',
     name: 'BIOWART',
-    description: 'Prirodna pomoć kod uklanjanja virusnih bradavica. Djeluje lokalno, ubrzava povlačenje promjena i regeneraciju kože. Redovnom primjenom smanjuje rizik od ponovnog pojavljivanja bradavica.',
-    shortDescription: 'Biljna formula za ciljanu njegu kože',
-    heroTitle: 'Recite stop virusnim bradavicama',
-    purpose: 'Podržava regeneraciju kože pogođene virusnim bradavicama',
+    description: 'Krema za njegu kože osoba sklonih pojavi bradavica. Formula sa 7 biljnih ekstrakata - među kojima su rusa i neven u najvišim koncentracijama - i 7 eteričnih ulja, obogaćena panthenolom, ureom i vitaminima A i E. Za ciljanu, svakodnevnu njegu kože.',
+    shortDescription: 'Ciljana njega kože sklone pojavi bradavica',
+    heroTitle: 'Ciljana njega za kožu sklonu bradavicama',
+    purpose: 'Za njegu kože osoba sklonih pojavi bradavica',
     category: 'skincare',
     slug: 'biowart',
     alternativeSlugs: [],
     availableCountries: ['rs', 'ba'],
-    seoTitle: 'BIOWART - Prirodna pomoć protiv virusnih bradavica | DERMOTIN',
-    seoDescription: 'BIOWART od DERMOTIN brenda - prirodna formula sa 6 biljnih ekstrakata i 7 eteričnih ulja za njegu kože pogođene virusnim bradavicama. Bez parabena, pogodan za osjetljivu kožu. 50ml.',
-    urgencyElements: {
-      limitedStock: 15,
-      limitedTime: '24h',
-      socialProof: {
-        recentPurchases: 23,
-        timeFrame: 'poslednja 24h'
-      }
-    },
+    seoTitle: 'BIOWART - Krema za njegu kože sklone pojavi bradavica | DERMOTIN',
+    seoDescription: 'BIOWART od DERMOTIN brenda - krema za njegu kože osoba sklonih pojavi bradavica. 7 biljnih ekstrakata (rusa, neven, hrastova kora) i 7 eteričnih ulja, panthenol, urea, vitamini A i E. Bez parabena. 50ml.',
+    // Povezani proizvod: FUNGEL (srodna njega kože)
+    crossSells: ['fungel'],
+    urgencyElements: {},
     images: {
       main: '/images/products/biowart/biowart-old-product-image.png',
       gallery: [
@@ -552,14 +407,14 @@ export const PRODUCTS: Record<string, Product> = {
       }
     ],
     benefits: [
-      'Podržava regeneraciju kože pogođene virusnim bradavicama',
-      'Smiruje iritacije i ubrzava zarastanje kože',
-      'Pruža zaštitu od spoljašnjih uticaja',
-      'Pogodan za svakodnevnu upotrebu, čak i na osjetljivoj koži',
-      'Bez parabena, veštačkih boja i mirisa',
-      'Idealan za prirodnu i bezbjednu njegu kože',
-      'Leave-on formula - ne ispira se, djeluje kontinuirano',
-      'Sadrži 6 ljekovitih biljaka i 7 eteričnih ulja'
+      'Namjenski razvijena za njegu kože sklone pojavi bradavica',
+      'Rusa (Chelidonium majus) i neven u najvišim koncentracijama među biljnim ekstraktima',
+      'Ukupno 7 biljnih ekstrakata: rusa, neven, hajdučka trava, ivanjsko cvijeće, kantarion, hrastova kora i žalfija',
+      '7 eteričnih ulja: žalfija, eukaliptus, nana, karanfilić, timijan, zvjezdasti anis i limun',
+      'Panthenol, urea i glicerin doprinose hidrataciji kože',
+      'Obogaćena vitaminima A i E i uljem slatkog badema',
+      'Bez parabena i bez vještačkih boja',
+      'Bezbjednosno procijenjena u skladu sa EU regulativom (EC) 1223/2009'
     ],
     ingredients: [
       // Key active ingredients first - based on BIOWART documentation
@@ -574,9 +429,9 @@ export const PRODUCTS: Record<string, Product> = {
       'sage-oil', // Eterično ulje žalfije
       'eucalyptus-oil', // Eterično ulje eukaliptusa
       'peppermint-oil', // Eterično ulje nane
-      'clove-oil', // Eterično ulje karanfilića
+      'clove-bud-oil', // Eterično ulje karanfilića (pupoljak)
       'thyme-oil', // Eterično ulje timijana
-      'anise-oil', // Eterično ulje anisa
+      'anise-oil', // Eterično ulje zvjezdastog anisa
       'lemon-oil', // Eterično ulje limuna
       // Vitamins and nutrients
       'panthenol', // Pro-Vitamin B5 (0.91%)
@@ -586,151 +441,84 @@ export const PRODUCTS: Record<string, Product> = {
       'vitamin-a', // Retinyl Palmitate
       // Base components
       'aqua',
+      'alcohol', // U sastavu biljne tinkture
       'stearic-acid',
       'glycerin', // 1.83%
-      'castor-oil', // Ricinus Communis Seed Oil
       'cetyl-alcohol',
       'glyceryl-stearate',
-      'synthetic-beeswax', // Cera Alba
+      'synthetic-beeswax',
       // Functional ingredients
       'triethanolamine',
       'carbomer',
       // Preservatives
       'phenoxyethanol',
+      'ethylhexylglycerin',
       'sodium-benzoate',
       'potassium-sorbate'
     ],
-    usage: 'Nanositi tanak sloj BIOWART melema na čistu i suhu kožu dva do tri puta dnevno ili po potrebi. Pogodan za svakodnevnu upotrebu. Sadržaj: 50ml.',
+    usage: 'Nanositi tanak sloj na čistu i suhu kožu 1-2 puta dnevno. Ne ispirati nakon nanošenja. Sadržaj: 50ml.',
+    usageSteps: [
+      'Očistite i osušite kožu prije nanošenja',
+      'Nanesite tanak sloj BIOWART-a na željeno mjesto',
+      'Ostavite da se upije',
+      'Koristite 1-2 puta dnevno',
+      'Ne ispirati nakon nanošenja',
+      'Za najbolji efekat njege koristite redovno'
+    ],
     warnings: [
-      'Samo za spoljašnju upotrebu',
-      'Izbjegavati kontakt sa očima',
-      'U slučaju preosjetljivosti ili alergijske reakcije, prekinuti upotrebu i konsultovati se sa liječnikom',
-      'Sadrži alergene: Limonene, Linalool, Eugenol, Citral'
+      'Samo za vanjsku upotrebu',
+      'Obratiti pažnju na preosjetljivost na bilo koji sastojak',
+      'Izbjegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'Ako iritacija ne prestane, potražiti savjet ljekara',
+      'Čuvati van domašaja djece',
+      'Sadrži prirodne alergene iz eteričnih ulja: Limonene, Linalool, Eugenol, Citral'
     ],
     productFAQ: [
       {
         question: 'Kako se koristi BIOWART?',
-        answer: 'Nanositi tanak sloj BIOWART melema na čistu i suhu kožu dva do tri puta dnevno ili po potrebi. Ne ispira se nakon nanošenja.',
+        answer: 'Nanesite tanak sloj na čistu i suhu kožu 1-2 puta dnevno. Ne ispira se nakon nanošenja. Pakovanje sadrži 50ml.',
         category: 'usage'
       },
       {
-        question: 'Koji su glavni aktivni sastojci u BIOWART proizvodu?',
-        answer: 'BIOWART sadrži 6 ljekovitih biljaka (rus, neven, hajdučka trava, žalfija, kantarion, ivanjsko cvijeće, hrastova kora) i 7 eteričnih ulja (žalfija, eukaliptus, nana, karanfilić, timijan, anis, limun), obogaćen vitaminima A, E i B5.',
+        question: 'Koji su glavni sastojci BIOWART-a?',
+        answer: 'BIOWART sadrži 7 biljnih ekstrakata (rusa, neven, hajdučka trava, ivanjsko cvijeće, kantarion, hrastova kora i žalfija) i 7 eteričnih ulja (žalfija, eukaliptus, nana, karanfilić, timijan, zvjezdasti anis i limun), uz panthenol, ureu i vitamine A i E. Rusa i neven su u najvišim koncentracijama.',
         category: 'ingredients'
       },
       {
-        question: 'Da li je BIOWART bezbijedan za upotrebu?',
-        answer: 'Da, BIOWART je EU-kompatibilan kozmetički proizvod koji je prošao sve potrebne testove bezbjednosti. Bez parabena, veštačkih boja i mirisa. Pogodan za svakodnevnu upotrebu.',
+        question: 'Da li je BIOWART lijek?',
+        answer: 'Ne. BIOWART je kozmetički proizvod za njegu kože osoba sklonih pojavi bradavica i ne zamjenjuje ljekarsku intervenciju. Za zdravstvene tegobe obratite se ljekaru.',
         category: 'safety'
       },
       {
-        question: 'Za koje tipove kože je pogodan BIOWART?',
-        answer: 'BIOWART je pogodan za sve tipove kože, uključujući i osjetljivu kožu. Formula je posebno dizajnirana za njegu kože pogođene virusnim bradavicama.',
-        category: 'usage'
+        question: 'Da li je BIOWART bezbjedan za upotrebu?',
+        answer: 'Da, BIOWART je prošao bezbjednosnu procjenu u skladu sa EU regulativom o kozmetičkim proizvodima (EC) 1223/2009. Bez parabena i bez vještačkih boja. Namijenjen je odraslima.',
+        category: 'safety'
       },
       {
-        question: 'Kada mogu očekivati rezultate?',
-        answer: 'Rezultati mogu biti individualni. Preporučuje se redovna upotreba 2-3 puta dnevno. Za najbolje rezultate, koristiti kontinuirano prema uputstvu.',
-        category: 'effects'
+        question: 'Zašto baš rusa i neven?',
+        answer: 'Rusa (Chelidonium majus) je tradicionalno najpoznatija biljka u kontekstu njege kože sklone bradavicama, a neven je klasik u njezi kože. U BIOWART formuli upravo ove dvije biljke su u najvišim koncentracijama među ekstraktima.',
+        category: 'ingredients'
       }
     ],
-    testimonials: [
-      {
-        id: "biowart_ba1",
-        name: "Fadila K.",
-        city: "Sarajevo",
-        rating: 5,
-        text: "BIOWART mi je pomogao da se riješim upornih bradavica na rukama. Probala sam razne načine, ali ovaj prirodni melem je konačno donio rezultate. Nakon mjesec dana redovne upotrebe, koža mi je čista i glatka!",
-        verified: true,
-        productUsed: "BIOWART",
-        dateAdded: "2024-12-14",
-        featured: true,
-        likes: 48
-      },
-      {
-        id: "biowart_ba2",
-        name: "Haris T.",
-        city: "Zenica",
-        rating: 5,
-        text: "Imao sam bradavice na prstima koje su me gnjavile godinama. BIOWART sa rusom i nevenom je bio prava stvar - prirodno, bez bola i stvarno efikasno. Preporučujem svima!",
-        verified: true,
-        productUsed: "BIOWART",
-        dateAdded: "2024-12-11",
-        featured: true,
-        likes: 41
-      },
-      {
-        id: "biowart_ba3",
-        name: "Emina S.",
-        city: "Tuzla",
-        rating: 5,
-        text: "Moje dijete je imalo bradavicu na stopalu i jako ga je bolilo. BIOWART je bio nježan, bez iritacije, a bradavica je nestala nakon tri sedmice. Prirodni sastojci su mi bili veoma važni.",
-        verified: true,
-        productUsed: "BIOWART",
-        dateAdded: "2024-12-08",
-        featured: true,
-        likes: 45
-      },
-      {
-        id: "biowart_ba4",
-        name: "Mirza J.",
-        city: "Mostar",
-        rating: 4,
-        text: "Dobar proizvod za bradavice. Trebalo mi je oko mjesec dana da vidim potpunu promjenu, ali prirodna formula vrijedi čekanja. Bez agresivnih kemikalija.",
-        verified: true,
-        productUsed: "BIOWART",
-        dateAdded: "2024-12-05",
-        featured: false,
-        likes: 33
-      },
-      {
-        id: "biowart_ba5",
-        name: "Azra M.",
-        city: "Banja Luka",
-        rating: 5,
-        text: "Skeptična sam bila prema prirodnim proizvodima, ali BIOWART me pozitivno iznenadio. Bradavica na mom prstu je nestala nakon mjesec dana. Sada preporučujem svim prijateljima.",
-        verified: true,
-        productUsed: "BIOWART",
-        dateAdded: "2024-12-02",
-        featured: true,
-        likes: 39
-      },
-      {
-        id: "biowart_ba6",
-        name: "Nedim R.",
-        city: "Bijeljina",
-        rating: 5,
-        text: "Kao neko ko radi sa rukama, bradavice su mi bile veliki problem. BIOWART sa 7 eteričnih ulja je djelovao brzo i efikasno. Bez neželjenih efekata, a koža je sada potpuno čista.",
-        verified: true,
-        productUsed: "BIOWART",
-        dateAdded: "2024-11-29",
-        featured: false,
-        likes: 36
-      }
-    ]
+    testimonials: []
   },
 
   bioroid: {
     id: 'bioroid',
     name: 'BIOROID',
-    description: 'Može da pruža olakšanje kod bola, svraba i peckanja izazvanih hemoroidima. Zahvaljujući biljnim ekstraktima pomaže u smanjenju otoka i iritacije. Redovna upotreba doprinosi regeneraciji tkiva i boljoj udobnosti tokom dana.',
-    shortDescription: 'Blaga podrška osjetljivim regijama',
-    heroTitle: 'Recite stop hemoroidima',
-    purpose: 'Pomaže u njezi i zaštiti osjetljive kože analnog područja',
+    description: 'Krema za njegu kože i sluzokože analne regije. Formula sa 6 biljnih ekstrakata (hajdučka trava, divlji kesten, neven, pastirska torbica, zdravac i kamilica) i mentolom koji pruža osjećaj svježine. Biljnog je porijekla i može se koristiti duži vremenski period bez prekida.',
+    shortDescription: 'Nježna njega osjetljive intimne regije',
+    heroTitle: 'Svakodnevni komfor i diskretna njega',
+    purpose: 'Za njegu kože i sluzokože analne regije',
     category: 'skincare',
     slug: 'bioroid',
     alternativeSlugs: [],
     availableCountries: ['rs', 'ba'],
-    seoTitle: 'BIOROID - Prirodna podrška za njegu analne kože | DERMOTIN',
-    seoDescription: 'BIOROID od DERMOTIN brenda - prirodna formula sa biljnim ekstraktima za njegu osjetljive kože analnog područja. Smiruje iritacije, podržava regeneraciju. Bez parabena. 50ml.',
-    urgencyElements: {
-      limitedStock: 12,
-      limitedTime: '24h',
-      socialProof: {
-        recentPurchases: 18,
-        timeFrame: 'zadnja 24h'
-      }
-    },
+    seoTitle: 'BIOROID - Krema za njegu kože analne regije | DERMOTIN',
+    seoDescription: 'BIOROID od DERMOTIN brenda - krema za njegu kože i sluzokože analne regije. 6 biljnih ekstrakata, mentol za osjećaj svježine, panthenol i vitamini A i E. Bez parabena. 50ml.',
+    // Povezani proizvod: BIOMELIS (njega kože iz iste linije; kapi ne postoje u BA katalogu)
+    crossSells: ['biomelis'],
+    urgencyElements: {},
     images: {
       main: '/images/products/bioroid/bioroid-old-product-image.png',
       gallery: [
@@ -775,14 +563,14 @@ export const PRODUCTS: Record<string, Product> = {
       }
     ],
     benefits: [
-      'Smiruje osjećaj svraba, pečenja i nelagodnosti',
-      'Podržava regeneraciju osjetljive kože uz održavanje hidratacije',
-      'Stvara nježnu zaštitnu barijeru protiv vanjskih faktora',
-      'Pogodan za svakodnevnu upotrebu, čak i na osjetljivoj koži',
-      'Bez parabena, veštačkih boja i mirisa',
-      'Prirodan i bezbijedan izbor za njegu kože',
-      'Dugotrajno umirujući i osvježavajući osjećaj',
-      'Sadrži pažljivo odabrane biljne ekstrakte i eterična ulja'
+      'Namjenski razvijena za njegu kože i sluzokože analne regije',
+      'Sadrži 6 biljnih ekstrakata: hajdučka trava, divlji kesten, neven, pastirska torbica, zdravac i kamilica',
+      'Mentol pruža osjećaj svježine i prijatnog hlađenja',
+      'Eterična ulja pačulija, lavandina, čajnog drveta i karanfilića',
+      'Panthenol, glicerin i vitamini A i E doprinose hidrataciji i njezi',
+      'Biljnog porijekla - može se koristiti duži vremenski period bez prekida',
+      'Bez parabena i bez vještačkih boja',
+      'Bezbjednosno procijenjena u skladu sa EU regulativom (EC) 1223/2009'
     ],
     ingredients: [
       // Key active herbal extracts - based on BIOROID documentation
@@ -795,17 +583,18 @@ export const PRODUCTS: Record<string, Product> = {
       // Vitamins and nutrients
       'panthenol', // Pro-Vitamin B5
       'vitamin-e', // Tocopheryl Acetate
+      'tocopherol', // Tocopherol (prirodni vitamin E, antioksidans iz CPSR)
       'vitamin-a', // Retinyl Palmitate
       'sweet-almond-oil', // Prunus amygdalus dulcis oil
       'menthol', // Menthol for cooling effect
       // Essential oils blend
-      'lavender-oil', // Lavandula angustifolia oil
-      'tea-tree-oil', // Melaleuca alternifolia leaf oil
-      'patchouli-oil', // Pogostemon cablin leaf oil
-      'clove-oil', // Eugenia caryophyllus leaf oil
+      'patchouli-oil', // Pogostemon Cablin Leaf Oil
+      'lavender-oil', // Lavandula Hybrida Oil (lavandin)
+      'tea-tree-oil', // Melaleuca Alternifolia Leaf Oil
+      'clove-oil', // Eugenia Caryophyllus Leaf Oil
       // Base components
       'aqua',
-      'alcohol',
+      'alcohol', // U sastavu biljne tinkture
       'stearic-acid',
       'glycerin',
       'cetyl-alcohol',
@@ -815,107 +604,65 @@ export const PRODUCTS: Record<string, Product> = {
       // Functional ingredients
       'triethanolamine',
       'carbomer',
+      'sodium-gluconate',
       // Preservatives
       'phenoxyethanol',
       'ethylhexylglycerin',
-      'potassium-sorbate',
-      // Natural components
-      'limonene'
+      'potassium-sorbate'
     ],
-    usage: 'Nanositi tanak sloj BIOROID kreme dva puta dnevno na čistu i suhu kožu analnog područja. Za najbolje rezultate, nanositi nakon defekacije i svakodnevne higijene. Pogodan za kontinuiranu, dugotrajnu upotrebu bez prekida. Sadržaj: 50ml.',
+    usage: 'Nanositi dva puta dnevno, uz redovnu higijenu. Krema je biljnog porijekla i može se koristiti duži vremenski period bez prekida. Sadržaj: 50ml.',
+    usageSteps: [
+      'Održavajte redovnu higijenu regije',
+      'Nanesite kremu na čistu i suhu kožu',
+      'Koristite dva puta dnevno',
+      'Operite ruke nakon upotrebe',
+      'Krema se može koristiti duži vremenski period bez prekida'
+    ],
     warnings: [
-      'Samo za vanjsku upotrebu',
-      'Izbjegavati kontakt sa očima. Ukoliko dođe do kontakta, temeljno isprati vodom',
-      'Ne koristiti ukoliko ste preosjetljivi na bilo koji od sastojaka',
-      'U slučaju trajne iritacije, prekinuti upotrebu i potražiti liječničku pomoć',
-      'Čuvati van dosega djece',
-      'Čuvati na sobnoj temperaturi'
+      'Proizvod je namijenjen isključivo za vanjsku upotrebu',
+      'Obratiti pažnju na preosjetljivost na bilo koji sastojak',
+      'Oprati ruke nakon upotrebe',
+      'Izbjegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'U slučaju produžene iritacije potražiti medicinsku pomoć',
+      'Čuvati van domašaja djece',
+      'Sadrži prirodne alergene iz eteričnih ulja (Limonene, Eugenol, Linalool)'
     ],
     productFAQ: [
       {
         question: 'Kako se koristi BIOROID?',
-        answer: 'Nanositi tanak sloj BIOROID kreme dva puta dnevno na čistu i suhu kožu analnog područja. Za najbolje rezultate, nanositi nakon defekacije i svakodnevne higijene.',
+        answer: 'Nanesite kremu dva puta dnevno na čistu kožu, uz redovnu higijenu. Krema je biljnog porijekla i može se koristiti duži vremenski period bez prekida.',
         category: 'usage'
       },
       {
-        question: 'Koji su glavni aktivni sastojci u BIOROID proizvodu?',
-        answer: 'BIOROID sadrži pažljivo odabrane biljne ekstrakte (hajdučka trava, divlji kesten, neven, pastirska torbica, zdravac, kamilica) i eterična ulja (lavanda, čajno drvo, pačuli, karanfilić), obogaćen vitaminima A, E i B5.',
+        question: 'Koji su glavni sastojci BIOROID-a?',
+        answer: 'BIOROID sadrži 6 biljnih ekstrakata (hajdučka trava, divlji kesten, neven, pastirska torbica, zdravac i kamilica), mentol za osjećaj svježine i eterična ulja pačulija, lavandina, čajnog drveta i karanfilića, uz panthenol i vitamine A i E.',
         category: 'ingredients'
       },
       {
-        question: 'Da li je BIOROID bezbijedan za dugotrajnu upotrebu?',
-        answer: 'Da, BIOROID je kozmetički proizvod na biljnoj osnovi pogodan za kontinuiranu svakodnevnu upotrebu. Bez parabena, veštačkih boja i mirisa.',
+        question: 'Da li je BIOROID bezbjedan za dugotrajnu upotrebu?',
+        answer: 'Da, krema je biljnog porijekla i prema uputstvu sa ambalaže može se koristiti duži vremenski period bez prekida. Prošla je bezbjednosnu procjenu u skladu sa EU regulativom (EC) 1223/2009.',
         category: 'safety'
       },
       {
-        question: 'Da li se može koristiti na osjetljivoj koži?',
-        answer: 'Da, formula je posebno dizajnirana za nježnu kožu analnog područja i pogodna je za osjetljivu kožu.',
-        category: 'usage'
+        question: 'Kakav je osjećaj nakon nanošenja?',
+        answer: 'Zahvaljujući mentolu, krema pruža osjećaj svježine i prijatnog hlađenja, a panthenol i glicerin doprinose hidrataciji i osjećaju komfora.',
+        category: 'effects'
       },
       {
-        question: 'Da li BIOROID zamjenjuje medicinsko liječenje?',
-        answer: 'Ne. BIOROID je kozmetički proizvod, a ne lijek. Za medicinske probleme konsultirajte se sa liječnikom.',
+        question: 'Da li je BIOROID lijek?',
+        answer: 'Ne. BIOROID je kozmetički proizvod za njegu kože, a ne lijek. Za zdravstvene tegobe obratite se ljekaru.',
         category: 'safety'
       }
     ],
-    testimonials: [
-      {
-        id: "bioroid_t1",
-        name: "Marija S.",
-        city: "Sarajevo",
-        rating: 5,
-        text: "BIOROID mi je stvarno pomogao sa svakodnevnom nelagodnošću. Prirodni sastojci su mi bili važni, a krema je nježna i efikasna. Koristim je već mjesec dana bez problema.",
-        verified: true,
-        productUsed: "BIOROID",
-        dateAdded: "2024-12-15",
-        featured: true,
-        likes: 42
-      },
-      {
-        id: "bioroid_t2",
-        name: "Jelena P.",
-        city: "Tuzla",
-        rating: 5,
-        text: "Kao neko ko ima osjetljivu kožu, BIOROID je bio pravo rješenje. Nema jakih mirisa, ne iritira, a stvarno pomaže. Preporučujem svima koji traže prirodno rješenje.",
-        verified: true,
-        productUsed: "BIOROID",
-        dateAdded: "2024-12-10",
-        featured: true,
-        likes: 35
-      },
-      {
-        id: "bioroid_t3",
-        name: "Stefan M.",
-        city: "Banja Luka",
-        rating: 4,
-        text: "Dobra krema za svakodnevnu upotrebu. Smiruje iritacije i ima prijatan osvježavajući osjećaj. Cijena je razumna za kvalitet koji dobijate.",
-        verified: true,
-        productUsed: "BIOROID",
-        dateAdded: "2024-12-12",
-        featured: false,
-        likes: 28
-      },
-      {
-        id: "bioroid_t4",
-        name: "Ana T.",
-        city: "Mostar",
-        rating: 5,
-        text: "Prirodni sastojci poput nevena i kamilice čine čuda za osjetljivu kožu. BIOROID je nježan, efikasan i bez neželjenih efekata. Već sam preporučila prijateljicama.",
-        verified: true,
-        productUsed: "BIOROID",
-        dateAdded: "2024-12-05",
-        featured: true,
-        likes: 38
-      }
-    ]
+    testimonials: []
   },
   fungomax: {
     id: 'fungomax',
     name: 'FUNGOMAX',
-    description: 'Djeluje dubinski na gljivične infekcije noktiju i kože stopala. Prodire u nokatnu ploču i pomaže u njenom jačanju i obnavljanju. Dugotrajnom upotrebom obezbijeđuje zaštitu i zdrav izgled noktiju.',
-    shortDescription: 'Intenzivna njega noktiju i stopala',
-    heroTitle: 'Recite stop gljivicama na noktima',
-    purpose: 'Pomaže koži i noktima sklonim gljivičnim infekcijama',
+    description: 'Serum za njegu kože i noktiju osoba sklonih pojavi gljivica. Koncentrovana tečna formula sa kapaljkom za preciznu, ciljanu primjenu - preko 79% formule čini biljna tinktura sa 4 ekstrakta, uz alantoin i čak 20% glicerina za njegovan izgled kože i noktiju.',
+    shortDescription: 'Serum za ciljanu njegu noktiju i kože',
+    heroTitle: 'Precizna serum-njega za nokte i kožu',
+    purpose: 'Za njegu kože i noktiju osoba sklonih pojavi gljivica',
     category: 'skincare',
     images: {
       main: '/images/products/fungomax/fungomax-box-and-product-mockup.png',
@@ -959,177 +706,103 @@ export const PRODUCTS: Record<string, Product> = {
       }
     ],
     benefits: [
-      'Djeluje efikasno na problematične regije',
-      'Smanjuje rizik od širenja gljivica',
-      'Obogaćen prirodnim sastojcima',
-      'Bez parabena i veštačkih boja',
-      'Pogodan za svakodnevnu i dugotrajnu upotrebu',
-      'Idealan u kombinaciji sa FUNGEL kremom',
-      'Koncentrisana formula u praktičnim kapima',
-      'Kombinuje snagu biljnih ekstrakata i eteričnih ulja'
+      'Namjenski razvijen za njegu kože i noktiju sklonih pojavi gljivica',
+      'Koncentrovana tečna formula sa kapaljkom za preciznu, ciljanu primjenu',
+      'Visok udio biljne tinkture - preko 79% formule',
+      '4 biljna ekstrakta: timijan, orahov list, žalfija i hrastova kora',
+      '3 eterična ulja: lavandin, ruzmarin i karanfilić',
+      'Alantoin i čak 20% glicerina doprinose hidrataciji i njegovanom izgledu',
+      'Idealan u kombinaciji sa FUNGEL kremom kao rutina njege',
+      'Bezbjednosno procijenjen u skladu sa EU regulativom (EC) 1223/2009'
     ],
     ingredients: [
       // Key active ingredients first
-      'quercus-bark-extract',
       'thymus-extract',
       'juglans-leaf-extract',
       'salvia-extract',
-      'clove-oil',
+      'quercus-bark-extract',
       'lavender-oil',
       'rosemary-oil',
+      'clove-oil',
       'allantoin',
       'glycerin',
       // Base components
       'aqua',
       'alcohol'
     ],
-    usage: 'Dva puta dnevno nanijeti nekoliko kapi FUNGOMAX seruma direktno na kožu ili nokte zahvaćene gljivicama, zatim blago utrljati. Preporučuje se kombinovanje sa FUNGEL kremom za maksimalne rezultate. Sadržaj: 50ml.',
+    usage: 'Nakapati dva puta dnevno i nježno utrljati na ciljano područje. Ne ispirati nakon nanošenja. Sadržaj: 50ml.',
     usageSteps: [
-      'Očistite i osušite pogođeno mjesto',
-      'Nanesite nekoliko kapi FUNGOMAX seruma direktno na kožu ili nokte',
-      'Blago utrljajte serum u kožu',
+      'Očistite i osušite kožu ili nokte prije nanošenja',
+      'Nakapajte nekoliko kapi seruma na željeno mjesto',
+      'Nježno utrljajte serum',
       'Koristite 2 puta dnevno (ujutru i navečer)',
-      'Za najbolje rezultate kombinirajte sa FUNGEL kremom',
-      'Redovno koristiti najmanje 2-4 sedmice'
+      'Ne ispirati nakon nanošenja',
+      'Za kompletnu rutinu njege kombinujte sa FUNGEL kremom'
     ],
     warnings: [
-      'Samo za vanjsku upotrebu',
+      'Proizvod je namijenjen isključivo za vanjsku upotrebu',
+      'Obratiti pažnju na preosjetljivost na bilo koji sastojak',
       'Ne nanositi na otvorene rane',
-      'Izbjegavati kontakt sa očima',
-      'U slučaju kontakta sa očima isprati sa dosta vode',
-      'Nakon upotrebe oprati ruke',
-      'U slučaju preosjetljivosti ili iritacije prekinuti upotrebu',
-      'Konsultovati se sa liječnikom u slučaju iritacije',
-      'Čuvati van domašaja djece, na sobnoj temperaturi'
+      'Oprati ruke nakon upotrebe',
+      'Izbjegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'U slučaju produžene iritacije potražiti medicinsku pomoć',
+      'Čuvati na suhom mjestu, van domašaja djece',
+      'Sadrži prirodne alergene iz eteričnih ulja (Eugenol, Linalool, Limonene)'
     ],
     slug: 'fungomax',
-    alternativeSlugs: ['fungomax-serum', 'gljivice-serum', 'antifungal-serum'],
+    alternativeSlugs: ['fungomax-serum', 'gljivice-serum', 'njega-noktiju-serum'],
     availableCountries: ['rs', 'ba'],
     seoTitle: 'FUNGOMAX - Serum za njegu kože i noktiju sklonih gljivicama | DERMOTIN',
-    seoDescription: 'FUNGOMAX od DERMOTIN brenda - prirodna formula sa ekstraktima hrastove kore, majčine dušice i eteričnim uljima. Koncentrisani serum za kožu i nokte sklone gljivičnim infekcijama. 50ml.',
-    urgencyElements: {
-      limitedStock: 35,
-      limitedTime: '24h',
-      socialProof: {
-        recentPurchases: 89,
-        timeFrame: 'zadnja 24h'
-      }
+    seoDescription: 'FUNGOMAX od DERMOTIN brenda - serum sa kapaljkom za njegu kože i noktiju osoba sklonih pojavi gljivica. 4 biljna ekstrakta (timijan, orahov list, žalfija, hrastova kora), alantoin i 20% glicerina. 50ml.',
+    // Povezani proizvodi: FUNGEL (ista namjena, krema), BIOWART
+    upsells: {
+      products: ['fungel'],
+      discountPercentage: 10
     },
+    crossSells: ['fungel', 'biowart'],
+    urgencyElements: {},
     productFAQ: [
       {
         question: "Kako se koristi FUNGOMAX serum?",
-        answer: "Vrlo jednostavno! Nanositi 2 puta dnevno nekoliko kapi direktno na pogođenu kožu ili nokte, zatim blago utrljati. Ne treba da se ispira - samo ostaviti da se upije. Jedna bočica od 50ml traje oko 3 sedmice pri redovnoj upotrebi.",
+        answer: "Vrlo jednostavno! Nakapajte 2 puta dnevno nekoliko kapi na ciljano područje i nježno utrljajte. Ne ispira se. Bočica sa kapaljkom sadrži 50ml.",
         category: "usage"
       },
       {
-        question: "Kada ću vidjeti prve rezultate?",
-        answer: "Budite realni - pravi rezultati se vide nakon 2-4 sedmice redovne upotrebe. Svaka koža je drugačija, pa budite strpljivi i ne očekujte čuda preko noći!",
-        category: "effects"
-      },
-      {
-        question: "Da li je FUNGOMAX prirodan?",
-        answer: "Da! Prirodna formula koja može pomoći koži i noktima sklonim gljivičnim infekcijama. Sadrži ekstrakte hrastove kore, majčine dušice, orahovog lista i žalfije plus eterična ulja. Bez parabena i veštačkih boja.",
+        question: "Šta FUNGOMAX sadrži?",
+        answer: "4 biljna ekstrakta (timijan, orahov list, žalfija i hrastova kora) i 3 eterična ulja (lavandin, ruzmarin i karanfilić), uz alantoin i čak 20% glicerina. Biljna tinktura čini preko 79% formule.",
         category: "ingredients"
       },
       {
-        question: "Da li je bezbijedan za svakodnevnu upotrebu?",
-        answer: "Apsolutno! FUNGOMAX je testiran i odobren za svakodnevnu upotrebu. Prirodni sastojci su blagi prema koži, a serum formula omogućava ciljanu primjenu.",
+        question: "Da li je FUNGOMAX lijek?",
+        answer: "Ne. FUNGOMAX je kozmetički proizvod za njegu kože i noktiju osoba sklonih pojavi gljivica. Ako imate zdravstveni problem, obratite se ljekaru ili farmaceutu.",
+        category: "safety"
+      },
+      {
+        question: "Da li je bezbjedan za svakodnevnu upotrebu?",
+        answer: "Da, FUNGOMAX je namijenjen redovnoj upotrebi 2 puta dnevno. Prošao je bezbjednosnu procjenu u skladu sa EU regulativom o kozmetičkim proizvodima (EC) 1223/2009.",
         category: "safety"
       },
       {
         question: "Mogu li ga koristiti sa FUNGEL kremom?",
-        answer: "Da, čak se i preporučuje! FUNGOMAX serum prodire dublje u kožu, dok FUNGEL krem pruža površinsku zaštitu. Kombinacija daje najbolje rezultate.",
+        answer: "Da! FUNGOMAX serum sa kapaljkom je zgodan za preciznu, ciljanu primjenu, a FUNGEL krema za njegu šire površine kože. Zajedno čine kompletnu rutinu njege.",
         category: "usage"
       },
       {
         question: "Kako da čuvam FUNGOMAX?",
-        answer: "Čuvajte na sobnoj temperaturi, daleko od djece. Zatvorite dobro nakon upotrebe. Rok trajanja je označen na pakovanju.",
+        answer: "Čuvajte na suhom mjestu, van domašaja djece. Zatvorite dobro nakon upotrebe. Rok trajanja je označen na pakovanju.",
         category: "storage"
       },
       {
         question: "Koja je razlika između FUNGOMAX-a i FUNGEL-a?",
-        answer: "FUNGOMAX je koncentrisani serum u kapima za ciljanu primjenu, dok je FUNGEL krem za široku površinu. FUNGOMAX prodire dublje, FUNGEL pruža dugotrajnu zaštitu. Najbolje je koristiti ih zajedno!",
+        answer: "FUNGOMAX je tečni serum sa kapaljkom za preciznu, ciljanu primjenu na nokte i manje površine. FUNGEL je krema/emulzija pogodna za njegu šire površine kože. Mnogi korisnici ih kombinuju.",
         category: "usage"
       },
       {
-        question: "Šta čini FUNGOMAX tako efikasnim?",
-        answer: "Kombinacija moćnih biljnih ekstrakata (hrastova kora, majčina dušica) sa eteričnim uljima (karanfilić, lavanda, ruzmarin) u koncentrisanoj serum formuli. Sve prirodno, bez štetnih kemikalija!",
-        category: "ingredients"
+        question: "Da li je FUNGOMAX namijenjen djeci?",
+        answer: "Ne, FUNGOMAX je namijenjen odraslima. To je definirano bezbjednosnom procjenom proizvoda.",
+        category: "safety"
       }
     ],
-    testimonials: [
-      {
-        id: "f_ba1",
-        name: "Emir M.",
-        city: "Sarajevo",
-        rating: 5,
-        text: "FUNGOMAX serum je bio prava stvar za moje probleme sa gljivicama na noktima. Koncentrisana formula djeluje brže od kremova. Koristim ga sa FUNGEL kremom i rezultati su fantastični!",
-        verified: true,
-        productUsed: "FUNGOMAX",
-        dateAdded: "2024-12-15",
-        featured: true,
-        likes: 43
-      },
-      {
-        id: "f_ba2",
-        name: "Amela P.",
-        city: "Tuzla",
-        rating: 5,
-        text: "Kao neko ko ima osjetljivu kožu, FUNGOMAX mi je pomogao bez iritacije. Hrastova kora i majčina dušica su poznate po antimikrobnom djelovanju. Prirodno i efikasno!",
-        verified: true,
-        productUsed: "FUNGOMAX",
-        dateAdded: "2024-12-12",
-        featured: true,
-        likes: 39
-      },
-      {
-        id: "f_ba3",
-        name: "Kemal J.",
-        city: "Mostar",
-        rating: 5,
-        text: "Probao sam mnoge proizvode, ali FUNGOMAX je jedini koji je stvarno pomogao. Serum formula se lako nanosi, brzo se upija i nema ljepljiv osjećaj. Preporučujem!",
-        verified: true,
-        productUsed: "FUNGOMAX",
-        dateAdded: "2024-12-10",
-        featured: true,
-        likes: 36
-      },
-      {
-        id: "f_ba4",
-        name: "Merima S.",
-        city: "Zenica",
-        rating: 4,
-        text: "Koristim FUNGOMAX već mjesec dana za problematičnu kožu na stopalima. Vidim poboljšanje, a kombinacija sa FUNGEL kremom daje odlične rezultate. Cijena je razumna.",
-        verified: true,
-        productUsed: "FUNGOMAX",
-        dateAdded: "2024-12-08",
-        featured: false,
-        likes: 31
-      },
-      {
-        id: "f_ba5",
-        name: "Adnan R.",
-        city: "Banja Luka",
-        rating: 5,
-        text: "Kao sportista, često imam problema sa gljivicama. FUNGOMAX serum je praktičan za ciljanu primjenu, a eterična ulja daju prijatan miris. Koristim ga preventivno.",
-        verified: true,
-        productUsed: "FUNGOMAX",
-        dateAdded: "2024-12-05",
-        featured: true,
-        likes: 34
-      },
-      {
-        id: "f_ba6",
-        name: "Lejla T.",
-        city: "Tuzla",
-        rating: 5,
-        text: "Kao dermatolog, često preporučujem FUNGOMAX pacijentima. Prirodni sastojci poput allantoina za regeneraciju i glicerina za hidrataciju čine čuda. Profesionalno rješenje.",
-        verified: true,
-        productUsed: "FUNGOMAX",
-        dateAdded: "2024-12-02",
-        featured: true,
-        likes: 41
-      }
-    ]
+    testimonials: []
   }
 };

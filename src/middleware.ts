@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { geolocation } from '@vercel/functions';
+import { resolveLegacyPath } from '@/config/legacy-urls';
 
 const locales = ['rs', 'ba', 'me']; // Serbia, Bosnia, and Montenegro
 
@@ -29,12 +30,27 @@ const countryToLocale: Record<string, string> = {
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
-  // Skip middleware for API routes, static files, and Next.js internals
-  if (pathname.startsWith('/api') || 
-      pathname.startsWith('/_next') || 
+  // Skip middleware for API routes, the admin panel, static files, and Next.js internals
+  if (pathname.startsWith('/api') ||
+      pathname === '/admin' ||
+      pathname.startsWith('/admin/') ||
+      pathname.startsWith('/_next') ||
       pathname.startsWith('/_vercel') ||
       pathname.includes('.')) {
     return NextResponse.next();
+  }
+
+  // Legacy dermotin.rs (WordPress/FunnelKit) URLs. Rewrites keep the URL
+  // unchanged (active ads point at them); redirects send the rest to the
+  // canonical new URL. Query strings (utm, fbclid…) are preserved.
+  const legacy = resolveLegacyPath(pathname);
+  if (legacy) {
+    const url = request.nextUrl.clone();
+    url.pathname = legacy.destination;
+    if (legacy.type === 'rewrite') {
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.redirect(url, 301);
   }
 
   // Handle geolocation-based routing for root path
@@ -104,7 +120,7 @@ export const config = {
     
     // Enable redirects that add missing locales
     // (e.g. `/pathnames` -> `/rs/pathnames`)
-    // But exclude API routes, static files, and Next.js internals
-    '/((?!api|_next|_vercel|.*\\..*).*)'
+    // But exclude API routes, the admin panel, static files, and Next.js internals
+    '/((?!api|admin|_next|_vercel|.*\\..*).*)'
   ]
 };

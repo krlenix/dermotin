@@ -375,6 +375,38 @@ export function usePixelTracking(countryCode: string) {
       }
     }
 
+    // Track Google Ads (gtag) event — base tag se učitava u app/layout.tsx
+    if (pixelConfig.google.enabled && window.gtag && pixelConfig.google.tagId) {
+      const value = typeof eventData?.value === 'number' ? eventData.value : undefined;
+      const currency = typeof eventData?.currency === 'string' ? eventData.currency : undefined;
+
+      switch (eventType) {
+        case 'purchase':
+          // Conversion event za Google Ads "Purchase" conversion action
+          if (pixelConfig.google.conversionLabel) {
+            window.gtag('event', 'conversion', {
+              send_to: `${pixelConfig.google.tagId}/${pixelConfig.google.conversionLabel}`,
+              value,
+              currency,
+              transaction_id: typeof eventData?.order_id === 'string' || typeof eventData?.order_id === 'number'
+                ? String(eventData.order_id)
+                : undefined,
+            });
+          }
+          break;
+        case 'initiate_checkout':
+          window.gtag('event', 'begin_checkout', { value, currency });
+          break;
+        case 'add_to_cart':
+          window.gtag('event', 'add_to_cart', { value, currency });
+          break;
+        case 'view_content':
+          window.gtag('event', 'view_item', { value, currency });
+          break;
+        // page_view šalje sam gtag('config', ...) pri učitavanju
+      }
+    }
+
     // Send to CAPI (Server-side) for all events EXCEPT purchase.
     // Purchase CAPI is handled by /api/orders with richer customer data (email, phone, address)
     // to avoid duplicate events with mismatched eventIds.
@@ -420,6 +452,8 @@ interface TikTokPixel {
 interface GoogleTag {
   (command: 'js', date: Date): void;
   (command: 'config', tagId: string): void;
+  (command: 'event', eventName: string, params?: Record<string, unknown>): void;
+  (command: 'set', key: string, value: Record<string, unknown>): void;
 }
 
 declare global {

@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Montserrat, Playfair_Display } from "next/font/google";
 import { getCountryConfig } from '@/config/countries';
+import { getSiteUrl } from '@/lib/seo';
 import { Toaster } from "@/components/ui/sonner";
 import { PerformanceOptimizer } from "@/components/PerformanceOptimizer";
 import { DebugPixelLoader } from "@/components/tracking/DebugPixelLoader";
@@ -28,16 +29,36 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "DERMOTIN - Prirodni proizvodi za zdravu kožu",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: "DERMOTIN - Prirodni proizvodi za zdravu kožu",
+    template: "%s | DERMOTIN",
+  },
   description: "DERMOTIN - Otkrijte našu ekskluzivnu kolekciju dermatoloških proizvoda za zdravu i negovanu kožu.",
-  keywords: "dermotin, kozmetika, nega kože, prirodni proizvodi, antifungal",
+  applicationName: "DERMOTIN",
   icons: {
     icon: "/images/main/favicon.png",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
+    siteName: "DERMOTIN",
     title: "DERMOTIN - Prirodni proizvodi za zdravu kožu",
     description: "Otkrijte našu ekskluzivnu kolekciju dermatoloških proizvoda za zdravu i negovanu kožu.",
     type: "website",
+    locale: "sr_RS",
+    images: [{ url: "/images/main/hero-image.webp" }],
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 
@@ -51,7 +72,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const messages = await getMessages();
+  // Rute van [locale] segmenta (/admin, /checkouts/[slug]) nemaju locale u putanji,
+  // pa getMessages() ume da baci notFound() (npr. kad postoji NEXT_LOCALE kolačić a
+  // middleware nije obradio zahtev). Root layout nikada ne sme sam da izazove 404 —
+  // padamo na rs poruke; [locale] grana ionako ima sopstveni NextIntlClientProvider.
+  let messages;
+  try {
+    messages = await getMessages();
+  } catch {
+    messages = (await import('@/messages/rs.json')).default;
+  }
   const countryConfig = getCountryConfig('rs');
 
   return (

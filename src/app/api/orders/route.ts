@@ -57,7 +57,7 @@ export interface CartOrderItem {
 export interface OrderData {
   orderId: string;
   customerName: string;
-  customerEmail: string;
+  customerEmail?: string;
   customerPhone: string;
   customerAddress: string;
   customerCity: string;
@@ -213,6 +213,14 @@ export async function POST(request: NextRequest) {
       coupon?: CouponData;
     } = await request.json();
 
+    const customerEmail = orderData.customerEmail?.trim() || undefined;
+    if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid email address' },
+        { status: 400 }
+      );
+    }
+
     // Get marketing parameters from cookies first, then fall back to request body
     const cookieHeader = request.headers.get('cookie');
     console.log('🍪 Cookie header present:', !!cookieHeader, 'Length:', cookieHeader?.length || 0);
@@ -357,30 +365,29 @@ export async function POST(request: NextRequest) {
           });
         });
       }
-      
-      // Distribute discount proportionally across all line items (for non-BOGO orders)
-      if (totalProductDiscount > 0 && lineItems.length > 0) {
-        const totalOrderValue = lineItems.reduce((sum, item) => sum + item.item_total_price, 0);
-        let remainingDiscount = totalProductDiscount;
-        
-        console.log('🎟️ Distributing discount across', lineItems.length, 'line items');
-        console.log('🎟️ Total order value:', totalOrderValue);
-        
-        // Distribute discount proportionally to each item
-        lineItems.forEach((item, index) => {
-          if (index === lineItems.length - 1) {
-            // Last item gets the remaining discount to handle rounding
-            item.discount = roundPrice(remainingDiscount);
-          } else {
-            // Calculate proportional discount for this item
-            const itemProportion = item.item_total_price / totalOrderValue;
-            const itemDiscount = totalProductDiscount * itemProportion;
-            item.discount = roundPrice(itemDiscount);
-            remainingDiscount -= item.discount;
-          }
-          console.log(`🎟️ ${item.name}: ${item.item_total_price} - discount: ${item.discount}`);
-        });
-      }
+    }
+
+    // Distribute product discounts for both single-product and classic cart orders.
+    // BOGO line items already carry their own full discount on the free item.
+    if (!isBOGOOrder && totalProductDiscount > 0 && lineItems.length > 0) {
+      const totalOrderValue = lineItems.reduce((sum, item) => sum + item.item_total_price, 0);
+      const distributableDiscount = Math.min(totalProductDiscount, totalOrderValue);
+      let remainingDiscount = distributableDiscount;
+
+      console.log('🎟️ Distributing discount across', lineItems.length, 'line items');
+      console.log('🎟️ Total order value:', totalOrderValue);
+
+      lineItems.forEach((item, index) => {
+        if (index === lineItems.length - 1) {
+          // Last item gets the remainder so rounded line discounts match the order discount.
+          item.discount = roundPrice(remainingDiscount);
+        } else {
+          const itemProportion = item.item_total_price / totalOrderValue;
+          item.discount = roundPrice(distributableDiscount * itemProportion);
+          remainingDiscount -= item.discount;
+        }
+        console.log(`🎟️ ${item.name}: ${item.item_total_price} - discount: ${item.discount}`);
+      });
     }
     
     // Prepare webhook payload to match Laravel controller validation
@@ -394,7 +401,7 @@ export async function POST(request: NextRequest) {
       total_price: roundPrice(orderData.totalPrice),
       financial_status: 'pending', // Laravel expects 'pending' or 'paid'
       customer: {
-        email: orderData.customerEmail || 'noreply@example.com', // Ensure email is not empty
+        ...(customerEmail ? { email: customerEmail } : {}),
         phone: orderData.customerPhone,
         note: ''
       },
@@ -524,7 +531,7 @@ export async function POST(request: NextRequest) {
         orderId,
         currency: countryConfig.currency,
         totalPrice: roundPrice(orderData.totalPrice),
-        customerEmail: orderData.customerEmail || undefined,
+        customerEmail,
         customerPhone: orderData.customerPhone || undefined,
         customerFirstName: firstName,
         customerLastName: lastName,

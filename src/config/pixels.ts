@@ -20,12 +20,19 @@ export interface PixelConfig {
   google: {
     tagId: string;
     enabled: boolean;
+    /** Google Ads conversion label (deo iza "/" u send_to, npr. AW-XXXX/LABEL) */
+    conversionLabel?: string;
   };
 }
 
 export interface CountryPixelConfig {
   [countryCode: string]: PixelConfig;
 }
+
+// Google Ads conversion label ("Purchase" konverzija) — koristi se kad
+// NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL nije podešen u env-u, da tracking
+// nikada ne ostane bez labela na produkciji.
+const DEFAULT_GOOGLE_CONVERSION_LABEL = '-4WLCOG_3r0ZENjk5rk9';
 
 // Get pixel configuration for a specific country from environment variables
 function getPixelConfigForCountry(countryCode: string): PixelConfig {
@@ -35,6 +42,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
   let metaPixelId = '';
   let tiktokPixelId = '';
   let googleTagId = '';
+  let googleConversionLabel = '';
   let capiAccessToken = '';
   let capiTestEventCode = '';
   
@@ -46,6 +54,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_RS || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_RS || '';
       googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_RS || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_RS || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env.META_CAPI_TOKEN_RS || '';
       capiTestEventCode = process.env.META_CAPI_TEST_CODE_RS || '';
       break;
@@ -53,6 +62,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_BA || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_BA || '';
       googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_BA || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_BA || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env.META_CAPI_TOKEN_BA || '';
       capiTestEventCode = process.env.META_CAPI_TEST_CODE_BA || '';
       break;
@@ -60,6 +70,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_BG || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_BG || '';
       googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_BG || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_BG || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env.META_CAPI_TOKEN_BG || '';
       capiTestEventCode = process.env.META_CAPI_TEST_CODE_BG || '';
       break;
@@ -67,6 +78,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_HR || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_HR || '';
       googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_HR || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_HR || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env.META_CAPI_TOKEN_HR || '';
       capiTestEventCode = process.env.META_CAPI_TEST_CODE_HR || '';
       break;
@@ -74,6 +86,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ME || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ME || '';
       googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_ME || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_ME || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env.META_CAPI_TOKEN_ME || '';
       capiTestEventCode = process.env.META_CAPI_TEST_CODE_ME || '';
       break;
@@ -81,6 +94,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_RO || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_RO || '';
       googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_RO || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_RO || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env.META_CAPI_TOKEN_RO || '';
       capiTestEventCode = process.env.META_CAPI_TEST_CODE_RO || '';
       break;
@@ -88,6 +102,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_EU || '';
       tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_EU || '';
       googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG_EU || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_EU || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env.META_CAPI_TOKEN_EU || '';
       capiTestEventCode = process.env.META_CAPI_TEST_CODE_EU || '';
       break;
@@ -96,6 +111,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       metaPixelId = process.env[`NEXT_PUBLIC_META_PIXEL_${upperCountryCode}`] || '';
       tiktokPixelId = process.env[`NEXT_PUBLIC_TIKTOK_PIXEL_${upperCountryCode}`] || '';
       googleTagId = process.env[`NEXT_PUBLIC_GOOGLE_TAG_${upperCountryCode}`] || process.env.NEXT_PUBLIC_GOOGLE_TAG || '';
+      googleConversionLabel = process.env[`NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_${upperCountryCode}`] || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || DEFAULT_GOOGLE_CONVERSION_LABEL;
       capiAccessToken = process.env[`META_CAPI_TOKEN_${upperCountryCode}`] || '';
       capiTestEventCode = process.env[`META_CAPI_TEST_CODE_${upperCountryCode}`] || '';
       break;
@@ -125,6 +141,7 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
     google: {
       tagId: googleTagId,
       enabled: !!isValidGoogleTag,
+      conversionLabel: googleConversionLabel || undefined,
     },
   };
   

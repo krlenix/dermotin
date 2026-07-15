@@ -100,7 +100,7 @@ export async function validateCouponFromAPI(
     }
     
     // Check if coupon is expired
-    if (coupon.validUntil && new Date() > coupon.validUntil) {
+    if (coupon.validUntil && new Date() > new Date(coupon.validUntil)) {
       console.log(`❌ Coupon code "${couponCode}" has expired`);
       return null;
     }

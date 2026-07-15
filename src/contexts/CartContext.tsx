@@ -10,8 +10,11 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { buildBogoPairLines } from '@/utils/bogo-pair';
 
 export interface CartLineItem {
+  /** Stable unique key per cart row (needed when 1+1 duplicates the same SKU) */
+  lineId: string;
   productId: string;
   productSlug: string;
   variantId: string;
@@ -20,12 +23,20 @@ export interface CartLineItem {
   variantName: string;
   image: string;
   quantity: number;
-  /** Unit price actually charged (discount price when available) */
+  /** Unit price actually charged (discount price when available; half for 1+1 lines) */
   unitPrice: number;
   /** Regular unit price, used for strikethrough display */
   regularPrice: number;
   currency: string;
+  /** Shared id for both lines of a 1+1 pair */
+  bogoPairId?: string;
+  /** Which side of the 1+1 pair this line is shown as (customer-facing) */
+  bogoRole?: 'paid' | 'free';
+  /** Original charged unit price before 1+1 half-split */
+  bogoOriginalUnitPrice?: number;
 }
+
+type CartItemInput = Omit<CartLineItem, 'quantity' | 'lineId'> & { lineId?: string };
 
 interface CartContextValue {
   items: CartLineItem[];
@@ -35,9 +46,11 @@ interface CartContextValue {
   totalSavings: number;
   isHydrated: boolean;
   isDrawerOpen: boolean;
-  addItem: (item: Omit<CartLineItem, 'quantity'>, quantity?: number) => void;
-  updateQuantity: (variantId: string, quantity: number) => void;
-  removeItem: (variantId: string) => void;
+  addItem: (item: CartItemInput, quantity?: number) => void;
+  /** Add both halves of a 1+1 pair (each at price/2). */
+  addBogoPair: (primary: CartItemInput, secondary: CartItemInput) => string;
+  updateQuantity: (lineId: string, quantity: number) => void;
+  removeItem: (lineId: string) => void;
   clearCart: () => void;
   openDrawer: () => void;
   closeDrawer: () => void;
@@ -45,10 +58,27 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const CART_VERSION = 'v1';
+const CART_VERSION = 'v2';
 
 function getStorageKey(locale: string) {
   return `dermotin_cart_${CART_VERSION}_${locale}`;
+}
+
+function newLineId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `line_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function normalizeStoredItems(parsed: unknown): CartLineItem[] {
+  if (!Array.isArray(parsed)) return [];
+  return parsed
+    .filter((item) => item && typeof item.variantId === 'string' && item.quantity > 0)
+    .map((item) => ({
+      ...item,
+      lineId: typeof item.lineId === 'string' ? item.lineId : newLineId(),
+    }));
 }
 
 interface CartProviderProps {
@@ -62,15 +92,11 @@ export function CartProvider({ locale, children }: CartProviderProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const skipNextPersist = useRef(true);
 
-  // Hydrate cart from localStorage on mount (client only, avoids SSR mismatch)
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(getStorageKey(locale));
       if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setItems(parsed.filter((item) => item && typeof item.variantId === 'string' && item.quantity > 0));
-        }
+        setItems(normalizeStoredItems(JSON.parse(stored)));
       }
     } catch (error) {
       console.error('Failed to load cart from storage:', error);
@@ -92,33 +118,66 @@ export function CartProvider({ locale, children }: CartProviderProps) {
     }
   }, [items, isHydrated, locale]);
 
-  const addItem = useCallback((item: Omit<CartLineItem, 'quantity'>, quantity: number = 1) => {
+  const addItem = useCallback((item: CartItemInput, quantity: number = 1) => {
     setItems((prev) => {
-      const existing = prev.find((line) => line.variantId === item.variantId);
+      const existing = prev.find(
+        (line) => line.variantId === item.variantId && !line.bogoPairId && !item.bogoPairId
+      );
       if (existing) {
         return prev.map((line) =>
-          line.variantId === item.variantId
+          line.lineId === existing.lineId
             ? { ...line, quantity: Math.min(line.quantity + quantity, 99) }
             : line
         );
       }
-      return [...prev, { ...item, quantity: Math.min(quantity, 99) }];
+      const { lineId: _ignored, ...rest } = item;
+      return [...prev, { ...rest, lineId: newLineId(), quantity: Math.min(quantity, 99) }];
     });
   }, []);
 
-  const updateQuantity = useCallback((variantId: string, quantity: number) => {
+  const addBogoPair = useCallback((primary: CartItemInput, secondary: CartItemInput) => {
+    const { lineId: _p, ...primaryRest } = primary;
+    const { lineId: _s, ...secondaryRest } = secondary;
+    const [paidLine, freeLine] = buildBogoPairLines(primaryRest, secondaryRest);
+    setItems((prev) => [
+      ...prev,
+      { ...paidLine, lineId: newLineId(), quantity: 1 },
+      { ...freeLine, lineId: newLineId(), quantity: 1 },
+    ]);
+    return paidLine.bogoPairId as string;
+  }, []);
+
+  const updateQuantity = useCallback((lineId: string, quantity: number) => {
     setItems((prev) => {
+      const target = prev.find((line) => line.lineId === lineId);
+      if (!target) return prev;
+
+      if (target.bogoPairId) {
+        if (quantity <= 0) {
+          return prev.filter((line) => line.bogoPairId !== target.bogoPairId);
+        }
+        // 1+1 quantity is fixed
+        return prev;
+      }
+
       if (quantity <= 0) {
-        return prev.filter((line) => line.variantId !== variantId);
+        return prev.filter((line) => line.lineId !== lineId);
       }
       return prev.map((line) =>
-        line.variantId === variantId ? { ...line, quantity: Math.min(quantity, 99) } : line
+        line.lineId === lineId ? { ...line, quantity: Math.min(quantity, 99) } : line
       );
     });
   }, []);
 
-  const removeItem = useCallback((variantId: string) => {
-    setItems((prev) => prev.filter((line) => line.variantId !== variantId));
+  const removeItem = useCallback((lineId: string) => {
+    setItems((prev) => {
+      const target = prev.find((line) => line.lineId === lineId);
+      if (!target) return prev;
+      if (target.bogoPairId) {
+        return prev.filter((line) => line.bogoPairId !== target.bogoPairId);
+      }
+      return prev.filter((line) => line.lineId !== lineId);
+    });
   }, []);
 
   const clearCart = useCallback(() => {
@@ -153,13 +212,28 @@ export function CartProvider({ locale, children }: CartProviderProps) {
       isHydrated,
       isDrawerOpen,
       addItem,
+      addBogoPair,
       updateQuantity,
       removeItem,
       clearCart,
       openDrawer,
       closeDrawer,
     }),
-    [items, totalItems, subtotal, totalSavings, isHydrated, isDrawerOpen, addItem, updateQuantity, removeItem, clearCart, openDrawer, closeDrawer]
+    [
+      items,
+      totalItems,
+      subtotal,
+      totalSavings,
+      isHydrated,
+      isDrawerOpen,
+      addItem,
+      addBogoPair,
+      updateQuantity,
+      removeItem,
+      clearCart,
+      openDrawer,
+      closeDrawer,
+    ]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

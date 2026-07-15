@@ -11,6 +11,7 @@ import {
   ChevronRight,
   CreditCard,
   Droplets,
+  Gift,
   Leaf,
   RotateCcw,
   ShieldCheck,
@@ -28,6 +29,7 @@ import {
 import { CountryConfig, getDefaultCourier } from '@/config/countries';
 import { qualifiesForFreeShipping } from '@/utils/shipping';
 import { useCart } from '@/contexts/CartContext';
+import { useBogoPair } from '@/components/shop/BogoPairModal';
 import { ShopHeader } from '@/components/shop/ShopHeader';
 import { Footer } from '@/components/ui/footer';
 import { CookieConsent } from '@/components/features/CookieConsent';
@@ -41,6 +43,14 @@ import { RegulatoryBadge } from '@/components/product-page/RegulatoryBadge';
 import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 import { cn } from '@/lib/utils';
+import { CouponBanner } from '@/components/shop/CouponBanner';
+import {
+  clearCouponCookie,
+  COUPON_CLEARED_EVENT,
+  getActiveCouponCode,
+} from '@/utils/coupon-cookies';
+import { calculateCouponDiscount, validateCouponWithAPI, type Coupon } from '@/config/coupons';
+import { isBOGOActive } from '@/utils/bogo-cookies';
 
 interface ClassicProductPageProps {
   product: Product;
@@ -51,7 +61,8 @@ interface ClassicProductPageProps {
 export function ClassicProductPage({ product, countryConfig, locale }: ClassicProductPageProps) {
   const t = useTranslations();
   const router = useRouter();
-  const { addItem, openDrawer } = useCart();
+  const { openDrawer } = useCart();
+  const { requestAdd } = useBogoPair();
   const { trackEvent } = usePixelTracking(countryConfig.code);
 
   useMarketingTracking();
@@ -65,6 +76,7 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(defaultVariant);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [activeCoupon, setActiveCoupon] = useState<Coupon | null>(null);
 
   // Variant with the biggest absolute savings gets the highlight badge
   const maxSavingsVariantId = useMemo(() => {
@@ -96,6 +108,18 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
     ? Math.round((1 - (selectedVariant.discountPrice! / selectedVariant.price)) * 100)
     : 0;
 
+  const getCouponDiscount = (price: number) => {
+    if (!activeCoupon || (activeCoupon.minOrderValue && price < activeCoupon.minOrderValue)) {
+      return 0;
+    }
+
+    return calculateCouponDiscount(activeCoupon, price, 0).productDiscount;
+  };
+
+  // Obračun aktivnog kupona za izabranu varijantu (konačan obračun je u korpi/checkout-u)
+  const couponDiscount = getCouponDiscount(unitPrice);
+  const couponPrice = Math.max(0, Math.round((unitPrice - couponDiscount) * 100) / 100);
+
   const formatPrice = (amount: number) =>
     `${new Intl.NumberFormat('sr-RS', {
       minimumFractionDigits: 0,
@@ -124,7 +148,16 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
       try {
         const all = await getProductsForCountry(locale, locale);
         if (!cancelled) {
-          setRelatedProducts(all.filter((item) => item.id !== product.id).slice(0, 3));
+          // Prednost imaju eksplicitno povezani proizvodi (crossSells), ostatak kataloga dopunjava
+          const crossSellIds = product.crossSells ?? [];
+          const byId = new Map(all.map((item) => [item.id, item]));
+          const preferred = crossSellIds
+            .map((id) => byId.get(id))
+            .filter((item): item is Product => Boolean(item));
+          const rest = all.filter(
+            (item) => item.id !== product.id && !crossSellIds.includes(item.id)
+          );
+          setRelatedProducts([...preferred, ...rest].slice(0, 3));
         }
       } catch (error) {
         console.error('Failed to load related products:', error);
@@ -135,7 +168,36 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
     return () => {
       cancelled = true;
     };
-  }, [locale, product.id]);
+  }, [locale, product.id, product.crossSells]);
+
+  // Kupon iz reklame (?coupon_code=POPUST20 / ?coupon=) ili ranije upamćen u kolačiću —
+  // validira se kroz OMS API + statičku listu i prikazuje animiran obračun
+  useEffect(() => {
+    let cancelled = false;
+    const code = getActiveCouponCode();
+    if (!code) return;
+
+    validateCouponWithAPI(code, unitPrice, countryConfig.code)
+      .then((result) => {
+        if (cancelled) return;
+        // BOGO kuponi imaju poseban tok i ne primenjuju se u klasičnoj korpi
+        if (result.valid && result.coupon && result.coupon.type !== 'bogo') {
+          setActiveCoupon(result.coupon);
+        }
+      })
+      .catch((error) => console.error('Coupon validation failed:', error));
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countryConfig.code]);
+
+  useEffect(() => {
+    const handleCouponCleared = () => setActiveCoupon(null);
+    window.addEventListener(COUPON_CLEARED_EVENT, handleCouponCleared);
+    return () => window.removeEventListener(COUPON_CLEARED_EVENT, handleCouponCleared);
+  }, []);
 
   const buildCartItem = () => ({
     productId: product.id,
@@ -162,15 +224,21 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
   };
 
   const handleAddToCart = () => {
-    addItem(buildCartItem(), 1);
     trackAddToCart();
-    openDrawer();
+    const tookOver = requestAdd(buildCartItem(), {
+      intent: 'drawer',
+      onAfterAdd: () => openDrawer(),
+    });
+    if (!tookOver) openDrawer();
   };
 
   const handleBuyNow = () => {
-    addItem(buildCartItem(), 1);
     trackAddToCart();
-    router.push(`/${locale}/checkout`);
+    const tookOver = requestAdd(buildCartItem(), {
+      intent: 'checkout',
+      onAfterAdd: () => router.push(`/${locale}/checkout`),
+    });
+    if (!tookOver) router.push(`/${locale}/checkout`);
   };
 
   const trustItems = [
@@ -257,58 +325,81 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                     <h1 className="text-3xl font-black leading-[1.1] tracking-[-0.01em] text-slate-950 md:text-4xl">
                       {product.name}
                     </h1>
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-black text-slate-900">
-                          {(averageRating ?? 4.97).toFixed(1)}/5
-                        </span>
-                        <div className="flex text-amber-400">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={cn(
-                                'h-4 w-4',
-                                star <= Math.round(averageRating ?? 5)
-                                  ? 'fill-current'
-                                  : 'fill-slate-200 text-slate-200'
-                              )}
-                            />
-                          ))}
+                    {averageRating !== null && (
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-black text-slate-900">
+                            {averageRating.toFixed(1)}/5
+                          </span>
+                          <div className="flex text-amber-400">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={cn(
+                                  'h-4 w-4',
+                                  star <= Math.round(averageRating)
+                                    ? 'fill-current'
+                                    : 'fill-slate-200 text-slate-200'
+                                )}
+                              />
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                      {reviewCount > 0 && (
                         <a
                           href="#testimonials"
                           className="font-semibold text-slate-700 underline decoration-slate-300 underline-offset-4 transition-colors hover:text-[#358055] hover:decoration-[#358055]"
                         >
                           {t('testimonials_ui.review_count_label', { count: reviewCount })}
                         </a>
-                      )}
-                    </div>
+                      </div>
+                    )}
                     <p className="text-base leading-relaxed text-slate-600 md:text-lg">
                       {product.description}
                     </p>
                   </div>
 
+                  {/* Aktivni kupon (iz reklame ili ručno unet) */}
+                  {activeCoupon && (
+                    <CouponBanner
+                      coupon={activeCoupon}
+                      formatPrice={formatPrice}
+                      onRemove={() => {
+                        clearCouponCookie();
+                        setActiveCoupon(null);
+                      }}
+                    />
+                  )}
+
                   {/* Price */}
                   <div className="flex flex-wrap items-center gap-3">
-                    {hasDiscount && (
+                    {(hasDiscount || couponDiscount > 0) && (
                       <span className="text-xl font-semibold text-slate-400 line-through">
-                        {formatPrice(selectedVariant.price)}
+                        {formatPrice(couponDiscount > 0 ? unitPrice : selectedVariant.price)}
                       </span>
                     )}
                     <span
+                      key={`${selectedVariant.id}-${activeCoupon?.code ?? 'bez-kupona'}`}
                       className={cn(
                         'text-4xl font-black leading-none md:text-[2.8rem]',
-                        hasDiscount ? 'text-[#F3765D]' : 'text-[#358055]'
+                        couponDiscount > 0
+                          ? 'coupon-price-animate text-[#F3765D]'
+                          : hasDiscount
+                            ? 'text-[#F3765D]'
+                            : 'text-[#358055]'
                       )}
                     >
-                      {formatPrice(unitPrice)}
+                      {formatPrice(couponDiscount > 0 ? couponPrice : unitPrice)}
                     </span>
-                    {hasDiscount && (
-                      <span className="inline-flex items-center rounded-md bg-[#F3765D] px-2.5 py-1 text-sm font-black text-white shadow-[0_8px_18px_rgba(243,118,93,0.3)]">
-                        {t('shop.save_percent', { percent: discountPercent })}
+                    {couponDiscount > 0 ? (
+                      <span className="coupon-price-animate inline-flex items-center rounded-md bg-[#358055] px-2.5 py-1 text-sm font-black text-white shadow-[0_8px_18px_rgba(53,128,85,0.3)]">
+                        {t('coupons.with_coupon', { code: activeCoupon!.code })}
                       </span>
+                    ) : (
+                      hasDiscount && (
+                        <span className="inline-flex items-center rounded-md bg-[#F3765D] px-2.5 py-1 text-sm font-black text-white shadow-[0_8px_18px_rgba(243,118,93,0.3)]">
+                          {t('shop.save_percent', { percent: discountPercent })}
+                        </span>
+                      )
                     )}
                   </div>
 
@@ -323,7 +414,12 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                           const isSelected = variant.id === selectedVariant.id;
                           const variantPrice = variant.discountPrice ?? variant.price;
                           const variantHasDiscount = Boolean(variant.discountPrice && variant.discountPrice < variant.price);
-                          const variantSavings = variantHasDiscount ? variant.price - variantPrice : 0;
+                          const variantCouponDiscount = getCouponDiscount(variantPrice);
+                          const variantFinalPrice = Math.max(
+                            0,
+                            Math.round((variantPrice - variantCouponDiscount) * 100) / 100
+                          );
+                          const variantSavings = variant.price - variantFinalPrice;
                           const isBestValue = variant.id === maxSavingsVariantId && variants.length > 1;
                           const variantFreeShipping = qualifiesForFreeShipping(variantPrice, countryConfig);
 
@@ -360,24 +456,36 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                                     <p className="text-sm font-bold text-slate-900">{variant.name}</p>
                                     {(variant.quantity ?? 1) > 1 && (
                                       <p className="text-xs font-medium text-[#358055]">
-                                        {formatPrice(Math.round((variantPrice / (variant.quantity ?? 1)) * 100) / 100)} {t('bundles.per_item')}
+                                        {formatPrice(Math.round((variantFinalPrice / (variant.quantity ?? 1)) * 100) / 100)} {t('bundles.per_item')}
                                       </p>
                                     )}
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  {variantHasDiscount && (
+                                  {(variantHasDiscount || variantCouponDiscount > 0) && (
                                     <p className="text-xs text-slate-400 line-through">{formatPrice(variant.price)}</p>
                                   )}
-                                  <p className="text-lg font-black leading-tight text-slate-950">{formatPrice(variantPrice)}</p>
+                                  <p
+                                    className={cn(
+                                      'text-lg font-black leading-tight',
+                                      variantCouponDiscount > 0 ? 'text-[#F3765D]' : 'text-slate-950'
+                                    )}
+                                  >
+                                    {formatPrice(variantFinalPrice)}
+                                  </p>
                                 </div>
                               </div>
 
-                              {(variantSavings > 0 || variantFreeShipping) && (
+                              {(variantSavings > 0 || variantCouponDiscount > 0 || variantFreeShipping) && (
                                 <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pl-8">
                                   {variantSavings > 0 && (
                                     <span className="inline-flex items-center rounded-full bg-[#358055]/10 px-2.5 py-0.5 text-[11px] font-extrabold text-[#2f6f4a]">
                                       {t('bundles.save_amount', { amount: formatPrice(variantSavings) })}
+                                    </span>
+                                  )}
+                                  {variantCouponDiscount > 0 && (
+                                    <span className="inline-flex items-center rounded-full bg-[#358055] px-2.5 py-0.5 text-[11px] font-extrabold text-white">
+                                      {t('coupons.with_coupon', { code: activeCoupon!.code })}
                                     </span>
                                   )}
                                   {variantFreeShipping && (
@@ -396,6 +504,26 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
 
                   {/* Actions */}
                   <div className="space-y-3">
+                    {isBOGOActive() && (
+                      <div
+                        className="relative overflow-hidden rounded-[1.25rem] p-4 text-white shadow-[0_16px_34px_rgba(53,128,85,0.28)]"
+                        style={{ background: 'linear-gradient(120deg, #358055 0%, #2a6844 40%, #F3765D 100%)' }}
+                      >
+                        <div className="pointer-events-none absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/15 blur-2xl" />
+                        <div className="relative flex items-start gap-3">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/15">
+                            <Gift className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-black uppercase tracking-[0.16em] text-white/85">
+                              {t('bogo.offer_badge')}
+                            </p>
+                            <p className="mt-1 text-lg font-black leading-tight">{t('bogo.pair_headline')}</p>
+                            <p className="mt-1 text-sm text-white/85">{t('bogo.pair_subheadline')}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div className="flex flex-col gap-2.5 sm:flex-row">
                       <button
                         type="button"
@@ -594,7 +722,19 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="truncate text-xs font-semibold uppercase tracking-[0.04em] text-slate-500">{selectedVariant.name}</p>
-            <p className="text-lg font-black leading-tight text-[#358055]">{formatPrice(unitPrice)}</p>
+            <div className="flex items-baseline gap-2">
+              {couponDiscount > 0 && (
+                <span className="text-xs text-slate-400 line-through">{formatPrice(unitPrice)}</span>
+              )}
+              <p
+                className={cn(
+                  'text-lg font-black leading-tight',
+                  couponDiscount > 0 ? 'text-[#F3765D]' : 'text-[#358055]'
+                )}
+              >
+                {formatPrice(couponDiscount > 0 ? couponPrice : unitPrice)}
+              </p>
+            </div>
           </div>
           <button
             type="button"

@@ -61,7 +61,7 @@ export function IngredientsShowcase({ product }: IngredientsShowcaseProps) {
                   </div>
 
                   <p className="mt-3 text-sm leading-6 text-slate-600">
-                    {ingredient.description}
+                    {product.ingredientDescriptions?.[ingredient.id] ?? ingredient.description}
                   </p>
                 </div>
               );

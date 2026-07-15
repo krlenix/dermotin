@@ -5,6 +5,16 @@ const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
+  // Old WordPress (Yoast) sitemap URLs → new sitemap.
+  // The full legacy URL migration lives in src/config/legacy-urls.ts
+  // (applied by middleware so ad URLs keep working unchanged via rewrites).
+  async redirects() {
+    return [
+      { source: '/sitemap_index.xml', destination: '/sitemap.xml', permanent: true },
+      { source: '/:name(page|product|product_cat|wffn_ty|wfacp_checkout|wfocu_offer|elementor-hf|elementskit_content)-sitemap.xml', destination: '/sitemap.xml', permanent: true },
+    ];
+  },
+
   // Image optimization
   images: {
     remotePatterns: [
@@ -18,6 +28,9 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/webp', 'image/avif'],
+    // SVI kvaliteti koje komponente koriste (galerija 50/60/90, headeri 95, default 75) —
+    // vrednost van ove liste je runtime greška, a lista postaje obavezna od Next 16
+    qualities: [25, 50, 60, 75, 90, 95, 100],
     minimumCacheTTL: isDev ? 0 : 31536000,
     dangerouslyAllowSVG: false,
     contentDispositionType: 'attachment',

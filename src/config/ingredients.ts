@@ -1,6 +1,7 @@
 import { Ingredient } from './types';
 
-// Clean ingredients database - only confirmed ingredients from fungel.txt
+// Baza sastojaka — INCI podaci verifikovani protiv CPSR izveštaja i stručnih
+// mišljenja u docs/newdocs/ (interna dokumentacija: docs/products/*.md)
 export const INGREDIENTS: Record<string, Ingredient> = {
   // Herbal Extracts - 6 powerful medicinal plants
   'calendula-extract': {
@@ -8,8 +9,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Calendula Officinalis Flower Extract',
     serbianName: 'Ekstrakt cveta nevena',
     bulgarianName: 'Екстракт от цвят на невен',
-    description: 'Smiruje iritiranu kožu, ublažava crvenilo i pomaže u brzoj obnovi oštećene kože',
-    bulgarianDescription: 'Успокоява раздразнената кожа, облекчава червенината и помага за бързо възстановяване',
+    description: 'Klasik u nezi kože - umiruje kožu i doprinosi negovanom i zdravom izgledu',
+    bulgarianDescription: 'Класика в грижата за кожата - успокоява кожата и допринася за поддържан вид',
     category: 'herbal_extract'
   },
   'chelidonium-extract': {
@@ -17,8 +18,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Chelidonium Majus Extract',
     serbianName: 'Ekstrakt rusa',
     bulgarianName: 'Екстракт от змийско мляко',
-    description: 'Efikasno čisti problematičnu kožu, pomaže kod upornih kožnih problema i podržava zdravlje kože',
-    bulgarianDescription: 'Ефективно почиства проблемната кожа, помага при упорити кожни проблеми',
+    description: 'Biljka sa dugom tradicijom u nezi problematične kože, posebno kože sklone pojavi bradavica',
+    bulgarianDescription: 'Растение с дълга традиция в грижата за проблемна кожа',
     category: 'herbal_extract'
   },
   'salvia-leaf-extract': {
@@ -26,8 +27,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Salvia Officinalis Leaf Extract',
     serbianName: 'Ekstrakt lista žalfije',
     bulgarianName: 'Екстракт от листа на градинска салвия',
-    description: 'Prirodno čisti i dezinfikuje kožu, regulira masnoću i steže pore za zdraviji izgled kože',
-    bulgarianDescription: 'Природно почиства и дезинфектира кожата, регулира мазнината и стяга порите',
+    description: 'Tradicionalno cenjena biljka koja doprinosi osećaju čistoće i svežine kože',
+    bulgarianDescription: 'Традиционно ценено растение което допринася за усещане на чистота и свежест на кожата',
     category: 'herbal_extract'
   },
   'echinacea-extract': {
@@ -35,17 +36,17 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Echinacea Purpurea Extract',
     serbianName: 'Ekstrakt ehinaceje',
     bulgarianName: 'Екстракт от ехинацея',
-    description: 'Jača prirodnu otpornost kože i pomaže u odbrani od štetnih uticaja iz okoline',
-    bulgarianDescription: 'Укрепва природната устойчивост на кожата и помага в отбраната от вредни въздействия',
+    description: 'Tradicionalno cenjena biljka u nezi kože izložene spoljašnjim uticajima',
+    bulgarianDescription: 'Традиционно ценено растение в грижата за кожа изложена на външни влияния',
     category: 'herbal_extract'
   },
   'galium-extract': {
     id: 'galium-extract',
     inciName: 'Galium Verum Extract',
-    serbianName: 'Ekstrakt podmarenka',
+    serbianName: 'Ekstrakt ivanjskog cveća (podmarenka)',
     bulgarianName: 'Екстракт от жълт звездан',
-    description: 'Tradicionalni biljni lek koji nežno čisti i smiruje problematičnu kožu',
-    bulgarianDescription: 'Традиционно билково лекарство което нежно почиства и успокоява проблемната кожа',
+    description: 'Tradicionalno cenjena biljka u kozmetičkoj nezi kože',
+    bulgarianDescription: 'Традиционно ценено растение което нежно се грижи и успокоява кожата',
     category: 'herbal_extract'
   },
   'hypericum-extract': {
@@ -53,8 +54,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Hypericum Perforatum Extract',
     serbianName: 'Ekstrakt kantariona',
     bulgarianName: 'Екстракт от жълт кантарион',
-    description: 'Ubrzava regeneraciju i obnovu oštećene kože, pomaže u zaceljenju',
-    bulgarianDescription: 'Ускорява регенерацията и възстановяването на увредената кожа, помага в зацеляването',
+    description: 'Tradicionalno omiljena biljka u nezi kože, doprinosi negovanom izgledu i osećaju komfora',
+    bulgarianDescription: 'Традиционно любимо растение в грижата за кожата, допринася за поддържан вид',
     category: 'herbal_extract'
   },
 
@@ -64,8 +65,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Melaleuca Alternifolia Leaf Oil',
     serbianName: 'Ulje čajnog drveta',
     bulgarianName: 'Масло от чаено дърво',
-    description: 'Najpoznatije prirodno sredstvo protiv gljivica i bakterija, efikasno čisti i dezinfikuje kožu',
-    bulgarianDescription: 'Най-познатото природно средство против гъбички и бактерии, ефективно почиства и дезинфектира',
+    description: 'Jedno od najpoznatijih eteričnih ulja u nezi problematične kože, sa vekovnom tradicijom upotrebe',
+    bulgarianDescription: 'Едно от най-познатите етерични масла в грижата за проблемна кожа',
     category: 'essential_oil'
   },
   'oregano-oil': {
@@ -73,17 +74,17 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Origanum Vulgare Oil',
     serbianName: 'Ulje origana',
     bulgarianName: 'Масло от риган',
-    description: 'Moćno prirodno sredstvo koje štiti kožu od štetnih mikroorganizama i infekcija',
-    bulgarianDescription: 'Мощно природно средство което защитава кожата от вредни микроорганизми',
+    description: 'Aromatično eterično ulje tradicionalno cenjeno u nezi kože sklone promenama',
+    bulgarianDescription: 'Ароматично етерично масло традиционно ценено в грижата за кожата',
     category: 'essential_oil'
   },
   'lavender-oil': {
     id: 'lavender-oil',
     inciName: 'Lavandula Hybrida Oil',
-    serbianName: 'Ulje lavande',
+    serbianName: 'Ulje lavandina (hibridna lavanda)',
     bulgarianName: 'Масло от лавандула',
-    description: 'Smirujuće dejstvo na kožu, pomaže u relaksaciji i ima blag antiseptički efekat',
-    bulgarianDescription: 'Концентрация 0.08% - Успокояващо действие върху кожата, релаксация, антисептичен ефект. Съдържа линалоол и лимонен',
+    description: 'Umirujuće eterično ulje prijatnog mirisa koje doprinosi osećaju opuštenosti i nege',
+    bulgarianDescription: 'Успокояващо етерично масло с приятен аромат',
     category: 'essential_oil'
   },
   'sage-oil': {
@@ -91,8 +92,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Salvia Officinalis Oil',
     serbianName: 'Eterično ulje žalfije',
     bulgarianName: 'Етерично масло от салвия',
-    description: 'Prirodno čisti i dezinfikuje kožu, regulira masnoću i steže pore za zdraviji izgled kože',
-    bulgarianDescription: 'Концентрация 0.08% - Антимикробни свойства, регулиране на мазнината на кожата, стягащо действие. Съдържа туяон',
+    description: 'Aromatično eterično ulje koje doprinosi osećaju čistoće i svežine kože',
+    bulgarianDescription: 'Ароматично етерично масло което допринася за усещане на чистота и свежест',
     category: 'essential_oil'
   },
   'eucalyptus-oil': {
@@ -100,8 +101,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Eucalyptus Globulus Leaf Oil',
     serbianName: 'Ulje eukaliptusa',
     bulgarianName: 'Масло от евкалипт',
-    description: 'Osvežavajuće dejstvo, antimikrobna svojstva i pomaže u čišćenju kože',
-    bulgarianDescription: 'Концентрация 0.08% - Освежаващо действие, антимикробни свойства, почистване на кожата. Изключително висока безопасност',
+    description: 'Osvežavajuće eterično ulje koje koži daje osećaj čistoće i svežine',
+    bulgarianDescription: 'Освежаващо етерично масло което дава на кожата усещане за чистота и свежест',
     category: 'essential_oil'
   },
 
@@ -111,8 +112,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Panthenol',
     serbianName: 'Panthenol (Pro-vitamin B5)',
     bulgarianName: 'Пантенол (Про-витамин B5)',
-    description: 'Duboko hidrira kožu, podstiče regeneraciju ćelija kože i smiruje iritacije',
-    bulgarianDescription: 'Концентрация 0.94% - Дълбоко хидратира кожата, стимулира регенерацията на клетките и успокоява иритациите',
+    description: 'Pro-vitamin B5 - hidrira kožu, umiruje je i doprinosi mekom, negovanom osećaju',
+    bulgarianDescription: 'Про-витамин B5 - хидратира кожата, успокоява я и допринася за мек, поддържан вид',
     category: 'active_compound'
   },
   'urea': {
@@ -138,8 +139,17 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Tocopheryl Acetate',
     serbianName: 'Vitamin E',
     bulgarianName: 'Витамин E',
-    description: 'Snažan antioksidans, štiti kožu od slobodnih radikala i usporava proces starenja',
-    bulgarianDescription: 'Концентрация 0.09% - Силен антиоксидант, защитава кожата от свободни радикали, забавя процеса на стареене',
+    description: 'Antioksidans i sastojak za negu koji doprinosi stabilnosti formule i negovanom izgledu kože',
+    bulgarianDescription: 'Антиоксидант и съставка за грижа, която допринася за стабилността на формулата и поддържания вид на кожата',
+    category: 'active_compound'
+  },
+  'tocopherol': {
+    id: 'tocopherol',
+    inciName: 'Tocopherol',
+    serbianName: 'Vitamin E (prirodni tokoferol)',
+    bulgarianName: 'Витамин E (натурален токоферол)',
+    description: 'Prirodni oblik vitamina E — antioksidans koji doprinosi zaštiti formule i negovanom izgledu kože',
+    bulgarianDescription: 'Натурална форма на витамин E — антиоксидант, който допринася за защитата на формулата и поддържания вид на кожата',
     category: 'active_compound'
   },
   'vitamin-a': {
@@ -147,8 +157,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Retinyl Palmitate',
     serbianName: 'Vitamin A',
     bulgarianName: 'Витамин A',
-    description: 'Podstiče obnovu ćelija kože, poboljšava teksturu kože i pomaže u regeneraciji',
-    bulgarianDescription: 'Концентрация 0.09% - Стимулира обновяването на клетките на кожата, подобрява текстурата на кожата, помага в регенерацията',
+    description: 'Poznati kozmetički sastojak koji doprinosi glatkom izgledu i lepšoj teksturi kože',
+    bulgarianDescription: 'Познат козметичен съставка който допринася за гладък вид и по-добра текстура на кожата',
     category: 'active_compound'
   },
 
@@ -269,19 +279,10 @@ export const INGREDIENTS: Record<string, Ingredient> = {
   'equisetum-extract': {
     id: 'equisetum-extract',
     inciName: 'Equisetum Arvense Extract',
-    serbianName: 'Ekstrakt preslice',
+    serbianName: 'Ekstrakt rastavića (preslice)',
     bulgarianName: 'Екстракт от полска хвощ',
-    description: 'Bogat prirodnim silikatima, pomaže u jačanju i obnovi kože',
-    bulgarianDescription: 'Богат на природни силикати, помага за укрепване и възстановяване на кожата',
-    category: 'herbal_extract'
-  },
-  'quercus-extract': {
-    id: 'quercus-extract',
-    inciName: 'Quercus Robur Extract',
-    serbianName: 'Ekstrakt hrasta',
-    bulgarianName: 'Екстракт от дъб',
-    description: 'Sadrži prirodne tanine, tradicionalno se koristi za stezanje i zaštitu kože',
-    bulgarianDescription: 'Съдържа природни танини, традиционно се използва за стягане и защита на кожата',
+    description: 'Biljni ekstrakt koji je deo BIOMELIS formule za svakodnevnu negu kože',
+    bulgarianDescription: 'Растителен екстракт, който е част от формулата BIOMELIS за ежедневна грижа за кожата',
     category: 'herbal_extract'
   },
   'quercus-bark-extract': {
@@ -289,26 +290,26 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Quercus Robur Bark Extract',
     serbianName: 'Ekstrakt hrastove kore',
     bulgarianName: 'Екстракт от кора на дъб',
-    description: 'Bogat prirodnim taninima (8-20%), deluje adstringentno i smanjuje iritacije kože',
-    bulgarianDescription: 'Богат на природни танини (8-20%), действа стягащо и намалява раздразненията на кожата',
+    description: 'Bogat prirodnim taninima, tradicionalno cenjen zbog adstringentnog (stežućeg) osećaja na koži',
+    bulgarianDescription: 'Богат на природни танини, традиционно ценен заради стягащото усещане върху кожата',
     category: 'herbal_extract'
   },
   'rosemary-oil': {
     id: 'rosemary-oil',
-    inciName: 'Rosmarinus Officinalis Oil',
+    inciName: 'Rosmarinus Officinalis Leaf Oil',
     serbianName: 'Ulje ruzmarina',
     bulgarianName: 'Масло от розмарин',
-    description: 'Stimuliše cirkulaciju i ima antioksidativna svojstva, osvežava kožu',
-    bulgarianDescription: 'Стимулира циркулацията и има антиоксидантни свойства, освежава кожата',
+    description: 'Aromatično eterično ulje koje osvežava kožu i daje joj negovan izgled',
+    bulgarianDescription: 'Ароматично етерично масло което освежава кожата',
     category: 'essential_oil'
   },
   'thyme-oil': {
     id: 'thyme-oil',
-    inciName: 'Thymus Vulgaris Oil',
-    serbianName: 'Ulje majčine dušice',
+    inciName: 'Thymus Vulgaris Flower/Leaf Oil',
+    serbianName: 'Ulje timijana',
     bulgarianName: 'Масло от мащерка',
-    description: 'Tradicionalno antimikrobno eterično ulje, pomaže u čišćenju i zaštiti kože',
-    bulgarianDescription: 'Традиционно антимикробно етерично масло, помага за почистване и защита на кожата',
+    description: 'Tradicionalno cenjeno eterično ulje u nezi problematične kože',
+    bulgarianDescription: 'Традиционно ценено етерично масло в грижата за проблемна кожа',
     category: 'essential_oil'
   },
 
@@ -318,26 +319,35 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Mentha Piperita Oil',
     serbianName: 'Eterično ulje nane',
     bulgarianName: 'Етерично масло от мента',
-    description: 'Umiruje i osvežava kožu, pruža hlađenje i smirujući efekat',
-    bulgarianDescription: 'Успокоява и освежава кожата, осигурява охлаждащ и успокояващ ефект',
+    description: 'Umiruje i osvežava kožu, pruža osećaj prijatne svežine',
+    bulgarianDescription: 'Успокоява и освежава кожата, осигурява усещане за приятна свежест',
     category: 'essential_oil'
   },
   'clove-oil': {
     id: 'clove-oil',
     inciName: 'Eugenia Caryophyllus Leaf Oil',
-    serbianName: 'Eterično ulje karanfilića',
+    serbianName: 'Eterično ulje karanfilića (list)',
     bulgarianName: 'Етерично масло от карамфил',
-    description: 'Pomaže u eliminaciji virusa na koži, ima antiseptičko dejstvo',
-    bulgarianDescription: 'Помага за елиминиране на вируси на кожата, има антисептично действие',
+    description: 'Toplo, aromatično eterično ulje sa dugom tradicijom u nezi kože',
+    bulgarianDescription: 'Топло, ароматично етерично масло с дълга традиция в грижата за кожата',
+    category: 'essential_oil'
+  },
+  'clove-bud-oil': {
+    id: 'clove-bud-oil',
+    inciName: 'Eugenia Caryophyllus Bud Oil',
+    serbianName: 'Eterično ulje karanfilića (pupoljak)',
+    bulgarianName: 'Етерично масло от карамфилови пъпки',
+    description: 'Toplo, aromatično eterično ulje sa dugom tradicijom u nezi kože',
+    bulgarianDescription: 'Топло, ароматично етерично масло с дълга традиция в грижата за кожата',
     category: 'essential_oil'
   },
   'anise-oil': {
     id: 'anise-oil',
-    inciName: 'Pimpinella Anisum Seed Oil',
-    serbianName: 'Eterično ulje anisa',
-    bulgarianName: 'Етерично масло от анасон',
-    description: 'Deluje protivupalno i osvežava kožu, ima umirujuće svojstva',
-    bulgarianDescription: 'Действа противовъзпалително и освежава кожата, има успокояващи свойства',
+    inciName: 'Illicium Verum Leaf Oil',
+    serbianName: 'Eterično ulje zvezdastog anisa',
+    bulgarianName: 'Етерично масло от звезден анасон',
+    description: 'Aromatično eterično ulje koje osvežava kožu i doprinosi osećaju komfora',
+    bulgarianDescription: 'Ароматично етерично масло което освежава кожата',
     category: 'essential_oil'
   },
   'lemon-oil': {
@@ -345,8 +355,8 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Citrus Limon Peel Oil',
     serbianName: 'Eterično ulje limuna',
     bulgarianName: 'Етерично масло от лимон',
-    description: 'Osvežava i čisti kožu, ima prirodna antiseptička svojstva',
-    bulgarianDescription: 'Освежава и почиства кожата, има естествени антисептични свойства',
+    description: 'Osvežavajuće citrusno ulje koje koži daje osećaj čistoće i svežine',
+    bulgarianDescription: 'Освежаващо цитрусово масло което дава на кожата усещане за чистота',
     category: 'essential_oil'
   },
 
@@ -354,9 +364,9 @@ export const INGREDIENTS: Record<string, Ingredient> = {
   'aesculus-extract': {
     id: 'aesculus-extract',
     inciName: 'Aesculus Hippocastanum Seed Extract',
-    serbianName: 'Ekstrakt divljeg kestena',
+    serbianName: 'Ekstrakt semena divljeg kestena',
     bulgarianName: 'Екстракт от див кестен',
-    description: 'Poznato po jačajućem i tonizujućem efektu, tradicionalno se koristi za negu osetljive kože',
+    description: 'Tradicionalno cenjen biljni ekstrakt u nezi osetljive kože',
     bulgarianDescription: 'Известен със своя укрепващ и тонизиращ ефект, традиционно се използва за грижа за чувствителна кожа',
     category: 'herbal_extract'
   },
@@ -405,13 +415,13 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     bulgarianDescription: 'Ароматично масло традиционно използвано в грижата за кожата, има успокояващи свойства',
     category: 'essential_oil'
   },
-  'limonene': {
-    id: 'limonene',
-    inciName: 'Limonene',
-    serbianName: 'Limonen',
-    bulgarianName: 'Лимонен',
-    description: 'Prirodna komponenta eteričnih ulja, daje prijatan miris i ima blago antiseptičko dejstvo',
-    bulgarianDescription: 'Естествена съставка на етеричните масла, придава приятен аромат и има слабо антисептично действие',
+  'sodium-gluconate': {
+    id: 'sodium-gluconate',
+    inciName: 'Sodium Gluconate',
+    serbianName: 'Natrijum glukonat',
+    bulgarianName: 'Натриев глюконат',
+    description: 'Stabilizator prirodnog porekla koji doprinosi stabilnosti i kvalitetu formule',
+    bulgarianDescription: 'Стабилизатор от естествен произход, който допринася за стабилността и качеството на формулата',
     category: 'other'
   },
 
@@ -419,55 +429,57 @@ export const INGREDIENTS: Record<string, Ingredient> = {
   'milk-thistle-extract': {
     id: 'milk-thistle-extract',
     inciName: 'Silybum Marianum Fruit Extract',
-    serbianName: 'Ekstrakt ploda badelja',
+    serbianName: 'Vodeno-etanolni ekstrakt ploda badelja (sikavice)',
     bulgarianName: 'Екстракт от плод на бодлив магарешки трън',
-    description: 'Zahvaljujući sadržaju silimarina, badel ispolja regenerativno delovanje na hepatocite, deluje kao hepatoprotektiv i doprinosi zdravlju jetre',
+    description: 'Zahvaljujući sadržaju silimarina, badelj ispoljava regenerativno delovanje na hepatocite, deluje kao hepatoprotektiv i doprinosi zdravlju jetre',
     bulgarianDescription: 'Благодарение на съдържанието на силимарин, бодливият магарешки трън проявява регенеративно действие върху хепатоцитите, действа като хепатопротектив',
     category: 'herbal_extract'
   },
   'nettle-leaf-extract': {
     id: 'nettle-leaf-extract',
     inciName: 'Urtica Dioica Leaf Extract',
-    serbianName: 'Ekstrakt lista koprive',
+    serbianName: 'Vodeno-etanolni ekstrakt lista koprive',
     bulgarianName: 'Екстракт от листа на коприва',
-    description: 'Tradicionalno se koristi za podršku zdravlja jetre i žlezuda, bogat je mineralima i vitaminima',
-    bulgarianDescription: 'Традиционно се използва за подкрепа на здравето на черния дроб и жлъчката, богат е на минерали и витамини',
+    // Neutralan opis — imuno tvrdnja je odobrena samo za IMMUNIS KAPI i tamo se
+    // postavlja kroz product.ingredientDescriptions override
+    description: 'Kopriva — tradicionalno cenjena biljka sa dugom istorijom upotrebe u biljnim preparatima',
+    bulgarianDescription: 'Коприва — традиционно ценено растение с дълга история на употреба в билкови препарати',
     category: 'herbal_extract'
   },
   'dandelion-root-extract': {
     id: 'dandelion-root-extract',
     inciName: 'Taraxacum Officinale Root Extract',
-    serbianName: 'Ekstrakt korena maslačka',
+    serbianName: 'Vodeno-etanolni ekstrakt korena maslačka',
     bulgarianName: 'Екстракт от корен на глухарче',
-    description: 'Maslačak doprinosi normalnoj funkciji žlezuda i jetre, tradicionalno se koristi za podršku digestivnog sistema',
-    bulgarianDescription: 'Глухарчето допринася за нормалната функция на жлъчката и черния дроб, традиционно се използва за подкрепа на храносмилателната система',
+    description: 'Maslačak doprinosi normalnoj funkciji želuca i jetre i normalnom funkcionisanju digestivnog trakta',
+    bulgarianDescription: 'Глухарчето допринася за нормалната функция на стомаха и черния дроб',
     category: 'herbal_extract'
   },
   'burdock-root-extract': {
     id: 'burdock-root-extract',
     inciName: 'Arctium Lappa Root Extract',
-    serbianName: 'Ekstrakt korena čička',
+    serbianName: 'Vodeno-etanolni ekstrakt korena čička',
     bulgarianName: 'Екстракт от корен на репей',
-    description: 'Čičak poboljšava varenje i podstiče metabolizam masti i glukoze, tradicionalno se koristi za detoksifikaciju',
-    bulgarianDescription: 'Репеят подобрява храносмилането и стимулира метаболизма на мазнините и глюкозата, традиционно се използва за детоксикация',
+    description: 'Čičak poboljšava varenje i podstiče metabolizam masti i glukoze',
+    bulgarianDescription: 'Репеят подобрява храносмилането и стимулира метаболизма на мазнините и глюкозата',
     category: 'herbal_extract'
   },
-  'burdock-herb-extract': {
-    id: 'burdock-herb-extract',
-    inciName: 'Arctium Lappa Herb Extract',
-    serbianName: 'Ekstrakt herbe rastavića',
-    bulgarianName: 'Екстракт от билка репей',
-    description: 'Rastić ima zaštitni efekat na hepatocite, podržava zdravlje jetre i pomaže u regeneraciji',
-    bulgarianDescription: 'Репеят има защитен ефект върху хепатоцитите, подкрепя здравето на черния дроб и помага в регенерацията',
+  'horsetail-herb-extract': {
+    id: 'horsetail-herb-extract',
+    inciName: 'Equisetum Arvense Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt herbe rastavića',
+    bulgarianName: 'Екстракт от билка полски хвощ',
+    description: 'Rastavić ima zaštitni efekat na hepatocite',
+    bulgarianDescription: 'Полският хвощ има защитен ефект върху хепатоцитите',
     category: 'herbal_extract'
   },
   'woodruff-herb-extract': {
     id: 'woodruff-herb-extract',
-    inciName: 'Galium Odoratum Herb Extract',
-    serbianName: 'Ekstrakt herbe lazarkinje',
-    bulgarianName: 'Екстракт от билка мирисливо подмаренче',
-    description: 'Lazarkinja povoljno utiče na proces varenja, tradicionalno se koristi za podršku digestivnog sistema',
-    bulgarianDescription: 'Мирисливото подмаренче благоприятно влияе на процеса на храносмилане, традиционно се използва за подкрепа на храносмилателната система',
+    inciName: 'Asperula Odorata Herb Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt herbe lazarkinje',
+    bulgarianName: 'Екстракт от билка еньовче',
+    description: 'Lazarkinja povoljno utiče na proces varenja',
+    bulgarianDescription: 'Еньовчето благоприятно влияе на процеса на храносмилане',
     category: 'herbal_extract'
   },
   'ethanol': {
@@ -475,8 +487,140 @@ export const INGREDIENTS: Record<string, Ingredient> = {
     inciName: 'Ethanol',
     serbianName: 'Etanol',
     bulgarianName: 'Етанол',
-    description: 'Prirodni konzervans i ekstraktni rastvarač, omogućava ekstrakciju aktivnih komponenti iz lekovitih biljaka',
+    description: 'Prirodni konzervans i ekstraktni rastvarač, omogućava ekstrakciju aktivnih komponenti iz biljaka',
     bulgarianDescription: 'Естествен консервант и екстрактен разтворител, позволява екстракция на активни компоненти от лечебни растения',
     category: 'base_component'
+  },
+
+  // BIOROID KAPI-specific ingredients
+  'achillea-herb-extract': {
+    id: 'achillea-herb-extract',
+    inciName: 'Achillea Millefolium Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt herbe hajdučke trave',
+    bulgarianName: 'Водно-етанолов екстракт от бял равнец',
+    description: 'Hajdučka trava podržava normalan vaskularni tonus, zdravlje venskog sistema i digestivni komfor',
+    bulgarianDescription: 'Белият равнец подпомага нормалния съдов тонус, здравето на венозната система и храносмилателния комфорт',
+    category: 'herbal_extract'
+  },
+  'arctium-root-extract': {
+    id: 'arctium-root-extract',
+    inciName: 'Arctium Lappa Root Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt korena čička',
+    bulgarianName: 'Екстракт от корен на репей',
+    description: 'Čičak pomaže varenje i doprinosi osećaju digestivnog komfora',
+    bulgarianDescription: 'Репеят помага на храносмилането и допринася за усещане на храносмилателен комфорт',
+    category: 'herbal_extract'
+  },
+  'calendula-flower-oral-extract': {
+    id: 'calendula-flower-oral-extract',
+    inciName: 'Calendula Officinalis Flower Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt cveta nevena',
+    bulgarianName: 'Водно-етанолов екстракт от цвят на невен',
+    description: 'Neven podstiče procese isceljivanja tkiva i osnaživanja tela',
+    bulgarianDescription: 'Невенът подпомага процесите на възстановяване на тъканите и укрепване на тялото',
+    category: 'herbal_extract'
+  },
+  'quercus-bark-oral-extract': {
+    id: 'quercus-bark-oral-extract',
+    inciName: 'Quercus Robur Bark Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt kore hrasta',
+    bulgarianName: 'Водно-етанолов екстракт от дъбова кора',
+    description: 'Hrast doprinosi intestinalnoj pokretljivosti, mikroflori i digestivnom komforu',
+    bulgarianDescription: 'Дъбът допринася за чревната моторика, микрофлората и храносмилателния комфорт',
+    category: 'herbal_extract'
+  },
+  'juniper-fruit-extract': {
+    id: 'juniper-fruit-extract',
+    inciName: 'Juniperus Communis Fruit Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt ploda kleke',
+    bulgarianName: 'Екстракт от плод на хвойна',
+    description: 'Kleka doprinosi odbrambenim sposobnostima organizma protiv spoljnih agenasa',
+    bulgarianDescription: 'Хвойната допринася за защитните способности на организма',
+    category: 'herbal_extract'
+  },
+
+  // IMMUNIS KAPI-specific ingredients
+  'echinacea-root-extract': {
+    id: 'echinacea-root-extract',
+    inciName: 'Echinacea Purpurea Root Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt korena purpurne ehinacee',
+    bulgarianName: 'Екстракт от корен на ехинацея',
+    description: 'Purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema i prirodnoj odbrambenoj sposobnosti organizma',
+    bulgarianDescription: 'Ехинацеята допринася за правилното функциониране на имунната система',
+    category: 'herbal_extract'
+  },
+  'walnut-leaf-extract': {
+    id: 'walnut-leaf-extract',
+    inciName: 'Juglans Regia Leaf Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt lista oraha',
+    bulgarianName: 'Екстракт от листа на орех',
+    description: 'Tradicionalno cenjena biljka, deo pažljivo odabrane kombinacije ekstrakata',
+    bulgarianDescription: 'Традиционно ценено растение, част от внимателно подбрана комбинация',
+    category: 'herbal_extract'
+  },
+  'thyme-herb-extract': {
+    id: 'thyme-herb-extract',
+    inciName: 'Thymus Serpyllum Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt herbe majčine dušice',
+    bulgarianName: 'Екстракт от билка дива мащерка',
+    description: 'Majčina dušica doprinosi zdravlju organa za disanje',
+    bulgarianDescription: 'Дивата мащерка допринася за здравето на дихателните органи',
+    category: 'herbal_extract'
+  },
+  'olive-leaf-extract': {
+    id: 'olive-leaf-extract',
+    inciName: 'Olea Europaea Leaf Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt lista masline',
+    bulgarianName: 'Екстракт от маслинови листа',
+    description: 'Maslina doprinosi odbrani organizma od spoljašnjih agenasa i zdravlju gornjih disajnih puteva',
+    bulgarianDescription: 'Маслината допринася за защитата на организма от външни агенти',
+    category: 'herbal_extract'
+  },
+  'lavender-flower-extract': {
+    id: 'lavender-flower-extract',
+    inciName: 'Lavandula Angustifolia Flower Extract',
+    serbianName: 'Vodeno-etanolni ekstrakt cveta lavande',
+    bulgarianName: 'Екстракт от цвят на лавандула',
+    description: 'Lavanda doprinosi relaksaciji i uspavljivanju',
+    bulgarianDescription: 'Лавандулата допринася за релаксация и заспиване',
+    category: 'herbal_extract'
+  },
+
+  // FUNGOMAX-specific ingredients
+  'thymus-extract': {
+    id: 'thymus-extract',
+    inciName: 'Thymus Vulgaris Extract',
+    serbianName: 'Ekstrakt timijana',
+    bulgarianName: 'Екстракт от мащерка',
+    description: 'Tradicionalno cenjena biljka u nezi kože i noktiju, glavni biljni sastojak FUNGOMAX formule',
+    bulgarianDescription: 'Традиционно ценено растение в грижата за кожата и ноктите',
+    category: 'herbal_extract'
+  },
+  'juglans-leaf-extract': {
+    id: 'juglans-leaf-extract',
+    inciName: 'Juglans Regia Leaf Extract',
+    serbianName: 'Ekstrakt orahovog lista',
+    bulgarianName: 'Екстракт от листа на орех',
+    description: 'Tradicionalno cenjena biljka u nezi kože sklone promenama',
+    bulgarianDescription: 'Традиционно ценено растение в грижата за кожата',
+    category: 'herbal_extract'
+  },
+  'salvia-extract': {
+    id: 'salvia-extract',
+    inciName: 'Salvia Officinalis Leaf Extract',
+    serbianName: 'Ekstrakt lista žalfije',
+    bulgarianName: 'Екстракт от листа на градинска салвия',
+    description: 'Tradicionalno cenjena biljka koja doprinosi osećaju čistoće i svežine kože',
+    bulgarianDescription: 'Традиционно ценено растение което допринася за усещане на чистота и свежест',
+    category: 'herbal_extract'
+  },
+  'allantoin': {
+    id: 'allantoin',
+    inciName: 'Allantoin',
+    serbianName: 'Alantoin',
+    bulgarianName: 'Алантоин',
+    description: 'Poznat sastojak za negu kože koji doprinosi mekom i negovanom osećaju kože',
+    bulgarianDescription: 'Познат съставка за грижа за кожата която допринася за мек и поддържан вид',
+    category: 'active_compound'
   }
 };
