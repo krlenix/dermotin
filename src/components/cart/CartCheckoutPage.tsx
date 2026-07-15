@@ -44,6 +44,7 @@ import {
 import { calculateCouponDiscount, validateCouponWithAPI, type Coupon } from '@/config/coupons';
 import { BOGO_CONFIG } from '@/utils/bogo-cookies';
 import { groupCartItemsForDisplay } from '@/utils/bogo-pair';
+import type { OrderDisplayItem } from '@/components/ThankYouPage';
 
 interface CartCheckoutPageProps {
   countryConfig: CountryConfig;
@@ -384,11 +385,43 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
         eventId,
       );
 
+      // Strukturisane stavke (sa ugnježdenim gratis linijama) samo za prikaz na thank-you strani
+      const displayItems: OrderDisplayItem[] = displayGroups.map((group) =>
+        group.type === 'bogo'
+          ? {
+              type: 'bogo' as const,
+              name: group.paid.productName,
+              variant: group.paid.variantName,
+              quantity: group.paid.quantity,
+              image: group.paid.image,
+              linePrice: roundPrice(
+                (group.paid.bogoOriginalUnitPrice ?? group.paid.unitPrice) * group.paid.quantity
+              ),
+              regularPrice: roundPrice(group.paid.regularPrice * group.paid.quantity),
+              free: group.free.map((line) => ({
+                name: line.productName,
+                variant: line.variantName,
+                quantity: line.quantity,
+                image: line.image,
+              })),
+            }
+          : {
+              type: 'regular' as const,
+              name: group.line.productName,
+              variant: group.line.variantName,
+              quantity: group.line.quantity,
+              image: group.line.image,
+              linePrice: roundPrice(group.line.unitPrice * group.line.quantity),
+              regularPrice: roundPrice(group.line.regularPrice * group.line.quantity),
+            }
+      );
+
       sessionStorage.setItem(
         'completedOrder',
         JSON.stringify({
           ...apiOrderData,
           orderId: result.orderId,
+          displayItems,
         })
       );
 

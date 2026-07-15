@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import {
   CheckCircle2,
   CreditCard,
+  Gift,
   Mail,
   MapPin,
   Package,
@@ -21,6 +22,20 @@ import { Footer } from '@/components/ui/footer';
 import { OrderData } from '@/app/api/orders/route';
 import { PixelTracker } from '@/components/tracking/PixelTracker';
 
+/** Stavka porudžbine pripremljena za prikaz (1+1 grupe sa ugnježdenim gratis linijama). */
+export interface OrderDisplayItem {
+  type: 'regular' | 'bogo';
+  name: string;
+  variant: string;
+  quantity: number;
+  image: string;
+  linePrice: number;
+  regularPrice: number;
+  free?: Array<{ name: string; variant: string; quantity: number; image: string }>;
+}
+
+type ThankYouOrder = OrderData & { displayItems?: OrderDisplayItem[] };
+
 interface ThankYouPageProps {
   countryConfig: CountryConfig;
   locale?: string;
@@ -30,7 +45,7 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
   const t = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [orderData, setOrderData] = useState<OrderData | null>(null);
+  const [orderData, setOrderData] = useState<ThankYouOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
   const courier = getDefaultCourier(countryConfig);
@@ -184,7 +199,8 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
 
                   <div className="space-y-4">
                     <h1 className="max-w-3xl text-4xl font-black leading-[1.08] tracking-[-0.02em] text-slate-950 sm:text-5xl lg:text-6xl">
-                      <span className="highlight-reveal highlight-reveal--green is-visible">Hvala vam</span> na porudžbini!
+                      <span className="highlight-reveal highlight-reveal--green is-visible">{t('thank_you.success_title_highlight')}</span>{' '}
+                      {t('thank_you.success_title_rest')}
                     </h1>
                     <p className="max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
                       {t('thank_you.order_confirmation')}. {t('thank_you.contact_soon')}
@@ -206,7 +222,8 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
                         <div>
                           <p className="text-lg font-black leading-tight text-slate-950">{courier.name}</p>
                           <p className="mt-2 text-sm leading-6 text-slate-600">
-                            {t('thank_you.courier_delivery')} u roku od <span className="font-semibold text-[#358055]">{orderData.deliveryTime}</span>
+                            {t('thank_you.courier_delivery')} {t('thank_you.delivery_within')}{' '}
+                            <span className="font-semibold text-[#358055]">{orderData.deliveryTime}</span>
                           </p>
                         </div>
                       </div>
@@ -224,7 +241,8 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
                         <div>
                           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#358055]">{t('thank_you.what_happens_next')}</p>
                           <h2 className="mt-3 text-3xl font-black leading-tight text-slate-950 md:text-[2.5rem]">
-                            Potvrda, pakovanje i <span className="highlight-reveal highlight-reveal--orange is-visible">brza dostava</span>
+                            {t('thank_you.next_steps_title_prefix')}{' '}
+                            <span className="highlight-reveal highlight-reveal--orange is-visible">{t('thank_you.next_steps_title_highlight')}</span>
                           </h2>
                         </div>
                         <div className="rounded-2xl bg-white/80 p-3 shadow-[0_10px_24px_rgba(53,128,85,0.08)]">
@@ -266,7 +284,7 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
                           />
                         </div>
                         <p className="mt-3 text-sm font-semibold text-slate-500">
-                          Korak {activeStep + 1} / 4
+                          {t('thank_you.step_of', { current: activeStep + 1, total: 4 })}
                         </p>
                       </div>
                     </div>
@@ -293,49 +311,113 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
               </div>
 
               <div className="mt-6 space-y-4">
-                <div className="flex items-center justify-between rounded-[1.2rem] bg-[#f7faf8] px-4 py-3">
+                <div className="flex items-center justify-between gap-3 rounded-[1.2rem] bg-[#f7faf8] px-4 py-3">
                   <span className="text-sm font-medium text-slate-500">{t('thank_you.order_number')}</span>
-                  <span className="text-base font-black text-slate-950">#{orderData.orderId}</span>
+                  <span className="break-all text-right text-base font-black text-slate-950">#{orderData.orderId}</span>
                 </div>
 
-                <div className="divide-y divide-[#358055]/8 rounded-[1.4rem] border border-[#358055]/10 bg-white">
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-slate-500">{t('thank_you.product')}</span>
-                    <span className="text-sm font-semibold text-slate-900">{orderData.productName}</span>
+                {orderData.displayItems && orderData.displayItems.length > 0 ? (
+                  <div className="space-y-3">
+                    <p className="px-1 text-sm font-semibold text-slate-600">{t('thank_you.ordered_items')}</p>
+                    {orderData.displayItems.map((item, index) => (
+                      <div
+                        key={index}
+                        className="overflow-hidden rounded-[1.2rem] border border-[#358055]/10 bg-white"
+                      >
+                        <div className="flex items-center gap-3 p-3">
+                          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[0.7rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              className="object-contain p-1"
+                              sizes="56px"
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-black uppercase text-slate-900">{item.name}</p>
+                            <p className="truncate text-xs font-medium text-slate-500">
+                              {item.variant} · {item.quantity} {t('thank_you.pieces')}
+                            </p>
+                          </div>
+                          <p className="shrink-0 text-sm font-black text-slate-950">
+                            {formatMoney(item.linePrice)} {orderData.currency}
+                          </p>
+                        </div>
+                        {item.free && item.free.length > 0 && (
+                          <div className="border-t border-[#358055]/10 bg-[#f3faf6] px-3 py-2">
+                            <ul className="space-y-1.5">
+                              {item.free.map((freeLine, freeIndex) => (
+                                <li key={freeIndex} className="flex items-center gap-2 pl-1.5">
+                                  <span className="h-6 w-0.5 shrink-0 rounded-full bg-[#358055]/35" aria-hidden />
+                                  <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md bg-white">
+                                    <Image
+                                      src={freeLine.image}
+                                      alt={freeLine.name}
+                                      fill
+                                      className="object-contain p-0.5"
+                                      sizes="32px"
+                                    />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="truncate text-xs font-bold text-slate-800">{freeLine.name}</p>
+                                    <p className="truncate text-[11px] text-slate-500">{freeLine.variant}</p>
+                                  </div>
+                                  <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-black uppercase text-[#358055]">
+                                    <Gift className="h-3 w-3" />
+                                    {t('bogo.pair_gratis')}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-slate-500">{t('thank_you.variant')}</span>
-                    <span className="text-sm font-semibold text-slate-900">{orderData.productVariant}</span>
-                  </div>
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-slate-500">{t('thank_you.quantity')}</span>
-                    <span className="text-sm font-semibold text-slate-900">{orderData.quantity} {t('thank_you.pieces')}</span>
-                  </div>
-                  {(orderData.isBOGO || orderData.bogoDetails) && (
-                    <div className="flex items-center justify-between px-4 py-3">
-                      <span className="text-sm text-slate-500">BOGO</span>
-                      <span className="text-sm font-semibold text-slate-900">
-                        {orderData.bogoDetails
-                          ? `${orderData.bogoDetails.paidQuantity}+${orderData.bogoDetails.freeQuantity}`
-                          : 'Aktivno'}
-                      </span>
+                ) : (
+                  <div className="divide-y divide-[#358055]/8 rounded-[1.4rem] border border-[#358055]/10 bg-white">
+                    <div className="flex items-start justify-between gap-4 px-4 py-3">
+                      <span className="shrink-0 text-sm text-slate-500">{t('thank_you.product')}</span>
+                      <span className="text-right text-sm font-semibold text-slate-900">{orderData.productName}</span>
                     </div>
-                  )}
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-slate-500">Cena proizvoda</span>
+                    <div className="flex items-start justify-between gap-4 px-4 py-3">
+                      <span className="shrink-0 text-sm text-slate-500">{t('thank_you.variant')}</span>
+                      <span className="text-right text-sm font-semibold leading-6 text-slate-900">{orderData.productVariant}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-4 px-4 py-3">
+                      <span className="text-sm text-slate-500">{t('thank_you.quantity')}</span>
+                      <span className="text-sm font-semibold text-slate-900">{orderData.quantity} {t('thank_you.pieces')}</span>
+                    </div>
+                    {(orderData.isBOGO || orderData.bogoDetails) && (
+                      <div className="flex items-center justify-between gap-4 px-4 py-3">
+                        <span className="text-sm text-slate-500">1+1</span>
+                        <span className="text-sm font-semibold text-slate-900">
+                          {orderData.bogoDetails
+                            ? `${orderData.bogoDetails.paidQuantity}+${orderData.bogoDetails.freeQuantity}`
+                            : t('bogo.pair_badge_pill')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="divide-y divide-[#358055]/8 rounded-[1.4rem] border border-[#358055]/10 bg-white">
+                  <div className="flex items-center justify-between gap-4 px-4 py-3">
+                    <span className="text-sm text-slate-500">{t('thank_you.product_price')}</span>
                     <span className="text-sm font-semibold text-slate-900">
                       {formatMoney(orderData.subtotal)} {orderData.currency}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <span className="text-sm text-slate-500">Troškovi dostave ({orderData.courierName || courier.name})</span>
-                    <span className={`text-sm font-semibold ${orderData.shippingCost > 0 ? 'text-slate-900' : 'text-[#358055]'}`}>
+                  <div className="flex items-center justify-between gap-4 px-4 py-3">
+                    <span className="text-sm text-slate-500">{t('thank_you.shipping_cost')} ({orderData.courierName || courier.name})</span>
+                    <span className={`shrink-0 text-sm font-semibold ${orderData.shippingCost > 0 ? 'text-slate-900' : 'text-[#358055]'}`}>
                       {orderData.shippingCost > 0
                         ? `${formatMoney(orderData.shippingCost)} ${orderData.currency}`
                         : t('order_summary.free')}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between px-4 py-4">
+                  <div className="flex items-center justify-between gap-4 px-4 py-4">
                     <span className="text-sm font-semibold text-slate-600">{t('thank_you.to_be_paid')}</span>
                     <span className="text-lg font-black text-[#F3765D]">{formatMoney(orderData.totalPrice)} {orderData.currency}</span>
                   </div>
@@ -349,7 +431,7 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#F3765D]">{t('thank_you.customer_info')}</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#F3765D]">{t('thank_you.delivery_info')}</p>
                   <h3 className="mt-1 text-2xl font-black text-slate-950">{t('thank_you.customer_info')}</h3>
                 </div>
               </div>

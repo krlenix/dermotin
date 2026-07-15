@@ -657,7 +657,16 @@
     "step_4": "Dostava na vašu adresu",
     "need_help": "Potrebna vam je pomoć?",
     "contact_support": "Naš tim za podršku je dostupan 24/7 za sve vaše potrebe",
-    "order_completed": "Narudžba završena"
+    "order_completed": "Narudžba završena",
+    "success_title_highlight": "Hvala vam",
+    "success_title_rest": "na narudžbi!",
+    "next_steps_title_prefix": "Potvrda, pakiranje i",
+    "next_steps_title_highlight": "brza dostava",
+    "delivery_within": "u roku od",
+    "step_of": "Korak {current} / {total}",
+    "ordered_items": "Naručeni proizvodi",
+    "product_price": "Cijena proizvoda",
+    "shipping_cost": "Troškovi dostave"
   },
   "wheel": {
     "title": "Kotač Sreće",
