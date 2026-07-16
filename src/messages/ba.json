@@ -505,7 +505,7 @@
     "return_period_template": "{days} dana garancije povrata novca.",
     "warranty_template": "{years} godina garancije.",
     "delivery_time_question": "Koliko traje dostava?",
-    "delivery_time_answer": "Dostava traje {deliveryTime} za {deliveryArea}. Kurirska služba Pošte Srpske radi radnim danima.",
+    "delivery_time_answer": "Dostava traje {deliveryTime} za {deliveryArea}. Kurirska služba X Express radi radnim danima.",
     "delivery_cost_question": "Koliko košta dostava?",
     "delivery_cost_answer": "Dostava košta {cost} {currency}. Besplatna dostava za narudžbe preko {freeShippingThreshold} {currencySymbol}.",
     "cash_on_delivery_question": "Da li mogu da platim pouzećem?",

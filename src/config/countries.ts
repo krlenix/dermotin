@@ -229,12 +229,12 @@ export const COUNTRIES: Record<string, CountryConfig> = {
     },
     couriers: [
       {
-        id: 'poste-srpske',
-        name: 'Pošte Srpske',
-        displayName: 'kurirske službe Pošte Srpske',
-        logo: '/images/couriers/postesrpske.png',
+        id: 'x-express',
+        name: 'X Express',
+        displayName: 'kurirske službe X Express',
+        logo: '/images/couriers/x-express.png',
         deliveryTime: '1-2 radna dana',
-        trackingUrl: 'https://postesrpske.com/tracking',
+        trackingUrl: 'https://www.x-express.ba/korisnicki-panel/pracenje-posiljke',
         isDefault: true,
         enabled: true,
         shipping: {
