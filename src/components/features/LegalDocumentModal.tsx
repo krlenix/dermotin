@@ -88,15 +88,20 @@ export function LegalDocumentModal({
     if (config.company.phone) {
       processed = processed.replace(/\{\{company\.phone\}\}/g, config.company.phone);
     } else {
-      // Remove phone references from text when phone is not available
       processed = processed
-        .replace(/\{\{company\.phone\}\}/g, '') // Remove phone placeholder
-        .replace(/ i telefon: /g, '') // Remove " i telefon: " 
-        .replace(/telefon: /g, '') // Remove "telefon: "
-        .replace(/ i telefon/g, '') // Remove " i telefon"
-        .replace(/\s+,\s*$/g, '') // Remove trailing comma and whitespace
-        .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
-        .trim();
+        .replace(/\{\{company\.phone\}\}/g, '__NO_PHONE__')
+        .replace(/ i telefon: __NO_PHONE__/gi, '')
+        .replace(/ili telefonom na __NO_PHONE__/gi, '')
+        .replace(/ ili pozivom na telefon: __NO_PHONE__/gi, '')
+        .replace(/pozivom na telefon: __NO_PHONE__/gi, '')
+        .replace(/Pozovite nas na __NO_PHONE__\r?\n?/g, '')
+        .replace(/^Telefon:\s*__NO_PHONE__\r?\n?/gim, '')
+        .replace(/Telefon:\s*__NO_PHONE__/gi, '')
+        .replace(/telefon:\s*__NO_PHONE__/gi, '')
+        .replace(/__NO_PHONE__/g, '')
+        .replace(/[^\S\n]{2,}/g, ' ')
+        .replace(/ +\./g, '.')
+        .replace(/\n{3,}/g, '\n\n');
     }
     processed = processed.replace(/\{\{company\.email\}\}/g, config.company.email);
     processed = processed.replace(/\{\{company\.website\}\}/g, websiteDomain);

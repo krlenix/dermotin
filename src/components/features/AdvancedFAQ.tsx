@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getFAQForCountry, FAQItem } from '@/config/faq';
+import { getCountryConfig } from '@/config/countries';
 import type { ProductFAQ, Product } from '@/config/types';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
@@ -28,6 +29,7 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
   const t = useTranslations();
   const tFaq = useTranslations('faq_ui');
   const [openItems, setOpenItems] = useState<string[]>(['0']); // First item open by default
+  const hasPhoneSupport = Boolean(getCountryConfig(countryCode).company.phone);
 
   // Create a proper translations object by manually building it
   // This bypasses the useTranslations issue by creating the structure we need
@@ -199,16 +201,18 @@ export function AdvancedFAQ({ countryCode, className, product }: AdvancedFAQProp
         <h3 className="text-lg font-black text-slate-950 md:text-xl">{t('faq_ui.no_answer')}</h3>
         <p className="mt-1.5 text-sm text-slate-600 md:text-base">{t('faq_ui.support_team')}</p>
 
-        <div className="mt-4 grid gap-3 md:grid-cols-2 md:gap-4">
-          <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/70 bg-white px-4 py-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F3765D]/10">
-              <Phone className="h-[18px] w-[18px] text-[#F3765D]" />
-            </span>
-            <div className="text-left">
-              <p className="text-sm font-bold text-slate-900">{t('faq_ui.call_us')}</p>
-              <p className="text-xs text-slate-500 md:text-sm">{t('faq_ui.working_hours')}</p>
+        <div className={`mt-4 grid gap-3 md:gap-4 ${hasPhoneSupport ? 'md:grid-cols-2' : 'md:grid-cols-1 md:max-w-md md:mx-auto'}`}>
+          {hasPhoneSupport && (
+            <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/70 bg-white px-4 py-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F3765D]/10">
+                <Phone className="h-[18px] w-[18px] text-[#F3765D]" />
+              </span>
+              <div className="text-left">
+                <p className="text-sm font-bold text-slate-900">{t('faq_ui.call_us')}</p>
+                <p className="text-xs text-slate-500 md:text-sm">{t('faq_ui.working_hours')}</p>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/70 bg-white px-4 py-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F3765D]/10">

@@ -300,7 +300,6 @@ export const COUNTRIES: Record<string, CountryConfig> = {
       postalCode: '84310',
       country: 'Crna Gora',
       taxNumber: '03303632',
-      phone: '+382 69 244 404',
       email: 'support@dermotin.com',
       registrationNumber: '5-0922858/001',
       activityCode: '47.91',

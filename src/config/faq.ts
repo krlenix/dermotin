@@ -117,7 +117,9 @@ function replacePlaceholders(template: string, faqContent: Record<string, unknow
         .replace(/telefona \{phone\} ili /gi, '') // Remove "telefona {phone} ili"
         .replace(/\{phone\} ili /gi, '') // Remove "{phone} ili"
         .replace(/ili \{phone\}/gi, '') // Remove "ili {phone}"
-        .replace(/\{phone\}/g, ''); // Remove any remaining {phone} placeholders
+        .replace(/\{phone\}/g, '') // Remove any remaining {phone} placeholders
+        .replace(/na telefon ili email/gi, 'na email')
+        .replace(/na telefon ili e-mail/gi, 'na email');
     }
     
     return processedTemplate;

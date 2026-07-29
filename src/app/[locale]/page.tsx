@@ -53,7 +53,9 @@ function buildOrganizationJsonLd(locale: string) {
       '@type': 'ContactPoint',
       contactType: 'customer service',
       email: countryConfig.company.email,
-      telephone: countryConfig.company.phone,
+      ...(countryConfig.company.phone
+        ? { telephone: countryConfig.company.phone }
+        : {}),
       areaServed: countryConfig.code.toUpperCase(),
       availableLanguage: ['sr', 'bs'],
     },
