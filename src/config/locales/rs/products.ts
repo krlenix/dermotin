@@ -1333,7 +1333,7 @@ export const PRODUCTS: Record<string, Product> = {
         quantity: 1,
         price: 5380,
         currency: 'RSD',
-        discountPrice: 3290,
+        discountPrice: 2790,
         isDefault: true
       }
     ],
@@ -1416,7 +1416,7 @@ export const PRODUCTS: Record<string, Product> = {
     crossSells: [
       'immunis_kapi'
     ],
-    published: false,
+    published: true,
     isBundle: true,
     bundleItems: [
       {

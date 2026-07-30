@@ -38,11 +38,9 @@ function normalizeFunnelSlug(slug: string): string {
 
 /** Tačna podudaranja koja čuvaju URL (rewrite). Prioritet nad pattern pravilima. */
 const EXACT_REWRITES: Record<string, string> = {
-  // BIOROID SET postoji kao DRAFT u rs katalogu (bioroid_set, slug 'bioroid-set').
-  // Dok se ne objavi kroz admin panel, stari URL-ovi služe bioroid funnel.
-  // PRI OBJAVI SETA promeniti destinacije u '/rs/checkouts/bioroid-set' i '/rs/products/bioroid-set'.
-  '/checkouts/bioroid-set': '/rs/checkouts/bioroid',
-  '/product/set-bioroid-melem-kapi': '/rs/products/bioroid',
+  // BIOROID SET je objavljen u rs katalogu (bioroid_set, slug 'bioroid-set').
+  '/checkouts/bioroid-set': '/rs/checkouts/bioroid-set',
+  '/product/set-bioroid-melem-kapi': '/rs/products/bioroid-set',
   // FunnelKit globalni checkout za BA tržište
   '/checkouts/checkout-ba': '/ba/checkout',
 };

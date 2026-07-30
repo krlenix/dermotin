@@ -12,6 +12,7 @@ import {
   CreditCard,
   Droplets,
   Leaf,
+  Package,
   RotateCcw,
   ShieldCheck,
   ShoppingBag,
@@ -75,6 +76,9 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(defaultVariant);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [bundleComponents, setBundleComponents] = useState<
+    { product: Product; variantName?: string; quantity: number }[]
+  >([]);
   const [activeCoupon, setActiveCoupon] = useState<Coupon | null>(null);
 
   // Variant with the biggest absolute savings gets the highlight badge
@@ -160,6 +164,22 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
             (item) => item.id !== product.id && !crossSellIds.includes(item.id)
           );
           setRelatedProducts([...preferred, ...rest].slice(0, 3));
+
+          if (product.isBundle && product.bundleItems?.length) {
+            const resolved = product.bundleItems
+              .map((item) => {
+                const component = byId.get(item.productId);
+                if (!component) return null;
+                const componentVariant = item.variantId
+                  ? component.variants.find((v) => v.id === item.variantId)
+                  : component.variants.find((v) => v.isDefault) || component.variants[0];
+                return { product: component, variantName: componentVariant?.name, quantity: item.quantity };
+              })
+              .filter((item): item is { product: Product; variantName?: string; quantity: number } =>
+                Boolean(item)
+              );
+            setBundleComponents(resolved);
+          }
         }
       } catch (error) {
         console.error('Failed to load related products:', error);
@@ -170,7 +190,7 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
     return () => {
       cancelled = true;
     };
-  }, [locale, product.id, product.crossSells]);
+  }, [locale, product.id, product.crossSells, product.isBundle, product.bundleItems]);
 
   // Kupon iz reklame (?coupon_code=POPUST20 / ?coupon=) ili ranije upamćen u kolačiću —
   // validira se kroz OMS API + statičku listu i prikazuje animiran obračun
@@ -309,6 +329,12 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                 {/* Product info */}
                 <div className="space-y-5">
                   <div className="flex flex-wrap items-center gap-2">
+                    {product.isBundle && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(135deg,#F3765D,#e0654d)] px-3.5 py-1 text-[13px] font-black tracking-[0.05em] text-white shadow-[0_8px_18px_rgba(243,118,93,0.35)]">
+                        <Package className="h-3.5 w-3.5" />
+                        {t('bundle_ui.set_badge')}
+                      </span>
+                    )}
                     <span className="inline-flex items-center rounded-full border border-[#358055]/20 bg-[#358055]/10 px-3 py-1 text-[13px] font-extrabold tracking-[0.01em] text-[#2f6f4a]">
                       {t('homepage.trust_natural_ingredients')}
                     </span>
@@ -359,6 +385,49 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                       {product.description}
                     </p>
                   </div>
+
+                  {/* Sadržaj seta — naglašava da je proizvod komplet više proizvoda */}
+                  {product.isBundle && bundleComponents.length > 0 && (
+                    <div className="rounded-[1.2rem] border-2 border-[#F3765D]/20 bg-[linear-gradient(135deg,rgba(243,118,93,0.07),rgba(53,128,85,0.05))] p-4 md:p-5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="text-sm font-black uppercase tracking-[0.08em] text-[#ba5a47]">
+                          {t('bundle_ui.set_contents_title')}
+                        </p>
+                        <span className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-extrabold text-[#ba5a47] shadow-sm">
+                          {t('bundle_ui.set_contents_count', {
+                            count: bundleComponents.reduce((sum, c) => sum + c.quantity, 0),
+                          })}
+                        </span>
+                      </div>
+                      <div className="mt-3 space-y-2.5">
+                        {bundleComponents.map(({ product: component, variantName, quantity }) => (
+                          <div
+                            key={component.id}
+                            className="flex items-center gap-3 rounded-xl border border-white/70 bg-white/85 px-3 py-2.5 shadow-sm"
+                          >
+                            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-slate-100 bg-white">
+                              <Image
+                                src={component.images.thumbnail || component.images.main}
+                                alt={component.name}
+                                fill
+                                className="object-contain p-1"
+                                sizes="44px"
+                              />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-bold text-slate-900">{component.name}</p>
+                              {variantName && (
+                                <p className="truncate text-xs font-medium text-slate-500">{variantName}</p>
+                              )}
+                            </div>
+                            <span className="shrink-0 rounded-full bg-[#358055]/10 px-2.5 py-1 text-xs font-black text-[#2f6f4a]">
+                              ×{quantity}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Aktivni kupon (iz reklame ili ručno unet) */}
                   {activeCoupon && (

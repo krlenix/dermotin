@@ -421,6 +421,11 @@
     "per_item": "/ kom",
     "selected": "Izabrano"
   },
+  "bundle_ui": {
+    "set_badge": "SET / KOMPLET",
+    "set_contents_title": "Šta je u setu?",
+    "set_contents_count": "{count, plural, one {# proizvod} few {# proizvoda} other {# proizvoda}}"
+  },
 
   "comparison": {
     "why_dermotin": "Zašto baš DERMOTIN?",
