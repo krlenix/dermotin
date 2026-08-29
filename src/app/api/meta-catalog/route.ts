@@ -33,7 +33,7 @@ function getBaseUrl(request: NextRequest): string {
   const host = request.headers.get('host');
   const protocol = request.headers.get('x-forwarded-proto') || 'https';
   if (host) return `${protocol}://${host}`;
-  return process.env.NEXT_PUBLIC_APP_URL || 'https://dermotin.com';
+  return process.env.NEXT_PUBLIC_APP_URL || 'https://dermotin.rs';
 }
 
 function csvField(value: string): string {

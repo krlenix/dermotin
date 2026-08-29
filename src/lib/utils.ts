@@ -19,17 +19,23 @@ export function getAppUrl(): string {
   // In server environment, try to get from request headers first
   // This will be handled by passing the request context when needed
   
-  // Fallback to environment variables only if URL detection is not available
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`
-  }
-  
+  // Explicit canonical origin must win over Vercel's deployment/preview URL.
   if (process.env.NEXT_PUBLIC_APP_URL) {
     return process.env.NEXT_PUBLIC_APP_URL
   }
   
   if (process.env.NEXT_PUBLIC_DOMAIN) {
-    return process.env.NEXT_PUBLIC_DOMAIN
+    return process.env.NEXT_PUBLIC_DOMAIN.startsWith('http')
+      ? process.env.NEXT_PUBLIC_DOMAIN
+      : `https://${process.env.NEXT_PUBLIC_DOMAIN}`
+  }
+
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
   }
   
   // For development, use localhost
@@ -37,8 +43,7 @@ export function getAppUrl(): string {
     return 'http://localhost:3000'
   }
   
-  // This should not happen in production if environment variables are set correctly
-  throw new Error('Unable to determine app URL. Please set NEXT_PUBLIC_APP_URL or NEXT_PUBLIC_DOMAIN environment variable.')
+  return 'https://dermotin.rs'
 }
 
 /**

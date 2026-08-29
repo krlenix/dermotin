@@ -4,6 +4,7 @@
  */
 
 export interface PixelConfig {
+  site: TrackingSite;
   meta: {
     pixelId: string;
     enabled: boolean;
@@ -19,10 +20,66 @@ export interface PixelConfig {
   };
   google: {
     tagId: string;
+    analyticsId: string;
     enabled: boolean;
     /** Google Ads conversion label (deo iza "/" u send_to, npr. AW-XXXX/LABEL) */
     conversionLabel?: string;
   };
+}
+
+export type TrackingSite = 'dermotin_rs' | 'dermotin_co' | 'default';
+
+export function getTrackingSite(hostname?: string): TrackingSite {
+  const normalized = (hostname || '')
+    .toLowerCase()
+    .replace(/^www\./, '')
+    .replace(/:\d+$/, '');
+
+  if (normalized === 'dermotin.rs') return 'dermotin_rs';
+  if (normalized === 'dermotin.co') return 'dermotin_co';
+  return 'default';
+}
+
+interface SitePixelOverrides {
+  metaPixelId: string;
+  tiktokPixelId: string;
+  googleTagId: string;
+  googleAnalyticsId: string;
+  googleConversionLabel: string;
+  capiAccessToken: string;
+  capiTestEventCode: string;
+}
+
+/**
+ * Domain-level tracking is intentionally isolated. A known production host
+ * never falls back to another site's pixel/CAPI configuration.
+ */
+function getSitePixelOverrides(site: TrackingSite): SitePixelOverrides | null {
+  if (site === 'dermotin_rs') {
+    return {
+      // Backward-compatible RS fallbacks keep the current site operational while
+      // Vercel is migrated to the explicit SITE_RS variable names.
+      metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_SITE_RS || process.env.NEXT_PUBLIC_META_PIXEL_RS || '',
+      tiktokPixelId: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_SITE_RS || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_RS || '',
+      googleTagId: process.env.NEXT_PUBLIC_GOOGLE_TAG_SITE_RS || process.env.NEXT_PUBLIC_GOOGLE_TAG_RS || process.env.NEXT_PUBLIC_GOOGLE_TAG || '',
+      googleAnalyticsId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID_SITE_RS || process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || '',
+      googleConversionLabel: process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_SITE_RS || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_RS || process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL || '',
+      capiAccessToken: process.env.META_CAPI_TOKEN_SITE_RS || process.env.META_CAPI_TOKEN_RS || '',
+      capiTestEventCode: process.env.META_CAPI_TEST_CODE_SITE_RS || process.env.META_CAPI_TEST_CODE_RS || '',
+    };
+  }
+  if (site === 'dermotin_co') {
+    return {
+      metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_SITE_CO || '',
+      tiktokPixelId: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_SITE_CO || '',
+      googleTagId: process.env.NEXT_PUBLIC_GOOGLE_TAG_SITE_CO || '',
+      googleAnalyticsId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID_SITE_CO || '',
+      googleConversionLabel: process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_LABEL_SITE_CO || '',
+      capiAccessToken: process.env.META_CAPI_TOKEN_SITE_CO || '',
+      capiTestEventCode: process.env.META_CAPI_TEST_CODE_SITE_CO || '',
+    };
+  }
+  return null;
 }
 
 export interface CountryPixelConfig {
@@ -35,13 +92,15 @@ export interface CountryPixelConfig {
 const DEFAULT_GOOGLE_CONVERSION_LABEL = '-4WLCOG_3r0ZENjk5rk9';
 
 // Get pixel configuration for a specific country from environment variables
-function getPixelConfigForCountry(countryCode: string): PixelConfig {
+function getPixelConfigForCountry(countryCode: string, hostname?: string): PixelConfig {
   const upperCountryCode = countryCode.toUpperCase();
+  const site = getTrackingSite(hostname);
   
   // Use direct access to environment variables - Next.js dynamic access doesn't work reliably on client
   let metaPixelId = '';
   let tiktokPixelId = '';
   let googleTagId = '';
+  let googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || '';
   let googleConversionLabel = '';
   let capiAccessToken = '';
   let capiTestEventCode = '';
@@ -116,21 +175,34 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
       capiTestEventCode = process.env[`META_CAPI_TEST_CODE_${upperCountryCode}`] || '';
       break;
   }
+
+  const siteOverrides = getSitePixelOverrides(site);
+  if (siteOverrides) {
+    metaPixelId = siteOverrides.metaPixelId;
+    tiktokPixelId = siteOverrides.tiktokPixelId;
+    googleTagId = siteOverrides.googleTagId;
+    googleAnalyticsId = siteOverrides.googleAnalyticsId;
+    googleConversionLabel = siteOverrides.googleConversionLabel;
+    capiAccessToken = siteOverrides.capiAccessToken;
+    capiTestEventCode = siteOverrides.capiTestEventCode;
+  }
   
   // Check if pixel ID is valid (not empty and not a placeholder)
   // Allow any non-empty string that doesn't start with placeholder text
-  const isValidMetaPixel = metaPixelId && !metaPixelId.startsWith('your_meta_pixel_id') && !metaPixelId.startsWith('your_actual_meta_pixel_id');
-  const isValidTiktokPixel = tiktokPixelId && !tiktokPixelId.startsWith('your_tiktok_pixel_id') && !tiktokPixelId.startsWith('your_actual_tiktok_pixel_id');
-  const isValidGoogleTag = googleTagId && !googleTagId.startsWith('your_google_tag_id') && !googleTagId.startsWith('your_actual_google_tag_id');
+  const isValidMetaPixel = /^\d{8,20}$/.test(metaPixelId);
+  const isValidTiktokPixel = /^[A-Z0-9]{20,}$/.test(tiktokPixelId);
+  const isValidGoogleTag = /^(AW|G)-[A-Z0-9]+$/.test(googleTagId);
+  const isValidGoogleAnalytics = /^G-[A-Z0-9]+$/.test(googleAnalyticsId);
   const isValidCapiToken = capiAccessToken && !capiAccessToken.startsWith('your_');
   
   const config = {
+    site,
     meta: {
       pixelId: metaPixelId,
       enabled: !!isValidMetaPixel,
       capi: isValidMetaPixel ? {
         accessToken: capiAccessToken,
-        testEventCode: process.env.META_CAPI_TEST_CODE || capiTestEventCode || undefined,
+        testEventCode: (site === 'default' ? process.env.META_CAPI_TEST_CODE : undefined) || capiTestEventCode || undefined,
         enabled: !!isValidCapiToken,
       } : undefined,
     },
@@ -140,7 +212,8 @@ function getPixelConfigForCountry(countryCode: string): PixelConfig {
     },
     google: {
       tagId: googleTagId,
-      enabled: !!isValidGoogleTag,
+      analyticsId: googleAnalyticsId,
+      enabled: !!(isValidGoogleTag || isValidGoogleAnalytics),
       conversionLabel: googleConversionLabel || undefined,
     },
   };
@@ -164,13 +237,15 @@ const pixelConfigCache: CountryPixelConfig = {};
 /**
  * Get pixel configuration for a specific country
  */
-export function getPixelConfig(countryCode: string): PixelConfig {
+export function getPixelConfig(countryCode: string, hostname?: string): PixelConfig {
+  const site = getTrackingSite(hostname);
+  const cacheKey = `${site}:${countryCode.toLowerCase()}`;
   // Use cache to avoid repeated environment variable lookups
-  if (!pixelConfigCache[countryCode]) {
-    pixelConfigCache[countryCode] = getPixelConfigForCountry(countryCode);
+  if (!pixelConfigCache[cacheKey]) {
+    pixelConfigCache[cacheKey] = getPixelConfigForCountry(countryCode, hostname);
   }
   
-  return pixelConfigCache[countryCode];
+  return pixelConfigCache[cacheKey];
 }
 
 /**

@@ -145,13 +145,14 @@ interface CapiRequestPayload {
  */
 export async function sendCapiEvent(
   countryCode: string,
-  eventData: CapiEventData
+  eventData: CapiEventData,
+  hostname?: string
 ): Promise<{ success: boolean; error?: string; eventId?: string }> {
   // console.log('\n' + '='.repeat(80));
   // console.log('🚀 CAPI EVENT TRIGGERED');
   // console.log('='.repeat(80));
   
-  const pixelConfig = getPixelConfig(countryCode);
+  const pixelConfig = getPixelConfig(countryCode, hostname);
   
   // Check if CAPI is enabled for this country
   if (!pixelConfig.meta.capi || !pixelConfig.meta.capi.enabled) {
@@ -359,7 +360,8 @@ export async function sendCapiPurchaseEvent(
       quantity: number;
       price: number;
     }>;
-  }
+  },
+  hostname?: string
 ): Promise<{ success: boolean; error?: string; eventId?: string }> {
   // console.log('\n' + '💰'.repeat(40));
   // console.log('🛒 CAPI PURCHASE EVENT HELPER CALLED');
@@ -411,7 +413,7 @@ export async function sendCapiPurchaseEvent(
     actionSource: 'website',
     userData,
     customData,
-  });
+  }, hostname);
 }
 
 /**
@@ -431,7 +433,8 @@ export async function sendCapiInitiateCheckoutEvent(
     eventSourceUrl?: string;
     contentIds?: string[];
     numItems?: number;
-  }
+  },
+  hostname?: string
 ): Promise<{ success: boolean; error?: string; eventId?: string }> {
   // console.log('\n' + '🛍️'.repeat(40));
   // console.log('🔔 CAPI INITIATE CHECKOUT EVENT HELPER CALLED');
@@ -461,6 +464,6 @@ export async function sendCapiInitiateCheckoutEvent(
       content_ids: checkoutData.contentIds,
       num_items: checkoutData.numItems,
     },
-  });
+  }, hostname);
 }
 

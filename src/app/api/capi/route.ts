@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
     const clientUserAgent = request.headers.get('user-agent') || undefined;
     const referer = request.headers.get('referer') || undefined;
     const eventSourceUrl = pageUrl || referer;
+    const hostname = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim() ||
+                     request.headers.get('host') ||
+                     undefined;
 
     // Get Facebook tracking data from cookies
     const cookieHeader = request.headers.get('cookie');
@@ -105,7 +108,7 @@ export async function POST(request: NextRequest) {
       actionSource: 'website',
       userData,
       customData,
-    });
+    }, hostname);
 
     return NextResponse.json(result);
   } catch (error) {

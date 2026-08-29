@@ -32,7 +32,9 @@ export async function generateMetadata({ params }: CheckoutPageProps): Promise<M
   const ogImage = getProductOgImage(product);
   // Alternative slugs (A/B landing variants) canonicalize to the primary slug
   // so they don't compete in search results.
-  const canonical = `${getSiteUrl()}/${locale}/checkouts/${product.slug}`;
+  // Checkout/landing pages render the same product content as the canonical PDP.
+  // Keep funnels available for ads, but consolidate search signals on one URL.
+  const canonical = `${getSiteUrl()}/${locale}/products/${product.slug}`;
 
   return {
     // seoTitle already contains the brand suffix — bypass the layout template
@@ -42,7 +44,7 @@ export async function generateMetadata({ params }: CheckoutPageProps): Promise<M
       canonical,
       languages: buildLanguageAlternates(
         availableLocales,
-        (l) => `/${l}/checkouts/${product.slug}`
+        (l) => `/${l}/products/${product.slug}`
       ),
     },
     openGraph: {

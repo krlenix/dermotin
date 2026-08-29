@@ -16,9 +16,19 @@ export function getSiteUrl(): string {
   const raw =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_DOMAIN ||
-    'https://dermotin.com';
+    'https://dermotin.rs';
   const withProtocol = raw.startsWith('http') ? raw : `https://${raw}`;
   return withProtocol.replace(/\/$/, '');
+}
+
+/**
+ * Stable content date for sitemap lastmod. Never use "now" for every request:
+ * crawlers treat lastmod as the date when visible content actually changed.
+ */
+export function getContentLastModified(): Date {
+  const raw = process.env.NEXT_PUBLIC_CONTENT_LAST_MODIFIED || '2026-08-29';
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? new Date('2026-08-29') : parsed;
 }
 
 /** hreflang code for a locale, e.g. rs -> sr-RS */

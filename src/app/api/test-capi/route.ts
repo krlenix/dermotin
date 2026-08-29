@@ -6,9 +6,16 @@ import { sendCapiPurchaseEvent, sendCapiInitiateCheckoutEvent } from '@/lib/capi
  * Usage: GET /api/test-capi?country=rs&event=purchase
  */
 export async function GET(request: Request) {
+  if (process.env.NODE_ENV === 'production') {
+    return new NextResponse(null, { status: 404 });
+  }
+
   const { searchParams } = new URL(request.url);
   const country = searchParams.get('country') || 'rs';
   const eventType = searchParams.get('event') || 'purchase';
+  const hostname = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim() ||
+                   request.headers.get('host') ||
+                   undefined;
 
   console.log('\n' + '🧪'.repeat(40));
   console.log('🧪 TEST CAPI ENDPOINT CALLED');
@@ -45,7 +52,7 @@ export async function GET(request: Request) {
             price: 1990,
           },
         ],
-      });
+      }, hostname);
 
       return NextResponse.json({
         success: true,
@@ -66,7 +73,7 @@ export async function GET(request: Request) {
         eventSourceUrl: request.url,
         contentIds: ['biomelis-3'],
         numItems: 3,
-      });
+      }, hostname);
 
       return NextResponse.json({
         success: true,

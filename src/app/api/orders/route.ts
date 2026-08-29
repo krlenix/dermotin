@@ -550,7 +550,7 @@ export async function POST(request: NextRequest) {
           quantity: item.quantity,
           price: item.price, // Already rounded in webhookPayload
         })),
-      });
+      }, request.headers.get('x-forwarded-host')?.split(',')[0]?.trim() || currentDomain);
       
       if (capiResult.success) {
         capiStatus = 'success';

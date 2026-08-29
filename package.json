@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
-    "build:prod": "NODE_ENV=production next build"
+    "build:prod": "NODE_ENV=production next build",
+    "migration:map": "node scripts/generate-legacy-domain-map.mjs",
+    "audit:migration": "node scripts/audit-local-migration.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

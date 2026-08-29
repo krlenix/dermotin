@@ -40,11 +40,20 @@ function hasMarketingConsent(countryCode: string): boolean {
 
 export function PixelTracker({ countryCode }: PixelTrackerProps) {
   const [isClient, setIsClient] = useState(false);
-  const initializedRef = useRef(false);
-  const pixelConfig = getPixelConfig(countryCode);
+  const [marketingAllowed, setMarketingAllowed] = useState(false);
+  const metaInitializedRef = useRef(false);
+  const tiktokInitializedRef = useRef(false);
+  const hostname = isClient ? window.location.hostname : undefined;
+  const pixelConfig = getPixelConfig(countryCode, hostname);
+  const googleTagIds = [...new Set([
+    pixelConfig.google.tagId,
+    pixelConfig.google.analyticsId,
+  ])].filter(Boolean);
+  const googleLoaderId = googleTagIds[0];
 
   useEffect(() => {
     setIsClient(true);
+    setMarketingAllowed(hasMarketingConsent(countryCode));
     
     // Initialize Facebook tracking as fallback (captures fbclid and creates cookies)
     // This runs even if Meta Pixel is blocked by ad blockers
@@ -56,18 +65,15 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       //   hasFbc: !!fbData.fbc,
       // });
     }
-  }, []);
+  }, [countryCode]);
 
   useEffect(() => {
     // Only initialize on client side and when pixel config is available
     if (!isClient) return;
     
-    let metaInitialized = initializedRef.current;
-    let tiktokInitialized = false;
-    
     // Initialize Meta Pixel
     const initMetaPixel = () => {
-      if (metaInitialized || !pixelConfig.meta.enabled || !pixelConfig.meta.pixelId) return;
+      if (metaInitializedRef.current || !pixelConfig.meta.enabled || !pixelConfig.meta.pixelId) return;
       
       // Check for marketing consent
       if (!hasMarketingConsent(countryCode)) {
@@ -116,13 +122,13 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
           // console.warn('❌ CAPI PageView tracking failed:', error);
         });
         
-        metaInitialized = true;
+        metaInitializedRef.current = true;
       }
     };
     
     // Initialize TikTok Pixel
     const initTikTokPixel = () => {
-      if (tiktokInitialized || !pixelConfig.tiktok.enabled || !pixelConfig.tiktok.pixelId) return;
+      if (tiktokInitializedRef.current || !pixelConfig.tiktok.enabled || !pixelConfig.tiktok.pixelId) return;
       
       // Check for marketing consent
       if (!hasMarketingConsent(countryCode)) {
@@ -133,7 +139,7 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       if (typeof window !== 'undefined' && window.ttq) {
         window.ttq.load(pixelConfig.tiktok.pixelId);
         window.ttq.page();
-        tiktokInitialized = true;
+        tiktokInitializedRef.current = true;
       }
     };
 
@@ -172,12 +178,15 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
           const preferences = JSON.parse(e.newValue);
           if (preferences.marketing === true) {
             // Consent granted - reinitialize pixels
-            metaInitialized = false;
-            tiktokInitialized = false;
+            setMarketingAllowed(true);
+            metaInitializedRef.current = false;
+            tiktokInitializedRef.current = false;
             setTimeout(() => {
               initMetaPixel();
               initTikTokPixel();
             }, 100);
+          } else {
+            setMarketingAllowed(false);
           }
         } catch {
           // console.error('Failed to parse consent change:', error);
@@ -187,9 +196,11 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
     
     // Also listen for a custom event for same-window updates
     const handleConsentChange = () => {
-      if (hasMarketingConsent(countryCode)) {
-        metaInitialized = false;
-        tiktokInitialized = false;
+      const allowed = hasMarketingConsent(countryCode);
+      setMarketingAllowed(allowed);
+      if (allowed) {
+        metaInitializedRef.current = false;
+        tiktokInitializedRef.current = false;
         setTimeout(() => {
           initMetaPixel();
           initTikTokPixel();
@@ -212,13 +223,6 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       }
     };
   }, [isClient, pixelConfig.meta.enabled, pixelConfig.meta.pixelId, pixelConfig.tiktok.enabled, pixelConfig.tiktok.pixelId, countryCode]);
-  
-  // Mark as initialized after first render
-  useEffect(() => {
-    if (isClient) {
-      initializedRef.current = true;
-    }
-  }, [isClient]);
 
   // Don't render anything on server side to prevent hydration mismatch
   if (!isClient) {
@@ -228,10 +232,10 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
   return (
     <>
       {/* Meta Pixel Script */}
-      {pixelConfig.meta.enabled && pixelConfig.meta.pixelId && (
+      {marketingAllowed && pixelConfig.meta.enabled && pixelConfig.meta.pixelId && (
         <>
           <Script
-            id="meta-pixel"
+            id={`meta-pixel-${pixelConfig.site}`}
             strategy="afterInteractive"
             onLoad={() => {
               // Trigger a custom event to notify that the script is ready
@@ -264,9 +268,9 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
       )}
 
       {/* TikTok Pixel Script */}
-      {pixelConfig.tiktok.enabled && pixelConfig.tiktok.pixelId && (
+      {marketingAllowed && pixelConfig.tiktok.enabled && pixelConfig.tiktok.pixelId && (
         <Script
-          id="tiktok-pixel"
+          id={`tiktok-pixel-${pixelConfig.site}`}
           strategy="afterInteractive"
           onLoad={() => {
             // Trigger a custom event to notify that the script is ready
@@ -282,16 +286,40 @@ export function PixelTracker({ countryCode }: PixelTrackerProps) {
         />
       )}
 
+      {/* Google Ads / Analytics are also isolated per production domain. */}
+      {marketingAllowed && pixelConfig.google.enabled && googleLoaderId && (
+        <>
+          <Script
+            id={`google-tag-init-${pixelConfig.site}`}
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
+                window.gtag('js', new Date());
+                ${googleTagIds
+                  .map((id) => `window.gtag('config', ${JSON.stringify(id)});`)
+                  .join('\n')}
+              `,
+            }}
+          />
+          <Script
+            id={`google-tag-loader-${pixelConfig.site}`}
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(googleLoaderId)}`}
+          />
+        </>
+      )}
+
     </>
   );
 }
 
 // Hook for tracking events
 export function usePixelTracking(countryCode: string) {
-  const pixelConfig = getPixelConfig(countryCode);
-
   const trackEvent = (eventType: 'initiate_checkout' | 'purchase' | 'view_content' | 'add_to_cart' | 'page_view' | 'lead', eventData?: Record<string, unknown>, eventId?: string) => {
     if (typeof window === 'undefined') return;
+    const pixelConfig = getPixelConfig(countryCode, window.location.hostname);
 
     // Check for marketing consent
     if (!hasMarketingConsent(countryCode)) {
@@ -375,7 +403,7 @@ export function usePixelTracking(countryCode: string) {
       }
     }
 
-    // Track Google Ads (gtag) event — base tag se učitava u app/layout.tsx
+    // Track Google events; the per-site base tag is loaded by PixelTracker.
     if (pixelConfig.google.enabled && window.gtag && pixelConfig.google.tagId) {
       const value = typeof eventData?.value === 'number' ? eventData.value : undefined;
       const currency = typeof eventData?.currency === 'string' ? eventData.currency : undefined;

@@ -25,6 +25,11 @@ export default function robots(): MetadataRoute.Robots {
           '/*/new-landing',
         ],
       },
+      {
+        userAgent: ['OAI-SearchBot', 'ChatGPT-User', 'GPTBot', 'Google-Extended'],
+        allow: '/',
+        disallow: ['/api/', '/admin/'],
+      },
     ],
     sitemap: `${base}/sitemap.xml`,
     host: base,

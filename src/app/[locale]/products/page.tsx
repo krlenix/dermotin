@@ -3,6 +3,7 @@ import { getProductsForCountry } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
 import { ProductsPage } from '@/components/shop/ProductsPage';
 import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { SITE_LOCALES, buildLanguageAlternates, getSiteUrl } from '@/lib/seo';
 
 interface ProductsRouteProps {
@@ -44,6 +45,20 @@ export default async function ProductsRoute({ params }: ProductsRouteProps) {
 
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'DERMOTIN proizvodi',
+          numberOfItems: products.length,
+          itemListElement: products.map((product, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: product.name,
+            url: `${getSiteUrl()}/${locale}/products/${product.slug}`,
+          })),
+        }}
+      />
       <CountryMismatchBanner />
       <ProductsPage products={products} countryConfig={countryConfig} locale={locale} />
     </>

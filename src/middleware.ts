@@ -40,13 +40,18 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Legacy dermotin.rs (WordPress/FunnelKit) URLs. Rewrites keep the URL
+  // Legacy dermotin.rs / dermotin.co (WordPress/FunnelKit) URLs. Rewrites keep the URL
   // unchanged (active ads point at them); redirects send the rest to the
   // canonical new URL. Query strings (utm, fbclid…) are preserved.
   const legacy = resolveLegacyPath(pathname);
   if (legacy) {
     const url = request.nextUrl.clone();
     url.pathname = legacy.destination;
+    for (const [key, value] of Object.entries(legacy.query || {})) {
+      if (!url.searchParams.has(key)) {
+        url.searchParams.set(key, value);
+      }
+    }
     if (legacy.type === 'rewrite') {
       return NextResponse.rewrite(url);
     }

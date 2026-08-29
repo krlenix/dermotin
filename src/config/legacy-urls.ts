@@ -1,5 +1,6 @@
 /**
- * Migracija URL-ova sa starog dermotin.rs sajta (WordPress + WooCommerce + FunnelKit).
+ * Migracija URL-ova sa starih dermotin.rs i dermotin.co sajtova
+ * (WordPress + WooCommerce + FunnelKit).
  *
  * Cilj: SVAKI stari URL mora da radi na novom sajtu (1:1), a URL-ovi na koje
  * pokazuju aktivne reklame (FunnelKit checkouts + product stranice) moraju da
@@ -16,6 +17,8 @@
 export interface LegacyResolution {
   type: 'rewrite' | 'redirect';
   destination: string;
+  /** Default query params from an old WordPress redirect rule. Existing values win. */
+  query?: Record<string, string>;
 }
 
 /** Stari jezički prefiks → novi locale. */
@@ -47,6 +50,12 @@ const EXACT_REWRITES: Record<string, string> = {
 
 /** Tačna podudaranja koja se preusmeravaju (301). Prioritet nad pattern pravilima. */
 const EXACT_REDIRECTS: Record<string, string> = {
+  // Aktivni marketinški aliasi iz WordPress Redirection plugina.
+  // BA aliasi su na starom sajtu prvo vodili na /bs/ FunnelKit URL.
+  '/checkouts/biomelis-ba': '/bs/checkouts/biomelis',
+  '/checkouts/biowart-ba': '/bs/checkouts/biowart',
+  '/checkouts/fungel-ba': '/bs/checkouts/fungel',
+
   // Interni FunnelKit preview / test funneli
   '/checkouts/wfacp_preview1': '/rs',
   '/checkouts/smania-copy': '/rs',
@@ -106,6 +115,29 @@ const EXACT_REDIRECTS: Record<string, string> = {
   '/offer/immunis-kapi': '/rs/checkouts/immunis-kapi',
   '/offer/immunis-kapi-2': '/rs/checkouts/immunis-kapi',
   '/offer/crn': '/me/products',
+
+  // Ostali WordPress Redirection aliasi
+  '/product/krema-za-lice-od-sluzi-puza': '/rs/products',
+  '/qrkod': '/rs',
+};
+
+/**
+ * Marketinški aliasi koji su na WordPress-u dodavali kupon pre otvaranja
+ * FunnelKit/product stranice. Middleware dodaje kupon samo ako ga poziv već
+ * nema, pa eksplicitni coupon_code iz oglasa nikada ne biva pregažen.
+ */
+const COUPON_REDIRECTS: Record<string, string> = {
+  '/checkouts/krema-protiv-gljivica-lp1': '/checkouts/fungel-v1',
+  '/checkouts/ulje-protiv-gljivica': '/checkouts/fungel-v1',
+  '/checkouts/v2-ulje-gljivice': '/checkouts/fungel-v1',
+  '/checkouts/melem-protiv-psorijaze-i-ekcema': '/checkouts/biomelis-v2',
+  '/checkouts/v2-ekcem-i-psorijaza': '/checkouts/biomelis-v2',
+  '/checkouts/melem-protiv-virusnih-bradavica': '/checkouts/biowart-v1',
+  '/checkouts/v2-virusne-bradavice': '/checkouts/biowart-v1',
+  '/product/krema-protiv-gljivica': '/product/fungel',
+  '/product/ulje-protiv-gljivica': '/product/fungel',
+  '/product/melem-protiv-ekcema-i-psorijaze': '/product/biomelis',
+  '/product/melem-protiv-virusnih-bradavica': '/product/biowart',
 };
 
 /**
@@ -120,6 +152,13 @@ export function resolveLegacyPath(pathname: string): LegacyResolution | null {
   }
   if (EXACT_REDIRECTS[path]) {
     return { type: 'redirect', destination: EXACT_REDIRECTS[path] };
+  }
+  if (COUPON_REDIRECTS[path]) {
+    return {
+      type: 'redirect',
+      destination: COUPON_REDIRECTS[path],
+      query: { coupon_code: 'POPUST20' },
+    };
   }
 
   // FunnelKit checkout funneli — URL mora da ostane isti (aktivne reklame).

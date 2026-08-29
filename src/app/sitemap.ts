@@ -3,10 +3,12 @@ import { getProductsForLocale } from '@/config/locales';
 import {
   SITE_LOCALES,
   buildLanguageAlternates,
+  getContentLastModified,
   getSiteUrl,
 } from '@/lib/seo';
 
 const BASE = getSiteUrl();
+const LAST_MODIFIED = getContentLastModified();
 
 function entry(
   path: string,
@@ -16,7 +18,7 @@ function entry(
 ): MetadataRoute.Sitemap[number] {
   return {
     url: `${BASE}${path}`,
-    lastModified: new Date(),
+    lastModified: LAST_MODIFIED,
     changeFrequency: options.changeFrequency,
     priority: options.priority,
     alternates: {
@@ -46,7 +48,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
   }
 
-  // Product detail + checkout landing pages (canonical slugs only)
+  // Product detail pages (canonical slugs only). Checkout/funnel routes serve
+  // the same content and canonicalize here, so they must not duplicate sitemap entries.
   // Compute per-slug locale availability first so hreflang groups are complete.
   const availability = new Map<string, string[]>();
   for (const locale of SITE_LOCALES) {
@@ -64,10 +67,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       entries.push(
         entry(`/${locale}/products/${slug}`, locales, (l) => `/${l}/products/${slug}`, {
           priority: 0.8,
-          changeFrequency: 'weekly',
-        }),
-        entry(`/${locale}/checkouts/${slug}`, locales, (l) => `/${l}/checkouts/${slug}`, {
-          priority: 0.7,
           changeFrequency: 'weekly',
         })
       );

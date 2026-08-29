@@ -104,8 +104,25 @@ const nextConfig: NextConfig = {
             key: 'X-Frame-Options',
             value: 'DENY',
           },
+          {
+            key: 'Link',
+            value: '</llms.txt>; rel="describedby"',
+          },
         ],
       },
+      ...[
+        '/api/:path*',
+        '/admin/:path*',
+        '/capi-test',
+        '/test-marketing',
+        '/test-country-modal',
+        '/geolocation-test',
+        '/geolocation-demo',
+        '/new-template-example',
+      ].map((source) => ({
+        source,
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      })),
     ];
   },
 };

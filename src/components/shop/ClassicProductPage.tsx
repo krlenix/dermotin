@@ -58,6 +58,12 @@ interface ClassicProductPageProps {
   locale: string;
 }
 
+interface BundleComponent {
+  product: Product;
+  variantName?: string;
+  quantity: number;
+}
+
 export function ClassicProductPage({ product, countryConfig, locale }: ClassicProductPageProps) {
   const t = useTranslations();
   const router = useRouter();
@@ -76,9 +82,7 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(defaultVariant);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [bundleComponents, setBundleComponents] = useState<
-    { product: Product; variantName?: string; quantity: number }[]
-  >([]);
+  const [bundleComponents, setBundleComponents] = useState<BundleComponent[]>([]);
   const [activeCoupon, setActiveCoupon] = useState<Coupon | null>(null);
 
   // Variant with the biggest absolute savings gets the highlight badge
@@ -167,7 +171,7 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
 
           if (product.isBundle && product.bundleItems?.length) {
             const resolved = product.bundleItems
-              .map((item) => {
+              .map((item): BundleComponent | null => {
                 const component = byId.get(item.productId);
                 if (!component) return null;
                 const componentVariant = item.variantId
@@ -175,9 +179,7 @@ export function ClassicProductPage({ product, countryConfig, locale }: ClassicPr
                   : component.variants.find((v) => v.isDefault) || component.variants[0];
                 return { product: component, variantName: componentVariant?.name, quantity: item.quantity };
               })
-              .filter((item): item is { product: Product; variantName?: string; quantity: number } =>
-                Boolean(item)
-              );
+              .filter((item): item is BundleComponent => item !== null);
             setBundleComponents(resolved);
           }
         }

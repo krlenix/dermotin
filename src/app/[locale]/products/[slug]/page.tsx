@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getProductBySlug, getProductsForLocale, getProductVariantsForCountry } from '@/config/products';
-import { getCountryConfig } from '@/config/countries';
+import { getCountryConfig, getDefaultCourier } from '@/config/countries';
 import { ClassicProductPage } from '@/components/shop/ClassicProductPage';
 import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -80,7 +80,8 @@ export async function generateStaticParams() {
 function buildProductJsonLd(product: Product, locale: string, currency: string) {
   const url = `${getSiteUrl()}/${locale}/products/${product.slug}`;
   const variants = getProductVariantsForCountry(product, locale);
-  const prices = variants.map((v) => v.discountPrice ?? v.price);
+  const countryConfig = getCountryConfig(locale);
+  const courier = getDefaultCourier(countryConfig);
   const testimonials = product.testimonials || [];
 
   const jsonLd: Record<string, unknown> = {
@@ -88,6 +89,7 @@ function buildProductJsonLd(product: Product, locale: string, currency: string) 
     '@type': 'Product',
     name: product.name,
     description: product.seoDescription || product.description,
+    '@id': `${url}#product`,
     sku: product.variants[0]?.sku || product.id,
     brand: {
       '@type': 'Brand',
@@ -98,15 +100,58 @@ function buildProductJsonLd(product: Product, locale: string, currency: string) 
       ...[product.images.main, ...product.images.gallery].map(toAbsoluteUrl),
     ],
     url,
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: currency,
-      lowPrice: Math.min(...prices).toFixed(2),
-      highPrice: Math.max(...prices).toFixed(2),
-      offerCount: variants.length,
-      availability: 'https://schema.org/InStock',
-      url,
-    },
+    offers: variants.map((variant) => {
+      const price = variant.discountPrice ?? variant.price;
+      const shippingCost = price >= countryConfig.business.freeShippingThreshold
+        ? 0
+        : courier.shipping.cost;
+
+      return {
+        '@type': 'Offer',
+        sku: variant.sku,
+        name: variant.name,
+        url,
+        price: price.toFixed(2),
+        priceCurrency: currency,
+        availability: 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@id': `${getSiteUrl()}/#organization` },
+        shippingDetails: {
+          '@type': 'OfferShippingDetails',
+          shippingRate: {
+            '@type': 'MonetaryAmount',
+            value: shippingCost.toFixed(2),
+            currency,
+          },
+          shippingDestination: {
+            '@type': 'DefinedRegion',
+            addressCountry: countryConfig.code.toUpperCase(),
+          },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: {
+              '@type': 'QuantitativeValue',
+              minValue: 0,
+              maxValue: 1,
+              unitCode: 'DAY',
+            },
+            transitTime: {
+              '@type': 'QuantitativeValue',
+              minValue: countryConfig.business.deliveryTimeMin,
+              maxValue: countryConfig.business.deliveryTimeMax,
+              unitCode: 'DAY',
+            },
+          },
+        },
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: countryConfig.code.toUpperCase(),
+          returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: countryConfig.business.returnPeriodDays,
+          returnMethod: 'https://schema.org/ReturnByMail',
+        },
+      };
+    }),
   };
 
   if (testimonials.length > 0) {
@@ -135,6 +180,23 @@ function buildProductJsonLd(product: Product, locale: string, currency: string) 
   return jsonLd;
 }
 
+function buildFaqJsonLd(product: Product) {
+  if (!product.productFAQ?.length) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: product.productFAQ.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}
+
 function buildBreadcrumbJsonLd(product: Product, locale: string) {
   const base = getSiteUrl();
   return {
@@ -161,11 +223,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   const countryConfig = getCountryConfig(locale);
+  const faqJsonLd = buildFaqJsonLd(product);
 
   return (
     <>
       <JsonLd data={buildProductJsonLd(product, locale, countryConfig.currency)} />
       <JsonLd data={buildBreadcrumbJsonLd(product, locale)} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <CountryMismatchBanner />
       <ClassicProductPage product={product} countryConfig={countryConfig} locale={locale} />
     </>

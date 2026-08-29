@@ -6,7 +6,6 @@ import { getCountryConfig } from '@/config/countries';
 import { getSiteUrl } from '@/lib/seo';
 import { Toaster } from "@/components/ui/sonner";
 import { PerformanceOptimizer } from "@/components/PerformanceOptimizer";
-import { DebugPixelLoader } from "@/components/tracking/DebugPixelLoader";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -62,11 +61,6 @@ export const metadata: Metadata = {
   },
 };
 
-const googleTagId = process.env.NEXT_PUBLIC_GOOGLE_TAG || process.env.NEXT_PUBLIC_GOOGLE_TAG_RS || '';
-const isGoogleTagEnabled = googleTagId &&
-  !googleTagId.startsWith('your_google_tag_id') &&
-  !googleTagId.startsWith('your_actual_google_tag_id');
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -87,24 +81,6 @@ export default async function RootLayout({
   return (
     <html lang={countryConfig.locale} dir="ltr">
       <head>
-        {isGoogleTagEnabled && (
-          <>
-            {/* Google tag (gtag.js) */}
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`} />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-
-                  gtag('config', '${googleTagId}');
-                `,
-              }}
-            />
-          </>
-        )}
-
         {/* Preload critical resources with high priority */}
         <link
           rel="preload"
@@ -135,7 +111,6 @@ export default async function RootLayout({
       </head>
       <body className={`${montserrat.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
         <PerformanceOptimizer />
-        <DebugPixelLoader />
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
