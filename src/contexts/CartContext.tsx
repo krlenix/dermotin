@@ -71,6 +71,12 @@ function newLineId(): string {
   return `line_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
 
+function withoutLineId(item: CartItemInput): Omit<CartItemInput, 'lineId'> {
+  const itemCopy = { ...item };
+  delete itemCopy.lineId;
+  return itemCopy;
+}
+
 function normalizeStoredItems(parsed: unknown): CartLineItem[] {
   if (!Array.isArray(parsed)) return [];
   const items: CartLineItem[] = parsed
@@ -149,14 +155,14 @@ export function CartProvider({ locale, children }: CartProviderProps) {
             : line
         );
       }
-      const { lineId: _ignored, ...rest } = item;
+      const rest = withoutLineId(item);
       return [...prev, { ...rest, lineId: newLineId(), quantity: Math.min(quantity, 99) }];
     });
   }, []);
 
   const addBogoGroup = useCallback((primary: CartItemInput, secondaries: CartItemInput[]) => {
-    const { lineId: _p, ...primaryRest } = primary;
-    const secondariesRest = secondaries.map(({ lineId: _s, ...rest }) => rest);
+    const primaryRest = withoutLineId(primary);
+    const secondariesRest = secondaries.map(withoutLineId);
     const groupLines = buildBogoGroupLines(primaryRest, secondariesRest);
     setItems((prev) => [
       ...prev,

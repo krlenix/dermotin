@@ -122,7 +122,7 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
       router.push(`/${locale}`);
     }
     setLoading(false);
-  }, [countryConfig.currencySymbol, courier.deliveryTime, courier.name, locale, router, searchParams]);
+  }, [countryConfig.currencySymbol, courier.deliveryTime, courier.name, courier.shipping.cost, locale, router, searchParams]);
 
 
   // Animated progress steps

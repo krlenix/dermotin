@@ -84,13 +84,6 @@ export function CheckoutFormV2({
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const submitInFlightRef = useRef(false);
 
-  const formatPrice = (amount: number) =>
-    `${new Intl.NumberFormat('sr-RS', {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }).format(amount)} ${countryConfig.currencySymbol}`;
-
   const roundPrice = (price: number) => Math.round(price * 100) / 100;
 
   const validateField = (field: string, value: string): string => {
