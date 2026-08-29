@@ -4,6 +4,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
+import { getTrackingSite } from '@/config/pixels';
 import { getMarketingCookiesFromHeaders, MarketingParams } from '@/utils/marketing-cookies';
 import { OrderService, webhookToOrderRecord, WebhookPayload, LineItem } from '@/lib/supabase';
 import { sendCapiPurchaseEvent } from '@/lib/capi';
@@ -130,7 +131,16 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
     return null;
   }
   
-  const webhookConfig = countryConfig.webhooks.orders;
+  const configuredWebhook = countryConfig.webhooks.orders;
+  const trackingSite = getTrackingSite(currentDomain);
+  const domainApiKey = trackingSite === 'dermotin_rs'
+    ? process.env.RS_ORDER_API_KEY_SITE_RS
+    : trackingSite === 'dermotin_co'
+      ? process.env.RS_ORDER_API_KEY_SITE_CO
+      : undefined;
+  const webhookConfig = domainApiKey
+    ? { ...configuredWebhook, authMethod: 'api-key' as const, apiKey: domainApiKey }
+    : configuredWebhook;
 
   
   // Skip if webhook URL is not configured
@@ -169,7 +179,12 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
 
   try {
     console.log(`📤 Webhook URL for ${countryCode}:`, webhookConfig.url);
-    console.log(`📤 Webhook headers for ${countryCode}:`, JSON.stringify(headers, null, 2));
+    const safeHeaders = {
+      ...headers,
+      ...(headers['X-API-Key'] ? { 'X-API-Key': '[REDACTED]' } : {}),
+      ...(headers['X-Webhook-Signature'] ? { 'X-Webhook-Signature': '[REDACTED]' } : {}),
+    };
+    console.log(`📤 Webhook headers for ${countryCode}:`, JSON.stringify(safeHeaders, null, 2));
     console.log(`📤 Webhook payload for ${countryCode}:`, JSON.stringify(webhookData, null, 2));
     
 
