@@ -23,7 +23,7 @@ const BOGO_DISCOVERED_COOKIE = 'bogo_discovered';
  */
 export const BOGO_CONFIG = {
   // Master switch - set to false to completely disable BOGO feature
-  enabled: true,
+  enabled: false,
   
   // Coupon code that triggers BOGO
   couponCode: '1PLUS1',
@@ -37,7 +37,7 @@ export const BOGO_CONFIG = {
   
   // Config version - INCREMENT THIS when you change any setting above
   // This helps invalidate browser localStorage cache
-  configVersion: 2,
+  configVersion: 3,
 };
 
 // ============================================================
