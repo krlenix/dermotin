@@ -1316,13 +1316,13 @@ export const PRODUCTS: Record<string, Product> = {
     purpose: 'Set za spoljašnju negu analne regije i unutrašnju podršku zdravlju vena i varenju',
     category: 'bundle',
     images: {
-      main: '/images/products/bioroid/bioroid-box-and-product-mockup.png',
+      main: '/images/products/bioroid/bioroid-melem-kapi-gratis-900x900.jpg',
       gallery: [
         '/images/products/bioroid/bioroid-box-only.png',
         '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png'
       ],
-      thumbnail: '/images/products/bioroid/bioroid-box-only.png',
-      fallback: '/images/products/bioroid/bioroid-box-and-product-mockup.png'
+      thumbnail: '/images/products/bioroid/bioroid-melem-kapi-gratis-900x900.jpg',
+      fallback: '/images/products/bioroid/bioroid-melem-kapi-gratis-900x900.jpg'
     },
     variants: [
       {
@@ -1333,7 +1333,7 @@ export const PRODUCTS: Record<string, Product> = {
         quantity: 1,
         price: 5380,
         currency: 'RSD',
-        discountPrice: 2790,
+        discountPrice: 1990,
         isDefault: true
       }
     ],
