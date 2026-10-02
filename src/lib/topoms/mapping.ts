@@ -57,12 +57,16 @@ function resolveUnits(products: Record<string, Product>, sku: string, count: num
   if (product.isBundle) {
     if (!product.bundleItems?.length) throw new Error(`Empty bundle: ${product.id}`);
     const path = new Set(seen).add(product.id);
-    return product.bundleItems.flatMap(item => {
+    const components = product.bundleItems.flatMap(item => {
       const component = products[item.productId];
       const v = component?.variants.find(v => v.id === item.variantId) || component?.variants.find(v => v.isDefault) || component?.variants[0];
       if (!v) throw new Error(`Unknown bundle component: ${item.productId}`);
       return resolveUnits(products, v.sku, units * quantity(item.quantity), v.id, item.productId, path);
     });
+    // BIOROID promotion splits the set equally: cream 995 RSD + drops 995 RSD.
+    return product.id === 'bioroid_set'
+      ? components.map(component => ({ ...component, weight: component.quantity }))
+      : components;
   }
   const unit = product.variants.find(v => v.sku === selected.sku && (v.quantity || 1) === 1);
   if (!unit) throw new Error(`No physical unit for SKU ${selected.sku}`);

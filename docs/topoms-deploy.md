@@ -13,12 +13,15 @@ Vercel log od 2. oktobra u 12:40 (Europe/Belgrade) potvrdio je HTTP 500 za
 Legacy OMS zahteva fizičke SKU-ove `BIOROID` i `BIOROID-KAPI`. Set se sada
 razlaže pre trajnog upisa legacy delivery payloada i u direktnom fallback slanju.
 Raspodela u parama čuva ukupan iznos i popuste; retry ne menja sačuvane komponente.
+BIOROID set od 1.990 RSD raspodeljuje se jednako: BIOROID 995 RSD i
+BIOROID-KAPI 995 RSD, u oba OMS-a, nezavisno od pojedinačnih kataloških cena.
 
 Supabase čuva dva BIOROID pokušaja posle te objave, sa podacima kupaca:
 - `WEB-1790869926487-0bo8s4twu`: 1. oktobar 17:52, 4 seta, 7.960 RSD.
 - `WEB-1790937649215-ilp7duecl`: 2. oktobar 12:40, 1 set, 2.390 RSD sa dostavom.
-Za prvi pokušaj u dostupnim Vercel logovima nema zapisa; isti problem je verovatan,
-ali se ne označava kao nezavisno potvrđen. Oba ID-ja vraćaju 404 u novom TopOMS-u.
+Read-only provera starog OMS-a po brand_order_id za brand 6 potvrđuje da oba
+BIOROID ID-ja nedostaju; kontrolni FUNGEL ID postoji. Za prvi pokušaj nema
+dostupnog Vercel loga sa uzrokom. Oba ID-ja vraćaju 404 i u novom TopOMS-u.
 
 FUNGEL `WEB-1790965624998-dwzcekcfz` od 2. oktobra u 20:27 jeste uspešno
 primljen u stari OMS (interni ID `33207`), ali ga nema u novom TopOMS-u.

@@ -104,6 +104,21 @@ test('BIOROID SET becomes its two physical components and preserves discounts', 
   assert.equal(result.totals.total, '5000.00');
 });
 
+test('BIOROID promotion sends each physical product at 995 to both OMS systems', async () => {
+  const products = await getProductsForLocale('rs');
+  for (const count of [1, 4]) {
+    const input = legacy([line('BIOROID-SET', count, count * 1990)], count === 1 ? 400 : 0);
+    for (const cartItems of [undefined, [{ sku: 'BIOROID-SET', productId: 'bioroid_set', variantId: products.bioroid_set.variants[0].id }]]) {
+      const mapped = mapOrder(input, products, { ...context, cartItems });
+      assert.deepEqual(mapped.line_items.map(l => [l.sku, l.quantity, l.price]), [
+        ['BIOROID', count, '995.00'], ['BIOROID-KAPI', count, '995.00'],
+      ]);
+      assert.equal(Number(mapped.totals.total), input.total_price);
+    }
+    assert.deepEqual(expandLegacyBundles(input, products).line_items.map(l => l.price), [995, 995]);
+  }
+});
+
 test('legacy BIOROID sets preserve totals, discounts and quantities in mixed carts', async () => {
   const products = await getProductsForLocale('rs');
   for (const count of [1, 3, 4]) {
@@ -136,6 +151,7 @@ test('legacy delivery sends and signs component SKUs instead of BIOROID-SET', as
   await deliverLegacy(input, 'rs', 'dermotin.shop');
   assert.deepEqual(sent.line_items.map(l => l.sku), ['BIOROID', 'BIOROID-KAPI']);
   assert.deepEqual(sent.line_items.map(l => l.quantity), [4, 4]);
+  assert.deepEqual(sent.line_items.map(l => l.price), [995, 995]);
   assert.equal(sent.total_price, 7960);
 });
 
