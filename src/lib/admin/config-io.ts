@@ -3,6 +3,9 @@ import path from 'path';
 import { Ingredient, Product } from '@/config/types';
 import type { Coupon } from '@/config/coupons';
 import { bogoConfigSchema, couponSchema, ingredientSchema, productSchema } from './schemas';
+import { topomsEnabledFor, topomsConfigs } from '@/lib/topoms/config';
+import { mapCatalog } from '@/lib/topoms/mapping';
+import { enqueueCatalog } from '@/lib/topoms/outbox';
 
 /**
  * IO sloj admin panela: čita i piše config fajlove sa podacima
@@ -238,7 +241,23 @@ export async function writeProducts(locale: ProductLocale, products: Record<stri
     throw new Error(`Round-trip provera nije prošla za ${locale}/products.ts — pisanje je otkazano.`);
   }
 
-  await enqueue(productsFilePath(locale), () => writeConfigFile(productsFilePath(locale), content));
+  await enqueue(productsFilePath(locale), async () => {
+    const previous = topomsEnabledFor(locale) ? await readProducts(locale) : {};
+    await writeConfigFile(productsFilePath(locale), content);
+    if (topomsEnabledFor(locale)) {
+      // A real content edit supplies the new revision time, never a retry.
+      const updatedAt = new Date().toISOString();
+      const removed = Object.fromEntries(Object.entries(previous).filter(([id, product]) => !product.isBundle && (!products[id] || products[id].isBundle)));
+      try {
+        for (const config of topomsConfigs()) {
+          const catalog = mapCatalog(products, updatedAt, config.catalogUrl);
+          const archived = mapCatalog(removed, updatedAt, config.catalogUrl).map(p => ({ ...p, status: 'archived' }));
+          await enqueueCatalog([...catalog, ...archived], config.storeId);
+        }
+      }
+      catch { throw new Error('Proizvodi su sačuvani, ali OMS red nije dostupan. Ponovite snimanje/sinhronizaciju pre deploya.'); }
+    }
+  });
 }
 
 // ---------------------------------------------------------------------------

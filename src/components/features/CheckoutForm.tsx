@@ -1,5 +1,7 @@
 'use client';
 
+import { checkoutEventId, completeCheckoutAttempt } from '@/utils/checkout-event';
+
 import { useState, useEffect, useRef } from 'react';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -363,7 +365,7 @@ export function CheckoutForm({
       const marketingData = getMarketingCookies();
       
       // Generate event ID for deduplication between browser pixel and CAPI
-      const eventId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const eventId = await checkoutEventId({ formData, selectedVariant, bundleItems, finalTotal, bogoQuantity, locale: countryConfig.code });
       
       // Prepare order data
       const orderData = {
@@ -399,6 +401,7 @@ export function CheckoutForm({
 
       // Call onOrderSubmit and wait for result
       const result = await onOrderSubmit(orderData);
+      if (result.success) completeCheckoutAttempt();
       
       if (result.success) {
         // Track Purchase event immediately after successful order submission.

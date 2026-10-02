@@ -2,12 +2,20 @@ import crypto from 'crypto';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { NextRequest, NextResponse } from 'next/server';
+import { after, NextRequest, NextResponse } from 'next/server';
 import { getCountryConfig } from '@/config/countries';
 import { getTrackingSite } from '@/config/pixels';
 import { getMarketingCookiesFromHeaders, MarketingParams } from '@/utils/marketing-cookies';
 import { OrderService, webhookToOrderRecord, WebhookPayload, LineItem } from '@/lib/supabase';
 import { sendCapiPurchaseEvent } from '@/lib/capi';
+import { getProductsForLocale } from '@/config/locales';
+import { topomsEnabledFor } from '@/lib/topoms/config';
+import { digest, expandLegacyBundles, mapOrder } from '@/lib/topoms/mapping';
+import { enqueueOrder, drainDeliveries } from '@/lib/topoms/outbox';
+import { reserveOrderNumber, usesShortOrderNumbers } from '@/lib/topoms/order-number';
+
+export const runtime = 'nodejs';
+export const maxDuration = 120;
 
 // Configure dayjs with timezone support
 dayjs.extend(utc);
@@ -49,6 +57,8 @@ export interface CouponData {
 }
 
 export interface CartOrderItem {
+  productId?: string;
+  variantId?: string;
   sku: string;
   name: string;
   quantity: number;
@@ -120,6 +130,8 @@ function getCurrentDomain(req: NextRequest): string {
 }
 
 async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, currentDomain: string) {
+
+  webhookData = expandLegacyBundles(webhookData, await getProductsForLocale(countryCode, true));
 
   const countryConfig = getCountryConfig(countryCode);
   
@@ -262,7 +274,7 @@ export async function POST(request: NextRequest) {
     // the original orderId without re-running the webhook or re-firing CAPI Purchase.
     pruneExpiredEventIds();
     if (orderData.eventId) {
-      const existing = RECENT_EVENT_IDS.get(orderData.eventId);
+      const existing = RECENT_EVENT_IDS.get(`${currentDomain}:${orderData.eventId}`);
       if (existing) {
         console.warn('⚠️ Duplicate submit detected for eventId', orderData.eventId, '— returning cached orderId', existing.orderId);
         return NextResponse.json({
@@ -274,8 +286,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate order ID
-    const orderId = `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const dualDelivery = topomsEnabledFor(orderData.locale, currentDomain);
+    if (orderData.eventId && (typeof orderData.eventId !== 'string' || orderData.eventId.length > 200)) {
+      return NextResponse.json({ error: 'Invalid event ID' }, { status: 400 });
+    }
+    // Shop numbers are allocated in Postgres, not shortened random hashes.
+    // The reservation also recognizes pre-migration retries and preserves their IDs.
+    let orderId: string;
+    if (usesShortOrderNumbers(currentDomain)) {
+      try {
+        orderId = await reserveOrderNumber(currentDomain, orderData.eventId);
+      } catch {
+        // No order, webhook or purchase event is emitted without a stable number.
+        return NextResponse.json({ success: false, error: 'Porudžbinu trenutno nije moguće sačuvati. Pokušajte ponovo.' }, { status: 503 });
+      }
+    } else {
+      orderId = dualDelivery && orderData.eventId
+        ? `WEB-${digest([currentDomain, orderData.eventId]).slice(0, 40)}`
+        : `WEB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
     
     // Get country configuration
     const countryConfig = getCountryConfig(orderData.locale);
@@ -453,6 +482,30 @@ export async function POST(request: NextRequest) {
       }
     };
 
+    if (dualDelivery) {
+      let topomsOrder;
+      try {
+        topomsOrder = mapOrder(webhookPayload, await getProductsForLocale(orderData.locale), {
+          timestamp: currentDate.toISOString(), locale: orderData.locale, domain: currentDomain,
+          landingUrl: eventSourceUrl, cartItems: orderData.cartItems,
+        });
+      } catch {
+        return NextResponse.json({ success: false, error: 'Porudžbina nema ispravne proizvode, količine ili iznose.' }, { status: 422 });
+      }
+      try {
+        const queued = await enqueueOrder(webhookPayload, topomsOrder, { locale: orderData.locale, domain: currentDomain });
+        after(async () => {
+          try { await drainDeliveries(35_000, currentDomain.toLowerCase()); } catch { console.error('OMS worker unavailable; scheduled worker must resume delivery'); }
+        });
+        if (queued.duplicate) {
+          return NextResponse.json({ success: true, orderId, duplicate: true, webhookStatus: 'queued', topomsStatus: 'queued' });
+        }
+      } catch {
+        // Nothing was sent to either OMS. Never accept an order that is not durable.
+        return NextResponse.json({ success: false, error: 'Porudžbinu trenutno nije moguće sačuvati. Pokušajte ponovo.' }, { status: 503 });
+      }
+    }
+
     // Debug: Log discount codes in webhook payload
     if (webhookPayload.discount_codes && webhookPayload.discount_codes.length > 0) {
       console.log('🎟️ Discount codes array:', webhookPayload.discount_codes);
@@ -497,7 +550,10 @@ export async function POST(request: NextRequest) {
     // full success path — including CAPI Purchase + browser Pixel Purchase —
     // can be verified end-to-end without hitting the production endpoint).
     const webhookDryRun = process.env.WEBHOOK_DRY_RUN === 'true';
-    if (webhookDryRun) {
+    if (dualDelivery) {
+      webhookStatus = 'queued';
+      webhookResult = { durable: true };
+    } else if (webhookDryRun) {
       webhookStatus = 'skipped';
       webhookResult = { dryRun: true, note: 'WEBHOOK_DRY_RUN=true — webhook not sent' };
       console.log('🧪 WEBHOOK_DRY_RUN enabled — skipping webhook call for locale:', orderData.locale);
@@ -585,7 +641,7 @@ export async function POST(request: NextRequest) {
 
     // Record the eventId so duplicate submits in the next 5min are short-circuited
     if (orderData.eventId) {
-      RECENT_EVENT_IDS.set(orderData.eventId, { orderId, timestamp: Date.now() });
+      RECENT_EVENT_IDS.set(`${currentDomain}:${orderData.eventId}`, { orderId, timestamp: Date.now() });
     }
 
     // Create complete order object
@@ -603,6 +659,7 @@ export async function POST(request: NextRequest) {
       message: 'Order placed successfully',
       webhookStatus,
       webhookResult,
+      topomsStatus: dualDelivery ? 'queued' : 'disabled',
       supabaseStatus,
       supabaseError: supabaseError || undefined,
       capiStatus,

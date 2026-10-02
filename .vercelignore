@@ -1,0 +1,11 @@
+.env*
+.git
+.next
+.admin-backups
+.claude
+.cursor
+.vscode
+.playwright-mcp
+.devserver.log
+tmp-review-manifest.json
+*.tsbuildinfo

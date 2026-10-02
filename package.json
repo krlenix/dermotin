@@ -10,7 +10,15 @@
     "analyze": "ANALYZE=true next build",
     "build:prod": "NODE_ENV=production next build",
     "migration:map": "node scripts/generate-legacy-domain-map.mjs",
-    "audit:migration": "node scripts/audit-local-migration.mjs"
+    "audit:migration": "node scripts/audit-local-migration.mjs",
+    "test:topoms": "node -r ./scripts/register-ts.cjs --test tests/topoms.test.cjs tests/order-number.test.cjs",
+    "topoms:check": "node scripts/topoms.cjs check",
+    "topoms:connect": "node scripts/topoms.cjs connect",
+    "topoms:rehearsal": "node scripts/topoms.cjs rehearsal",
+    "topoms:sync": "node scripts/topoms.cjs sync-catalog",
+    "topoms:drain": "node scripts/topoms.cjs drain",
+    "topoms:status": "node scripts/topoms.cjs status",
+    "topoms:replay": "node scripts/topoms.cjs replay-blocked"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

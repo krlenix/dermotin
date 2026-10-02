@@ -1,5 +1,7 @@
 'use client';
 
+import { checkoutEventId, completeCheckoutAttempt } from '@/utils/checkout-event';
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -284,7 +286,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
     try {
       const fbTrackingData = getFacebookTrackingData(typeof document !== 'undefined' ? document.cookie : null);
       const marketingData = getMarketingCookies();
-      const eventId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const eventId = await checkoutEventId({ formData, items, total, locale: countryConfig.code });
 
       const productSummary =
         items.length === 1
@@ -343,6 +345,8 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
         pageUrl: typeof window !== 'undefined' ? window.location.href : undefined,
         marketingParams: marketingData,
         cartItems: items.map((line) => ({
+          productId: line.productId,
+          variantId: line.variantId,
           sku: line.sku,
           name: `${line.productName} - ${line.variantName}`,
           quantity: line.quantity,
@@ -366,6 +370,8 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
         submitInFlightRef.current = false;
         return;
       }
+
+      completeCheckoutAttempt();
 
       trackEvent(
         'purchase',

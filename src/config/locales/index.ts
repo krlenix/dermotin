@@ -14,28 +14,28 @@ function onlyPublished(products: Record<string, Product>): Record<string, Produc
 }
 
 // Dynamic imports for locale-specific products
-export async function getProductsForLocale(locale: string): Promise<Record<string, Product>> {
+export async function getProductsForLocale(locale: string, includeDrafts = false): Promise<Record<string, Product>> {
   try {
     switch (locale) {
       case 'rs':
         const { PRODUCTS: rsProducts } = await import('./rs/products');
-        return onlyPublished(rsProducts);
+        return includeDrafts ? rsProducts : onlyPublished(rsProducts);
       case 'ba':
         const { PRODUCTS: baProducts } = await import('./ba/products');
-        return onlyPublished(baProducts);
+        return includeDrafts ? baProducts : onlyPublished(baProducts);
       case 'me':
         const { PRODUCTS: meProducts } = await import('./me/products');
-        return onlyPublished(meProducts);
+        return includeDrafts ? meProducts : onlyPublished(meProducts);
       default:
         // Fallback to Serbian
         const { PRODUCTS: defaultProducts } = await import('./rs/products');
-        return onlyPublished(defaultProducts);
+        return includeDrafts ? defaultProducts : onlyPublished(defaultProducts);
     }
   } catch (error) {
     console.error(`Failed to load products for locale ${locale}:`, error);
     // Fallback to Serbian products
     const { PRODUCTS: fallbackProducts } = await import('./rs/products');
-    return onlyPublished(fallbackProducts);
+    return includeDrafts ? fallbackProducts : onlyPublished(fallbackProducts);
   }
 }
 

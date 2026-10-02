@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OrderService } from '@/lib/supabase';
+import { topomsEnabledFor } from '@/lib/topoms/config';
+import { enqueueOrderStatus } from '@/lib/topoms/order-update';
 
 /**
  * Authenticate admin requests via Bearer token in the Authorization header.
@@ -170,6 +172,11 @@ export async function POST(request: NextRequest) {
       });
 
     } else if (action === 'updateStatus' && status) {
+      const original = await OrderService.getOrderById(orderId);
+      const dualDelivery = original.data && topomsEnabledFor(original.data.locale, original.data.domain);
+      if (dualDelivery && !['pending', 'paid', 'cancelled'].includes(status)) {
+        return NextResponse.json({ success: false, error: 'OMS zahteva eksplicitne iznose za delimična plaćanja i refundacije.' }, { status: 422 });
+      }
       // Update order status
       const result = await OrderService.updateOrderStatus(orderId, status);
       
@@ -181,6 +188,13 @@ export async function POST(request: NextRequest) {
           },
           { status: 400 }
         );
+      }
+
+      if (dualDelivery) {
+        try { await enqueueOrderStatus(orderId, status, original.data!.domain); }
+        catch {
+          return NextResponse.json({ success: false, error: 'Status je sačuvan, ali OMS slanje nije zakazano. Ponovite zahtev nakon provere reda.' }, { status: 503 });
+        }
       }
 
       return NextResponse.json({

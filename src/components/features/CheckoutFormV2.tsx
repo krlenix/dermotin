@@ -1,5 +1,7 @@
 'use client';
 
+import { checkoutEventId, completeCheckoutAttempt } from '@/utils/checkout-event';
+
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { isValidPhoneNumber } from 'react-phone-number-input';
@@ -286,7 +288,7 @@ export function CheckoutFormV2({
     try {
       const fbTrackingData = getFacebookTrackingData(typeof document !== 'undefined' ? document.cookie : null);
       const marketingData = getMarketingCookies();
-      const eventId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const eventId = await checkoutEventId({ formData, selectedVariant, bundleItems, finalTotal, bogoQuantity, locale: countryConfig.code });
 
       const orderData = {
         ...formData,
@@ -328,6 +330,8 @@ export function CheckoutFormV2({
         submitInFlightRef.current = false;
         return;
       }
+
+      completeCheckoutAttempt();
 
       // Match server-side CAPI Purchase content_ids by using variant.sku
       const purchaseProductId = selectedVariant.sku || selectedVariant.id || 'main-product';
