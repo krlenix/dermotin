@@ -788,7 +788,8 @@
     "required_fields": "Sva polja označena sa * su obavezna",
     "contact_success_title": "Hvala vam na poruci!",
     "contact_success_message": "Primili smo vašu poruku i odgovorićemo vam u najkraćem roku. Proverite svoj email za potvrdu.",
-    "back_to_home": "Povratak na početnu"
+    "back_to_home": "Povratak na početnu",
+    "mailto_note": "Klikom na dugme otvara se vaša mejl aplikacija sa već popunjenom porukom — samo je pošaljite."
   },
   "legal": {
     "back_to_home": "Povratak na početnu",
@@ -1118,7 +1119,25 @@
       "per_pack": "po pakovanju",
       "delivery_tile": "Očekivana isporuka <b>{range}</b>",
       "cod_sub": "bez avansa i kartice",
-      "seal_label": "garancija"
+      "seal_label": "garancija",
+      "card_safe_text": "Blaga i sigurna formula, bez veštačkih dodataka, parabena i GMO — pogodna i za dugotrajnu upotrebu"
+    },
+    "landerHome": {
+      "hero_l1": "Prirodna podrška",
+      "hero_l2": "za kožu, nokte,",
+      "hero_l3": "imunitet i varenje",
+      "hero_l4": "Platite tek kada paket stigne",
+      "offers_title": "Akcije <c>dok traju zalihe</c>",
+      "needs_title": "Šta vam je <g>potrebno</g>?",
+      "products_title": "Svi <g>DERMOTIN</g> proizvodi",
+      "view_offer": "Pogledaj ponudu",
+      "order": "Naruči",
+      "card_natural_home": "Formule zasnovane na pažljivo odabranim biljnim ekstraktima i eteričnim uljima.",
+      "card_tested_home": "Kozmetika procenjena po EU regulativi (EC) 1223/2009, dodaci ishrani upisani kod Ministarstva zdravlja.",
+      "guarantee_unit_home": "kutije ili bočice",
+      "sticker": "Akcije do",
+      "shop_title": "Biljna nega i podrška <c>za svaki dan</c>",
+      "filter_label": "Prikaži:"
     }
   }
 }

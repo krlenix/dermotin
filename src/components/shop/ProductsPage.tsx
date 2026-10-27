@@ -1,17 +1,18 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Product } from '@/config/products';
 import { CountryConfig } from '@/config/countries';
 import { getStoreOffers } from '@/config/store-content';
+import { STORE_PROOF } from '@/config/store-proof';
 import { ShopHeader } from '@/components/shop/ShopHeader';
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { PixelTracker } from '@/components/tracking/PixelTracker';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
-import { OfferCard, ProductCard } from '@/components/store/ProductCard';
-import { Eyebrow, GuaranteeBand, SectionHeading, StoreFooter, TrustStrip } from '@/components/store/StoreSections';
-import { storeFontClass } from '@/components/store/fonts';
+import { landerFontClass } from '@/components/store/fonts';
+import { LANDER_BG, LanderFooter, Stars, TornBand, richTags, useReveal } from '@/components/store/LanderKit';
+import { GreenHero, LanderGuarantee, LanderHeading, LanderProductCard, OfferTile } from '@/components/store/LanderStore';
 import { cn } from '@/lib/utils';
 
 interface ProductsPageProps {
@@ -24,7 +25,11 @@ type Filter = 'all' | 'bundle' | 'skincare' | 'supplements';
 
 export function ProductsPage({ products, countryConfig, locale }: ProductsPageProps) {
   const t = useTranslations('store');
+  const tl = useTranslations('store.landerHome');
+  const tLander = useTranslations('store.lander');
   useMarketingTracking();
+  const rootRef = useRef<HTMLDivElement>(null);
+  useReveal(rootRef);
   const [filter, setFilter] = useState<Filter>('all');
 
   const byId = useMemo(() => new Map(products.map((product) => [product.id, product])), [products]);
@@ -38,68 +43,67 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
   ];
   const available = filters.filter((f) => f.id === 'all' || products.some((p) => p.category === f.id));
   const visible = filter === 'all' ? products : products.filter((product) => product.category === filter);
+  const scrollToOffers = () => document.querySelector(offers.length > 0 ? '#akcije' : '#proizvodi')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   return (
-    <div className={cn(storeFontClass, 'min-h-screen overflow-x-hidden bg-paper')}>
+    <div ref={rootRef} className={cn(landerFontClass, 'min-h-screen overflow-x-hidden', LANDER_BG)}>
       <PixelTracker countryCode={countryConfig.code} />
       <ShopHeader />
 
-      <main className="pb-24 md:pb-36">
-        <section className="container mx-auto px-4 pb-10 pt-12 md:pb-14 md:pt-20">
-          <Eyebrow>{t('shop.eyebrow')}</Eyebrow>
-          <h1 className="mt-5 max-w-4xl font-display text-[52px] leading-[0.98] text-ink md:text-[84px]">{t('shop.title')}</h1>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-ink/75">{t('shop.text')}</p>
-        </section>
-
-        <section className="container mx-auto px-4">
-          <TrustStrip countryConfig={countryConfig} compact />
-        </section>
+      <main className="mx-auto max-w-[1180px] space-y-10 px-3 pt-3 md:space-y-14 md:px-6 md:pt-6">
+        <GreenHero>
+          <h1 className="text-[30px] font-extrabold leading-[1.22] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.12)] md:text-[44px]">
+            {tl.rich('shop_title', richTags)}
+          </h1>
+          <p className="mx-auto mt-3 max-w-xl text-[15px] font-medium text-white md:text-[16px]">{t('shop.text')}</p>
+          <div className="mt-4 flex items-center justify-center gap-2 pb-2 text-[13px] font-medium text-white">
+            <Stars size={16} />
+            <span>{tLander.rich('hero_rating', { b: (chunks) => <strong className="font-bold">{chunks}</strong>, count: STORE_PROOF.reviewsCount })}</span>
+          </div>
+        </GreenHero>
 
         {offers.length > 0 && (
-          <section className="container mx-auto px-4 pt-20 md:pt-28">
-            <SectionHeading eyebrow={t('home.offers_eyebrow')} title={t('home.offers_title')} />
-            <div className="grid gap-14 md:grid-cols-2 md:gap-8 xl:grid-cols-4">
+          <section id="akcije" className="scroll-mt-24">
+            <LanderHeading>{tl.rich('offers_title', richTags)}</LanderHeading>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 md:gap-6">
               {offers.map((offer) => (
-                <OfferCard key={offer.productId} offer={offer} product={byId.get(offer.productId)!} locale={locale} countryConfig={countryConfig} />
+                <OfferTile key={offer.productId} offer={offer} product={byId.get(offer.productId)!} locale={locale} countryConfig={countryConfig} />
               ))}
             </div>
           </section>
         )}
 
-        <section className="container mx-auto px-4 pt-24 md:pt-32">
-          <div className="mb-10 flex flex-col gap-6 border-b border-line pb-6 md:flex-row md:items-end md:justify-between">
-            <h2 className="font-display text-[40px] leading-none text-ink md:text-[56px]">{t('shop.all_title')}</h2>
-            {available.length > 2 && (
-              <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:px-0">
-                {available.map((f) => (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setFilter(f.id)}
-                    className={cn(
-                      'shrink-0 rounded-full px-5 py-2.5 text-[14px] font-medium transition',
-                      filter === f.id ? 'bg-forest text-paper' : 'border border-ink/15 text-ink/75 hover:border-ink/40 hover:text-ink'
-                    )}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-14 lg:grid-cols-4">
+        <section id="proizvodi" className="scroll-mt-24">
+          <LanderHeading>{tl.rich('products_title', richTags)}</LanderHeading>
+          {available.length > 2 && (
+            <div className="-mx-3 mt-5 flex justify-start gap-2 overflow-x-auto px-3 [scrollbar-width:none] md:justify-center">
+              {available.map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setFilter(f.id)}
+                  className={cn(
+                    'shrink-0 rounded-full px-5 py-2.5 text-[14px] font-semibold transition',
+                    filter === f.id ? 'bg-[#2E8655] text-white shadow-[0_4px_0_#1d5434]' : 'bg-white text-[#222] ring-1 ring-black/10 hover:ring-[#2E8655]/50'
+                  )}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="mt-6 grid grid-cols-2 gap-2.5 md:gap-4 lg:grid-cols-4">
             {visible.map((product) => (
-              <ProductCard key={product.id} product={product} locale={locale} countryConfig={countryConfig} />
+              <LanderProductCard key={product.id} product={product} locale={locale} countryConfig={countryConfig} />
             ))}
           </div>
         </section>
 
-        <section className="container mx-auto px-4 pt-24 md:pt-32">
-          <GuaranteeBand countryConfig={countryConfig} />
-        </section>
+        <LanderGuarantee unit={tl('guarantee_unit_home')} />
       </main>
 
-      <StoreFooter countryConfig={countryConfig} locale={locale} />
+      <TornBand label={tLander.rich('cta', richTags)} onClick={scrollToOffers} className="mt-10" />
+      <LanderFooter countryConfig={countryConfig} locale={locale} className="pb-6" />
       <CookieConsent isEU={countryConfig.isEU} />
     </div>
   );

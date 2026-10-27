@@ -29,7 +29,8 @@ import { VALIDATION_RULES } from '@/config/constants';
 import { calculateShippingCost, getAmountForFreeShipping, qualifiesForFreeShipping } from '@/utils/shipping';
 import { useCart } from '@/contexts/CartContext';
 import { ShopHeader } from '@/components/shop/ShopHeader';
-import { Footer } from '@/components/ui/footer';
+import { landerFontClass } from '@/components/store/fonts';
+import { LANDER_BG, LanderFooter } from '@/components/store/LanderKit';
 import { CookieConsent } from '@/components/features/CookieConsent';
 import { CheckoutDialog, CheckoutDialogType } from '@/components/features/CheckoutDialog';
 import { PixelTracker, usePixelTracking } from '@/components/tracking/PixelTracker';
@@ -481,34 +482,34 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
     'h-[52px] rounded-[6px] border-[#d9d0c5] px-3 pb-0 pt-[3px] !text-[17px] font-medium leading-[52px] text-slate-900 shadow-none placeholder:text-transparent';
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f6f8f6_0%,#ffffff_30%,#f8fbf9_65%,#ffffff_100%)]" style={{ maxWidth: '100vw' }}>
+    <div className={cn(landerFontClass, 'relative min-h-screen overflow-x-hidden', LANDER_BG)} style={{ maxWidth: '100vw' }}>
       <PixelTracker countryCode={countryConfig.code} />
 
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-28 right-0 h-96 w-96 rounded-full bg-[#358055]/8 blur-3xl" />
-        <div className="absolute top-[26rem] -left-16 h-80 w-80 rounded-full bg-[#F3765D]/8 blur-3xl" />
+        <div className="absolute -top-28 right-0 h-96 w-96 rounded-full bg-[#2E8655]/8 blur-3xl" />
+        <div className="absolute top-[26rem] -left-16 h-80 w-80 rounded-full bg-[#F0735A]/8 blur-3xl" />
       </div>
 
       <ShopHeader />
 
       <main className="relative pb-16">
         <div className="container mx-auto px-4 pt-6 md:pt-8">
-          <h1 className="text-3xl font-black leading-tight tracking-[-0.01em] text-slate-950 md:text-4xl">
+          <h1 className="text-3xl font-extrabold leading-tight tracking-[-0.01em] text-slate-950 md:text-4xl">
             {t('checkout.title')}
           </h1>
 
           {isHydrated && items.length === 0 ? (
             <div className="section-card-strong mx-auto mt-8 flex max-w-xl flex-col items-center gap-4 px-6 py-12 text-center">
-              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#358055]/8">
-                <ShoppingBag className="h-9 w-9 text-[#358055]/60" />
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#2E8655]/8">
+                <ShoppingBag className="h-9 w-9 text-[#2E8655]/60" />
               </div>
               <div>
-                <p className="text-xl font-black text-slate-900">{t('cart.empty_title')}</p>
+                <p className="text-xl font-extrabold text-slate-900">{t('cart.empty_title')}</p>
                 <p className="mt-2 text-sm leading-6 text-slate-500">{t('cart.empty_subtitle')}</p>
               </div>
               <Link
                 href={`/${locale}/products`}
-                className="mt-2 inline-flex items-center justify-center rounded-full bg-[#F3765D] px-7 py-3.5 text-base font-extrabold text-white shadow-[0_16px_32px_rgba(243,118,93,0.28)] transition-colors hover:bg-[#e0654d]"
+                className="mt-2 inline-flex items-center justify-center rounded-full bg-[#F0735A] px-7 py-3.5 text-base font-extrabold text-white shadow-[0_16px_32px_rgba(240,115,90,0.28)] transition-colors hover:bg-[#d9604a]"
               >
                 {t('cart.browse_products')}
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -518,7 +519,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
             <form onSubmit={handleSubmit} className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
               {/* Delivery form */}
               <div className="section-card-strong px-5 py-6 md:px-7 md:py-7">
-                <h2 className="text-xl font-black text-slate-900">{t('checkout_v2.simpleTitle')}</h2>
+                <h2 className="text-xl font-extrabold text-slate-900">{t('checkout_v2.simpleTitle')}</h2>
 
                 <div className="mt-5 space-y-3">
                   <div className="space-y-1.5">
@@ -532,7 +533,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                             : 'top-1/2 -translate-y-1/2 text-[17px]',
                         )}
                       >
-                        {t('forms.phone')} <span className="text-[#F3765D]">*</span>
+                        {t('forms.phone')} <span className="text-[#F0735A]">*</span>
                       </Label>
                       <PhoneInput
                         value={formData.phone}
@@ -552,7 +553,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                     <div className="space-y-1.5">
                       <div className="relative">
                         <Label htmlFor="firstName" className={floatingLabelClass('firstName')}>
-                          {t('forms.name')} <span className="text-[#F3765D]">*</span>
+                          {t('forms.name')} <span className="text-[#F0735A]">*</span>
                         </Label>
                         <Input
                           id="firstName"
@@ -571,7 +572,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                     <div className="space-y-1.5">
                       <div className="relative">
                         <Label htmlFor="lastName" className={floatingLabelClass('lastName')}>
-                          {t('forms.surname')} <span className="text-[#F3765D]">*</span>
+                          {t('forms.surname')} <span className="text-[#F0735A]">*</span>
                         </Label>
                         <Input
                           id="lastName"
@@ -590,7 +591,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                     <div className="space-y-1.5">
                       <div className="relative">
                         <Label htmlFor="address" className={floatingLabelClass('address')}>
-                          {t('checkout_v2.simpleAddressLabel')} <span className="text-[#F3765D]">*</span>
+                          {t('checkout_v2.simpleAddressLabel')} <span className="text-[#F0735A]">*</span>
                         </Label>
                         <Input
                           id="address"
@@ -609,7 +610,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                     <div className="space-y-1.5">
                       <div className="relative">
                         <Label htmlFor="city" className={floatingLabelClass('city')}>
-                          {t('forms.city')} <span className="text-[#F3765D]">*</span>
+                          {t('forms.city')} <span className="text-[#F0735A]">*</span>
                         </Label>
                         <Input
                           id="city"
@@ -628,7 +629,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                     <div className="space-y-1.5">
                       <div className="relative">
                         <Label htmlFor="postalCode" className={floatingLabelClass('postalCode')}>
-                          {t('forms.postal_code')} <span className="text-[#F3765D]">*</span>
+                          {t('forms.postal_code')} <span className="text-[#F0735A]">*</span>
                         </Label>
                         <Input
                           id="postalCode"
@@ -676,9 +677,9 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                 </div>
 
                 {/* Courier info */}
-                <div className="mt-5 rounded-[1rem] border border-[#358055]/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.99),rgba(247,251,248,0.98))] p-4 shadow-[0_10px_24px_rgba(53,128,85,0.08)]">
+                <div className="mt-5 rounded-[1rem] border border-[#2E8655]/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.99),rgba(247,251,248,0.98))] p-4 shadow-[0_10px_24px_rgba(46,134,85,0.08)]">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.85rem] border border-[#358055]/12 bg-white shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.85rem] border border-[#2E8655]/12 bg-white shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
                       <Image
                         src={courier.logo}
                         alt={courier.name}
@@ -688,13 +689,13 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[17px] font-black leading-none text-slate-950">{courier.name}</p>
+                      <p className="text-[17px] font-extrabold leading-none text-slate-950">{courier.name}</p>
                       <p className="mt-2 text-sm font-medium leading-6 text-slate-700">
                         {t('shop.delivery_time', { time: courier.deliveryTime })}
                       </p>
                     </div>
                   </div>
-                  <p className="mt-3 rounded-[0.8rem] bg-[#358055]/8 px-3 py-2 text-sm font-semibold text-[#358055]">
+                  <p className="mt-3 rounded-[0.8rem] bg-[#2E8655]/8 px-3 py-2 text-sm font-semibold text-[#2E8655]">
                     {t('faq_ui.cash_on_delivery')}
                   </p>
                 </div>
@@ -703,7 +704,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
               {/* Order summary */}
               <div className="space-y-4">
                 <div className="section-card-strong px-5 py-6 md:px-6 md:py-6">
-                  <h2 className="text-xl font-black text-slate-900">{t('order_summary.title')}</h2>
+                  <h2 className="text-xl font-extrabold text-slate-900">{t('order_summary.title')}</h2>
 
                   <div className="mt-4 space-y-3">
                     {displayGroups.map((group) => {
@@ -712,7 +713,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                         return (
                           <div
                             key={paid.bogoPairId}
-                            className="overflow-hidden rounded-[1.1rem] border border-[#358055]/30 bg-white"
+                            className="overflow-hidden rounded-[1.1rem] border border-[#2E8655]/30 bg-white"
                           >
                             <div className="flex gap-3 p-3">
                               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
@@ -727,7 +728,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="min-w-0">
-                                    <p className="truncate text-sm font-black uppercase text-slate-900">
+                                    <p className="truncate text-sm font-extrabold uppercase text-slate-900">
                                       {paid.productName}
                                     </p>
                                     <p className="truncate text-xs font-medium text-slate-500">
@@ -744,7 +745,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                                   </button>
                                 </div>
                                 <div className="mt-2 flex items-center justify-between gap-2">
-                                  <span className="text-xs font-semibold text-[#358055]">
+                                  <span className="text-xs font-semibold text-[#2E8655]">
                                     {t('bogo.pair_includes_gratis', { count: free.length })}
                                   </span>
                                   <div className="text-right">
@@ -754,7 +755,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                                         {formatPrice(paid.regularPrice * paid.quantity)}
                                       </p>
                                     )}
-                                    <p className="text-sm font-black text-slate-950">
+                                    <p className="text-sm font-extrabold text-slate-950">
                                       {formatPrice(
                                         (paid.bogoOriginalUnitPrice ?? paid.unitPrice) *
                                           paid.quantity
@@ -765,12 +766,12 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                               </div>
                             </div>
                             {free.length > 0 && (
-                              <div className="border-t border-[#358055]/10 bg-[#f3faf6] px-3 py-2">
+                              <div className="border-t border-[#2E8655]/10 bg-[#f3faf6] px-3 py-2">
                                 <ul className="space-y-1.5">
                                   {free.map((line) => (
                                     <li key={line.lineId} className="flex items-center gap-2 pl-1.5">
                                       <span
-                                        className="h-7 w-0.5 shrink-0 rounded-full bg-[#358055]/35"
+                                        className="h-7 w-0.5 shrink-0 rounded-full bg-[#2E8655]/35"
                                         aria-hidden
                                       />
                                       <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-white">
@@ -790,7 +791,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                                           {line.variantName}
                                         </p>
                                       </div>
-                                      <span className="shrink-0 text-[11px] font-black uppercase text-[#358055]">
+                                      <span className="shrink-0 text-[11px] font-extrabold uppercase text-[#2E8655]">
                                         {t('bogo.pair_gratis')}
                                       </span>
                                     </li>
@@ -806,7 +807,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                       return (
                         <div
                           key={line.lineId}
-                          className="flex gap-3 rounded-[1.1rem] border border-[#358055]/10 bg-white p-3"
+                          className="flex gap-3 rounded-[1.1rem] border border-[#2E8655]/10 bg-white p-3"
                         >
                           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
                             <Image
@@ -820,7 +821,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0">
-                                <p className="truncate text-sm font-black uppercase text-slate-900">
+                                <p className="truncate text-sm font-extrabold uppercase text-slate-900">
                                   {line.productName}
                                 </p>
                                 <p className="truncate text-xs font-medium text-slate-500">
@@ -837,12 +838,12 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                               </button>
                             </div>
                             <div className="mt-2 flex items-center justify-between gap-2">
-                              <div className="inline-flex items-center rounded-full border border-[#358055]/15 bg-white">
+                              <div className="inline-flex items-center rounded-full border border-[#2E8655]/15 bg-white">
                                 <button
                                   type="button"
                                   onClick={() => updateQuantity(line.lineId, line.quantity - 1)}
                                   aria-label="-"
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#2E8655]/8 hover:text-[#2E8655]"
                                 >
                                   <Minus className="h-3 w-3" />
                                 </button>
@@ -853,7 +854,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                                   type="button"
                                   onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
                                   aria-label="+"
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#358055]/8 hover:text-[#358055]"
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#2E8655]/8 hover:text-[#2E8655]"
                                 >
                                   <Plus className="h-3 w-3" />
                                 </button>
@@ -864,7 +865,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                                     {formatPrice(line.regularPrice * line.quantity)}
                                   </p>
                                 )}
-                                <p className="text-sm font-black text-slate-950">
+                                <p className="text-sm font-extrabold text-slate-950">
                                   {formatPrice(line.unitPrice * line.quantity)}
                                 </p>
                               </div>
@@ -876,7 +877,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                   </div>
 
                   {!hasFreeShipping && amountForFreeShipping > 0 && (
-                    <div className="mt-4 flex items-center gap-2 rounded-[0.9rem] bg-[#F3765D]/8 px-3 py-2.5 text-sm font-semibold text-[#ba5a47]">
+                    <div className="mt-4 flex items-center gap-2 rounded-[0.9rem] bg-[#F0735A]/8 px-3 py-2.5 text-sm font-semibold text-[#ba5a47]">
                       <Truck className="h-4 w-4 shrink-0" />
                       {t('cart.free_shipping_progress', { amount: formatPrice(amountForFreeShipping) })}
                     </div>
@@ -885,14 +886,14 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                   {/* 1+1 kupon — automatski primenjen kada je par u korpi */}
                   {hasBogoPair && (
                     <div
-                      className="coupon-banner-animate mt-4 flex items-center gap-3 rounded-[1.1rem] p-3 text-white shadow-[0_14px_30px_rgba(53,128,85,0.28)]"
-                      style={{ background: 'linear-gradient(120deg, #358055 0%, #2a6844 100%)' }}
+                      className="coupon-banner-animate mt-4 flex items-center gap-3 rounded-[1.1rem] p-3 text-white shadow-[0_14px_30px_rgba(46,134,85,0.28)]"
+                      style={{ background: 'linear-gradient(120deg, #2E8655 0%, #2a6844 100%)' }}
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/15">
                         <Gift className="h-5 w-5" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-black uppercase tracking-wide">
+                        <p className="text-sm font-extrabold uppercase tracking-wide">
                           {t('bogo.coupon_applied', { code: BOGO_CONFIG.couponCode })}
                         </p>
                         <p className="text-xs font-semibold text-white/85">
@@ -914,7 +915,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                         )}
                       </div>
                     ) : (
-                      <div className="mt-4 rounded-[1.1rem] border border-[#358055]/10 bg-white p-3">
+                      <div className="mt-4 rounded-[1.1rem] border border-[#2E8655]/10 bg-white p-3">
                         <p className="text-sm font-bold text-slate-700">{t('coupons.have_coupon')}</p>
                         <div className="mt-2 flex gap-2">
                           <Input
@@ -931,7 +932,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                             variant="outline"
                             disabled={couponApplying || !couponInput.trim()}
                             onClick={() => applyCoupon(couponInput, 'manual')}
-                            className="h-10 shrink-0 border-[#358055]/30 font-bold text-[#358055] hover:bg-[#358055]/5"
+                            className="h-10 shrink-0 border-[#2E8655]/30 font-bold text-[#2E8655] hover:bg-[#2E8655]/5"
                           >
                             {couponApplying ? t('coupons.validating') : t('coupons.apply')}
                           </Button>
@@ -940,11 +941,11 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                       </div>
                     ))}
 
-                  <div className="mt-4 divide-y divide-[#358055]/8 rounded-[1.2rem] border border-[#358055]/10 bg-white">
+                  <div className="mt-4 divide-y divide-[#2E8655]/8 rounded-[1.2rem] border border-[#2E8655]/10 bg-white">
                     {totalSavings > 0 && (
                       <div className="flex items-center justify-between px-4 py-3">
                         <span className="text-sm text-slate-500">{t('cart.you_save')}</span>
-                        <span className="text-sm font-bold text-[#358055]">-{formatPrice(totalSavings)}</span>
+                        <span className="text-sm font-bold text-[#2E8655]">-{formatPrice(totalSavings)}</span>
                       </div>
                     )}
                     <div className="flex items-center justify-between px-4 py-3">
@@ -956,7 +957,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                         <span className="text-sm text-slate-500">
                           {t('bogo.coupon_row_label', { code: BOGO_CONFIG.couponCode })}
                         </span>
-                        <span className="text-sm font-black uppercase text-[#358055]">
+                        <span className="text-sm font-extrabold uppercase text-[#2E8655]">
                           {t('bogo.pair_gratis')}
                         </span>
                       </div>
@@ -966,20 +967,20 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                         <span className="text-sm text-slate-500">
                           {t('checkout_v2.discountLabel')} ({appliedCoupon.code})
                         </span>
-                        <span className="text-sm font-bold text-[#358055]">
+                        <span className="text-sm font-bold text-[#2E8655]">
                           -{formatPrice(couponAmounts.productDiscount)}
                         </span>
                       </div>
                     )}
                     <div className="flex items-center justify-between px-4 py-3">
                       <span className="text-sm text-slate-500">{t('order_summary.delivery')}</span>
-                      <span className={`text-sm font-semibold ${shippingCost > 0 ? 'text-slate-900' : 'text-[#358055]'}`}>
+                      <span className={`text-sm font-semibold ${shippingCost > 0 ? 'text-slate-900' : 'text-[#2E8655]'}`}>
                         {shippingCost > 0 ? formatPrice(shippingCost) : t('order_summary.free')}
                       </span>
                     </div>
                     <div className="flex items-center justify-between px-4 py-4">
                       <span className="text-base font-semibold text-slate-700">{t('order_summary.total')}</span>
-                      <span className="text-xl font-black text-[#F3765D]">{formatPrice(total)}</span>
+                      <span className="text-xl font-extrabold text-[#F0735A]">{formatPrice(total)}</span>
                     </div>
                   </div>
 
@@ -988,13 +989,13 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
                       type="submit"
                       size="lg"
                       disabled={isSubmitting || items.length === 0}
-                      className="h-13 w-full rounded-full bg-[#358055] py-4 text-base font-extrabold text-white shadow-[0_16px_32px_rgba(53,128,85,0.24)] hover:bg-[#2d6d48]"
+                      className="lander-shine h-[60px] w-full rounded-full bg-[#2E8655] py-4 text-[18px] font-bold text-white shadow-[0_6px_0_#1d5434] hover:bg-[#2a7349]"
                     >
                       {isSubmitting ? t('order_summary.processing_order') : t('order_summary.place_order')}
                     </Button>
 
                     <div className="flex items-center justify-center gap-2 rounded-[8px] border border-[#e6ddd1] bg-[#fbf8f4] px-4 py-3 text-center">
-                      <ShieldCheck className="h-4 w-4 text-[#358055]" />
+                      <ShieldCheck className="h-4 w-4 text-[#2E8655]" />
                       <span className="text-sm font-medium text-slate-700">{t('order_summary.secure_purchase_guarantee')}</span>
                     </div>
                   </div>
@@ -1005,7 +1006,7 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
         </div>
       </main>
 
-      <Footer countryConfig={countryConfig} locale={locale} />
+      <LanderFooter countryConfig={countryConfig} locale={locale} className="pb-6" />
       <CookieConsent isEU={countryConfig.isEU} />
 
       <CheckoutDialog

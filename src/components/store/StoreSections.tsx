@@ -175,7 +175,7 @@ export function GuaranteeBand({ countryConfig }: { countryConfig: CountryConfig 
 }
 
 /* ── FAQ ───────────────────────────────────────────────────────────────── */
-function useGeneralFaq(countryCode: string): FAQItem[] {
+export function useGeneralFaq(countryCode: string): FAQItem[] {
   const tFaq = useTranslations('faq_ui');
   const keys = [
     'delivery_time', 'delivery_cost', 'cash_on_delivery', 'payment_methods', 'returns',

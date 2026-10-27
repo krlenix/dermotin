@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl';
 import {
   ArrowRight,
   Banknote,
-  Building2,
   Check,
   CheckCircle2,
   ChevronDown,
@@ -14,196 +13,24 @@ import {
   Clock,
   Gift,
   HandHeart,
-  Info,
   Leaf,
-  Mail,
-  MapPin,
   MousePointerClick,
   Package,
-  Phone,
   Plus,
   ShieldCheck,
-  Star,
   Truck,
 } from 'lucide-react';
 
 import { getProductVariantsForCountry, type Product } from '@/config/products';
 import { getDefaultCourier, type CountryConfig } from '@/config/countries';
-import type { LanderContent, Mark } from '@/config/lander-content';
+import type { LanderContent } from '@/config/lander-content';
 import { getStoreOffers, getStoreVisual } from '@/config/store-content';
-import { SOCIAL_LINKS } from '@/config/app-config';
-import { LegalDocumentModal } from '@/components/features/LegalDocumentModal';
 import { cn } from '@/lib/utils';
 import type { BundlePart } from './BundleContents';
 import { landerFontClass } from './fonts';
+import { Bold, CountUp, FOREST_BG, LanderFooter, Marked, Stars, TornBand, plural, richTags, useDeliveryRange, useReveal } from './LanderKit';
 import { QuickOrderForm, type QuickOrderLine } from './QuickOrderForm';
 import { formatMoney, scrollToOrderForm, variantDiscountPercent, variantPrice, variantSavings } from './format';
-
-const FOREST_BG = "bg-[#16241d] bg-[url('/images/lander/Pozadina-Drvece.webp')] bg-cover bg-center";
-
-/** Obojena podloga iza teksta, kao na starom sajtu (radi i kroz više redova). */
-function Marked({ tone, children, animate = false, className }: { tone: Mark; children: React.ReactNode; animate?: boolean; className?: string }) {
-  const color = tone === 'green' ? '#2E8655' : '#F0735A';
-  return (
-    <span
-      className={cn(
-        'rounded-[6px] px-[0.18em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]',
-        animate && 'lander-mark-anim',
-        className
-      )}
-      style={animate ? { backgroundImage: `linear-gradient(${color}, ${color})` } : { backgroundColor: color }}
-    >
-      {children}
-    </span>
-  );
-}
-
-/** Oznake u porukama: <g>zeleno</g>, <c>koralno</c>, <b>podebljano</b> */
-const richTags = {
-  g: (chunks: React.ReactNode) => <Marked tone="green">{chunks}</Marked>,
-  c: (chunks: React.ReactNode) => <Marked tone="coral">{chunks}</Marked>,
-  b: (chunks: React.ReactNode) => <strong className="font-bold">{chunks}</strong>,
-};
-
-/** **tekst** iz lander-content.ts → podebljano */
-function Bold({ text }: { text: string }) {
-  return (
-    <>
-      {text.split(/(\*\*[^*]+\*\*)/).map((part, index) =>
-        part.startsWith('**') ? <strong key={index} className="font-bold">{part.slice(2, -2)}</strong> : <span key={index}>{part}</span>
-      )}
-    </>
-  );
-}
-
-function Stars({ size = 22 }: { size?: number }) {
-  return (
-    <span className="inline-flex gap-1 text-[#F5A623]">
-      {[0, 1, 2, 3, 4].map((i) => (
-        <Star key={i} style={{ width: size, height: size }} className="fill-current" strokeWidth={0} />
-      ))}
-    </span>
-  );
-}
-
-/** Srpska množina: 1 bočica, 2–4 bočice, 5+ bočica */
-function plural(n: number, forms: string) {
-  const [one, few, many] = forms.split('|');
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return one;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
-  return many;
-}
-
-/** Pojavljivanje sekcija pri skrolovanju (.reveal) — samo kada je JS aktivan. */
-function useReveal(rootRef: React.RefObject<HTMLDivElement | null>) {
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const all = Array.from(root.querySelectorAll<HTMLElement>('.reveal'));
-    if (!('IntersectionObserver' in window)) return;
-    // Sve što je već na ekranu ili iznad njega ostaje vidljivo; animira se samo ono ispod
-    const fold = window.innerHeight * 0.92;
-    all.filter((item) => item.getBoundingClientRect().top < fold).forEach((item) => item.classList.add('is-visible'));
-    const items = all.filter((item) => !item.classList.contains('is-visible'));
-    root.classList.add('lander-js');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
-    );
-    items.forEach((item) => observer.observe(item));
-    return () => observer.disconnect();
-  }, [rootRef]);
-}
-
-/** „10,000 +“ broji naviše kada se pojavi na ekranu. */
-function CountUp({ value }: { value: string }) {
-  const target = Number(value.replace(/[^\d]/g, '')) || 0;
-  const [current, setCurrent] = useState(target);
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let frame = 0;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        const start = performance.now();
-        const tick = (now: number) => {
-          const progress = Math.min(1, (now - start) / 1600);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          setCurrent(Math.round(target * eased));
-          if (progress < 1) frame = requestAnimationFrame(tick);
-        };
-        setCurrent(0);
-        frame = requestAnimationFrame(tick);
-      },
-      { threshold: 0.4 }
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-    };
-  }, [target]);
-  return <span ref={ref}>{current.toLocaleString('en-US')}</span>;
-}
-
-/** Procena isporuke: danas + 1–2 radna dana (računa se u browseru zbog vremenske zone). */
-function useDeliveryRange() {
-  const [range, setRange] = useState<string | null>(null);
-  useEffect(() => {
-    const addBusinessDays = (from: Date, days: number) => {
-      const date = new Date(from);
-      let added = 0;
-      while (added < days) {
-        date.setDate(date.getDate() + 1);
-        if (date.getDay() !== 0 && date.getDay() !== 6) added++;
-      }
-      return date;
-    };
-    const format = new Intl.DateTimeFormat('sr-Latn-RS', { weekday: 'short', day: 'numeric', month: 'short' });
-    const today = new Date();
-    setRange(`${format.format(addBusinessDays(today, 1))} – ${format.format(addBusinessDays(today, 2))}`);
-  }, []);
-  return range;
-}
-
-/** Koralna traka sa „pocepanim“ ivicama i belim dugmetom. */
-function TornBand({ label, className }: { label: React.ReactNode; className?: string }) {
-  const edge = 'M0,18 L40,6 L70,14 L110,4 L150,16 L190,7 L230,15 L270,3 L320,13 L360,6 L400,17 L450,5 L490,14 L530,8 L580,16 L620,4 L660,13 L700,6 L750,15 L790,5 L830,14 L880,7 L920,16 L960,4 L1000,13 L1050,6 L1090,15 L1130,5 L1170,12 L1200,6 L1200,24 L0,24 Z';
-  return (
-    <div className={cn('relative', className)}>
-      <svg viewBox="0 0 1200 24" preserveAspectRatio="none" className="block h-4 w-full text-[#F0735A] md:h-5" aria-hidden>
-        <path d={edge} fill="currentColor" />
-      </svg>
-      <div className="flex justify-center bg-[#F0735A] px-4 py-5 md:py-9">
-        <button
-          type="button"
-          onClick={() => scrollToOrderForm()}
-          className="lander-shine inline-flex h-14 items-center gap-2 rounded-full bg-white px-7 text-[14px] font-semibold uppercase tracking-wide text-[#1f1f1f] shadow-[0_8px_20px_-8px_rgba(0,0,0,0.35)] transition hover:scale-[1.03] md:h-[60px] md:px-10 md:text-[15px]"
-        >
-          <span>{label}</span>
-          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#1f1f1f] text-white">
-            <ArrowRight className="h-3 w-3" strokeWidth={3} />
-          </span>
-        </button>
-      </div>
-      <svg viewBox="0 0 1200 24" preserveAspectRatio="none" className="block h-4 w-full rotate-180 text-[#F0735A] md:h-5" aria-hidden>
-        <path d={edge} fill="currentColor" />
-      </svg>
-    </div>
-  );
-}
 
 interface CheckoutLanderProps {
   product: Product;
@@ -215,12 +42,19 @@ interface CheckoutLanderProps {
   /** Snimci pravih komentara (opciono, ispod svedočanstava) */
   shots?: Array<[string, number, number]>;
   reviewsCount?: string;
+  /** Viber: bez praćenja, kraća stranica, kampanja za OMS */
+  channel?: 'viber';
+  campaign?: string;
+  /** Kratka verzija: bez sastojaka, koraka, ikonica i čestih pitanja */
+  compact?: boolean;
+  /** Mala oznaka iznad naslova (npr. „Samo za Viber pratioce“) */
+  kicker?: string;
+  formTitle?: string;
 }
 
-export function CheckoutLander({ product, content, countryConfig, locale, bundleParts = [], shots = [], reviewsCount = '850+' }: CheckoutLanderProps) {
+export function CheckoutLander({ product, content, countryConfig, locale, bundleParts = [], shots = [], reviewsCount = '850+', channel, campaign, compact = false, kicker, formTitle }: CheckoutLanderProps) {
   const t = useTranslations('store.lander');
   const tStore = useTranslations('store');
-  const tAll = useTranslations();
   const rootRef = useRef<HTMLDivElement>(null);
   useReveal(rootRef);
 
@@ -233,11 +67,9 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
   const savings = variantSavings(variant);
   const percent = variantDiscountPercent(variant);
   const { packshot } = getStoreVisual(product);
-  const company = countryConfig.company;
   const courier = getDefaultCourier(countryConfig);
   const registration = content.registration;
   const deliveryRange = useDeliveryRange();
-  const [doc, setDoc] = useState<{ type: string; title: string } | null>(null);
   const [showSticky, setShowSticky] = useState(false);
 
   const lines: QuickOrderLine[] = useMemo(
@@ -303,6 +135,9 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
           <div className="pointer-events-none absolute -right-16 top-1/3 h-72 w-72 rounded-full bg-white/25 blur-3xl md:right-24" aria-hidden />
           <div className="relative grid items-center px-3 pb-2 pt-6 md:grid-cols-2 md:px-14 md:py-12">
             <div className="text-center">
+              {kicker && (
+                <span className="mb-3 inline-flex rounded-full bg-[#7360F2] px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-wide text-white shadow">{kicker}</span>
+              )}
               <h1 className="text-[30px] font-extrabold leading-[1.22] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.12)] md:text-[42px]">
                 {content.hero.map((line, index) => (
                   <span key={line.text} className="block">
@@ -390,6 +225,7 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
             <TornBand label={ctaLabel} className="-mx-3 md:mx-0" />
 
             {/* Sastojci */}
+            {!compact && (
             <section className="reveal text-center">
               <h2 className="text-[30px] font-extrabold leading-tight text-[#2E8655] md:text-[36px]">{t.rich('ingredients_title', richTags)}</h2>
               <div className="mt-4 flex items-center justify-center gap-3 md:mt-6 md:gap-6">
@@ -433,6 +269,8 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
                 </div>
               </div>
             </section>
+
+            )}
 
             {/* Garancija */}
             <section className="reveal flex flex-col items-center gap-4 px-2 text-center">
@@ -542,7 +380,7 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
                 </div>
               </div>
 
-              <QuickOrderForm countryConfig={countryConfig} lines={lines} appearance="classic" className="mt-5" />
+              <QuickOrderForm countryConfig={countryConfig} lines={lines} channel={channel} campaign={campaign} title={formTitle} appearance="classic" className="mt-5" />
             </div>
           </aside>
         </div>
@@ -574,6 +412,8 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
           <p className="mx-auto mt-3 max-w-xl text-[21px] font-bold leading-snug md:text-[24px]">{t.rich('reviews_sub', richTags)}</p>
         </section>
 
+        {!compact && (
+          <>
         {/* ── KAKO PORUČITI ─────────────────────────────────────── */}
         <section className="reveal mt-10 text-center">
           <h2 className="text-[26px] font-extrabold md:text-[32px]">{t.rich('how_title', richTags)}</h2>
@@ -637,70 +477,13 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
             </div>
           </section>
         )}
+          </>
+        )}
       </main>
 
       <TornBand label={ctaLabel} className="mt-8" />
 
-      {/* ── FOOTER ─────────────────────────────────────────────── */}
-      <footer className="px-3 pb-24 md:px-6 md:pb-6">
-        <div className={cn('relative mx-auto max-w-[1180px] overflow-hidden rounded-[22px] px-3 py-8 text-center text-white md:px-10 md:py-10', FOREST_BG)}>
-          <div className="absolute inset-0 bg-[#0f1a14]/60" aria-hidden />
-          <div className="relative">
-            <Image src={countryConfig.logo} alt={tAll('ui.alt_logo')} width={260} height={74} className="mx-auto h-14 w-auto" />
-            <p className="mt-4 text-[24px] font-semibold">{t('footer_title')}</p>
-            <p className="mx-auto mt-3 max-w-2xl text-[14px] leading-relaxed text-white/90">{tAll('footer.brand_description')}</p>
-
-            <div className="mx-auto mt-6 grid max-w-4xl gap-6 rounded-[14px] bg-white p-5 text-left text-[#222] md:grid-cols-3 md:gap-8 md:p-6">
-              <ul className="space-y-2 text-[13.5px]">
-                {company.phone && (
-                  <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-[#2E8655]" /><a href={`tel:${company.phone}`}>{company.phone}</a></li>
-                )}
-                <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-[#2E8655]" /><a href={`mailto:${company.email}`}>{company.email}</a></li>
-                <li className="flex items-center gap-2"><Building2 className="h-4 w-4 text-[#2E8655]" /><span><strong>{company.name}</strong> by {company.legalName}</span></li>
-                <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-[#2E8655]" />{company.address}, {company.city}</li>
-                {(company.taxNumber || company.registrationNumber) && (
-                  <li className="flex items-center gap-2">
-                    <Info className="h-4 w-4 text-[#2E8655]" />
-                    {[company.taxNumber && `PIB: ${company.taxNumber}`, company.registrationNumber && `MB: ${company.registrationNumber}`].filter(Boolean).join(' | ')}
-                  </li>
-                )}
-              </ul>
-              <div>
-                <p className="text-[19px] font-bold">{t('useful_links')}</p>
-                <ul className="mt-3 space-y-2 text-[13.5px]">
-                  {[
-                    ['returns-policy', tAll('legal.returns_policy')],
-                    ['terms-of-service', tAll('legal.terms_of_service')],
-                    ['privacy-policy', tAll('legal.privacy_policy')],
-                  ].map(([type, title]) => (
-                    <li key={type}>
-                      <button type="button" onClick={() => setDoc({ type, title })} className="hover:text-[#2E8655]">
-                        {title}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-[19px] font-bold">{t('follow')}</p>
-                <div className="mt-3 flex gap-2">
-                  {Object.entries(SOCIAL_LINKS).map(([name, href]) => (
-                    <a
-                      key={name}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-9 items-center justify-center rounded-full bg-[#2E8655] px-3 text-[12px] font-semibold capitalize text-white"
-                    >
-                      {name}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <LanderFooter countryConfig={countryConfig} locale={locale} />
 
       {/* ── DONJA TRAKA (telefon) ─────────────────────────────── */}
       <div
@@ -726,16 +509,6 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
         </div>
       </div>
 
-      {doc && (
-        <LegalDocumentModal
-          isOpen
-          onClose={() => setDoc(null)}
-          documentType={doc.type}
-          documentTitle={doc.title}
-          countryConfig={countryConfig}
-          locale={locale}
-        />
-      )}
     </div>
   );
 }
@@ -853,7 +626,7 @@ function OfferBox({
 }
 
 /** Svedočanstva: na telefonu prevlačenje + automatsko listanje i tačkice, na desktopu dve kolone. */
-function TestimonialCarousel({ items, yearsLabel }: { items: LanderContent['testimonials']; yearsLabel: string }) {
+export function TestimonialCarousel({ items, yearsLabel }: { items: LanderContent['testimonials']; yearsLabel: string }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
