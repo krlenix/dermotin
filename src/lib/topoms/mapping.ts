@@ -45,7 +45,8 @@ export function mapCatalog(products: Record<string, Product>, updatedAt: string,
 
 type CartSource = { sku: string; variantId?: string; productId?: string };
 type MappingContext = { timestamp: string; locale: string; domain: string; landingUrl?: string; cartItems?: CartSource[] };
-type Unit = { product: Product; sku: string; quantity: number; weight: number };
+// gratisValue: component given free inside a bundle — sent at full catalog value with a 100% discount.
+type Unit = { product: Product; sku: string; quantity: number; weight: number; gratisValue?: number };
 
 function resolveUnits(products: Record<string, Product>, sku: string, count: number, variant?: string, productId?: string, seen = new Set<string>()): Unit[] {
   const product = productId ? products[productId] : Object.values(products).find(p => p.id === sku || p.variants.some(v => v.sku === sku));
@@ -61,7 +62,10 @@ function resolveUnits(products: Record<string, Product>, sku: string, count: num
       const component = products[item.productId];
       const v = component?.variants.find(v => v.id === item.variantId) || component?.variants.find(v => v.isDefault) || component?.variants[0];
       if (!v) throw new Error(`Unknown bundle component: ${item.productId}`);
-      return resolveUnits(products, v.sku, units * quantity(item.quantity), v.id, item.productId, path);
+      const resolved = resolveUnits(products, v.sku, units * quantity(item.quantity), v.id, item.productId, path);
+      return item.gratis
+        ? resolved.map(component => ({ ...component, weight: 0, gratisValue: component.weight }))
+        : resolved;
     });
     // BIOROID promotion splits the set equally: cream 995 RSD + drops 995 RSD.
     return product.id === 'bioroid_set'
@@ -90,13 +94,16 @@ function mapPhysicalLines(items: LineItem[], products: Record<string, Product>, 
     units.forEach((unit, n) => {
       // Allocate bundles proportionally in integer cents. Last component gets remainder.
       const share = remainingWeight ? unit.weight / remainingWeight : 1 / (units.length - n);
-      const componentGross = n === units.length - 1 ? remainingGross : Math.floor(remainingGross * share);
-      const componentDiscount = n === units.length - 1 ? remainingDiscount :
-        (remainingGross ? Math.floor(remainingDiscount * componentGross / remainingGross) : 0);
-      const componentNet = componentGross - componentDiscount;
-      remainingGross -= componentGross;
-      remainingDiscount -= componentDiscount;
+      const allocatedGross = n === units.length - 1 ? remainingGross : Math.floor(remainingGross * share);
+      const allocatedDiscount = n === units.length - 1 ? remainingDiscount :
+        (remainingGross ? Math.floor(remainingDiscount * allocatedGross / remainingGross) : 0);
+      remainingGross -= allocatedGross;
+      remainingDiscount -= allocatedDiscount;
       remainingWeight -= unit.weight;
+      // Gratis component: full value on the line, fully discounted — totals stay unchanged.
+      const componentGross = allocatedGross + (unit.gratisValue || 0);
+      const componentDiscount = allocatedDiscount + (unit.gratisValue || 0);
+      const componentNet = componentGross - componentDiscount;
       // Ceil unit price and allocate cent rounding as line discount: e.g. 4790 / 3.
       const unitPrice = Math.ceil(componentGross / unit.quantity);
       lines.push({ id: `l${index + 1}-${n + 1}`, variant_id: variantId(unit.product.id, unit.sku), sku: unit.sku,

@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProductBySlug, getProductsForLocale, getProductVariantsForCountry } from '@/config/products';
+import { getProductBySlug, getProductsForLocale, getProductVariantsForCountry, isStorefrontProduct, resolveStorefrontProduct } from '@/config/products';
 import { getCountryConfig, getDefaultCourier } from '@/config/countries';
-import { ClassicProductPage } from '@/components/shop/ClassicProductPage';
+import { ProductLanding } from '@/components/store/ProductLanding';
+import { ClientRedirect } from '@/components/store/ClientRedirect';
 import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
@@ -24,6 +25,9 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   if (!product) {
     return { title: 'DERMOTIN' };
+  }
+  if (!isStorefrontProduct(product)) {
+    return { title: product.name, robots: { index: false, follow: true } };
   }
 
   const availableLocales = await getProductLocales(product.slug);
@@ -68,7 +72,7 @@ export async function generateStaticParams() {
   for (const locale of locales) {
     const products = await getProductsForLocale(locale);
     for (const product of Object.values(products)) {
-      if (product.availableCountries.includes(locale)) {
+      if (product.availableCountries.includes(locale) && !product.salesChannel) {
         params.push({ locale, slug: product.slug });
       }
     }
@@ -213,14 +217,14 @@ function buildBreadcrumbJsonLd(product: Product, locale: string) {
 export default async function ProductPage({ params }: ProductPageProps) {
   const { locale, slug } = await params;
 
-  const product = await getProductBySlug(slug, locale);
-  if (!product) {
+  const resolved = await resolveStorefrontProduct(slug, locale);
+  if (resolved.kind === 'missing') {
     notFound();
   }
-
-  if (product.availableCountries && !product.availableCountries.includes(locale)) {
-    notFound();
+  if (resolved.kind === 'redirect') {
+    return <ClientRedirect to={`/${locale}/products/${resolved.slug}`} />;
   }
+  const product = resolved.product;
 
   const countryConfig = getCountryConfig(locale);
   const faqJsonLd = buildFaqJsonLd(product);
@@ -231,7 +235,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <JsonLd data={buildBreadcrumbJsonLd(product, locale)} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <CountryMismatchBanner />
-      <ClassicProductPage product={product} countryConfig={countryConfig} locale={locale} />
+      <ProductLanding product={product} countryConfig={countryConfig} locale={locale} />
     </>
   );
 }

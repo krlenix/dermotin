@@ -401,8 +401,8 @@ export function CartDrawer() {
 
       {/* Drawer panel */}
       <aside
-        className={`fixed inset-y-0 right-0 z-[210] flex w-full max-w-md flex-col bg-[linear-gradient(180deg,#ffffff_0%,#f8fbf9_100%)] shadow-[-24px_0_70px_rgba(15,23,42,0.18)] transition-transform duration-300 ease-out ${
-          isDrawerOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed inset-y-0 right-0 z-[210] flex w-full max-w-md flex-col bg-[linear-gradient(180deg,#ffffff_0%,#f8fbf9_100%)] transition-[transform,box-shadow] duration-300 ease-out ${
+          isDrawerOpen ? 'translate-x-0 shadow-[-24px_0_70px_rgba(15,23,42,0.18)]' : 'translate-x-full shadow-none'
         }`}
         role="dialog"
         aria-modal="true"

@@ -238,7 +238,14 @@ export async function POST(request: NextRequest) {
       pageUrl?: string;
       marketingParams?: MarketingParams;
       coupon?: CouponData;
+      // Campaign channel outside paid social (e.g. Viber). Such orders never
+      // emit a Meta CAPI Purchase, so they cannot touch ad optimization.
+      channel?: 'viber';
     } = await request.json();
+    const isOfflineChannel = orderData.channel === 'viber';
+    if (isOfflineChannel) {
+      orderData.marketingParams = { ...(orderData.marketingParams || {}), medium: 'viber' } as MarketingParams;
+    }
 
     const customerEmail = orderData.customerEmail?.trim() || undefined;
     if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
@@ -590,7 +597,10 @@ export async function POST(request: NextRequest) {
     // Order is confirmed at this point. Now (and only now) fire the CAPI Purchase.
     // The same eventId was generated in the browser and will also be used by the
     // browser-side fbq Purchase call → Meta deduplicates them as a single event.
-    try {
+    if (isOfflineChannel) {
+      capiStatus = 'skipped';
+      console.log('📵 Viber order — CAPI Purchase intentionally skipped');
+    } else try {
       console.log('📤 Sending CAPI Purchase event for locale:', orderData.locale);
       
       // Split customer name into first and last name

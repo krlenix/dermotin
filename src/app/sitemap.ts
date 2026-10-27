@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getProductsForLocale } from '@/config/locales';
+import { getProductsForLocale, isStorefrontProduct } from '@/config/locales';
 import {
   SITE_LOCALES,
   buildLanguageAlternates,
@@ -55,7 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const locale of SITE_LOCALES) {
     const products = await getProductsForLocale(locale);
     for (const product of Object.values(products)) {
-      if (!product.availableCountries.includes(locale)) continue;
+      if (!product.availableCountries.includes(locale) || !isStorefrontProduct(product)) continue;
       const locales = availability.get(product.slug) || [];
       locales.push(locale);
       availability.set(product.slug, locales);

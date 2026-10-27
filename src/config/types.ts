@@ -52,6 +52,9 @@ export interface BundleItem {
   productId: string; // Product ID from the same locale catalog
   variantId?: string; // Specific variant included in the bundle (defaults to the default variant)
   quantity: number;
+  // Component is included free of charge (e.g. "FUNGEL + FUNGOMAX gratis").
+  // OMS receives it at its regular unit price with a 100% line discount.
+  gratis?: boolean;
 }
 
 export interface Product {
@@ -96,6 +99,15 @@ export interface Product {
   productFAQ?: ProductFAQ[]; // Localized FAQs for this locale
   testimonials?: Testimonial[]; // Localized testimonials for this product
   published?: boolean; // false = draft, hidden from the storefront (default: true)
+  // Hidden from every storefront surface (listings, sitemap, feeds, cross-sells)
+  // but still orderable and synced to the OMS. Use for products sold only as part
+  // of a set, or for channel-only offers (e.g. Viber campaign landing pages).
+  hidden?: boolean;
+  // When a hidden product's own page is opened (old ads, bookmarks), redirect
+  // to this product ID instead of showing 404.
+  replacedBy?: string;
+  // Offer that exists only for a specific campaign channel (served under /[locale]/v/…).
+  salesChannel?: 'viber';
   isBundle?: boolean; // Bundle/set product composed of other products
   bundleItems?: BundleItem[]; // Components of the bundle (informational + admin)
   // Per-product override of ingredient descriptions (ingredient ID → text).

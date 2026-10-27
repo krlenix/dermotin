@@ -1,5 +1,5 @@
 import { getCountryConfig } from '@/config/countries';
-import { getProductVariantsForCountry, getProductsForLocale } from '@/config/locales';
+import { getProductVariantsForCountry, getProductsForLocale, isStorefrontProduct } from '@/config/locales';
 import { SITE_LOCALES, getSiteUrl } from '@/lib/seo';
 
 export const revalidate = 86400;
@@ -24,7 +24,7 @@ export async function GET() {
     const country = getCountryConfig(locale);
     const products = await getProductsForLocale(locale);
     const available = Object.values(products).filter((product) =>
-      product.availableCountries.includes(locale)
+      product.availableCountries.includes(locale) && isStorefrontProduct(product)
     );
 
     lines.push('', `## ${LOCALE_NAMES[locale]}`, '');

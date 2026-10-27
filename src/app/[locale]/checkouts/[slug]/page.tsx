@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProductBySlug, getProductsForLocale } from '@/config/products';
+import { getProductBySlug, getProductsForLocale, isStorefrontProduct, resolveStorefrontProduct } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
-import { ClassicProductPage } from '@/components/shop/ClassicProductPage';
+import { ProductLanding } from '@/components/store/ProductLanding';
+import { ClientRedirect } from '@/components/store/ClientRedirect';
 import { CountryMismatchBanner } from '@/components/features/CountryMismatchBanner';
 import {
   buildLanguageAlternates,
@@ -24,6 +25,9 @@ export async function generateMetadata({ params }: CheckoutPageProps): Promise<M
 
   if (!product) {
     return { title: 'DERMOTIN' };
+  }
+  if (!isStorefrontProduct(product)) {
+    return { title: product.name, robots: { index: false, follow: true } };
   }
 
   const availableLocales = await getProductLocales(product.slug);
@@ -66,26 +70,24 @@ export async function generateMetadata({ params }: CheckoutPageProps): Promise<M
 export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { locale, slug } = await params;
 
-  // Get product by slug
-  const product = await getProductBySlug(slug, locale);
-  if (!product) {
+  // Skriveni proizvodi (npr. BIOROID pojedinačno) preusmeravaju na zamenski set,
+  // uz očuvan query string iz oglasa.
+  const resolved = await resolveStorefrontProduct(slug, locale);
+  if (resolved.kind === 'missing') {
     notFound();
   }
-
-  // Get country configuration
+  if (resolved.kind === 'redirect') {
+    return <ClientRedirect to={`/${locale}/checkouts/${resolved.slug}`} />;
+  }
+  const product = resolved.product;
   const countryConfig = getCountryConfig(locale);
-
-  // Check if product is available in this country
-  if (product.availableCountries && !product.availableCountries.includes(locale)) {
-    notFound();
-  }
 
   // Stari funnel lander (AdvancedLandingPage) je penzionisan — checkout URL-ovi
   // (na koje pokazuju aktivne reklame) služe novu product stranicu sa korpom.
   return (
     <>
       <CountryMismatchBanner />
-      <ClassicProductPage product={product} countryConfig={countryConfig} locale={locale} />
+      <ProductLanding product={product} countryConfig={countryConfig} locale={locale} />
     </>
   );
 }
@@ -97,7 +99,7 @@ export async function generateStaticParams() {
   for (const locale of locales) {
     const products = await getProductsForLocale(locale);
     for (const product of Object.values(products)) {
-      if (!product.availableCountries.includes(locale)) continue;
+      if (!product.availableCountries.includes(locale) || product.salesChannel) continue;
       for (const slug of [product.slug, ...product.alternativeSlugs]) {
         params.push({ locale, slug });
       }

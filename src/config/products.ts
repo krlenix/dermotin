@@ -1,5 +1,5 @@
 // Re-export types and utilities from the new localized structure
-export type { Product, ProductVariant, ProductFAQ } from './types';
+export type { Product, ProductVariant, ProductFAQ, BundleItem } from './types';
 export { PRODUCT_CATEGORIES } from './types';
 export { INGREDIENTS } from './ingredients';
 
@@ -13,5 +13,8 @@ export {
   getProductFAQByCategory,
   getProductPrice,
   getProductVariantsForCountry,
-  getProductVariantForCountry
+  getProductVariantForCountry,
+  isStorefrontProduct,
+  resolveStorefrontProduct
 } from './locales';
+export type { StorefrontProductResolution } from './locales';

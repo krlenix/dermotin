@@ -1,6 +1,7 @@
-import { getProductBySlug, getProductsForCountry } from '@/config/products';
+import { getProductsForCountry, resolveStorefrontProduct } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
-import { ClassicProductPage } from '@/components/shop/ClassicProductPage';
+import { ProductLanding } from '@/components/store/ProductLanding';
+import { ClientRedirect } from '@/components/store/ClientRedirect';
 import { notFound } from 'next/navigation';
 
 interface ProductPageProps {
@@ -10,15 +11,18 @@ interface ProductPageProps {
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const countryConfig = getCountryConfig('rs'); // Only Serbian now
-  const product = await getProductBySlug(slug, 'rs');
-
-  if (!product) {
+  const resolved = await resolveStorefrontProduct(slug, 'rs');
+  if (resolved.kind === 'missing') {
     notFound();
   }
+  if (resolved.kind === 'redirect') {
+    return <ClientRedirect to={`/rs/checkouts/${resolved.slug}`} />;
+  }
+  const product = resolved.product;
 
   // Stari funnel lander (AdvancedLandingPage) je penzionisan — legacy checkout
   // URL-ovi služe novu product stranicu sa korpom.
-  return <ClassicProductPage product={product} countryConfig={countryConfig} locale="rs" />;
+  return <ProductLanding product={product} countryConfig={countryConfig} locale="rs" />;
 }
 
 export async function generateStaticParams() {

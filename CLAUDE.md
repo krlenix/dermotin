@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Authoritative domain mapping — confirmed by Nikola, 2026-09-06
+
+- `dermotin.rs` remains the WordPress/WooCommerce site on our own server, NOT Vercel. The planned migration was not continued because the old site works better.
+- `dermotin.com` and `dermotin.shop` point to the same Vercel site; this repository is their source code.
+- A stale Vercel alias for `dermotin.rs` does not change this mapping. Work on `.rs` requires the separate WooCommerce source and server access.
+- See `AGENTS.md` for the persistent project instructions. This mapping supersedes older deployment notes that group `.com` with the WordPress site.
+
 ## Commands
 
 ```bash

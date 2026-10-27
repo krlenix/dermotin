@@ -33,7 +33,7 @@ const ITEMS_PER_PAGE = 6;
 
 export function ProductDetailsAccordion({ product, className }: ProductDetailsAccordionProps) {
   const t = useTranslations();
-  const [openItems, setOpenItems] = useState<Set<string>>(new Set(['ingredients']));
+  const [openItems, setOpenItems] = useState<Set<string>>(new Set());
 
   const toggleItem = (id: string) => {
     const newOpenItems = new Set(openItems);
@@ -177,8 +177,17 @@ export function ProductDetailsAccordion({ product, className }: ProductDetailsAc
             <div>
               <h4 className="font-black text-slate-950">Kompletna formula sastojaka</h4>
               <p className="mt-1 text-sm leading-relaxed text-slate-600">
-                6 medicinskih biljnih ekstrakata + 5 eteričnih ulja + aktivni sastojci + pomoćne
-                komponente
+                {(() => {
+                  const count = (category: string) => product.ingredients.filter((id) => INGREDIENTS[id]?.category === category).length;
+                  const herbal = count('herbal_extract');
+                  const oils = count('essential_oil');
+                  return [
+                    herbal > 0 ? `${herbal} biljnih ekstrakata` : null,
+                    oils > 0 ? `${oils} eteričnih ulja` : null,
+                    'aktivni sastojci',
+                    'pomoćne komponente',
+                  ].filter(Boolean).join(' + ');
+                })()}
               </p>
             </div>
           </div>

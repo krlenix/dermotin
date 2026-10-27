@@ -34,6 +34,19 @@
   --color-brand-green: #358055;
   --radius: 0.5rem;
 
+  /* Izlog (početna, proizvodi, Viber): topla „apotekarska“ paleta iz ambalaže */
+  --color-paper: #F7F3ED;
+  --color-sand: #EEE7DD;
+  --color-clay: #E3D8CA;
+  --color-line: #E2D8CB;
+  --color-ink: #1A2620;
+  --color-forest: #1F3A30;
+  --color-moss: #4E7A64;
+  --color-coral: #DE6247;
+  --color-coral-deep: #C9533A;
+  --font-display: var(--font-store-serif), "Iowan Old Style", Georgia, serif;
+  --font-store: var(--font-store-sans), ui-sans-serif, system-ui, sans-serif;
+
   /* Marquee trake (MarqueeText komponenta) — pomeraj od tačno jedne kopije teksta
      (komponenta renderuje 5 identičnih kopija → -20% daje besprekidnu petlju).
      U v4 --animate-* token automatski generiše animate-* utility. */
@@ -912,4 +925,140 @@ summary,
   );
   background-size: 200% 100%;
   animation: coupon-shimmer 2.4s ease-in-out infinite;
+}
+
+/* ── Storefront (redizajn 2026-10) ─────────────────────────────────────── */
+/* Izlog ima sopstvenu tipografiju (Instrument Serif + Instrument Sans) i paletu.
+   :where() drži specifičnost na nuli da utility klase uvek pobeđuju. */
+/* Napomena: @theme inline ne emituje --font-* / --color-* kao CSS promenljive, pa se
+   ovde koriste direktno promenljive koje postavlja next/font i konkretne boje. */
+.store-font,
+.store-font :where(h1, h2, h3, h4, h5, h6, b, strong, button, input, select, textarea) {
+  font-family: var(--font-store-sans), ui-sans-serif, system-ui, sans-serif;
+}
+.store-font {
+  color: #1A2620;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+.store-font .font-display {
+  font-family: var(--font-store-serif), "Iowan Old Style", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  font-feature-settings: "kern", "liga";
+}
+.store-font ::selection {
+  background: rgba(222, 98, 71, 0.18);
+}
+/* Pozadina za packshot-ove: meko svetlo odozgo, „pod“ pri dnu */
+.store-stage {
+  background:
+    radial-gradient(110% 65% at 50% 22%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(180deg, #EDE5D9 0%, #E7DED1 74%, #DFD4C5 100%);
+}
+.store-stage-dark {
+  background:
+    radial-gradient(90% 60% at 50% 30%, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0) 65%),
+    linear-gradient(180deg, #24443A 0%, #1F3A30 100%);
+}
+@keyframes store-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* 4 reda (poslednji = prvi), pomeraj u četvrtinama visine kolone */
+@keyframes store-ticker {
+  0%, 28% { transform: translateY(0); }
+  33%, 61% { transform: translateY(-25%); }
+  66%, 94% { transform: translateY(-50%); }
+  100% { transform: translateY(-75%); }
+}
+.store-fade-up {
+  animation: store-fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.store-ticker {
+  animation: store-ticker 10s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .store-fade-up,
+  .store-ticker {
+    animation: none !important;
+  }
+}
+
+/* Prodajna stranica proizvoda (preslikana sa starog sajta dermotin.rs) */
+.lander-font,
+.lander-font :where(h1, h2, h3, h4, h5, h6, b, strong, button, input, select, textarea) {
+  font-family: var(--font-lander), ui-sans-serif, system-ui, sans-serif;
+}
+.lander-font {
+  -webkit-font-smoothing: antialiased;
+}
+/* Efekti prodajne stranice: lebdenje, odsjaj, isticanje i pojavljivanje pri skrolovanju */
+@keyframes lander-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes lander-shine {
+  0%, 60% { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(220%) skewX(-20deg); }
+}
+@keyframes lander-mark {
+  from { background-size: 0% 100%; }
+  to { background-size: 100% 100%; }
+}
+@keyframes lander-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.lander-float {
+  animation: lander-float 4.5s ease-in-out infinite;
+}
+.lander-shine {
+  position: relative;
+  overflow: hidden;
+}
+.lander-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  animation: lander-shine 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+.lander-mark-anim {
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  animation: lander-mark 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.lander-pop {
+  animation: lander-pop 0.35s ease-out both;
+}
+.lander-js .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.lander-js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lander-float,
+  .lander-shine::after,
+  .lander-mark-anim,
+  .lander-pop {
+    animation: none !important;
+  }
+  .lander-mark-anim {
+    background-size: 100% 100%;
+  }
+  .lander-js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

@@ -50,6 +50,7 @@ export const bundleItemSchema = z
     productId: z.string().min(1),
     variantId: z.string().optional(),
     quantity: z.number().int().positive(),
+    gratis: z.boolean().optional(),
   })
   .strict();
 
@@ -108,6 +109,9 @@ export const productSchema = z
     productFAQ: z.array(productFAQSchema).optional(),
     testimonials: z.array(testimonialSchema).optional(),
     published: z.boolean().optional(),
+    hidden: z.boolean().optional(),
+    replacedBy: z.string().min(1).optional(),
+    salesChannel: z.enum(['viber']).optional(),
     isBundle: z.boolean().optional(),
     bundleItems: z.array(bundleItemSchema).optional(),
     ingredientDescriptions: z.record(z.string(), z.string().min(1)).optional(),

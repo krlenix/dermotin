@@ -151,7 +151,8 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f6f8f6_0%,#ffffff_30%,#f8fbf9_65%,#ffffff_100%)]">
-      <PixelTracker countryCode={countryConfig.code} />
+      {/* Viber porudžbine ne smeju da uključe Meta/TikTok pixel ni na jednom domenu */}
+      {(orderData as { channel?: string }).channel !== 'viber' && <PixelTracker countryCode={countryConfig.code} />}
 
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-28 right-0 h-96 w-96 rounded-full bg-[#358055]/8 blur-3xl" />

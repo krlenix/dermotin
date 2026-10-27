@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import HomePageClient from '@/components/HomePageClient';
+import { HomeStore } from '@/components/store/HomeStore';
+import { getProductsForCountry } from '@/config/products';
 import { getCountryConfig } from '@/config/countries';
 import { SOCIAL_LINKS } from '@/config/app-config';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -110,12 +111,13 @@ function buildWebSiteJsonLd(locale: string) {
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
+  const products = await getProductsForCountry(locale, locale);
 
   return (
     <>
       <JsonLd data={buildOrganizationJsonLd(locale)} />
       <JsonLd data={buildWebSiteJsonLd(locale)} />
-      <HomePageClient />
+      <HomeStore products={products} countryConfig={getCountryConfig(locale)} locale={locale} />
     </>
   );
 }

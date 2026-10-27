@@ -73,6 +73,8 @@ export interface BundleItemDraft {
   /** '' = podrazumevana varijanta proizvoda */
   variantId: string;
   quantity: string;
+  /** Komponenta ide gratis (100% popust na liniji u OMS-u) */
+  gratis?: boolean;
 }
 
 export interface ProductDraft {
@@ -106,6 +108,8 @@ export interface ProductDraft {
   published: boolean;
   isBundle: boolean;
   bundleItems: BundleItemDraft[];
+  /** Polja bez sopstvenog UI-a — čuvaju se nepromenjena pri snimanju iz admina */
+  storefront?: Pick<Product, 'hidden' | 'replacedBy' | 'salesChannel'>;
 }
 
 /* ── mali helperi ─────────────────────────────────────────────────────── */
@@ -276,7 +280,13 @@ export function productToDraft(product: Product): ProductDraft {
       productId: item.productId,
       variantId: item.variantId ?? '',
       quantity: numToStr(item.quantity),
+      ...(item.gratis ? { gratis: true } : {}),
     })),
+    storefront: {
+      ...(product.hidden ? { hidden: true } : {}),
+      ...(product.replacedBy ? { replacedBy: product.replacedBy } : {}),
+      ...(product.salesChannel ? { salesChannel: product.salesChannel } : {}),
+    },
   };
 }
 
@@ -328,6 +338,7 @@ export function draftToProduct(draft: ProductDraft): Product {
         productId: item.productId.trim(),
         ...(variantId !== undefined ? { variantId } : {}),
         quantity: optNum(item.quantity) ?? 1,
+        ...(item.gratis ? { gratis: true } : {}),
       };
     });
 
@@ -397,6 +408,9 @@ export function draftToProduct(draft: ProductDraft): Product {
     ...(productFAQ.length > 0 ? { productFAQ } : {}),
     ...(testimonials.length > 0 ? { testimonials } : {}),
     published: draft.published,
+    ...(draft.storefront?.hidden ? { hidden: true } : {}),
+    ...(draft.storefront?.replacedBy ? { replacedBy: draft.storefront.replacedBy } : {}),
+    ...(draft.storefront?.salesChannel ? { salesChannel: draft.storefront.salesChannel } : {}),
     ...(draft.isBundle ? { isBundle: true } : {}),
     ...(draft.isBundle && bundleItems.length > 0 ? { bundleItems } : {}),
     ...(Object.keys(ingredientDescriptions).length > 0 ? { ingredientDescriptions } : {}),

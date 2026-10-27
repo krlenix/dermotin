@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { getProductsForLocale, getProductVariantsForCountry } from '@/config/locales';
+import { getProductsForLocale, getProductVariantsForCountry, isStorefrontProduct } from '@/config/locales';
 import { getCountryConfig } from '@/config/countries';
 import type { Product } from '@/config/types';
 
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
   const rows: string[] = [header.join(',')];
 
   for (const product of Object.values(products)) {
-    if (!product.availableCountries.includes(country)) continue;
+    if (!product.availableCountries.includes(country) || !isStorefrontProduct(product)) continue;
 
     const variants = getProductVariantsForCountry(product, country);
     const defaultVariant = variants.find((v) => v.isDefault) || variants[0];

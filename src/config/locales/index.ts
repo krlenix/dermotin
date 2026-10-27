@@ -52,11 +52,40 @@ export async function getProductBySlug(slug: string, locale: string = 'rs'): Pro
   );
 }
 
+/** Proizvod se prikazuje u izlogu (liste, sitemap, feed-ovi, preporuke). */
+export function isStorefrontProduct(product: Product): boolean {
+  return product.hidden !== true && !product.salesChannel;
+}
+
 export async function getProductsForCountry(countryCode: string, locale: string = 'rs'): Promise<Product[]> {
   const products = await getProductsForLocale(locale);
   return Object.values(products).filter(
-    product => product.availableCountries.includes(countryCode)
+    product => product.availableCountries.includes(countryCode) && isStorefrontProduct(product)
   );
+}
+
+export type StorefrontProductResolution =
+  | { kind: 'product'; product: Product }
+  | { kind: 'redirect'; slug: string }
+  | { kind: 'missing' };
+
+/**
+ * Javne stranice proizvoda: skriveni proizvodi (npr. BIOROID pojedinačno, FUNGOMAX)
+ * preusmeravaju na zamenski set da stari oglasi i linkovi i dalje prodaju.
+ * Kanalske ponude (Viber) ne postoje na /products i /checkouts rutama.
+ */
+export async function resolveStorefrontProduct(slug: string, locale: string): Promise<StorefrontProductResolution> {
+  const product = await getProductBySlug(slug, locale);
+  if (!product || !product.availableCountries.includes(locale)) return { kind: 'missing' };
+  if (isStorefrontProduct(product)) return { kind: 'product', product };
+  if (product.replacedBy) {
+    const products = await getProductsForLocale(locale);
+    const replacement = products[product.replacedBy];
+    if (replacement && isStorefrontProduct(replacement) && replacement.availableCountries.includes(locale)) {
+      return { kind: 'redirect', slug: replacement.slug };
+    }
+  }
+  return { kind: 'missing' };
 }
 
 export function getProductFAQ(product: Product): ProductFAQ[] {

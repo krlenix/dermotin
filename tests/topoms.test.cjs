@@ -104,26 +104,26 @@ test('BIOROID SET becomes its two physical components and preserves discounts', 
   assert.equal(result.totals.total, '5000.00');
 });
 
-test('BIOROID promotion sends each physical product at 995 to both OMS systems', async () => {
+test('BIOROID promotion sends each physical product at 1095 to both OMS systems', async () => {
   const products = await getProductsForLocale('rs');
   for (const count of [1, 4]) {
-    const input = legacy([line('BIOROID-SET', count, count * 1990)], count === 1 ? 400 : 0);
+    const input = legacy([line('BIOROID-SET', count, count * 2190)], count === 1 ? 400 : 0);
     for (const cartItems of [undefined, [{ sku: 'BIOROID-SET', productId: 'bioroid_set', variantId: products.bioroid_set.variants[0].id }]]) {
       const mapped = mapOrder(input, products, { ...context, cartItems });
       assert.deepEqual(mapped.line_items.map(l => [l.sku, l.quantity, l.price]), [
-        ['BIOROID', count, '995.00'], ['BIOROID-KAPI', count, '995.00'],
+        ['BIOROID', count, '1095.00'], ['BIOROID-KAPI', count, '1095.00'],
       ]);
       assert.equal(Number(mapped.totals.total), input.total_price);
     }
-    assert.deepEqual(expandLegacyBundles(input, products).line_items.map(l => l.price), [995, 995]);
+    assert.deepEqual(expandLegacyBundles(input, products).line_items.map(l => l.price), [1095, 1095]);
   }
 });
 
 test('legacy BIOROID sets preserve totals, discounts and quantities in mixed carts', async () => {
   const products = await getProductsForLocale('rs');
   for (const count of [1, 3, 4]) {
-    for (const discount of [0, 199, count * 1990]) {
-      const input = legacy([line('BIOROID-SET', count, count * 1990, discount), line('FUNGEL')], 400);
+    for (const discount of [0, 199, count * 2190]) {
+      const input = legacy([line('BIOROID-SET', count, count * 2190, discount), line('FUNGEL')], 400);
       const before = structuredClone(input);
       const mapped = expandLegacyBundles(input, products);
       assert.deepEqual(input, before);
@@ -139,7 +139,7 @@ test('legacy BIOROID sets preserve totals, discounts and quantities in mixed car
 });
 
 test('legacy delivery sends and signs component SKUs instead of BIOROID-SET', async () => {
-  const input = legacy([line('BIOROID-SET', 4, 7960)], 0);
+  const input = legacy([line('BIOROID-SET', 4, 8760)], 0);
   let sent;
   mock.method(global, 'fetch', async (url, init) => {
     sent = JSON.parse(init.body);
@@ -151,8 +151,42 @@ test('legacy delivery sends and signs component SKUs instead of BIOROID-SET', as
   await deliverLegacy(input, 'rs', 'dermotin.shop');
   assert.deepEqual(sent.line_items.map(l => l.sku), ['BIOROID', 'BIOROID-KAPI']);
   assert.deepEqual(sent.line_items.map(l => l.quantity), [4, 4]);
-  assert.deepEqual(sent.line_items.map(l => l.price), [995, 995]);
-  assert.equal(sent.total_price, 7960);
+  assert.deepEqual(sent.line_items.map(l => l.price), [1095, 1095]);
+  assert.equal(sent.total_price, 8760);
+});
+
+test('new sets split into physical SKUs and keep totals', async () => {
+  const products = await getProductsForLocale('rs');
+  const set = mapOrder(legacy([line('FUNGEL-FUNGOMAX-SET', 1, 2490)], 400), products, context);
+  assert.deepEqual(set.line_items.map(l => [l.sku, l.quantity]), [['FUNGEL', 1], ['FUNGOMAX', 1]]);
+  assert.equal(set.totals.total, '2890.00');
+  const bio = mapOrder(legacy([line('BIOMELIS-SET', 2, 5780)], 0), products, context);
+  assert.deepEqual(bio.line_items.map(l => [l.sku, l.quantity]), [['BIOMELIS', 2], ['BIOMELIS-KAPI', 2]]);
+  assert.equal(bio.totals.total, '5780.00');
+});
+
+test('gratis bundle component is sent at full value with a 100% discount', async () => {
+  const products = await getProductsForLocale('rs');
+  for (const [sku, paid, free] of [['FUNGEL-FUNGOMAX-GRATIS', 'FUNGEL', 'FUNGOMAX'], ['BIOWART-IMMUNIS-GRATIS', 'BIOWART', 'IMMUNIS-KAPI']]) {
+    const input = legacy([line(sku, 1, 1990)], 400);
+    const mapped = mapOrder(input, products, context);
+    assert.deepEqual(mapped.line_items.map(l => l.sku), [paid, free]);
+    assert.equal(mapped.line_items[0].price, '1990.00');
+    assert.equal(mapped.line_items[0].total_discount, '0.00');
+    assert.equal(mapped.line_items[1].total_discount, mapped.line_items[1].price);
+    assert.equal(Number(mapped.totals.total), input.total_price);
+    const legacyLines = expandLegacyBundles(input, products).line_items;
+    assert.deepEqual(legacyLines.map(l => l.sku), [paid, free]);
+    assert.equal(legacyLines[1].discount, legacyLines[1].item_total_price);
+  }
+});
+
+test('BA Viber gratis bundle resolves to physical SKUs', async () => {
+  const products = await getProductsForLocale('ba');
+  const input = legacy([line('FUNGEL-FUNGOMAX-GRATIS', 1, 33.9)], 0);
+  const lines = expandLegacyBundles(input, products).line_items;
+  assert.deepEqual(lines.map(l => l.sku), ['FUNGEL', 'FUNGOMAX']);
+  assert.equal(lines[0].price, 33.9);
 });
 
 test('legacy upsell product IDs map to actual SKUs', async () => {

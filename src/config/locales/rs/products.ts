@@ -3,6 +3,606 @@ import { Product } from '../../types';
 // ⚠️ Ovaj fajl održava admin panel (/admin/products). Ručne izmene su dozvoljene,
 // ali će formatiranje i komentari biti pregaženi pri sledećem snimanju iz admina.
 export const PRODUCTS: Record<string, Product> = {
+  immunis_kapi: {
+    id: 'immunis_kapi',
+    name: 'IMMUNIS KAPI',
+    description: 'Dodatak ishrani na bazi vodeno-etanolnih ekstrakata 6 biljaka. Purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema, majčina dušica i maslina doprinose zdravlju organa za disanje, a lavanda doprinosi relaksaciji i lakšem uspavljivanju.',
+    shortDescription: 'Zimski paket — 3 bočice za celu sezonu, skoro po ceni jedne',
+    heroTitle: 'Zimski paket: 3 bočice biljne podrške imunitetu za celu sezonu',
+    purpose: 'Podržava pravilno funkcionisanje imunog sistema i prirodnu odbrambenu sposobnost organizma',
+    category: 'supplements',
+    images: {
+      main: '/images/products/sets/immunis-zimski-paket.jpg',
+      gallery: [
+        '/images/products/sets/immunis-zimski-paket.jpg',
+        '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
+      ],
+      thumbnail: '/images/products/sets/immunis-zimski-paket.jpg',
+      fallback: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'immunis-kapi-3pak',
+        sku: 'IMMUNIS-KAPI',
+        name: 'ZIMSKI PAKET — 3 PAKOVANJA (150ml)',
+        size: 'Za celu zimsku sezonu (okvirno 3 meseca)',
+        quantity: 3,
+        price: 7170,
+        currency: 'RSD',
+        discountPrice: 1990,
+        isDefault: true
+      },
+      {
+        id: 'immunis-kapi-1pak',
+        sku: 'IMMUNIS-KAPI',
+        name: '1 PAKOVANJE (50ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 1,
+        price: 2390,
+        currency: 'RSD',
+        discountPrice: 1890
+      }
+    ],
+    benefits: [
+      'ZIMSKI PAKET: 3 bočice (3 × 50ml) za celu zimsku sezonu po ceni koja je skoro kao za jednu',
+      'Purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema',
+      'Ehinacea doprinosi prirodnoj odbrambenoj sposobnosti organizma',
+      'Kopriva podržava odbrambene sposobnosti organizma i imuni sistem',
+      'Majčina dušica doprinosi zdravlju organa za disanje',
+      'Maslina doprinosi odbrani organizma od spoljašnjih agenasa i zdravlju gornjih disajnih puteva',
+      'Lavanda doprinosi relaksaciji i uspavljivanju',
+      '6 pažljivo odabranih vodeno-etanolnih biljnih ekstrakata',
+      'Energetska vrednost dnevnog unosa manja od 50 kJ (12 kcal)'
+    ],
+    ingredients: [
+      'echinacea-root-extract',
+      'nettle-leaf-extract',
+      'walnut-leaf-extract',
+      'thyme-herb-extract',
+      'olive-leaf-extract',
+      'lavender-flower-extract',
+      'aqua',
+      'ethanol'
+    ],
+    ingredientDescriptions: {
+      'nettle-leaf-extract': 'Kopriva podržava odbrambene sposobnosti organizma i imuni sistem'
+    },
+    usage: 'Odrasli, 3 puta dnevno po 40 kapi, rastvoreno u malo vode, posle obroka. Sadržaj: 50ml.',
+    usageSteps: [
+      'Uzimati 3 puta dnevno po 40 kapi',
+      'Rastvoriti kapi u malo vode',
+      'Uzimati posle obroka',
+      'Ne prekoračiti preporučenu dnevnu dozu',
+      'Za najbolji efekat koristiti redovno',
+      'Kombinovati sa raznovrsnom i uravnoteženom ishranom'
+    ],
+    warnings: [
+      'Dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu',
+      'Nije namenjen osobama preosetljivim na bilo koji sastojak, trudnicama, dojiljama i osobama mlađim od 18 godina',
+      'Nije namenjen osobama kojima se preporučuje redukovan unos tečnosti (teška srčana ili bubrežna bolest)',
+      'Nije namenjen osobama sa progresivnim sistemskim poremećajima, autoimunim oboljenjima, imunodeficijencijama, imunosupresijom ili oboljenjima ćelija bele krvne loze',
+      'Primena proizvoda na bazi lavande može da dovede do pospanosti - u to vreme izbegavati upravljanje motornim vozilima ili radnim mašinama',
+      'Primenu mogu da prate blagi i prolazni simptomi poremećaja funkcije gastrointestinalnog trakta; moguća je pojava blažih kožnih reakcija',
+      'Proizvod sadrži alkohol',
+      'Čuvati van domašaja dece, dobro zatvoren u originalnom pakovanju, na suvom, tamnom i hladnom mestu'
+    ],
+    slug: 'immunis-kapi',
+    alternativeSlugs: [
+      'immunis-drops',
+      'imunitet-kapi',
+      'ehinacea-kapi'
+    ],
+    availableCountries: [
+      'rs',
+      'ba'
+    ],
+    seoTitle: 'IMMUNIS KAPI - Dodatak ishrani za imunitet i disajne puteve | DERMOTIN',
+    seoDescription: 'IMMUNIS KAPI od DERMOTIN brenda - dodatak ishrani sa ekstraktima purpurne ehinacee, koprive, oraha, majčine dušice, masline i lavande. Podrška imunom sistemu. 50ml.',
+    crossSells: [
+      'biomelis_kapi',
+      'bioroid_kapi'
+    ],
+    urgencyElements: {},
+    productFAQ: [
+      {
+        question: 'Kako se koriste IMMUNIS KAPI?',
+        answer: 'Vrlo jednostavno! Odrasli uzimaju 3 puta dnevno po 40 kapi, rastvoreno u malo vode, posle obroka. Bočica sadrži 50ml.',
+        category: 'usage'
+      },
+      {
+        question: 'Šta IMMUNIS KAPI sadrže?',
+        answer: 'Vodeno-etanolne ekstrakte 6 biljaka: purpurna ehinacea, kopriva, orah (list), majčina dušica, maslina (list) i lavanda. Proizvod sadrži alkohol iz vodeno-etanolnih ekstrakata.',
+        category: 'ingredients'
+      },
+      {
+        question: 'Da li su IMMUNIS KAPI lek?',
+        answer: 'Ne, IMMUNIS KAPI su dodatak ishrani, a ne lek. Dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu. Za zdravstvene tegobe obratite se lekaru.',
+        category: 'safety'
+      },
+      {
+        question: 'Kako biljke iz sastava doprinose organizmu?',
+        answer: 'Purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema i prirodnoj odbrambenoj sposobnosti organizma, kopriva podržava odbrambene sposobnosti i imuni sistem, majčina dušica doprinosi zdravlju organa za disanje, maslina odbrani organizma od spoljašnjih agenasa i zdravlju gornjih disajnih puteva, a lavanda relaksaciji i uspavljivanju.',
+        category: 'effects'
+      },
+      {
+        question: 'Ko ne sme da koristi IMMUNIS KAPI?',
+        answer: 'Proizvod nije namenjen osobama preosetljivim na bilo koji sastojak, trudnicama, dojiljama i osobama mlađim od 18 godina, kao ni osobama sa progresivnim sistemskim poremećajima, autoimunim oboljenjima, imunodeficijencijama, imunosupresijom ili oboljenjima ćelija bele krvne loze.',
+        category: 'safety'
+      },
+      {
+        question: 'Kako da čuvam IMMUNIS KAPI?',
+        answer: 'Čuvajte dobro zatvoreno u originalnom pakovanju, na suvom, tamnom i hladnom mestu, van domašaja dece.',
+        category: 'storage'
+      },
+      {
+        question: 'Da li mogu da vozim nakon uzimanja?',
+        answer: 'Oprez - proizvodi na bazi lavande mogu da dovedu do pospanosti. U to vreme izbegavajte upravljanje motornim vozilima ili radnim mašinama.',
+        category: 'usage'
+      },
+      {
+        question: 'Kada je pravi trenutak za IMMUNIS KAPI?',
+        answer: 'Mnogi korisnici ih biraju kao dnevnu biljnu podršku tokom jeseni i zime, uz uravnoteženu ishranu, san i kretanje. Uzimaju se redovno, 3 puta dnevno po 40 kapi posle obroka.',
+        category: 'usage'
+      }
+    ],
+    testimonials: []
+  },
+  bioroid_set: {
+    id: 'bioroid_set',
+    name: 'BIOROID SET',
+    description: 'Kompletna rutina u jednom pakovanju: BIOROID krema za spoljašnju negu kože i sluzokože analne regije, sa mentolom za trenutan osećaj svežine, i BIOROID KAPI — dodatak ishrani u kome hajdučka trava podržava normalan vaskularni tonus i zdravlje venskog sistema, a čičak, maslačak i hrast doprinose digestivnom komforu. Nega spolja i podrška iznutra — poručite online i platite kuriru pri preuzimanju.',
+    shortDescription: 'Krema + kapi — kompletna rutina nege spolja i podrške iznutra',
+    heroTitle: 'Diskretna, kompletna rutina: nega spolja i podrška iznutra',
+    purpose: 'Set za spoljašnju negu analne regije i unutrašnju podršku zdravlju vena i varenju',
+    category: 'bundle',
+    images: {
+      main: '/images/products/sets/bioroid-set.jpg',
+      gallery: [
+        '/images/products/sets/bioroid-set.jpg',
+        '/images/products/bioroid/bioroid-box-and-product-mockup.png',
+        '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png'
+      ],
+      thumbnail: '/images/products/sets/bioroid-set.jpg',
+      fallback: '/images/products/bioroid/bioroid-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'bioroid-set-1',
+        sku: 'BIOROID-SET',
+        name: '1 SET (krema 50ml + kapi 50ml)',
+        size: 'Okvirno mesec dana upotrebe',
+        quantity: 1,
+        price: 5380,
+        currency: 'RSD',
+        discountPrice: 2190,
+        isDefault: true
+      }
+    ],
+    benefits: [
+      'Dva proizvoda u jednom setu: BIOROID krema (50ml) + BIOROID KAPI (50ml)',
+      'Krema neguje kožu i sluzokožu analne regije — 6 biljnih ekstrakata, panthenol i vitamini A i E',
+      'Mentol pruža prijatan osećaj svežine i hlađenja već pri nanošenju',
+      'Hajdučka trava iz kapi podržava normalan vaskularni tonus i zdravlje venskog sistema',
+      'Čičak, maslačak i hrast doprinose varenju i digestivnom komforu',
+      'Biljnog porekla — krema se može koristiti duži vremenski period bez prekida',
+      'Bez parabena i bez veštačkih boja'
+    ],
+    ingredients: [
+      'achillea-extract',
+      'aesculus-extract',
+      'calendula-extract',
+      'capsella-extract',
+      'geranium-extract',
+      'chamomile-extract',
+      'panthenol',
+      'vitamin-e',
+      'tocopherol',
+      'vitamin-a',
+      'sweet-almond-oil',
+      'menthol',
+      'patchouli-oil',
+      'lavender-oil',
+      'tea-tree-oil',
+      'clove-oil',
+      'aqua',
+      'alcohol',
+      'stearic-acid',
+      'glycerin',
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax',
+      'urea',
+      'triethanolamine',
+      'carbomer',
+      'sodium-gluconate',
+      'phenoxyethanol',
+      'ethylhexylglycerin',
+      'potassium-sorbate',
+      'achillea-herb-extract',
+      'arctium-root-extract',
+      'calendula-flower-oral-extract',
+      'quercus-bark-oral-extract',
+      'dandelion-root-extract',
+      'juniper-fruit-extract',
+      'ethanol'
+    ],
+    usage: 'KREMA: nanositi dva puta dnevno, uz redovnu higijenu (50ml). KAPI: odrasli, 3 puta dnevno po 40 kapi, rastvoreno u malo vode, posle obroka (50ml).',
+    usageSteps: [
+      'Kremu nanesite na čistu i suvu kožu, dva puta dnevno',
+      'Kapi uzimajte 3 puta dnevno po 40 kapi, rastvorene u malo vode, posle obroka',
+      'Za najbolji efekat koristite oba proizvoda redovno',
+      'Operite ruke nakon upotrebe kreme'
+    ],
+    warnings: [
+      'KREMA: namenjena isključivo za spoljašnju upotrebu; oprati ruke nakon upotrebe',
+      'KREMA: izbegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'KREMA: sadrži prirodne alergene iz eteričnih ulja (Limonene, Eugenol, Linalool)',
+      'KAPI: dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu',
+      'KAPI: nije namenjen trudnicama, dojiljama i deci mlađoj od 18 godina',
+      'KAPI: kontraindikovan kod osoba preosetljivih na sastojke i osoba sa teškim bubrežnim i srčanim oboljenjima',
+      'KAPI: ne preporučuje se osobama sa gastričnim i duodenalnim ulkusom, ili sa oboljenjima žučnih puteva i žučne kesice',
+      'KAPI: ne preporučuje se istovremena upotreba sa diureticima; proizvod sadrži alkohol',
+      'Obratiti pažnju na preosetljivost na bilo koji sastojak',
+      'Čuvati van domašaja dece'
+    ],
+    slug: 'bioroid-set',
+    alternativeSlugs: [
+      'set-bioroid-melem-kapi',
+      'bioroid-komplet'
+    ],
+    availableCountries: [
+      'rs'
+    ],
+    seoTitle: 'BIOROID SET — krema + kapi | DERMOTIN',
+    seoDescription: 'BIOROID SET od DERMOTIN brenda — BIOROID krema za negu kože i sluzokože analne regije i BIOROID KAPI za podršku zdravlju venskog sistema i varenju. Kompletna rutina po povoljnijoj ceni.',
+    urgencyElements: {},
+    crossSells: [
+      'immunis_kapi'
+    ],
+    published: true,
+    isBundle: true,
+    bundleItems: [
+      {
+        productId: 'bioroid',
+        variantId: 'bioroid-1pak',
+        quantity: 1
+      },
+      {
+        productId: 'bioroid_kapi',
+        variantId: 'bioroid-kapi-1pak',
+        quantity: 1
+      }
+    ]
+  },
+  fungel_fungomax_set: {
+    id: 'fungel_fungomax_set',
+    name: 'FUNGEL + FUNGOMAX SET',
+    category: 'bundle',
+    variants: [
+      {
+        id: 'fungel-fungomax-set-1',
+        sku: 'FUNGEL-FUNGOMAX-SET',
+        name: '1 SET',
+        quantity: 1,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 2490,
+        isDefault: true
+      }
+    ],
+    ingredients: [
+      'calendula-extract',
+      'chelidonium-extract',
+      'salvia-leaf-extract',
+      'echinacea-extract',
+      'galium-extract',
+      'hypericum-extract',
+      'tea-tree-oil',
+      'oregano-oil',
+      'lavender-oil',
+      'sage-oil',
+      'eucalyptus-oil',
+      'panthenol',
+      'urea',
+      'sweet-almond-oil',
+      'vitamin-e',
+      'vitamin-a',
+      'aqua',
+      'alcohol',
+      'glycerin',
+      'castor-oil',
+      'stearic-acid',
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax',
+      'triethanolamine',
+      'carbomer',
+      'phenoxyethanol',
+      'ethylhexylglycerin',
+      'sodium-benzoate',
+      'potassium-sorbate',
+      'thymus-extract',
+      'juglans-leaf-extract',
+      'salvia-extract',
+      'quercus-bark-extract',
+      'rosemary-oil',
+      'clove-oil',
+      'allantoin'
+    ],
+    slug: 'fungel-fungomax-set',
+    alternativeSlugs: [
+      'fungel-fungomax',
+      'set-fungel-fungomax',
+      'fungel-komplet'
+    ],
+    availableCountries: [
+      'rs'
+    ],
+    urgencyElements: {},
+    published: true,
+    isBundle: true,
+    bundleItems: [
+      {
+        productId: 'fungel',
+        variantId: 'fungel-1pak',
+        quantity: 1
+      },
+      {
+        productId: 'fungomax',
+        variantId: 'fungomax-1pak',
+        quantity: 1
+      }
+    ],
+    description: 'Kompletna rutina nege kože i noktiju osoba sklonih pojavi gljivica. FUNGEL krema sa 6 biljnih ekstrakata i 5 eteričnih ulja neguje širu površinu kože i nokte, a FUNGOMAX serum sa kapaljkom — preko 79% biljne tinkture, alantoin i 20% glicerina — omogućava preciznu, ciljanu primenu tamo gde je najpotrebnije. Dva proizvoda koja se savršeno dopunjuju, u setu po znatno povoljnijoj ceni.',
+    shortDescription: 'Krema + serum — kompletna rutina nege noktiju i kože',
+    heroTitle: 'Krema i serum u jednoj rutini — za uredne nokte i negovanu kožu',
+    purpose: 'Za negu kože i noktiju osoba sklonih pojavi gljivica',
+    images: {
+      main: '/images/products/sets/fungel-fungomax-set.jpg',
+      gallery: [
+        '/images/products/sets/fungel-fungomax-set.jpg',
+        '/images/products/fungel/fungel-box-and-product-mockup.png',
+        '/images/products/fungomax/fungomax-box-and-product-mockup.png',
+        '/images/products/fungel/fungel-open-bottle.png'
+      ],
+      thumbnail: '/images/products/sets/fungel-fungomax-set.jpg',
+      fallback: '/images/products/fungel/fungel-box-and-product-mockup.png'
+    },
+    benefits: [
+      'Set: FUNGEL krema (50ml) + FUNGOMAX serum sa kapaljkom (50ml)',
+      'Krema za širu površinu kože, serum za preciznu, ciljanu primenu na nokte',
+      'FUNGEL: 6 biljnih ekstrakata i 5 eteričnih ulja, uz panthenol, ureu i vitamine A i E',
+      'FUNGOMAX: preko 79% biljne tinkture, 4 biljna ekstrakta, alantoin i čak 20% glicerina',
+      'Panthenol, urea i glicerin doprinose hidrataciji i negovanom izgledu',
+      'Bez parabena i bez veštačkih boja',
+      'Bezbednosna procena u skladu sa EU regulativom (EC) 1223/2009',
+      'Uštedite u odnosu na pojedinačnu kupovinu'
+    ],
+    usage: 'FUNGEL KREMA: naneti tanak sloj 2 puta dnevno na kožu ili nokte i nežno umasirati, ne ispira se (50ml). FUNGOMAX SERUM: nakapati 2 puta dnevno nekoliko kapi na ciljano područje i nežno utrljati, ne ispira se (50ml).',
+    usageSteps: [
+      'Operite i dobro osušite kožu i nokte',
+      'Nakapajte FUNGOMAX serum na nokte i ciljana mesta i nežno utrljajte',
+      'Kada se serum upije, nanesite tanak sloj FUNGEL kreme na širu površinu kože i nežno umasirajte',
+      'Ponovite ujutru i uveče — redovnost je ključ negovanog izgleda',
+      'Ne ispirati nakon nanošenja; oprati ruke posle upotrebe'
+    ],
+    warnings: [
+      'KREMA: samo za spoljašnju upotrebu',
+      'KREMA: obratiti pažnju na preosetljivost na bilo koji sastojak',
+      'KREMA: oprati ruke nakon nanošenja',
+      'KREMA: ne koristiti na ranama',
+      'KREMA: izbegavati kontakt sa očima; u slučaju kontakta odmah isprati vodom',
+      'KREMA: prekinuti upotrebu i javiti se lekaru ako dođe do iritacije',
+      'KREMA: čuvati na hladnom, suvom mestu',
+      'KREMA: sadrži prirodne alergene iz eteričnih ulja (Limonene, Linalool)',
+      'SERUM: proizvod je namenjen isključivo za spoljašnju upotrebu',
+      'SERUM: obratiti pažnju na preosetljivost na bilo koji sastojak',
+      'SERUM: ne nanositi na otvorene rane',
+      'SERUM: oprati ruke nakon upotrebe',
+      'SERUM: izbegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'SERUM: u slučaju produžene iritacije potražiti medicinsku pomoć',
+      'SERUM: čuvati na suvom mestu, van domašaja dece',
+      'SERUM: sadrži prirodne alergene iz eteričnih ulja (Eugenol, Linalool, Limonene)'
+    ],
+    seoTitle: 'FUNGEL + FUNGOMAX SET — krema + serum za negu noktiju i kože | DERMOTIN',
+    seoDescription: 'Set FUNGEL krema + FUNGOMAX serum od DERMOTIN brenda: kompletna rutina nege kože i noktiju osoba sklonih pojavi gljivica. Plaćanje pouzećem, dostava 1–2 radna dana.',
+    crossSells: [
+      'immunis_kapi',
+      'biowart'
+    ],
+    productFAQ: [
+      {
+        question: 'Šta dobijam u setu?',
+        answer: 'Jednu FUNGEL kremu (50ml) i jedan FUNGOMAX serum sa kapaljkom (50ml) — sve što je potrebno za kompletnu rutinu nege kože i noktiju.',
+        category: 'general'
+      },
+      {
+        question: 'Kako da kombinujem kremu i serum?',
+        answer: 'Prvo nakapajte FUNGOMAX serum na nokte i ciljana mesta i nežno utrljajte. Kada se upije, nanesite tanak sloj FUNGEL kreme na širu površinu kože. Ponavljajte ujutru i uveče.',
+        category: 'usage'
+      },
+      {
+        question: 'Koja je razlika između FUNGEL-a i FUNGOMAX-a?',
+        answer: 'FUNGEL je krema pogodna za negu šire površine kože, a FUNGOMAX je tečni serum sa kapaljkom za preciznu, ciljanu primenu na nokte i manje površine. Zato se odlično dopunjuju.',
+        category: 'usage'
+      },
+      {
+        question: 'Da li su ovo lekovi?',
+        answer: 'Ne. FUNGEL i FUNGOMAX su kozmetički proizvodi za negu kože i noktiju osoba sklonih pojavi gljivica. Ako imate zdravstveni problem, obratite se lekaru ili farmaceutu.',
+        category: 'safety'
+      },
+      {
+        question: 'Kako plaćam?',
+        answer: 'Plaćate kuriru gotovinom prilikom preuzimanja paketa (pouzećem). Ne treba vam kartica niti avans.',
+        category: 'general'
+      }
+    ]
+  },
+  biomelis_set: {
+    id: 'biomelis_set',
+    name: 'BIOMELIS SET (krema + kapi)',
+    category: 'bundle',
+    variants: [
+      {
+        id: 'biomelis-set-1',
+        sku: 'BIOMELIS-SET',
+        name: '1 SET',
+        quantity: 1,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 2890,
+        isDefault: true
+      }
+    ],
+    ingredients: [
+      'calendula-extract',
+      'chelidonium-extract',
+      'salvia-leaf-extract',
+      'achillea-extract',
+      'equisetum-extract',
+      'galium-extract',
+      'hypericum-extract',
+      'quercus-bark-extract',
+      'sage-oil',
+      'eucalyptus-oil',
+      'lavender-oil',
+      'rosemary-oil',
+      'thyme-oil',
+      'panthenol',
+      'vitamin-e',
+      'vitamin-a',
+      'castor-oil',
+      'sweet-almond-oil',
+      'urea',
+      'aqua',
+      'alcohol',
+      'glycerin',
+      'stearic-acid',
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax',
+      'triethanolamine',
+      'carbomer',
+      'phenoxyethanol',
+      'ethylhexylglycerin',
+      'sodium-benzoate',
+      'potassium-sorbate',
+      'milk-thistle-extract',
+      'nettle-leaf-extract',
+      'dandelion-root-extract',
+      'burdock-root-extract',
+      'horsetail-herb-extract',
+      'woodruff-herb-extract',
+      'ethanol'
+    ],
+    slug: 'biomelis-set',
+    alternativeSlugs: [
+      'biomelis-komplet',
+      'set-biomelis-krema-kapi'
+    ],
+    availableCountries: [
+      'rs'
+    ],
+    urgencyElements: {},
+    published: true,
+    isBundle: true,
+    bundleItems: [
+      {
+        productId: 'biomelis',
+        variantId: 'biomelis-1pak',
+        quantity: 1
+      },
+      {
+        productId: 'biomelis_kapi',
+        variantId: 'biomelis-kapi-1pak',
+        quantity: 1
+      }
+    ],
+    description: 'Dva proizvoda, dve namene, jedna povoljna cena. BIOMELIS krema sa 8 biljnih ekstrakata i 5 eteričnih ulja, obogaćena panthenolom, ureom i vitaminima A i E, za svakodnevnu negu kože osoba sklonih ekcemima i psorijazi. BIOMELIS KAPI su dodatak ishrani u kome badelj, zahvaljujući silimarinu, doprinosi zdravlju jetre, a maslačak, čičak i lazarkinja podržavaju varenje.',
+    shortDescription: 'BIOMELIS krema + BIOMELIS KAPI po povoljnijoj ceni',
+    heroTitle: 'Nega kože spolja i biljna podrška jetri i varenju iznutra',
+    purpose: 'Krema za negu kože osoba sklonih ekcemima i psorijazi + dodatak ishrani za podršku jetri i varenju',
+    images: {
+      main: '/images/products/sets/biomelis-set.jpg',
+      gallery: [
+        '/images/products/sets/biomelis-set.jpg',
+        '/images/products/biomelis/biomelis-box-and-product-mockup.png',
+        '/images/products/biomelis-kapi/biomelis-kapi-box-and-product-mockup.png',
+        '/images/products/biomelis/biomelis-open-bottle.png'
+      ],
+      thumbnail: '/images/products/sets/biomelis-set.jpg',
+      fallback: '/images/products/biomelis/biomelis-box-and-product-mockup.png'
+    },
+    benefits: [
+      'Set: BIOMELIS krema (50ml) + BIOMELIS KAPI (50ml)',
+      'Krema: 8 biljnih ekstrakata i 5 eteričnih ulja za negu kože sklone ekcemima i psorijazi',
+      'Panthenol, urea i glicerin doprinose hidrataciji i mekšem osećaju kože',
+      'Kapi: badelj (silimarin) doprinosi zdravlju jetre',
+      'Maslačak doprinosi normalnoj funkciji želuca i jetre, čičak i lazarkinja podržavaju varenje',
+      'Krema bez parabena i bez veštačkih boja',
+      'Uštedite u odnosu na pojedinačnu kupovinu'
+    ],
+    usage: 'KREMA: nanositi 2 puta dnevno na čistu kožu uz nežnu masažu, ne ispira se (50ml). KAPI: odrasli, 3 puta dnevno po 40 kapi, rastvoreno u malo vode (50ml).',
+    usageSteps: [
+      'Kremu nanesite na čistu, suvu kožu 2 puta dnevno i nežno umasirajte',
+      'Kapi uzimajte 3 puta dnevno po 40 kapi, rastvorene u malo vode',
+      'Koristite oba proizvoda redovno, svakog dana',
+      'Uz kapi se pridržavajte raznovrsne i uravnotežene ishrane'
+    ],
+    warnings: [
+      'KREMA: samo za spoljašnju upotrebu',
+      'KREMA: obratiti pažnju na preosetljivost na bilo koji sastojak',
+      'KREMA: nanositi samo na neoštećenu kožu',
+      'KREMA: izbegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'KREMA: ako iritacija ne prestane, potražiti savet lekara',
+      'KREMA: čuvati na hladnom, suvom mestu',
+      'KREMA: sadrži prirodne alergene iz eteričnih ulja (Limonene, Linalool)',
+      'KREMA: čuvati van domašaja dece',
+      'KAPI: dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu',
+      'KAPI: čuvati van domašaja dece',
+      'KAPI: proizvod čuvati dobro zatvoren u originalnom pakovanju, na suvom, tamnom i hladnom mestu',
+      'KAPI: proizvod nije namenjen osobama preosetljivim na bilo koji sastojak',
+      'KAPI: nije namenjen trudnicama, dojiljama i osobama mlađim od 18 godina',
+      'KAPI: takođe, osobama kojima se preporučuje redukovan unos tečnosti (teška srčana ili bubrežna bolest)',
+      'KAPI: ne preporučuje se istovremena primena sa diureticima',
+      'KAPI: primenu proizvoda mogu da prate blagi i prolazni simptomi poremećaja funkcije gastrointestinalnog trakta',
+      'KAPI: moguća je pojava kožnih reakcija',
+      'KAPI: proizvod sadrži alkohol'
+    ],
+    seoTitle: 'BIOMELIS SET — krema + kapi | DERMOTIN',
+    seoDescription: 'BIOMELIS SET od DERMOTIN brenda: BIOMELIS krema za negu kože osoba sklonih ekcemima i psorijazi + BIOMELIS KAPI za podršku jetri i varenju. Plaćanje pouzećem.',
+    crossSells: [
+      'immunis_kapi',
+      'fungel'
+    ],
+    productFAQ: [
+      {
+        question: 'Šta dobijam u setu?',
+        answer: 'Jednu BIOMELIS kremu (50ml) i jedne BIOMELIS KAPI (50ml) po ceni nižoj nego kada ih kupujete pojedinačno.',
+        category: 'general'
+      },
+      {
+        question: 'Kako koristim kremu?',
+        answer: 'Nanesite kremu 2 puta dnevno na čistu kožu i nežno umasirajte. Ne ispira se.',
+        category: 'usage'
+      },
+      {
+        question: 'Kako uzimam kapi?',
+        answer: 'Odrasli uzimaju 3 puta dnevno po 40 kapi, rastvoreno u malo vode. Kapi su dodatak ishrani i ne mogu zameniti raznovrsnu i uravnoteženu ishranu.',
+        category: 'usage'
+      },
+      {
+        question: 'Da li su ovo lekovi?',
+        answer: 'Ne. BIOMELIS krema je kozmetički proizvod, a BIOMELIS KAPI su dodatak ishrani. Za zdravstvene tegobe obratite se lekaru ili farmaceutu.',
+        category: 'safety'
+      },
+      {
+        question: 'Kako plaćam?',
+        answer: 'Plaćate kuriru gotovinom prilikom preuzimanja paketa (pouzećem).',
+        category: 'general'
+      }
+    ]
+  },
   fungel: {
     id: 'fungel',
     name: 'FUNGEL',
@@ -129,12 +729,12 @@ export const PRODUCTS: Record<string, Product> = {
     seoDescription: 'FUNGEL od DERMOTIN brenda - krema za negu kože i noktiju osoba sklonih pojavi gljivica. 6 biljnih ekstrakata i 5 eteričnih ulja (čajno drvo, origano), panthenol, urea, vitamini A i E. Bez parabena. 50ml.',
     upsells: {
       products: [
-        'fungomax'
+        'fungel_fungomax_set'
       ],
       discountPercentage: 10
     },
     crossSells: [
-      'fungomax',
+      'fungel_fungomax_set',
       'biowart'
     ],
     urgencyElements: {},
@@ -679,7 +1279,9 @@ export const PRODUCTS: Record<string, Product> = {
         category: 'safety'
       }
     ],
-    testimonials: []
+    testimonials: [],
+    hidden: true,
+    replacedBy: 'bioroid_set'
   },
   biomelis_kapi: {
     id: 'biomelis_kapi',
@@ -995,159 +1597,9 @@ export const PRODUCTS: Record<string, Product> = {
         category: 'usage'
       }
     ],
-    testimonials: []
-  },
-  immunis_kapi: {
-    id: 'immunis_kapi',
-    name: 'IMMUNIS KAPI',
-    description: 'Dodatak ishrani na bazi vodeno-etanolnih ekstrakata 6 biljaka. Purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema, majčina dušica i maslina doprinose zdravlju organa za disanje, a lavanda doprinosi relaksaciji i lakšem uspavljivanju.',
-    shortDescription: 'Biljna podrška imunitetu i disanju',
-    heroTitle: 'Dnevna doza podrške vašem imunitetu',
-    purpose: 'Podržava pravilno funkcionisanje imunog sistema i prirodnu odbrambenu sposobnost organizma',
-    category: 'supplements',
-    images: {
-      main: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png',
-      gallery: [
-        '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
-      ],
-      thumbnail: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png',
-      fallback: '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
-    },
-    variants: [
-      {
-        id: 'immunis-kapi-1pak',
-        sku: 'IMMUNIS-KAPI',
-        name: '1 PAKOVANJE (50ml)',
-        size: 'Okvirno mesec dana upotrebe',
-        quantity: 1,
-        price: 2390,
-        currency: 'RSD',
-        discountPrice: 1890,
-        isDefault: true
-      },
-      {
-        id: 'immunis-kapi-2pak',
-        sku: 'IMMUNIS-KAPI',
-        name: '2 PAKOVANJA (100ml)',
-        size: 'Okvirno 2 meseca upotrebe',
-        quantity: 2,
-        price: 4780,
-        currency: 'RSD',
-        discountPrice: 3590
-      },
-      {
-        id: 'immunis-kapi-3pak',
-        sku: 'IMMUNIS-KAPI',
-        name: '3 PAKOVANJA (150ml)',
-        size: 'Okvirno 3 meseca upotrebe',
-        quantity: 3,
-        price: 7170,
-        currency: 'RSD',
-        discountPrice: 4790
-      }
-    ],
-    benefits: [
-      'Purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema',
-      'Ehinacea doprinosi prirodnoj odbrambenoj sposobnosti organizma',
-      'Kopriva podržava odbrambene sposobnosti organizma i imuni sistem',
-      'Majčina dušica doprinosi zdravlju organa za disanje',
-      'Maslina doprinosi odbrani organizma od spoljašnjih agenasa i zdravlju gornjih disajnih puteva',
-      'Lavanda doprinosi relaksaciji i uspavljivanju',
-      '6 pažljivo odabranih vodeno-etanolnih biljnih ekstrakata',
-      'Energetska vrednost dnevnog unosa manja od 50 kJ (12 kcal)'
-    ],
-    ingredients: [
-      'echinacea-root-extract',
-      'nettle-leaf-extract',
-      'walnut-leaf-extract',
-      'thyme-herb-extract',
-      'olive-leaf-extract',
-      'lavender-flower-extract',
-      'aqua',
-      'ethanol'
-    ],
-    ingredientDescriptions: {
-      'nettle-leaf-extract': 'Kopriva podržava odbrambene sposobnosti organizma i imuni sistem'
-    },
-    usage: 'Odrasli, 3 puta dnevno po 40 kapi, rastvoreno u malo vode, posle obroka. Sadržaj: 50ml.',
-    usageSteps: [
-      'Uzimati 3 puta dnevno po 40 kapi',
-      'Rastvoriti kapi u malo vode',
-      'Uzimati posle obroka',
-      'Ne prekoračiti preporučenu dnevnu dozu',
-      'Za najbolji efekat koristiti redovno',
-      'Kombinovati sa raznovrsnom i uravnoteženom ishranom'
-    ],
-    warnings: [
-      'Dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu',
-      'Nije namenjen osobama preosetljivim na bilo koji sastojak, trudnicama, dojiljama i osobama mlađim od 18 godina',
-      'Nije namenjen osobama kojima se preporučuje redukovan unos tečnosti (teška srčana ili bubrežna bolest)',
-      'Nije namenjen osobama sa progresivnim sistemskim poremećajima, autoimunim oboljenjima, imunodeficijencijama, imunosupresijom ili oboljenjima ćelija bele krvne loze',
-      'Primena proizvoda na bazi lavande može da dovede do pospanosti - u to vreme izbegavati upravljanje motornim vozilima ili radnim mašinama',
-      'Primenu mogu da prate blagi i prolazni simptomi poremećaja funkcije gastrointestinalnog trakta; moguća je pojava blažih kožnih reakcija',
-      'Proizvod sadrži alkohol',
-      'Čuvati van domašaja dece, dobro zatvoren u originalnom pakovanju, na suvom, tamnom i hladnom mestu'
-    ],
-    slug: 'immunis-kapi',
-    alternativeSlugs: [
-      'immunis-drops',
-      'imunitet-kapi',
-      'ehinacea-kapi'
-    ],
-    availableCountries: [
-      'rs',
-      'ba'
-    ],
-    seoTitle: 'IMMUNIS KAPI - Dodatak ishrani za imunitet i disajne puteve | DERMOTIN',
-    seoDescription: 'IMMUNIS KAPI od DERMOTIN brenda - dodatak ishrani sa ekstraktima purpurne ehinacee, koprive, oraha, majčine dušice, masline i lavande. Podrška imunom sistemu. 50ml.',
-    crossSells: [
-      'biomelis_kapi',
-      'bioroid_kapi'
-    ],
-    urgencyElements: {},
-    productFAQ: [
-      {
-        question: 'Kako se koriste IMMUNIS KAPI?',
-        answer: 'Vrlo jednostavno! Odrasli uzimaju 3 puta dnevno po 40 kapi, rastvoreno u malo vode, posle obroka. Bočica sadrži 50ml.',
-        category: 'usage'
-      },
-      {
-        question: 'Šta IMMUNIS KAPI sadrže?',
-        answer: 'Vodeno-etanolne ekstrakte 6 biljaka: purpurna ehinacea, kopriva, orah (list), majčina dušica, maslina (list) i lavanda. Proizvod sadrži alkohol iz vodeno-etanolnih ekstrakata.',
-        category: 'ingredients'
-      },
-      {
-        question: 'Da li su IMMUNIS KAPI lek?',
-        answer: 'Ne, IMMUNIS KAPI su dodatak ishrani, a ne lek. Dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu. Za zdravstvene tegobe obratite se lekaru.',
-        category: 'safety'
-      },
-      {
-        question: 'Kako biljke iz sastava doprinose organizmu?',
-        answer: 'Purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema i prirodnoj odbrambenoj sposobnosti organizma, kopriva podržava odbrambene sposobnosti i imuni sistem, majčina dušica doprinosi zdravlju organa za disanje, maslina odbrani organizma od spoljašnjih agenasa i zdravlju gornjih disajnih puteva, a lavanda relaksaciji i uspavljivanju.',
-        category: 'effects'
-      },
-      {
-        question: 'Ko ne sme da koristi IMMUNIS KAPI?',
-        answer: 'Proizvod nije namenjen osobama preosetljivim na bilo koji sastojak, trudnicama, dojiljama i osobama mlađim od 18 godina, kao ni osobama sa progresivnim sistemskim poremećajima, autoimunim oboljenjima, imunodeficijencijama, imunosupresijom ili oboljenjima ćelija bele krvne loze.',
-        category: 'safety'
-      },
-      {
-        question: 'Kako da čuvam IMMUNIS KAPI?',
-        answer: 'Čuvajte dobro zatvoreno u originalnom pakovanju, na suvom, tamnom i hladnom mestu, van domašaja dece.',
-        category: 'storage'
-      },
-      {
-        question: 'Da li mogu da vozim nakon uzimanja?',
-        answer: 'Oprez - proizvodi na bazi lavande mogu da dovedu do pospanosti. U to vreme izbegavajte upravljanje motornim vozilima ili radnim mašinama.',
-        category: 'usage'
-      },
-      {
-        question: 'Kada je pravi trenutak za IMMUNIS KAPI?',
-        answer: 'Mnogi korisnici ih biraju kao dnevnu biljnu podršku tokom jeseni i zime, uz uravnoteženu ishranu, san i kretanje. Uzimaju se redovno, 3 puta dnevno po 40 kapi posle obroka.',
-        category: 'usage'
-      }
-    ],
-    testimonials: []
+    testimonials: [],
+    hidden: true,
+    replacedBy: 'bioroid_set'
   },
   fungomax: {
     id: 'fungomax',
@@ -1305,62 +1757,209 @@ export const PRODUCTS: Record<string, Product> = {
         category: 'safety'
       }
     ],
-    testimonials: []
+    testimonials: [],
+    hidden: true,
+    replacedBy: 'fungel_fungomax_set'
   },
-  bioroid_set: {
-    id: 'bioroid_set',
-    name: 'BIOROID SET',
-    description: 'Komplet za kompletnu rutinu: BIOROID krema za spoljašnju negu kože i sluzokože analne regije + BIOROID KAPI, dodatak ishrani koji podržava normalan vaskularni tonus, zdravlje venskog sistema i digestivni komfor. Spoljašnja nega i unutrašnja podrška u jednom pakovanju, po povoljnijoj ceni.',
-    shortDescription: 'BIOROID krema + BIOROID KAPI — kompletna rutina po povoljnijoj ceni',
-    heroTitle: 'Kompletna rutina: nega spolja, podrška iznutra',
-    purpose: 'Set za spoljašnju negu analne regije i unutrašnju podršku zdravlju vena i varenju',
+  fungel_fungomax_gratis: {
+    id: 'fungel_fungomax_gratis',
+    name: 'FUNGEL + FUNGOMAX GRATIS',
     category: 'bundle',
-    images: {
-      main: '/images/products/bioroid/bioroid-melem-kapi-gratis-900x900.jpg',
-      gallery: [
-        '/images/products/bioroid/bioroid-box-only.png',
-        '/images/products/bioroid-kapi/bioroid-kapi-box-and-product-mockup.png'
-      ],
-      thumbnail: '/images/products/bioroid/bioroid-melem-kapi-gratis-900x900.jpg',
-      fallback: '/images/products/bioroid/bioroid-melem-kapi-gratis-900x900.jpg'
-    },
     variants: [
       {
-        id: 'bioroid-set-1',
-        sku: 'BIOROID-SET',
-        name: '1 SET (krema 50ml + kapi 50ml)',
-        size: 'Okvirno mesec dana upotrebe',
+        id: 'fungel-fungomax-gratis-1',
+        sku: 'FUNGEL-FUNGOMAX-GRATIS',
+        name: 'FUNGEL krema + FUNGOMAX serum GRATIS',
         quantity: 1,
-        price: 5380,
+        price: 4780,
         currency: 'RSD',
         discountPrice: 1990,
         isDefault: true
       }
     ],
+    ingredients: [
+      'calendula-extract',
+      'chelidonium-extract',
+      'salvia-leaf-extract',
+      'echinacea-extract',
+      'galium-extract',
+      'hypericum-extract',
+      'tea-tree-oil',
+      'oregano-oil',
+      'lavender-oil',
+      'sage-oil',
+      'eucalyptus-oil',
+      'panthenol',
+      'urea',
+      'sweet-almond-oil',
+      'vitamin-e',
+      'vitamin-a',
+      'aqua',
+      'alcohol',
+      'glycerin',
+      'castor-oil',
+      'stearic-acid',
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax',
+      'triethanolamine',
+      'carbomer',
+      'phenoxyethanol',
+      'ethylhexylglycerin',
+      'sodium-benzoate',
+      'potassium-sorbate',
+      'thymus-extract',
+      'juglans-leaf-extract',
+      'salvia-extract',
+      'quercus-bark-extract',
+      'rosemary-oil',
+      'clove-oil',
+      'allantoin'
+    ],
+    slug: 'fungel-fungomax-gratis',
+    alternativeSlugs: [],
+    availableCountries: [
+      'rs'
+    ],
+    urgencyElements: {},
+    published: true,
+    isBundle: true,
+    bundleItems: [
+      {
+        productId: 'fungel',
+        variantId: 'fungel-1pak',
+        quantity: 1
+      },
+      {
+        productId: 'fungomax',
+        variantId: 'fungomax-1pak',
+        quantity: 1,
+        gratis: true
+      }
+    ],
+    description: 'Kompletna rutina nege kože i noktiju osoba sklonih pojavi gljivica. FUNGEL krema sa 6 biljnih ekstrakata i 5 eteričnih ulja neguje širu površinu kože i nokte, a FUNGOMAX serum sa kapaljkom — preko 79% biljne tinkture, alantoin i 20% glicerina — omogućava preciznu, ciljanu primenu tamo gde je najpotrebnije. Dva proizvoda koja se savršeno dopunjuju, u setu po znatno povoljnijoj ceni.',
+    shortDescription: 'FUNGEL krema + FUNGOMAX serum GRATIS',
+    heroTitle: 'Krema i serum u jednoj rutini — za uredne nokte i negovanu kožu',
+    purpose: 'Za negu kože i noktiju osoba sklonih pojavi gljivica',
+    images: {
+      main: '/images/products/sets/fungel-fungomax-gratis.jpg',
+      gallery: [
+        '/images/products/sets/fungel-fungomax-gratis.jpg',
+        '/images/products/fungel/fungel-box-and-product-mockup.png',
+        '/images/products/fungomax/fungomax-box-and-product-mockup.png',
+        '/images/products/fungel/fungel-open-bottle.png'
+      ],
+      thumbnail: '/images/products/sets/fungel-fungomax-gratis.jpg',
+      fallback: '/images/products/fungel/fungel-box-and-product-mockup.png'
+    },
     benefits: [
-      'Komplet: BIOROID krema (50ml) + BIOROID KAPI (50ml)',
-      'Krema neguje kožu i sluzokožu analne regije, uz mentol za osećaj svežine',
-      'Kapi podržavaju normalan vaskularni tonus, zdravlje venskog sistema i digestivni komfor',
-      'Povoljnije nego pojedinačna kupovina',
-      'Prirodni biljni ekstrakti u oba proizvoda'
+      'Set: FUNGEL krema (50ml) + FUNGOMAX serum sa kapaljkom (50ml)',
+      'Krema za širu površinu kože, serum za preciznu, ciljanu primenu na nokte',
+      'FUNGEL: 6 biljnih ekstrakata i 5 eteričnih ulja, uz panthenol, ureu i vitamine A i E',
+      'FUNGOMAX: preko 79% biljne tinkture, 4 biljna ekstrakta, alantoin i čak 20% glicerina',
+      'Panthenol, urea i glicerin doprinose hidrataciji i negovanom izgledu',
+      'Bez parabena i bez veštačkih boja',
+      'Bezbednosna procena u skladu sa EU regulativom (EC) 1223/2009',
+      'Uštedite u odnosu na pojedinačnu kupovinu'
+    ],
+    usage: 'FUNGEL KREMA: naneti tanak sloj 2 puta dnevno na kožu ili nokte i nežno umasirati, ne ispira se (50ml). FUNGOMAX SERUM: nakapati 2 puta dnevno nekoliko kapi na ciljano područje i nežno utrljati, ne ispira se (50ml).',
+    usageSteps: [
+      'Operite i dobro osušite kožu i nokte',
+      'Nakapajte FUNGOMAX serum na nokte i ciljana mesta i nežno utrljajte',
+      'Kada se serum upije, nanesite tanak sloj FUNGEL kreme na širu površinu kože i nežno umasirajte',
+      'Ponovite ujutru i uveče — redovnost je ključ negovanog izgleda',
+      'Ne ispirati nakon nanošenja; oprati ruke posle upotrebe'
+    ],
+    warnings: [
+      'KREMA: samo za spoljašnju upotrebu',
+      'KREMA: obratiti pažnju na preosetljivost na bilo koji sastojak',
+      'KREMA: oprati ruke nakon nanošenja',
+      'KREMA: ne koristiti na ranama',
+      'KREMA: izbegavati kontakt sa očima; u slučaju kontakta odmah isprati vodom',
+      'KREMA: prekinuti upotrebu i javiti se lekaru ako dođe do iritacije',
+      'KREMA: čuvati na hladnom, suvom mestu',
+      'KREMA: sadrži prirodne alergene iz eteričnih ulja (Limonene, Linalool)',
+      'SERUM: proizvod je namenjen isključivo za spoljašnju upotrebu',
+      'SERUM: obratiti pažnju na preosetljivost na bilo koji sastojak',
+      'SERUM: ne nanositi na otvorene rane',
+      'SERUM: oprati ruke nakon upotrebe',
+      'SERUM: izbegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'SERUM: u slučaju produžene iritacije potražiti medicinsku pomoć',
+      'SERUM: čuvati na suvom mestu, van domašaja dece',
+      'SERUM: sadrži prirodne alergene iz eteričnih ulja (Eugenol, Linalool, Limonene)'
+    ],
+    seoTitle: 'FUNGEL + FUNGOMAX SET — krema + serum za negu noktiju i kože | DERMOTIN',
+    seoDescription: 'Set FUNGEL krema + FUNGOMAX serum od DERMOTIN brenda: kompletna rutina nege kože i noktiju osoba sklonih pojavi gljivica. Plaćanje pouzećem, dostava 1–2 radna dana.',
+    crossSells: [
+      'immunis_kapi',
+      'biowart'
+    ],
+    productFAQ: [
+      {
+        question: 'Šta dobijam u setu?',
+        answer: 'Jednu FUNGEL kremu (50ml) i jedan FUNGOMAX serum sa kapaljkom (50ml) — sve što je potrebno za kompletnu rutinu nege kože i noktiju.',
+        category: 'general'
+      },
+      {
+        question: 'Kako da kombinujem kremu i serum?',
+        answer: 'Prvo nakapajte FUNGOMAX serum na nokte i ciljana mesta i nežno utrljajte. Kada se upije, nanesite tanak sloj FUNGEL kreme na širu površinu kože. Ponavljajte ujutru i uveče.',
+        category: 'usage'
+      },
+      {
+        question: 'Koja je razlika između FUNGEL-a i FUNGOMAX-a?',
+        answer: 'FUNGEL je krema pogodna za negu šire površine kože, a FUNGOMAX je tečni serum sa kapaljkom za preciznu, ciljanu primenu na nokte i manje površine. Zato se odlično dopunjuju.',
+        category: 'usage'
+      },
+      {
+        question: 'Da li su ovo lekovi?',
+        answer: 'Ne. FUNGEL i FUNGOMAX su kozmetički proizvodi za negu kože i noktiju osoba sklonih pojavi gljivica. Ako imate zdravstveni problem, obratite se lekaru ili farmaceutu.',
+        category: 'safety'
+      },
+      {
+        question: 'Kako plaćam?',
+        answer: 'Plaćate kuriru gotovinom prilikom preuzimanja paketa (pouzećem). Ne treba vam kartica niti avans.',
+        category: 'general'
+      }
+    ],
+    hidden: true,
+    salesChannel: 'viber'
+  },
+  biowart_immunis_gratis: {
+    id: 'biowart_immunis_gratis',
+    name: 'BIOWART + IMMUNIS KAPI GRATIS',
+    category: 'bundle',
+    variants: [
+      {
+        id: 'biowart-immunis-gratis-1',
+        sku: 'BIOWART-IMMUNIS-GRATIS',
+        name: 'BIOWART krema + IMMUNIS KAPI GRATIS',
+        quantity: 1,
+        price: 4780,
+        currency: 'RSD',
+        discountPrice: 1990,
+        isDefault: true
+      }
     ],
     ingredients: [
-      'achillea-extract',
-      'aesculus-extract',
+      'chelidonium-extract',
       'calendula-extract',
-      'capsella-extract',
-      'geranium-extract',
-      'chamomile-extract',
+      'achillea-extract',
+      'salvia-leaf-extract',
+      'hypericum-extract',
+      'galium-extract',
+      'quercus-bark-extract',
+      'sage-oil',
+      'eucalyptus-oil',
+      'peppermint-oil',
+      'clove-bud-oil',
+      'thyme-oil',
+      'anise-oil',
+      'lemon-oil',
       'panthenol',
-      'vitamin-e',
-      'tocopherol',
-      'vitamin-a',
+      'urea',
       'sweet-almond-oil',
-      'menthol',
-      'patchouli-oil',
-      'lavender-oil',
-      'tea-tree-oil',
-      'clove-oil',
+      'vitamin-e',
+      'vitamin-a',
       'aqua',
       'alcohol',
       'stearic-acid',
@@ -1368,67 +1967,90 @@ export const PRODUCTS: Record<string, Product> = {
       'cetyl-alcohol',
       'glyceryl-stearate',
       'synthetic-beeswax',
-      'urea',
       'triethanolamine',
       'carbomer',
-      'sodium-gluconate',
       'phenoxyethanol',
       'ethylhexylglycerin',
+      'sodium-benzoate',
       'potassium-sorbate',
-      'achillea-herb-extract',
-      'arctium-root-extract',
-      'calendula-flower-oral-extract',
-      'quercus-bark-oral-extract',
-      'dandelion-root-extract',
-      'juniper-fruit-extract',
+      'echinacea-root-extract',
+      'nettle-leaf-extract',
+      'walnut-leaf-extract',
+      'thyme-herb-extract',
+      'olive-leaf-extract',
+      'lavender-flower-extract',
       'ethanol'
     ],
-    usage: 'KREMA: nanositi dva puta dnevno, uz redovnu higijenu (50ml). KAPI: odrasli, 3 puta dnevno po 40 kapi, rastvoreno u malo vode, posle obroka (50ml).',
-    usageSteps: [
-      'Kremu nanesite na čistu i suvu kožu, dva puta dnevno',
-      'Kapi uzimajte 3 puta dnevno po 40 kapi, rastvorene u malo vode, posle obroka',
-      'Za najbolji efekat koristite oba proizvoda redovno',
-      'Operite ruke nakon upotrebe kreme'
-    ],
-    warnings: [
-      'KREMA: namenjena isključivo za spoljašnju upotrebu; oprati ruke nakon upotrebe',
-      'KREMA: izbegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
-      'KREMA: sadrži prirodne alergene iz eteričnih ulja (Limonene, Eugenol, Linalool)',
-      'KAPI: dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu',
-      'KAPI: nije namenjen trudnicama, dojiljama i deci mlađoj od 18 godina',
-      'KAPI: kontraindikovan kod osoba preosetljivih na sastojke i osoba sa teškim bubrežnim i srčanim oboljenjima',
-      'KAPI: ne preporučuje se osobama sa gastričnim i duodenalnim ulkusom, ili sa oboljenjima žučnih puteva i žučne kesice',
-      'KAPI: ne preporučuje se istovremena upotreba sa diureticima; proizvod sadrži alkohol',
-      'Obratiti pažnju na preosetljivost na bilo koji sastojak',
-      'Čuvati van domašaja dece'
-    ],
-    slug: 'bioroid-set',
-    alternativeSlugs: [
-      'set-bioroid-melem-kapi',
-      'bioroid-komplet'
-    ],
+    slug: 'biowart-immunis-gratis',
+    alternativeSlugs: [],
     availableCountries: [
       'rs'
     ],
-    seoTitle: 'BIOROID SET — krema + kapi | DERMOTIN',
-    seoDescription: 'BIOROID SET od DERMOTIN brenda — BIOROID krema za negu kože i sluzokože analne regije i BIOROID KAPI za podršku zdravlju venskog sistema i varenju. Kompletna rutina po povoljnijoj ceni.',
     urgencyElements: {},
-    crossSells: [
-      'immunis_kapi'
-    ],
     published: true,
     isBundle: true,
     bundleItems: [
       {
-        productId: 'bioroid',
-        variantId: 'bioroid-1pak',
+        productId: 'biowart',
+        variantId: 'biowart-1pak',
         quantity: 1
       },
       {
-        productId: 'bioroid_kapi',
-        variantId: 'bioroid-kapi-1pak',
-        quantity: 1
+        productId: 'immunis_kapi',
+        variantId: 'immunis-kapi-1pak',
+        quantity: 1,
+        gratis: true
       }
-    ]
+    ],
+    description: 'BIOWART krema za negu kože osoba sklonih pojavi bradavica — 7 biljnih ekstrakata (rusa i neven u najvišim koncentracijama) i 7 eteričnih ulja, uz panthenol, ureu i vitamine A i E. Uz nju dobijate IMMUNIS KAPI gratis: dodatak ishrani u kome purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema, a majčina dušica i maslina zdravlju organa za disanje.',
+    shortDescription: 'BIOWART krema + IMMUNIS KAPI GRATIS',
+    heroTitle: 'BIOWART krema + IMMUNIS KAPI na poklon',
+    purpose: 'Krema za negu kože osoba sklonih pojavi bradavica + dodatak ishrani za podršku imunitetu',
+    images: {
+      main: '/images/products/sets/biowart-immunis-gratis.jpg',
+      gallery: [
+        '/images/products/sets/biowart-immunis-gratis.jpg',
+        '/images/products/biowart/biowart-box-and-product-mockup.png',
+        '/images/products/immunis-kapi/immunis-kapi-box-and-product-mockup.png'
+      ],
+      thumbnail: '/images/products/sets/biowart-immunis-gratis.jpg',
+      fallback: '/images/products/biowart/biowart-box-and-product-mockup.png'
+    },
+    benefits: [
+      'BIOWART krema (50ml) + IMMUNIS KAPI (50ml) GRATIS',
+      'BIOWART: 7 biljnih ekstrakata i 7 eteričnih ulja za ciljanu negu kože sklone pojavi bradavica',
+      'Rusa i neven u najvišim koncentracijama među biljnim ekstraktima',
+      'IMMUNIS: purpurna ehinacea doprinosi pravilnom funkcionisanju imunog sistema',
+      'Majčina dušica i maslina doprinose zdravlju organa za disanje',
+      'Krema bez parabena i bez veštačkih boja'
+    ],
+    usage: 'KREMA: nanositi 2 puta dnevno na ciljano područje, ne ispira se (50ml). KAPI: odrasli, 3 puta dnevno po 40 kapi, rastvoreno u malo vode, posle obroka (50ml).',
+    usageSteps: [
+      'Kremu nanesite na čistu, suvu kožu 2 puta dnevno',
+      'Kapi uzimajte 3 puta dnevno po 40 kapi, rastvorene u malo vode, posle obroka',
+      'Koristite redovno, svakog dana'
+    ],
+    warnings: [
+      'KREMA: samo za spoljašnju upotrebu',
+      'KREMA: obratiti pažnju na preosetljivost na bilo koji sastojak',
+      'KREMA: izbegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'KREMA: ako iritacija ne prestane, potražiti savet lekara',
+      'KREMA: čuvati van domašaja dece',
+      'KREMA: sadrži prirodne alergene iz eteričnih ulja: Limonene, Linalool, Eugenol, Citral',
+      'KAPI: dodatak ishrani se ne može koristiti kao zamena za raznovrsnu i uravnoteženu ishranu',
+      'KAPI: nije namenjen osobama preosetljivim na bilo koji sastojak, trudnicama, dojiljama i osobama mlađim od 18 godina',
+      'KAPI: nije namenjen osobama kojima se preporučuje redukovan unos tečnosti (teška srčana ili bubrežna bolest)',
+      'KAPI: nije namenjen osobama sa progresivnim sistemskim poremećajima, autoimunim oboljenjima, imunodeficijencijama, imunosupresijom ili oboljenjima ćelija bele krvne loze',
+      'KAPI: primena proizvoda na bazi lavande može da dovede do pospanosti - u to vreme izbegavati upravljanje motornim vozilima ili radnim mašinama',
+      'KAPI: primenu mogu da prate blagi i prolazni simptomi poremećaja funkcije gastrointestinalnog trakta; moguća je pojava blažih kožnih reakcija',
+      'KAPI: proizvod sadrži alkohol',
+      'KAPI: čuvati van domašaja dece, dobro zatvoren u originalnom pakovanju, na suvom, tamnom i hladnom mestu'
+    ],
+    seoTitle: 'BIOWART + IMMUNIS KAPI GRATIS | DERMOTIN',
+    seoDescription: 'BIOWART krema + IMMUNIS KAPI gratis. Plaćanje pouzećem.',
+    crossSells: [],
+    productFAQ: [],
+    hidden: true,
+    salesChannel: 'viber'
   }
 };

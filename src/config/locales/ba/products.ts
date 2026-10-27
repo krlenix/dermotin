@@ -804,5 +804,132 @@ export const PRODUCTS: Record<string, Product> = {
       }
     ],
     testimonials: []
+  },
+  fungel_fungomax_gratis: {
+    id: 'fungel_fungomax_gratis',
+    name: 'FUNGEL + FUNGOMAX GRATIS',
+    description: 'Kompletna rutina njege kože i noktiju osoba sklonih pojavi gljivica. FUNGEL krema sa 6 biljnih ekstrakata i 5 eteričnih ulja njeguje širu površinu kože i nokte, a FUNGOMAX serum sa kapaljkom omogućava preciznu, ciljanu primjenu. Uz FUNGEL kremu, FUNGOMAX serum dobijate GRATIS.',
+    shortDescription: 'FUNGEL krema + FUNGOMAX serum GRATIS',
+    heroTitle: 'FUNGEL krema + FUNGOMAX serum na poklon',
+    purpose: 'Za njegu kože i noktiju osoba sklonih pojavi gljivica',
+    category: 'bundle',
+    images: {
+      main: '/images/products/sets/fungel-fungomax-gratis.jpg',
+      gallery: [
+        '/images/products/sets/fungel-fungomax-gratis.jpg',
+        '/images/products/fungel/fungel-box-and-product-mockup.png',
+        '/images/products/fungomax/fungomax-box-and-product-mockup.png'
+      ],
+      thumbnail: '/images/products/sets/fungel-fungomax-gratis.jpg',
+      fallback: '/images/products/fungel/fungel-box-and-product-mockup.png'
+    },
+    variants: [
+      {
+        id: 'fungel-fungomax-gratis-1',
+        sku: 'FUNGEL-FUNGOMAX-GRATIS',
+        name: 'FUNGEL krema + FUNGOMAX serum GRATIS',
+        quantity: 1,
+        price: 109.8,
+        currency: 'BAM',
+        discountPrice: 33.9,
+        isDefault: true
+      }
+    ],
+    benefits: [
+      'FUNGEL krema (50ml) + FUNGOMAX serum sa kapaljkom (50ml) GRATIS',
+      'Krema za širu površinu kože, serum za preciznu, ciljanu primjenu na nokte',
+      'FUNGEL: 6 biljnih ekstrakata i 5 eteričnih ulja, uz panthenol, ureu i vitamine A i E',
+      'FUNGOMAX: preko 79% biljne tinkture, alantoin i čak 20% glicerina',
+      'Bez parabena i bez vještačkih boja'
+    ],
+    ingredients: [
+      'calendula-extract',
+      'chelidonium-extract',
+      'salvia-leaf-extract',
+      'echinacea-extract',
+      'galium-extract',
+      'hypericum-extract',
+      'tea-tree-oil',
+      'oregano-oil',
+      'lavender-oil',
+      'sage-oil',
+      'eucalyptus-oil',
+      'panthenol',
+      'urea',
+      'sweet-almond-oil',
+      'vitamin-e',
+      'vitamin-a',
+      'aqua',
+      'alcohol',
+      'glycerin',
+      'castor-oil',
+      'stearic-acid',
+      'cetyl-alcohol',
+      'glyceryl-stearate',
+      'synthetic-beeswax',
+      'triethanolamine',
+      'carbomer',
+      'phenoxyethanol',
+      'ethylhexylglycerin',
+      'sodium-benzoate',
+      'potassium-sorbate',
+      'thymus-extract',
+      'juglans-leaf-extract',
+      'salvia-extract',
+      'quercus-bark-extract',
+      'rosemary-oil',
+      'clove-oil',
+      'allantoin'
+    ],
+    usage: 'FUNGEL KREMA: nanijeti tanak sloj 2 puta dnevno i nježno umasirati, ne ispira se. FUNGOMAX SERUM: nakapati 2 puta dnevno na ciljano područje i nježno utrljati, ne ispira se.',
+    usageSteps: [
+      'Operite i dobro osušite kožu i nokte',
+      'Nakapajte FUNGOMAX serum na nokte i ciljana mjesta i nježno utrljajte',
+      'Kada se serum upije, nanesite tanak sloj FUNGEL kreme',
+      'Ponovite ujutro i uveče'
+    ],
+    warnings: [
+      'KREMA: samo za vanjsku upotrebu',
+      'KREMA: obratiti pažnju na preosjetljivost na bilo koji sastojak',
+      'KREMA: oprati ruke nakon nanošenja',
+      'KREMA: ne koristiti na ranama',
+      'KREMA: izbjegavati kontakt sa očima; u slučaju kontakta odmah isprati vodom',
+      'KREMA: prekinuti upotrebu i javiti se ljekaru ako dođe do iritacije',
+      'KREMA: čuvati na hladnom, suhom mjestu',
+      'KREMA: sadrži prirodne alergene iz eteričnih ulja (Limonene, Linalool)',
+      'SERUM: proizvod je namijenjen isključivo za vanjsku upotrebu',
+      'SERUM: obratiti pažnju na preosjetljivost na bilo koji sastojak',
+      'SERUM: ne nanositi na otvorene rane',
+      'SERUM: oprati ruke nakon upotrebe',
+      'SERUM: izbjegavati kontakt sa očima; u slučaju kontakta isprati sa dosta vode',
+      'SERUM: u slučaju produžene iritacije potražiti medicinsku pomoć',
+      'SERUM: čuvati na suhom mjestu, van domašaja djece',
+      'SERUM: sadrži prirodne alergene iz eteričnih ulja (Eugenol, Linalool, Limonene)'
+    ],
+    slug: 'fungel-fungomax-gratis',
+    alternativeSlugs: [],
+    availableCountries: [
+      'ba'
+    ],
+    seoTitle: 'FUNGEL + FUNGOMAX GRATIS | DERMOTIN',
+    seoDescription: 'FUNGEL krema + FUNGOMAX serum gratis. Plaćanje pouzećem.',
+    urgencyElements: {},
+    published: true,
+    hidden: true,
+    salesChannel: 'viber',
+    isBundle: true,
+    bundleItems: [
+      {
+        productId: 'fungel',
+        variantId: 'fungel-1pak',
+        quantity: 1
+      },
+      {
+        productId: 'fungomax',
+        variantId: 'fungomax-1pak',
+        quantity: 1,
+        gratis: true
+      }
+    ]
   }
 };
