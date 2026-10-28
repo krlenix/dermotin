@@ -58,11 +58,11 @@ export default function ContactPage({ locale }: ContactPageProps) {
 
       <main className="mx-auto max-w-[1180px] space-y-8 px-3 pb-10 pt-3 md:space-y-12 md:px-6 md:pt-6">
         <GreenHero>
-          <h1 className="text-[32px] font-extrabold leading-[1.2] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.12)] md:text-[46px]">
+          <h1 className="text-[32px] font-extrabold leading-[1.2] text-[#151515] md:text-[46px]">
             <Marked tone="green" animate>{t('contact.page_title')}</Marked>
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-[16px] font-medium text-white md:text-[18px]">{t('contact.page_subtitle')}</p>
-          <p className="mx-auto mt-2 max-w-xl pb-2 text-[14px] text-white/90">{t('contact.response_time_value')}</p>
+          <p className="mx-auto mt-4 max-w-xl text-[16px] text-[#4a4a4a] md:text-[18px]">{t('contact.page_subtitle')}</p>
+          <p className="mx-auto mt-2 max-w-xl pb-2 text-[14px] font-semibold text-[#2E8655]">{t('contact.response_time_value')}</p>
         </GreenHero>
 
         {/* ── NAČINI KONTAKTA ──────────────────────────────────── */}

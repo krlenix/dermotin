@@ -162,19 +162,20 @@ export function ThankYouPage({ countryConfig, locale = 'rs' }: ThankYouPageProps
 
       <main className="mx-auto max-w-[1180px] space-y-5 px-3 pb-10 pt-3 md:space-y-8 md:px-6 md:pt-6">
         {/* ── POTVRDA ──────────────────────────────────────────── */}
-        <section className="relative overflow-hidden rounded-[28px] bg-[#7FCB95] bg-[url('/images/lander/bg2-h17.jpg')] bg-cover bg-center px-4 py-9 text-center text-white md:py-14">
-          <span className="lander-pop mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full bg-white text-[#2E8655] shadow-[0_14px_30px_-12px_rgba(0,0,0,0.35)]">
+        <section className="relative overflow-hidden rounded-[28px] bg-[#F7F4EE] px-4 py-9 text-center text-[#151515] ring-1 ring-black/5 md:py-14">
+          <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(46,134,85,0.16)_0%,rgba(46,134,85,0)_68%)]" aria-hidden />
+          <span className="lander-pop relative mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#2E8655] text-white shadow-[0_14px_30px_-12px_rgba(46,134,85,0.7)]">
             <Check className="h-11 w-11" strokeWidth={3.5} />
           </span>
-          <h1 className="mt-5 text-[32px] font-extrabold leading-[1.2] [text-shadow:0_1px_2px_rgba(0,0,0,0.12)] md:text-[48px]">
+          <h1 className="relative mt-5 text-[32px] font-extrabold leading-[1.2] md:text-[48px]">
             <Marked tone="green" animate>{t('thank_you.success_title_highlight')}</Marked> {t('thank_you.success_title_rest')}
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-[16px] font-medium leading-relaxed md:text-[18px]">
+          <p className="relative mx-auto mt-4 max-w-2xl text-[16px] leading-relaxed text-[#4a4a4a] md:text-[18px]">
             {t('thank_you.order_confirmation')}. {t('thank_you.contact_soon')}
           </p>
-          <div className="mt-5 flex flex-wrap justify-center gap-2 text-[13px] font-semibold">
-            <span className="rounded-full bg-white px-3.5 py-1.5 text-[#2E8655]">#{orderData.orderId}</span>
-            <span className="rounded-full bg-white/20 px-3.5 py-1.5 backdrop-blur-[2px]">{t('thank_you.cod')}</span>
+          <div className="relative mt-5 flex flex-wrap justify-center gap-2 text-[13px] font-semibold">
+            <span className="rounded-full bg-white px-3.5 py-1.5 text-[#2E8655] ring-1 ring-black/5">#{orderData.orderId}</span>
+            <span className="rounded-full bg-[#2E8655]/10 px-3.5 py-1.5 text-[#1d5434]">{t('thank_you.cod')}</span>
           </div>
         </section>
 

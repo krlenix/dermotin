@@ -294,7 +294,7 @@ const STORE_VISUALS: Record<string, { packshot: string; single?: string; extra?:
   bioroid_kapi: { packshot: '/images/store/bioroid-kapi.png' },
 };
 
-export const STORE_HERO_IMAGE = '/images/store/hero-group.png';
+export const STORE_HERO_IMAGE = '/images/store/hero-group-tight.png';
 
 /** Packshot (providan PNG) se prikazuje na „sceni“; ostale slike preko celog okvira. */
 export function isPackshot(src: string): boolean {
@@ -397,5 +397,5 @@ export function getUnitPackshot(product: { id: string; images: { main: string; g
 
 /** Tesno isečen providni packshot (bez praznog kadra) — za male prikaze jedan pored drugog. */
 export function tightPackshot(src: string): string {
-  return isPackshot(src) && !src.includes('/tight/') && !src.endsWith('hero-group.png') ? src.replace('/images/store/', '/images/store/tight/') : src;
+  return isPackshot(src) && !src.includes('/tight/') && !src.includes('/hero-group') ? src.replace('/images/store/', '/images/store/tight/') : src;
 }

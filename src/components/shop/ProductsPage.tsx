@@ -52,11 +52,11 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
 
       <main className="mx-auto max-w-[1180px] space-y-10 px-3 pt-3 md:space-y-14 md:px-6 md:pt-6">
         <GreenHero>
-          <h1 className="text-[30px] font-extrabold leading-[1.22] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.12)] md:text-[44px]">
+          <h1 className="text-[30px] font-extrabold leading-[1.18] text-[#151515] md:text-[46px]">
             {tl.rich('shop_title', richTags)}
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-[15px] font-medium text-white md:text-[16px]">{t('shop.text')}</p>
-          <div className="mt-4 flex items-center justify-center gap-2 pb-2 text-[13px] font-medium text-white">
+          <p className="mx-auto mt-3 max-w-xl text-[15px] text-[#4a4a4a] md:text-[16px]">{t('shop.text')}</p>
+          <div className="mt-4 flex items-center justify-center gap-2 pb-2 text-[13px] font-medium text-[#333]">
             <Stars size={16} />
             <span>{tLander.rich('hero_rating', { b: (chunks) => <strong className="font-bold">{chunks}</strong>, count: STORE_PROOF.reviewsCount })}</span>
           </div>

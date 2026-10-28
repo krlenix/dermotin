@@ -1004,8 +1004,14 @@ summary,
   100% { transform: translateX(220%) skewX(-20deg); }
 }
 @keyframes lander-mark {
-  from { background-size: 0% 100%; }
-  to { background-size: 100% 100%; }
+  from { background-size: 0% 84%; }
+  to { background-size: 100% 84%; }
+}
+/* Istaknut tekst: podloga samo preko sredine reda (vidi Marked u LanderKit.tsx) */
+.lander-mark {
+  background-repeat: no-repeat;
+  background-position: 0 50%;
+  background-size: 100% 84%;
 }
 @keyframes lander-pop {
   0% { transform: scale(0.6); opacity: 0; }
@@ -1030,7 +1036,7 @@ summary,
 }
 .lander-mark-anim {
   background-repeat: no-repeat;
-  background-size: 0% 100%;
+  background-size: 0% 84%;
   animation: lander-mark 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 .lander-pop {
@@ -1054,7 +1060,7 @@ summary,
     animation: none !important;
   }
   .lander-mark-anim {
-    background-size: 100% 100%;
+    background-size: 100% 84%;
   }
   .lander-js .reveal {
     opacity: 1;

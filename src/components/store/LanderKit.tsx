@@ -26,11 +26,12 @@ export function Marked({ tone, children, animate = false, className }: { tone: M
   return (
     <span
       className={cn(
-        'rounded-[6px] px-[0.18em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]',
+        // Podloga je visoka 84% „kutije“ slova (Poppins ≈ 1,4em) ≈ 1,18em — staje u red i ne prekriva susedne redove
+        'lander-mark rounded-[6px] px-[0.18em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]',
         animate && 'lander-mark-anim',
         className
       )}
-      style={animate ? { backgroundImage: `linear-gradient(${color}, ${color})` } : { backgroundColor: color }}
+      style={{ backgroundImage: `linear-gradient(${color}, ${color})` }}
     >
       {children}
     </span>

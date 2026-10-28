@@ -7,7 +7,7 @@ import { ArrowRight, Check, CheckCircle2, ChevronDown, Gift, HandHeart, Leaf, Tr
 
 import type { CountryConfig } from '@/config/countries';
 import { getProductVariantsForCountry, type Product } from '@/config/products';
-import { getProductFacts, getStoreVisual, type NeedTile, type StoreOffer } from '@/config/store-content';
+import { getProductFacts, getStoreVisual, tightPackshot, type NeedTile, type StoreOffer } from '@/config/store-content';
 import { getLanderContent } from '@/config/lander-content';
 import { cn } from '@/lib/utils';
 import { TestimonialCarousel } from './CheckoutLander';
@@ -19,7 +19,8 @@ import { formatMoney, variantDiscountPercent, variantPrice, variantSavings } fro
  * Delovi početne i liste proizvoda u stilu prodajne stranice (stari dermotin.rs).
  */
 
-const GREEN_PATTERN = "bg-[#7FCB95] bg-[url('/images/lander/bg2-h17.jpg')] bg-cover bg-center";
+/** Mekana svetla podloga za slike proizvoda (bez zasićene zelene) */
+const SOFT_STAGE = 'bg-[radial-gradient(120%_80%_at_50%_20%,#FFFFFF_0%,#EEF4EF_55%,#E1ECE4_100%)]';
 
 function defaultVariant(product: Product, locale: string) {
   const variants = getProductVariantsForCountry(product, locale);
@@ -60,13 +61,13 @@ export function OfferTile({ offer, product, locale, countryConfig }: { offer: St
         </span>
         {percent > 0 && <span className="rounded-full bg-white px-2.5 py-0.5 text-[12.5px] font-extrabold text-[#F0735A]">−{percent}%</span>}
       </div>
-      <div className={cn('relative aspect-[2/1] overflow-hidden md:aspect-[16/10]', GREEN_PATTERN)}>
+      <div className={cn('relative aspect-[2/1] overflow-hidden', SOFT_STAGE)}>
         <Image
-          src={getStoreVisual(product).packshot}
+          src={tightPackshot(getStoreVisual(product).packshot)}
           alt={offer.title}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover object-[50%_74%] transition duration-700 group-hover:scale-[1.05]"
+          className="object-contain p-4 drop-shadow-[0_14px_18px_rgba(0,0,0,0.16)] transition duration-700 group-hover:scale-[1.05]"
         />
         {quantity > 1 && (
           <span className="absolute right-3 top-3 rounded-full bg-[#2E8655] px-3 py-1 text-[16px] font-extrabold text-white shadow">× {quantity}</span>
@@ -273,8 +274,9 @@ export function LanderFaq({ countryCode, limit = 6 }: { countryCode: string; lim
 /** Zeleni hero sa šarom (kao na prodajnoj stranici). */
 export function GreenHero({ children, image, sticker }: { children: React.ReactNode; image?: React.ReactNode; sticker?: React.ReactNode }) {
   return (
-    <section className={cn('relative overflow-hidden rounded-[28px]', GREEN_PATTERN)}>
-      <div className="pointer-events-none absolute -right-16 top-1/3 h-72 w-72 rounded-full bg-white/25 blur-3xl md:right-24" aria-hidden />
+    <section className="relative overflow-hidden rounded-[28px] bg-[#F7F4EE] ring-1 ring-black/5">
+      <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(46,134,85,0.16)_0%,rgba(46,134,85,0)_68%)]" aria-hidden />
+      <div className="pointer-events-none absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(240,115,90,0.12)_0%,rgba(240,115,90,0)_70%)]" aria-hidden />
       <div className={cn('relative grid items-center px-3 pb-3 pt-7 md:px-14 md:py-12', image && 'md:grid-cols-2')}>
         <div className="text-center">{children}</div>
         {image && (
