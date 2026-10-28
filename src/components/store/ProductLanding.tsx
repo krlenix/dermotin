@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ShoppingBag } from 'lucide-react';
 
@@ -64,11 +64,46 @@ export function ProductLanding({ product, countryConfig, locale, storefront = fa
   const proof = getProductProof(product.id);
   const lander = getLanderContent(product.id);
 
+  // Prelaz iz kataloga (klijentska navigacija): Next.js skroluje na vrh tek posle naših efekata,
+  // pa se skok ispod headera ponavlja dok se položaj ne smiri (~0,5 s). Staje čim kupac sam
+  // skroluje; povratak strelicom „nazad“ zadržava položaj koji vraća pregledač.
+  useLayoutEffect(() => {
+    if (!storefront || window.location.hash || Date.now() - lastPopState < 1500) return;
+    let frames = 0;
+    let frame = 0;
+    const settle = () => {
+      const anchor = document.getElementById(PRODUCT_TOP);
+      if (!anchor) return;
+      const target = anchor.getBoundingClientRect().top + window.scrollY;
+      if (window.scrollY < target - 1) window.scrollTo({ top: target, behavior: 'instant' });
+      if (++frames < 30) frame = requestAnimationFrame(settle);
+    };
+    const stop = () => cancelAnimationFrame(frame);
+    settle();
+    window.addEventListener('wheel', stop, { passive: true });
+    window.addEventListener('touchstart', stop, { passive: true });
+    window.addEventListener('keydown', stop);
+    return () => {
+      stop();
+      window.removeEventListener('wheel', stop);
+      window.removeEventListener('touchstart', stop);
+      window.removeEventListener('keydown', stop);
+    };
+  }, [storefront, product.id]);
+
   return (
     <>
       <PixelTracker countryCode={countryConfig.code} />
       <StorefrontTracking product={product} variant={variant} countryConfig={countryConfig} />
-      {storefront && <ShopHeader />}
+      {storefront && (
+        <>
+          {/* Header nije lepljiv i stranica se otvara odmah na proizvodu; header se vidi tek kada se skroluje skroz gore */}
+          <ShopHeader sticky={false} />
+          <div id={PRODUCT_TOP} aria-hidden />
+          {/* Prvo učitavanje: skok ispod headera dok se HTML parsira, pre prvog iscrtavanja */}
+          <script dangerouslySetInnerHTML={{ __html: JUMP_SCRIPT }} />
+        </>
+      )}
       {lander && (
         <CheckoutLander
           product={product}
@@ -85,6 +120,21 @@ export function ProductLanding({ product, countryConfig, locale, storefront = fa
       <CookieConsent isEU={countryConfig.isEU} />
     </>
   );
+}
+
+const PRODUCT_TOP = 'proizvod';
+
+// Prvo učitavanje: stranica počinje ispod headera (osim sa #sidrom ili kada pregledač vraća položaj).
+// Fiksan tekst — isti na serveru i klijentu, bez razlike pri hidrataciji.
+const JUMP_SCRIPT =
+  "(function(){try{if(location.hash||scrollY>4)return;var t=document.getElementById('proizvod');if(t)scrollTo({top:t.getBoundingClientRect().top+scrollY,behavior:'instant'})}catch(e){}})()";
+
+// Vreme poslednjeg „nazad/napred“ — tada pregledač vraća položaj i ne skačemo ispod headera
+let lastPopState = 0;
+if (typeof window !== 'undefined') {
+  window.addEventListener('popstate', () => {
+    lastPopState = Date.now();
+  });
 }
 
 /** Druga radnja ispod forme: proizvod ide u korpu (više proizvoda, besplatna dostava preko praga). */

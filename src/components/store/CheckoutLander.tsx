@@ -328,7 +328,7 @@ export function CheckoutLander({
           </div>
 
           {/* ── DESNA KOLONA: PORUDŽBINA ───────────────────────────── */}
-          <aside className={cn('lg:sticky', storefront ? 'lg:top-28' : 'lg:top-20')}>
+          <aside className={cn('lg:sticky', storefront ? 'lg:top-6' : 'lg:top-20')}>
             <div className="reveal rounded-card bg-white p-4 shadow-raised md:p-6">
               {registration && (
                 <div className="flex items-center gap-4 border-b border-line pb-4">

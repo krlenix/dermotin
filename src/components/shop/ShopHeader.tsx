@@ -17,13 +17,15 @@ import { cn } from '@/lib/utils';
 interface ShopHeaderProps {
   /** Viber/kampanjske stranice: bez korpe i navigacije koja odvodi sa ponude */
   minimal?: boolean;
+  /** Stranica proizvoda: header se ne lepi za vrh (vidi se samo kada se skroluje skroz gore) */
+  sticky?: boolean;
 }
 
 /**
  * Zajednički header sajta: zelena traka sa prednostima + beli sticky meni.
  * Na telefonu: logo, poziv, korpa i meni (akcije, proizvodi, kontakt, zemlja).
  */
-export function ShopHeader({ minimal = false }: ShopHeaderProps) {
+export function ShopHeader({ minimal = false, sticky = true }: ShopHeaderProps) {
   const t = useTranslations('store');
   const tNav = useTranslations();
   const locale = useLocale();
@@ -77,7 +79,7 @@ export function ShopHeader({ minimal = false }: ShopHeaderProps) {
         </p>
       </div>
 
-      <header className={cn(landerFontClass, 'sticky top-0 z-[140] bg-white/95 shadow-[0_4px_18px_rgb(0_0_0/0.07)] backdrop-blur')}>
+      <header className={cn(landerFontClass, 'z-[140] bg-white/95 shadow-[0_4px_18px_rgb(0_0_0/0.07)] backdrop-blur', sticky ? 'sticky top-0' : 'relative')}>
         <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between gap-3 px-3 md:h-[72px] md:px-6">
           <div className="flex items-center gap-9">
             <Link href={`/${locale}`} className="inline-flex shrink-0 items-center">
