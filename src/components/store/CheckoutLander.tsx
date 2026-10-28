@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import {
@@ -24,11 +24,11 @@ import {
 import { getProductVariantsForCountry, type Product } from '@/config/products';
 import { getDefaultCourier, type CountryConfig } from '@/config/countries';
 import type { LanderContent } from '@/config/lander-content';
-import { getStoreOffers, getStoreVisual } from '@/config/store-content';
+import { getStoreOffers, getStoreVisual, getUnitPackshot, tightPackshot } from '@/config/store-content';
 import { cn } from '@/lib/utils';
 import type { BundlePart } from './BundleContents';
 import { landerFontClass } from './fonts';
-import { Bold, CountUp, FOREST_BG, LanderFooter, Marked, Stars, TornBand, plural, richTags, useDeliveryRange, useReveal } from './LanderKit';
+import { Bold, CountUp, FOREST_BG, LanderFooter, Marked, Stars, TornBand, plural, richTags, useDeliveryRange, useReveal, ReviewShots } from './LanderKit';
 import { QuickOrderForm, type QuickOrderLine } from './QuickOrderForm';
 import { formatMoney, scrollToOrderForm, variantDiscountPercent, variantPrice, variantSavings } from './format';
 
@@ -190,7 +190,7 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
         <div className="mt-4 grid gap-6 md:mt-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-8">
           {/* ── LEVA KOLONA ───────────────────────────────────────── */}
           <div className="min-w-0 space-y-6 md:space-y-8">
-            {/* 10,000+ i prednosti */}
+            {/* 30.000+ i prednosti */}
             <section className="reveal rounded-[24px] border-l-4 border-[#2E8655] bg-white p-3 shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:p-6">
               <p className="pt-2 text-center text-[58px] font-extrabold leading-none tracking-tight md:text-[84px]">
                 <CountUp value={content.customers} /> <span className="text-[#2E8655]">+</span>
@@ -395,18 +395,7 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
 
           <TestimonialCarousel items={content.testimonials} yearsLabel={t('years')} />
 
-          {shots.length > 0 && (
-            <div className="mt-8">
-              <p className="text-[18px] font-bold">{t('shots_title')}</p>
-              <div className="-mx-3 mt-4 flex snap-x gap-3 overflow-x-auto px-3 pb-2 text-left [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
-                {shots.map(([src, width, height]) => (
-                  <div key={src} className="w-[240px] shrink-0 snap-start self-start overflow-hidden rounded-[12px] border border-[#ddd] bg-white">
-                    <Image src={src} alt="Komentar kupca" width={width} height={height} sizes="240px" className="h-auto max-h-[380px] w-full object-cover object-top" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <ReviewShots shots={shots} title={t('shots_title')} />
 
           <p className="mt-8 text-[24px] font-extrabold leading-tight md:text-[30px]">{t.rich('reviews_more', { ...richTags, count: reviewsCount })}</p>
           <p className="mx-auto mt-3 max-w-xl text-[21px] font-bold leading-snug md:text-[24px]">{t.rich('reviews_sub', richTags)}</p>
@@ -551,7 +540,11 @@ function OfferBox({
   const points: React.ReactNode[] = [];
   if (isSet) {
     points.push(t.rich('offer_set', { ...b, count: bundleParts.length }));
-    if (gratis) points.push(t.rich('offer_gratis', { ...b, name: gratis.product.name }));
+    if (gratis) {
+      const units = gratis.quantity * Math.max(1, gratis.variant?.quantity ?? 1);
+      const gratisForms = gratis.product.category === 'supplements' ? t('bottle_forms') : t('pack_forms');
+      points.push(t.rich('offer_gratis', { ...b, qty: units, unit: plural(units, gratisForms), name: gratis.product.name }));
+    }
     if (savings > 0) points.push(t.rich('offer_set_value', { ...b, regular: formatMoney(regular, countryConfig), price: formatMoney(price, countryConfig) }));
   } else if (quantity > 1) {
     points.push(t.rich('offer_qty', { ...b, qty: quantity, unit: plural(quantity, forms) }));
@@ -582,27 +575,48 @@ function OfferBox({
       <div className="p-4">
         <p className="text-[17px] font-bold">{t('offer_title')}</p>
 
-        {/* Vizuelno: komponente seta ili broj komada */}
-        <div className="mt-3 flex items-center justify-center gap-2 rounded-[14px] bg-white p-2">
+        {/* Vizuelno: tačno ono što kupac dobija (komponente seta po komadu ili broj komada) */}
+        <div className="mt-3 rounded-[14px] bg-white p-3">
           {isSet ? (
-            bundleParts.map((part, index) => (
-              <div key={part.product.id} className="flex items-center gap-2">
-                {index > 0 && (
-                  <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2E8655] text-white">
-                    <Plus className="h-4 w-4" strokeWidth={3} />
-                  </span>
-                )}
-                <div className="relative h-24 w-28">
-                  <Image src={getStoreVisual(part.product).packshot} alt={part.product.name} fill sizes="112px" className="object-cover object-[50%_75%]" />
-                  {part.gratis && (
-                    <span className="absolute -top-1 right-0 rounded-full bg-[#F0735A] px-2 py-0.5 text-[10px] font-bold uppercase text-white">Gratis</span>
-                  )}
-                </div>
-              </div>
-            ))
+            <div className="flex items-start justify-center gap-1.5">
+              {bundleParts.map((part, index) => {
+                const units = part.quantity * Math.max(1, part.variant?.quantity ?? 1);
+                const partForms = part.product.category === 'supplements' ? t('bottle_forms') : t('pack_forms');
+                return (
+                  <Fragment key={part.product.id}>
+                    {index > 0 && (
+                      <span className="mt-10 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2E8655] text-white">
+                        <Plus className="h-4 w-4" strokeWidth={3} />
+                      </span>
+                    )}
+                    <div className="flex min-w-0 flex-1 flex-col items-center text-center">
+                      <div className="relative h-28 w-full max-w-[150px]">
+                        <Image
+                          src={tightPackshot(getUnitPackshot(part.product))}
+                          alt={part.product.name}
+                          fill
+                          sizes="150px"
+                          className="object-contain object-bottom drop-shadow-[0_8px_10px_rgba(0,0,0,0.14)]"
+                        />
+                      </div>
+                      <p className="mt-2 text-[12px] font-extrabold uppercase leading-tight">{part.product.name}</p>
+                      <p
+                        className={cn(
+                          'mt-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold',
+                          part.gratis ? 'bg-[#F0735A] text-white' : 'bg-[#2E8655]/10 text-[#1d5434]'
+                        )}
+                      >
+                        {units} {plural(units, partForms)}
+                        {part.gratis ? ' · GRATIS' : ''}
+                      </p>
+                    </div>
+                  </Fragment>
+                );
+              })}
+            </div>
           ) : (
-            <div className="relative h-28 w-full max-w-[240px]">
-              <Image src={packshot} alt={product.name} fill sizes="240px" className="object-cover object-[50%_75%]" />
+            <div className="relative mx-auto h-32 w-full max-w-[260px]">
+              <Image src={tightPackshot(packshot)} alt={product.name} fill sizes="260px" className="object-contain object-bottom drop-shadow-[0_8px_10px_rgba(0,0,0,0.14)]" />
               {quantity > 1 && (
                 <span className="absolute right-0 top-0 rounded-full bg-[#2E8655] px-3 py-1 text-[16px] font-extrabold text-white">× {quantity}</span>
               )}

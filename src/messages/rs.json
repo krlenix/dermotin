@@ -1031,12 +1031,12 @@
       "all_title": "Svi proizvodi"
     },
     "proof": {
-      "customers_line": "{years} godine i {customers} zadovoljnih korisnika",
+      "customers_line": "{years} godine i {customers} zadovoljnih kupaca",
       "reviews_eyebrow": "Utisci kupaca",
       "reviews_title": "Šta kažu naši — cenjeni kupci",
       "reviews_more": "Ovo su samo neke od {count} recenzija",
       "shots_title": "Pravi komentari sa naših društvenih mreža",
-      "satisfied": "zadovoljnih korisnika",
+      "satisfied": "zadovoljnih kupaca",
       "reviews_label": "recenzija",
       "rating_label": "prosečna ocena kupaca",
       "years_label": "godine sa vama",
@@ -1069,7 +1069,7 @@
       "urgency_title": "Poručite odmah",
       "urgency_sub": "Ne propustite akciju!",
       "learn_more": "Saznaj više",
-      "customers_line": "2 godine i <g>{customers}</g> zadovoljnih korisnika",
+      "customers_line": "2 godine i <g>{customers}</g> zadovoljnih kupaca",
       "story_line": "Neka i <b>Vaša</b> priča bude jedna od <b>mnogih uspešnih</b>",
       "cta": "Poruči po <b>sniženoj ceni</b>",
       "ingredients_title": "Provereni <g>Sastojci</g> i Formula",
@@ -1109,7 +1109,7 @@
       "offer_save": "Uštedite <b>{amount}</b> (−{percent}%)",
       "offer_set": "Dobijate <b>{count} proizvoda</b> u jednom paketu",
       "offer_set_value": "Pojedinačno {regular} → u akciji samo <b>{price}</b>",
-      "offer_gratis": "<b>{name}</b> dobijate GRATIS",
+      "offer_gratis": "<b>{qty} {unit} {name}</b> dobijate GRATIS",
       "offer_single": "Dobijate <b>{name}</b>",
       "offer_free_shipping": "<b>Besplatna dostava</b> na vašu adresu",
       "regular_price": "Redovna cena",
@@ -1137,7 +1137,21 @@
       "guarantee_unit_home": "kutije ili bočice",
       "sticker": "Akcije do",
       "shop_title": "Biljna nega i podrška <c>za svaki dan</c>",
-      "filter_label": "Prikaži:"
+      "filter_label": "Prikaži:",
+      "reviews_title_home": "Šta kažu naši <g>kupci</g>",
+      "trust_registered_title": "Registrovani proizvodi",
+      "trust_registered_text": "Ministarstvo zdravlja RS i EU regulativa",
+      "stat_customers": "zadovoljnih kupaca",
+      "stat_reviews": "recenzija kupaca",
+      "stat_years": "godine sa vama",
+      "stat_returns": "dana za povraćaj",
+      "all_offers": "Sve akcije",
+      "final_title": "Akcije traju <c>dok traju zalihe</c>",
+      "final_text": "Izaberite set ili paket, upišite adresu i platite kuriru tek kada preuzmete paket.",
+      "faq_sub": "Sve o porudžbini, dostavi i plaćanju na jednom mestu.",
+      "hero_badge": "{rating} · {reviews} recenzija · {customers} kupaca",
+      "offer_of_day": "Ponuda dana",
+      "view": "Pogledaj"
     }
   }
 }

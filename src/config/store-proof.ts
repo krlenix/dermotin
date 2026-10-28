@@ -23,7 +23,7 @@ export interface Registration {
 }
 
 export interface ProductProof {
-  /** „2 godine i 10.000+ zadovoljnih korisnika“ */
+  /** „2 godine i 30.000+ zadovoljnih kupaca“ — isti broj na celom sajtu (SITE_CUSTOMERS) */
   customers: string;
   years: number;
   /** „Ovo su samo neke od 850+ recenzija“ */
@@ -163,7 +163,10 @@ const T = {
 
 const shots = (...folders: string[]) => folders.flatMap((folder) => REVIEW_SHOTS[folder] ?? []);
 
-const base = { customers: '10.000+', years: 2, reviewsCount: '850+', guaranteeUnit: 'bočice' as const };
+/** Broj zadovoljnih kupaca — jedan za ceo sajt (odluka vlasnika, 2026-10-28). */
+export const SITE_CUSTOMERS = '30.000+';
+
+const base = { customers: SITE_CUSTOMERS, years: 2, reviewsCount: '850+', guaranteeUnit: 'bočice' as const };
 
 const PROOF: Record<string, ProductProof> = {
   biomelis_kapi: { ...base, testimonials: T.biomelisKapi, registrations: [MINISTRY.biomelis_kapi], shots: shots('biomelis-kapi', 'mixed-biomelis-family') },
@@ -171,7 +174,6 @@ const PROOF: Record<string, ProductProof> = {
   bioroid_kapi: { ...base, testimonials: T.bioroidKapi, registrations: [MINISTRY.bioroid_kapi], shots: shots('mixed-dermotin-pack') },
   bioroid_set: {
     ...base,
-    customers: '20.000+',
     testimonials: [...T.bioroidSet, ...T.bioroid, ...T.bioroidKapi],
     registrations: [MINISTRY.bioroid_kapi],
     shots: shots('mixed-dermotin-pack'),
@@ -184,7 +186,7 @@ const PROOF: Record<string, ProductProof> = {
     registrations: [MINISTRY.biomelis_kapi],
     shots: shots('biomelis', 'biomelis-kapi', 'mixed-biomelis-family'),
   },
-  fungel: { ...base, customers: '12.000+', guaranteeUnit: 'kutije', testimonials: T.fungel, registrations: [], shots: shots('fungel') },
+  fungel: { ...base, guaranteeUnit: 'kutije', testimonials: T.fungel, registrations: [], shots: shots('fungel') },
   fungomax: { ...base, testimonials: T.fungomax, registrations: [FUNGOMAX_LAB], shots: shots('fungel') },
   fungel_fungomax_set: { ...base, testimonials: [...T.fungel, ...T.fungomax], registrations: [FUNGOMAX_LAB], shots: shots('fungel') },
   biowart: { ...base, guaranteeUnit: 'kutije', testimonials: T.biowart, registrations: [], shots: shots('biowart') },
@@ -200,7 +202,7 @@ PROOF.fungel_fungomax_gratis = PROOF.fungel_fungomax_set;
 
 /** Za početnu: svi komentari, izmešani po proizvodima */
 export const STORE_PROOF = {
-  customers: '10.000+',
+  customers: SITE_CUSTOMERS,
   years: 2,
   reviewsCount: '850+',
   testimonials: [T.fungel[0], T.biomelis[0], T.biowart[1], T.biomelisKapi[0], T.immunis[0], T.bioroid[2]],

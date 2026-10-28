@@ -103,7 +103,7 @@ export function useReveal(rootRef: React.RefObject<HTMLDivElement | null>) {
   }, [rootRef]);
 }
 
-/** „10,000 +“ broji naviše kada se pojavi na ekranu. */
+/** „30.000+“ broji naviše kada se pojavi na ekranu (srpski separator hiljada). */
 export function CountUp({ value }: { value: string }) {
   const target = Number(value.replace(/[^\d]/g, '')) || 0;
   const [current, setCurrent] = useState(target);
@@ -134,7 +134,7 @@ export function CountUp({ value }: { value: string }) {
       cancelAnimationFrame(frame);
     };
   }, [target]);
-  return <span ref={ref}>{current.toLocaleString('en-US')}</span>;
+  return <span ref={ref}>{current.toLocaleString('de-DE')}</span>;
 }
 
 /** Procena isporuke: danas + 1–2 radna dana (računa se u browseru zbog vremenske zone). */
@@ -263,5 +263,78 @@ export function LanderFooter({ countryConfig, locale, className }: { countryConf
         />
       )}
     </>
+  );
+}
+
+/**
+ * Snimci pravih komentara: kartice iste visine (bez praznog prostora), strelice na
+ * desktopu, a klik otvara ceo komentar preko celog ekrana.
+ */
+export function ReviewShots({ shots, title }: { shots: Array<[string, number, number]>; title: string }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState<[string, number, number] | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => event.key === 'Escape' && setOpen(null);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+  if (shots.length === 0) return null;
+  const scroll = (direction: 1 | -1) => trackRef.current?.scrollBy({ left: direction * trackRef.current.clientWidth * 0.8, behavior: 'smooth' });
+
+  return (
+    <div className="mt-8">
+      <div className="flex items-center justify-center gap-3 md:justify-between">
+        <p className="text-[18px] font-bold md:text-[20px]">{title}</p>
+        <div className="hidden gap-2 md:flex">
+          {([-1, 1] as const).map((direction) => (
+            <button
+              key={direction}
+              type="button"
+              onClick={() => scroll(direction)}
+              aria-label={direction < 0 ? 'Prethodni' : 'Sledeći'}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#2E8655] text-white transition hover:bg-[#2a7349]"
+            >
+              <ArrowRight className={cn('h-4 w-4', direction < 0 && 'rotate-180')} />
+            </button>
+          ))}
+        </div>
+      </div>
+      <div
+        ref={trackRef}
+        className="-mx-3 mt-4 flex snap-x gap-3 overflow-x-auto px-3 pb-2 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+      >
+        {shots.map((shot) => {
+          // Širina prati oblik snimka (fiksna visina) — bez praznog belog prostora
+          const width = Math.round(Math.min(340, Math.max(170, (200 * shot[1]) / shot[2])));
+          return (
+            <button
+              key={shot[0]}
+              type="button"
+              onClick={() => setOpen(shot)}
+              style={{ width }}
+              className="group relative h-[200px] shrink-0 snap-start overflow-hidden rounded-[14px] border border-[#ddd] bg-white text-left shadow-[0_6px_16px_rgba(0,0,0,0.06)]"
+            >
+              <Image src={shot[0]} alt="Komentar kupca" fill sizes="340px" className="object-cover object-top transition duration-500 group-hover:scale-[1.03]" />
+            </button>
+          );
+        })}
+      </div>
+      {open && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 p-4" onClick={() => setOpen(null)} role="dialog" aria-modal="true">
+          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-auto rounded-[14px] bg-white p-2" onClick={(event) => event.stopPropagation()}>
+            <Image src={open[0]} alt="Komentar kupca" width={open[1]} height={open[2]} sizes="(max-width: 768px) 100vw, 672px" className="h-auto w-full" />
+            <button
+              type="button"
+              onClick={() => setOpen(null)}
+              className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#111]/80 text-[18px] font-bold text-white"
+              aria-label="Zatvori"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

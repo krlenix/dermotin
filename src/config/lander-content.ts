@@ -5,7 +5,7 @@
  *
  * Ključ je product.id (isti u svim lokalima).
  */
-import type { Registration } from './store-proof';
+import { SITE_CUSTOMERS, type Registration } from './store-proof';
 
 export type Mark = 'green' | 'coral';
 
@@ -19,7 +19,7 @@ export interface LanderTestimonial {
 export interface LanderContent {
   /** Naslov u hero delu, red po red; mark = obojena podloga iza teksta */
   hero: Array<{ text: string; mark?: Mark }>;
-  /** „10,000 +“ */
+  /** Broj zadovoljnih kupaca (SITE_CUSTOMERS, „30.000+“) */
   customers: string;
   /** Naslov iznad liste prednosti (npr. „IMMUNIS kapi pomažu“) */
   benefitsTitle?: string;
@@ -115,7 +115,7 @@ const BIOMELIS_KAPI: LanderContent = {
     { text: 'za jetru i metabolizam' },
     { text: 'Bez osećaja nadutosti, težine i umora nakon obroka', mark: 'coral' },
   ],
-  customers: '10,000 +',
+  customers: SITE_CUSTOMERS,
   benefits: [
     'Pomažu jetri u neutralisanju toksina',
     'Podstiču izbacivanje viška tečnosti',
@@ -164,7 +164,7 @@ const IMMUNIS_KAPI: LanderContent = {
     { text: '3 bočice za celu sezonu gripa i prehlada' },
     { text: 'za jači imunitet i zdravije disajne puteve', mark: 'coral' },
   ],
-  customers: '10,000 +',
+  customers: SITE_CUSTOMERS,
   benefitsTitle: 'IMMUNIS kapi pomažu',
   benefits: [
     'Aktivaciju prirodne odbrane organizma',
@@ -221,7 +221,7 @@ const BIOROID_KAPI: LanderContent = {
     { text: 'za ublažavanje hemoroidalnih tegoba' },
     { text: 'i regeneraciju osetljivog tkiva', mark: 'coral' },
   ],
-  customers: '10,000 +',
+  customers: SITE_CUSTOMERS,
   benefitsTitle: 'BIOROID kapi pomažu',
   benefits: [
     'Ublažavanju neprijatnosti kod hemoroida (svrab, peckanje, osećaj nelagodnosti)',
@@ -263,7 +263,7 @@ const BIOROID_SET: LanderContent = {
     { text: 'protiv hemoroida' },
     { text: 'Deluju iznutra i spolja – za brže i potpunije olakšanje', mark: 'coral' },
   ],
-  customers: '20,000 +',
+  customers: SITE_CUSTOMERS,
   benefitsTitle: 'Prva prirodna kombinacija koja istovremeno',
   benefits: [
     'Umiruje upale i svrab iznutra',
@@ -308,7 +308,7 @@ const BIOROID: LanderContent = {
     { text: 'Pomoć u nezi hemoroida.' },
     { text: 'Osećaj olakšanja i blago umirenje kože već nakon nekoliko primena', mark: 'coral' },
   ],
-  customers: '10,000 +',
+  customers: SITE_CUSTOMERS,
   benefits: [
     'Brzo umiruje iritaciju, svrab i nelagodnost analne regije',
     'Podstiče regeneraciju osetljive kože',
@@ -353,7 +353,7 @@ const FUNGOMAX: LanderContent = {
     { text: 'za kožu i nokte' },
     { text: 'sklone pojavi gljivica', mark: 'coral' },
   ],
-  customers: '10,000 +',
+  customers: SITE_CUSTOMERS,
   benefits: [
     'Brzo delovanje već nakon par nedelja',
     'Eliminiše neprijatne mirise stopala',
@@ -382,7 +382,7 @@ const FUNGOMAX: LanderContent = {
 
 const FUNGEL: LanderContent = {
   hero: FUNGOMAX.hero,
-  customers: '20,000 +',
+  customers: SITE_CUSTOMERS,
   benefits: FUNGEL_BENEFITS,
   quote: FUNGEL_QUOTE,
   ingredientsIntro: '**FUNGEL** krema sadrži pažljivo odabrane **100% prirodne sastojke**, **bez GMO**, čija je efikasnost i bezbednost potvrđena istraživanjima.',
@@ -414,7 +414,7 @@ const BIOMELIS: LanderContent = {
     { text: 'za kožu sklonu' },
     { text: 'ekcemima i psorijazi', mark: 'coral' },
   ],
-  customers: '20,000 +',
+  customers: SITE_CUSTOMERS,
   benefits: [
     'Brzo delovanje već nakon par primena',
     'Ublažava crvenilo, svrab i perutanje kože uzrokovano ekcemom i psorijazom',
@@ -480,7 +480,7 @@ const BIOWART: LanderContent = {
     { text: 'za zdravu kožu' },
     { text: 'BEZ BRADAVICA', mark: 'coral' },
   ],
-  customers: '10,000 +',
+  customers: SITE_CUSTOMERS,
   benefits: [
     'Podržava prirodnu otpornost kože',
     'Podstiče regeneraciju tretiranih područja',

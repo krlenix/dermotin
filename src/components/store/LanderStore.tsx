@@ -11,7 +11,7 @@ import { getProductFacts, getStoreVisual, type NeedTile, type StoreOffer } from 
 import { getLanderContent } from '@/config/lander-content';
 import { cn } from '@/lib/utils';
 import { TestimonialCarousel } from './CheckoutLander';
-import { Bold, Marked, Stars, richTags } from './LanderKit';
+import { Bold, Marked, ReviewShots, Stars, richTags } from './LanderKit';
 import { useGeneralFaq } from './StoreSections';
 import { formatMoney, variantDiscountPercent, variantPrice, variantSavings } from './format';
 
@@ -195,18 +195,7 @@ export function LanderReviews({ productIds, shots, reviewsCount }: { productIds:
         <Image src="/images/lander/thumb.webp" alt="" width={128} height={44} className="h-11 w-auto" />
       </div>
       <TestimonialCarousel items={testimonials} yearsLabel={t('years')} />
-      {shots.length > 0 && (
-        <div className="mt-8">
-          <p className="text-[18px] font-bold">{t('shots_title')}</p>
-          <div className="-mx-3 mt-4 flex snap-x gap-3 overflow-x-auto px-3 pb-2 text-left [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
-            {shots.map(([src, width, height]) => (
-              <div key={src} className="w-[240px] shrink-0 snap-start self-start overflow-hidden rounded-[12px] border border-[#ddd] bg-white">
-                <Image src={src} alt="Komentar kupca" width={width} height={height} sizes="240px" className="h-auto max-h-[380px] w-full object-cover object-top" />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ReviewShots shots={shots} title={t('shots_title')} />
       <p className="mt-8 text-[24px] font-extrabold leading-tight md:text-[30px]">{t.rich('reviews_more', { ...richTags, count: reviewsCount })}</p>
       <p className="mx-auto mt-3 max-w-xl text-[20px] font-bold leading-snug md:text-[24px]">{t.rich('reviews_sub', richTags)}</p>
     </section>

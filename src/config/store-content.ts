@@ -262,8 +262,9 @@ export function getSalesCopy(productId: string, locale: string): SalesCopy | nul
  * kartice i galerije izgledaju kao jedna kolekcija. Ključ je product.id (isti u svim
  * lokalima); proizvod bez unosa koristi svoje slike iz products.ts.
  */
-const STORE_VISUALS: Record<string, { packshot: string; extra?: string[] }> = {
-  immunis_kapi: { packshot: '/images/store/immunis-3pak.png', extra: ['/images/store/immunis-kapi.png'] },
+// single = slika JEDNOG komada (za komponente setova), kada je glavni packshot višepak
+const STORE_VISUALS: Record<string, { packshot: string; single?: string; extra?: string[] }> = {
+  immunis_kapi: { packshot: '/images/store/immunis-3pak.png', single: '/images/store/immunis-kapi.png', extra: ['/images/store/immunis-kapi.png'] },
   bioroid_set: {
     packshot: '/images/store/bioroid-set.png',
     extra: ['/images/store/bioroid.png', '/images/store/bioroid-kapi.png'],
@@ -386,4 +387,15 @@ PRODUCT_FACTS.biowart_immunis_gratis = [
 
 export function getProductFacts(productId: string): ProductFact[] {
   return PRODUCT_FACTS[productId] ?? [];
+}
+
+/** Slika jednog komada proizvoda — za prikaz komponenti seta (npr. 1 bočica IMMUNIS, ne zimski paket). */
+export function getUnitPackshot(product: { id: string; images: { main: string; gallery: string[] } }): string {
+  const visual = STORE_VISUALS[product.id];
+  return visual?.single ?? getStoreVisual(product).packshot;
+}
+
+/** Tesno isečen providni packshot (bez praznog kadra) — za male prikaze jedan pored drugog. */
+export function tightPackshot(src: string): string {
+  return isPackshot(src) && !src.includes('/tight/') && !src.endsWith('hero-group.png') ? src.replace('/images/store/', '/images/store/tight/') : src;
 }
