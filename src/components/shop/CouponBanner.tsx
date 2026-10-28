@@ -11,7 +11,10 @@ interface CouponBannerProps {
   className?: string;
 }
 
-/** Animirani baner aktivnog kupona (npr. POPUST20 iz reklame) na product stranici i u korpi */
+/**
+ * Baner aktivnog kupona (npr. POPUST20 iz reklame) u korpi i checkout-u.
+ * Koralni „okvir ponude“ (DESIGN.md): sitan koralni tekst je coral-deep na coral-soft podlozi.
+ */
 export function CouponBanner({ coupon, formatPrice, onRemove, className }: CouponBannerProps) {
   const t = useTranslations();
 
@@ -26,30 +29,29 @@ export function CouponBanner({ coupon, formatPrice, onRemove, className }: Coupo
 
   return (
     <div
-      className={`coupon-banner-animate relative overflow-hidden rounded-[1.1rem] border border-[#F3765D]/25 bg-[linear-gradient(100deg,#F3765D_0%,#e0654d_100%)] px-4 py-3 text-white shadow-[0_14px_30px_rgba(243,118,93,0.32)] ${className ?? ''}`}
+      className={`coupon-banner-animate flex items-center gap-3 rounded-panel border-2 border-coral bg-coral-soft py-2.5 pl-3 pr-1.5 ${className ?? ''}`}
     >
-      <div className="coupon-shimmer pointer-events-none absolute inset-0" />
-      <div className="relative flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15">
-          <TicketPercent className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-black leading-tight md:text-base">
-            {t('coupons.activated_title', { code: coupon.code })}
-          </p>
-          <p className="text-xs font-semibold text-white/85 md:text-sm">{benefitText}</p>
-        </div>
-        {onRemove && (
-          <button
-            type="button"
-            onClick={onRemove}
-            aria-label={t('coupons.remove_coupon')}
-            className="shrink-0 rounded-full p-1.5 text-white/70 transition-colors hover:bg-white/15 hover:text-white"
-          >
-            <X className="h-4 w-4" />
-          </button>
+      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-coral-deep text-white">
+        <TicketPercent className="h-5 w-5" aria-hidden />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[0.9375rem] font-extrabold leading-snug text-coral-deep">
+          {t('coupons.activated_title', { code: coupon.code })}
+        </p>
+        {benefitText && (
+          <p className="text-[0.8125rem] font-medium leading-snug text-ink-soft">{benefitText}</p>
         )}
       </div>
+      {onRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={t('coupons.remove_coupon')}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white hover:text-ink"
+        >
+          <X className="h-4 w-4" aria-hidden />
+        </button>
+      )}
     </div>
   );
 }

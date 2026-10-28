@@ -13,6 +13,8 @@ import { topomsEnabledFor } from '@/lib/topoms/config';
 import { digest, expandLegacyBundles, mapOrder } from '@/lib/topoms/mapping';
 import { enqueueOrder, drainDeliveries } from '@/lib/topoms/outbox';
 import { reserveOrderNumber, usesShortOrderNumbers } from '@/lib/topoms/order-number';
+import { orderInputSchema, verifyOrderPricing } from '@/lib/order-guard';
+import { allowRequest, clientIp as requestIp } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -106,27 +108,7 @@ export interface OrderData {
 
 // Function to get domain for X-Shop-Domain header (prioritize dynamic URL detection)
 function getCurrentDomain(req: NextRequest): string {
-  const host = req.headers.get('host');
-  const envDomain = process.env.NEXT_PUBLIC_DOMAIN;
-  
-  console.log(`🌐 Host header from request: "${host}"`);
-  console.log(`🌐 NEXT_PUBLIC_DOMAIN env var: "${envDomain}"`);
-  
-  // Prioritize host header from request (dynamic URL detection)
-  if (host) {
-    console.log(`🌐 Using dynamic host header: "${host}"`);
-    return host;
-  }
-  
-  // Fallback to environment variable if no host header
-  if (envDomain) {
-    console.log(`🌐 Fallback to NEXT_PUBLIC_DOMAIN: "${envDomain}"`);
-    return envDomain;
-  }
-  
-  // Last resort fallback
-  console.log(`🌐 Using last resort fallback: "localhost"`);
-  return 'localhost';
+  return req.headers.get('host') || process.env.NEXT_PUBLIC_DOMAIN || 'localhost';
 }
 
 async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, currentDomain: string) {
@@ -190,17 +172,7 @@ async function sendToWebhook(webhookData: WebhookPayload, countryCode: string, c
   }
 
   try {
-    console.log(`📤 Webhook URL for ${countryCode}:`, webhookConfig.url);
-    const safeHeaders = {
-      ...headers,
-      ...(headers['X-API-Key'] ? { 'X-API-Key': '[REDACTED]' } : {}),
-      ...(headers['X-Webhook-Signature'] ? { 'X-Webhook-Signature': '[REDACTED]' } : {}),
-    };
-    console.log(`📤 Webhook headers for ${countryCode}:`, JSON.stringify(safeHeaders, null, 2));
-    console.log(`📤 Webhook payload for ${countryCode}:`, JSON.stringify(webhookData, null, 2));
-    
-
-    
+    // Bez ispisa payload-a: sadrži ime, telefon i adresu kupca
     const response = await fetch(webhookConfig.url, {
       method: 'POST',
       headers,
@@ -231,8 +203,39 @@ export async function POST(request: NextRequest) {
     // Get current domain early in the handler
     const currentDomain = getCurrentDomain(request);
 
-    const orderData: Omit<OrderData, 'orderId'> & { 
-      fbp?: string; 
+    // Zaštita od skripti koje šalju lažne porudžbine pouzećem (dostava se plaća)
+    if (!allowRequest(`order:${requestIp(request)}`, 20, 10 * 60 * 1000)) {
+      return NextResponse.json(
+        { success: false, error: 'Previše pokušaja za kratko vreme. Sačekajte nekoliko minuta ili nas pozovite.' },
+        { status: 429 }
+      );
+    }
+
+    let rawOrder: unknown;
+    try {
+      rawOrder = await request.json();
+    } catch {
+      return NextResponse.json({ success: false, error: 'Neispravan zahtev.' }, { status: 400 });
+    }
+    const parsed = orderInputSchema.safeParse(rawOrder);
+    if (!parsed.success) {
+      console.warn('Order rejected: invalid fields', parsed.error.issues.map((issue) => issue.path.join('.')).join(', '));
+      return NextResponse.json(
+        { success: false, error: 'Proverite podatke za isporuku i pokušajte ponovo.' },
+        { status: 400 }
+      );
+    }
+    const pricing = await verifyOrderPricing(parsed.data);
+    if (!pricing.ok) {
+      console.warn('Order rejected: pricing', pricing.reason);
+      return NextResponse.json(
+        { success: false, error: 'Cene su se u međuvremenu promenile. Osvežite stranicu i pokušajte ponovo.' },
+        { status: 422 }
+      );
+    }
+
+    const orderData = parsed.data as unknown as Omit<OrderData, 'orderId'> & {
+      fbp?: string;
       fbc?: string;
       eventId?: string;
       pageUrl?: string;
@@ -241,7 +244,7 @@ export async function POST(request: NextRequest) {
       // Campaign channel outside paid social (e.g. Viber). Such orders never
       // emit a Meta CAPI Purchase, so they cannot touch ad optimization.
       channel?: 'viber';
-    } = await request.json();
+    };
     const isOfflineChannel = orderData.channel === 'viber';
     if (isOfflineChannel) {
       orderData.marketingParams = { ...(orderData.marketingParams || {}), medium: 'viber' } as MarketingParams;
@@ -257,12 +260,8 @@ export async function POST(request: NextRequest) {
 
     // Get marketing parameters from cookies first, then fall back to request body
     const cookieHeader = request.headers.get('cookie');
-    console.log('🍪 Cookie header present:', !!cookieHeader, 'Length:', cookieHeader?.length || 0);
-    
     const cookieMarketingParams = getMarketingCookiesFromHeaders(cookieHeader);
-    console.log('📊 Marketing params from cookies:', cookieMarketingParams);
-    console.log('📊 Marketing params from request body:', orderData.marketingParams);
-    
+
     // Prefer request body (always fresh, includes sessionStorage data)
     // Fall back to cookies if request body doesn't have data
     const hasBodyData = orderData.marketingParams && (
@@ -274,8 +273,6 @@ export async function POST(request: NextRequest) {
     );
     
     const marketingParams = hasBodyData ? orderData.marketingParams : cookieMarketingParams;
-    console.log('📊 Final marketing parameters:', marketingParams);
-    console.log('📊 Using source:', hasBodyData ? 'REQUEST BODY (sessionStorage or cookies)' : 'COOKIE HEADERS');
 
     // Idempotency guard — if the browser submits the same eventId twice, return
     // the original orderId without re-running the webhook or re-firing CAPI Purchase.
@@ -333,18 +330,7 @@ export async function POST(request: NextRequest) {
     
     // Get product discount amount (excluding shipping discount)
     const totalProductDiscount = orderData.coupon?.productDiscount || 0;
-    
-    // Debug: Log coupon data
-    if (orderData.coupon) {
-      console.log('🎟️ Coupon data received:', JSON.stringify(orderData.coupon, null, 2));
-      console.log('🎟️ Total product discount to distribute:', totalProductDiscount);
-      if (isBOGOOrder) {
-        console.log('🎁 BOGO Order detected:', JSON.stringify(orderData.bogoDetails, null, 2));
-      }
-    } else {
-      console.log('🎟️ No coupon applied to this order');
-    }
-    
+
     // Check if this is a multi-item cart order (classic shop checkout)
     const isCartOrder = Array.isArray(orderData.cartItems) && orderData.cartItems.length > 0;
 
@@ -363,7 +349,6 @@ export async function POST(request: NextRequest) {
           discount: 0
         });
       });
-      console.log('🛒 Cart order line items created:', lineItems.length, 'items');
     } else if (isBOGOOrder && orderData.bogoDetails) {
       // BOGO order: create separate line items for paid and free items
       const { unitPrice, paidQuantity, freeQuantity } = orderData.bogoDetails;
@@ -388,9 +373,6 @@ export async function POST(request: NextRequest) {
         discount: roundPrice(unitPrice * freeQuantity) // Full discount = free
       });
       
-      console.log('🎁 BOGO Line Items created:', lineItems.length, 'items');
-      console.log(`🎁 Paid: ${paidQuantity} x ${unitPrice} = ${unitPrice * paidQuantity}`);
-      console.log(`🎁 Free: ${freeQuantity} x ${unitPrice} = ${unitPrice * freeQuantity} (100% discount)`);
     } else {
       // Regular order
       lineItems.push({
@@ -425,8 +407,6 @@ export async function POST(request: NextRequest) {
       const distributableDiscount = Math.min(totalProductDiscount, totalOrderValue);
       let remainingDiscount = distributableDiscount;
 
-      console.log('🎟️ Distributing discount across', lineItems.length, 'line items');
-      console.log('🎟️ Total order value:', totalOrderValue);
 
       lineItems.forEach((item, index) => {
         if (index === lineItems.length - 1) {
@@ -437,7 +417,6 @@ export async function POST(request: NextRequest) {
           item.discount = roundPrice(distributableDiscount * itemProportion);
           remainingDiscount -= item.discount;
         }
-        console.log(`🎟️ ${item.name}: ${item.item_total_price} - discount: ${item.discount}`);
       });
     }
     
@@ -513,44 +492,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Debug: Log discount codes in webhook payload
-    if (webhookPayload.discount_codes && webhookPayload.discount_codes.length > 0) {
-      console.log('🎟️ Discount codes array:', webhookPayload.discount_codes);
-      console.log('🎟️ Discount codes as comma-separated:', webhookPayload.discount_codes.join(', '));
-    }
-    console.log('🎟️ Line items with distributed discounts:', JSON.stringify(webhookPayload.line_items, null, 2));
-
-    // Initialize status variables
+    // Statusi se beleže u log (bez podataka kupca), a ne vraćaju browseru
     let webhookStatus = 'pending';
-    let webhookError = '';
-    let webhookResult = null;
     let supabaseStatus = 'pending';
-    let supabaseError = '';
     let capiStatus = 'pending';
-    let capiError = '';
-    let capiEventId = '';
 
     // First, insert order into Supabase database
     try {
-      console.log('💾 Inserting order into Supabase database:', orderId);
       const orderRecord = webhookToOrderRecord(webhookPayload, orderData.locale, currentDomain);
       const supabaseResult = await OrderService.insertOrder(orderRecord);
-      
+
       if (supabaseResult.success) {
         supabaseStatus = 'success';
-        console.log('✅ Order successfully saved to Supabase:', supabaseResult.data?.id);
       } else {
         supabaseStatus = 'failed';
-        supabaseError = supabaseResult.error || 'Unknown Supabase error';
-        console.error('❌ Failed to save order to Supabase:', supabaseError);
-        
-        // Continue with webhook even if Supabase fails (for now)
-        // You can change this behavior based on your requirements
+        console.error('❌ Failed to save order to Supabase:', orderId, supabaseResult.error || 'Unknown Supabase error');
+        // Continue with webhook even if Supabase fails
       }
     } catch (supabaseErr) {
       supabaseStatus = 'failed';
-      supabaseError = supabaseErr instanceof Error ? supabaseErr.message : 'Unknown Supabase error';
-      console.error('❌ Unexpected error saving to Supabase:', supabaseErr);
+      console.error('❌ Unexpected error saving to Supabase:', orderId, supabaseErr instanceof Error ? supabaseErr.message : supabaseErr);
     }
 
     // Send to webhook (skipped on local dev when WEBHOOK_DRY_RUN=true so the
@@ -559,37 +520,21 @@ export async function POST(request: NextRequest) {
     const webhookDryRun = process.env.WEBHOOK_DRY_RUN === 'true';
     if (dualDelivery) {
       webhookStatus = 'queued';
-      webhookResult = { durable: true };
     } else if (webhookDryRun) {
       webhookStatus = 'skipped';
-      webhookResult = { dryRun: true, note: 'WEBHOOK_DRY_RUN=true — webhook not sent' };
-      console.log('🧪 WEBHOOK_DRY_RUN enabled — skipping webhook call for locale:', orderData.locale);
     } else {
       try {
-        console.log('🚀 Attempting to send webhook for locale:', orderData.locale);
-        console.log('🚀 Using domain:', currentDomain);
-        webhookResult = await sendToWebhook(webhookPayload, orderData.locale, currentDomain);
+        await sendToWebhook(webhookPayload, orderData.locale, currentDomain);
         webhookStatus = 'success';
-        console.log('✅ Order sent to webhook successfully:', webhookResult);
       } catch (webhookErr) {
-        webhookStatus = 'failed';
-        webhookError = webhookErr instanceof Error ? webhookErr.message : 'Unknown webhook error';
-        console.error('❌ Failed to send order to webhook:', webhookErr);
-        
+        console.error('❌ Failed to send order to webhook:', orderId, webhookErr instanceof Error ? webhookErr.message : webhookErr);
+
         // Return error if webhook fails — do NOT fire CAPI Purchase for a failed order.
         // This is what prevents phantom Purchase events being recorded in Meta when the
         // backend webhook fails (and prevents duplicates when the user retries).
         return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Processing error',
-            details: webhookError,
-            webhookStatus,
-            supabaseStatus,
-            supabaseError: supabaseError || undefined,
-            orderId
-          },
-          { status: 500 }
+          { success: false, error: 'Porudžbinu trenutno nije moguće poslati. Pokušajte ponovo ili nas pozovite.' },
+          { status: 502 }
         );
       }
     }
@@ -599,9 +544,7 @@ export async function POST(request: NextRequest) {
     // browser-side fbq Purchase call → Meta deduplicates them as a single event.
     if (isOfflineChannel) {
       capiStatus = 'skipped';
-      console.log('📵 Viber order — CAPI Purchase intentionally skipped');
     } else try {
-      console.log('📤 Sending CAPI Purchase event for locale:', orderData.locale);
       
       // Split customer name into first and last name
       const nameParts = orderData.customerName.trim().split(/\s+/);
@@ -635,18 +578,14 @@ export async function POST(request: NextRequest) {
       
       if (capiResult.success) {
         capiStatus = 'success';
-        capiEventId = capiResult.eventId || '';
-        console.log('✅ CAPI Purchase event sent successfully:', capiEventId);
       } else {
         capiStatus = 'failed';
-        capiError = capiResult.error || 'Unknown CAPI error';
-        console.error('❌ Failed to send CAPI event:', capiError);
+        console.error('❌ Failed to send CAPI event:', orderId, capiResult.error || 'Unknown CAPI error');
         // Continue — order itself is already accepted, CAPI failure is non-fatal
       }
     } catch (capiErr) {
       capiStatus = 'failed';
-      capiError = capiErr instanceof Error ? capiErr.message : 'Unknown CAPI error';
-      console.error('❌ Unexpected CAPI error:', capiErr);
+      console.error('❌ Unexpected CAPI error:', orderId, capiErr instanceof Error ? capiErr.message : capiErr);
     }
 
     // Record the eventId so duplicate submits in the next 5min are short-circuited
@@ -654,39 +593,13 @@ export async function POST(request: NextRequest) {
       RECENT_EVENT_IDS.set(`${currentDomain}:${orderData.eventId}`, { orderId, timestamp: Date.now() });
     }
 
-    // Create complete order object
-    const completeOrder: OrderData = {
-      orderId,
-      ...orderData
-    };
-    
-    console.log('✅ Order processed successfully:', completeOrder);
-    
-    // Return success response with order ID, webhook info, Supabase status, and CAPI status
-    return NextResponse.json({
-      success: true,
-      orderId,
-      message: 'Order placed successfully',
-      webhookStatus,
-      webhookResult,
-      topomsStatus: dualDelivery ? 'queued' : 'disabled',
-      supabaseStatus,
-      supabaseError: supabaseError || undefined,
-      capiStatus,
-      capiEventId,
-      capiError: capiError || undefined,
-      domain: currentDomain,
-      timestamp: webhookPayload.created_at
-    });
-    
+    console.log('✅ Order accepted:', orderId, { locale: orderData.locale, webhookStatus, supabaseStatus, capiStatus });
+    return NextResponse.json({ success: true, orderId, topomsStatus: dualDelivery ? 'queued' : 'disabled' });
+
   } catch (error) {
-    console.error('❌ Order processing error:', error);
+    console.error('❌ Order processing error:', error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Order processing error',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { success: false, error: 'Porudžbinu trenutno nije moguće poslati. Pokušajte ponovo ili nas pozovite.' },
       { status: 500 }
     );
   }

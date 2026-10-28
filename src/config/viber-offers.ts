@@ -26,7 +26,7 @@ export const VIBER_OFFERS: ViberOffer[] = [
     locale: 'rs',
     productId: 'fungel_fungomax_gratis',
     kicker: 'Samo za Viber pratioce',
-    headline: 'Kupite FUNGEL — FUNGOMAX serum dobijate GRATIS',
+    headline: 'Kupite FUNGEL kremu — FUNGOMAX serum na poklon',
     subheadline: 'Krema + serum sa kapaljkom za kompletnu rutinu nege kože i noktiju. Platite samo kremu, serum je naš poklon.',
     bullets: [
       'FUNGEL krema 50ml + FUNGOMAX serum 50ml GRATIS',
@@ -41,7 +41,7 @@ export const VIBER_OFFERS: ViberOffer[] = [
     locale: 'ba',
     productId: 'fungel_fungomax_gratis',
     kicker: 'Samo za Viber pratioce',
-    headline: 'Kupite FUNGEL — FUNGOMAX serum dobijate GRATIS',
+    headline: 'Kupite FUNGEL kremu — FUNGOMAX serum na poklon',
     subheadline: 'Krema + serum sa kapaljkom za kompletnu rutinu njege kože i noktiju. Platite samo kremu, serum je naš poklon.',
     bullets: [
       'FUNGEL krema 50ml + FUNGOMAX serum 50ml GRATIS',
@@ -71,7 +71,7 @@ export const VIBER_OFFERS: ViberOffer[] = [
     locale: 'rs',
     productId: 'biowart_immunis_gratis',
     kicker: 'Samo za Viber pratioce',
-    headline: 'Kupite BIOWART — IMMUNIS KAPI dobijate GRATIS',
+    headline: 'Kupite BIOWART kremu — IMMUNIS KAPI na poklon',
     subheadline: 'Ciljana nega kože sklone pojavi bradavica, a uz nju na poklon biljna podrška imunitetu za zimsku sezonu.',
     bullets: [
       'BIOWART krema 50ml + IMMUNIS KAPI 50ml GRATIS',

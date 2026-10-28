@@ -71,9 +71,9 @@ export interface WebhookConfig {
     apiKey?: string;
     webhookSecret?: string;
   };
+  /** OMS ključ za ovaj endpoint je samo serverski: AFFILIATE_API_KEY (src/lib/affiliate-codes.ts) */
   affiliateCodes?: {
     url: string;
-    apiKey: string;
   };
 }
 
@@ -196,7 +196,6 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL 
           ? process.env.NEXT_PUBLIC_RS_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
           : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
       }
     }
   },
@@ -277,7 +276,6 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL 
           ? process.env.NEXT_PUBLIC_BA_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
           : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
       }
     }
   },
@@ -356,7 +354,6 @@ export const COUNTRIES: Record<string, CountryConfig> = {
         url: process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL 
           ? process.env.NEXT_PUBLIC_ME_ORDER_WEBHOOK_URL.replace('/api/webhook/custom/orders', '/api/affiliate/codes')
           : '',
-        apiKey: process.env.NEXT_PUBLIC_AFFILIATE_API_KEY || 'tpms_V4vgxjC0vNk3QbwJodpxhzhNWHREjY3WPRstAgyVpFHdXPTGsV2xsulPWGum'
       }
     }
   }
@@ -369,7 +366,7 @@ export type SupportedCurrency = typeof SUPPORTED_CURRENCIES[number];
 
 export const CURRENCY_RATES: Record<SupportedCurrency, number> = {
   RSD: 1, // Base currency
-  BAM: 0.5, // Approximate rate
+  BAM: 0.0167, // 1 EUR = 1,95583 BAM ≈ 117,2 RSD (BA/ME cene su upisane direktno; ovo je samo rezerva)
   EUR: 0.0085 // RSD to EUR conversion rate
 };
 

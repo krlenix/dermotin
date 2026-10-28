@@ -35,6 +35,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -45,5 +46,11 @@ next-env.d.ts
 
 # local dev server log
 .devserver.log
-.vercel
-.env*
+
+# browser test screenshots
+/.playwright-mcp/
+
+# impeccable: lokalni keš i live beleške (critique snimci ostaju u gitu)
+/.impeccable/hook.cache.json
+/.impeccable/live/
+/.impeccable/config.local.json

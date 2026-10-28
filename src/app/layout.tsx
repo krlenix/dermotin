@@ -1,31 +1,9 @@
-import type { Metadata } from "next";
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { Montserrat, Playfair_Display } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { getLocale } from 'next-intl/server';
 import { getCountryConfig } from '@/config/countries';
 import { getSiteUrl } from '@/lib/seo';
 import { Toaster } from "@/components/ui/sonner";
-import { PerformanceOptimizer } from "@/components/PerformanceOptimizer";
 import "./globals.css";
-
-const montserrat = Montserrat({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-montserrat",
-  weight: ["400", "500", "600", "700"], // Reduced font weights
-  display: 'swap',
-  preload: true,
-  fallback: ['system-ui', 'arial'],
-  adjustFontFallback: false,
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-playfair",
-  weight: ["400", "600", "700"], // Reduced font weights
-  display: 'swap',
-  preload: false, // Only preload primary font
-  fallback: ['serif'],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -61,59 +39,33 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  // Boja trake pretraživača na telefonu = zelena gornja traka sajta
+  themeColor: '#2E8655',
+  colorScheme: 'light',
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Rute van [locale] segmenta (/admin, /checkouts/[slug]) nemaju locale u putanji,
-  // pa getMessages() ume da baci notFound() (npr. kad postoji NEXT_LOCALE kolačić a
-  // middleware nije obradio zahtev). Root layout nikada ne sme sam da izazove 404 —
-  // padamo na rs poruke; [locale] grana ionako ima sopstveni NextIntlClientProvider.
-  let messages;
+  // Rute van [locale] segmenta (/admin) nemaju locale u putanji — tada sr-RS.
+  // Prevodi se daju samo u [locale]/layout (jedan NextIntlClientProvider po stranici).
+  let locale = 'rs';
   try {
-    messages = await getMessages();
+    locale = await getLocale();
   } catch {
-    messages = (await import('@/messages/rs.json')).default;
+    // ostaje rs
   }
-  const countryConfig = getCountryConfig('rs');
 
   return (
-    <html lang={countryConfig.locale} dir="ltr">
-      <head>
-        {/* Preload critical resources with high priority */}
-        <link
-          rel="preload"
-          href="/images/main/hero-image.webp"
-          as="image"
-          type="image/webp"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          href="/images/main/logo.png"
-          as="image"
-          type="image/png"
-          fetchPriority="high"
-        />
-        
-        {/* Preload critical CSS for faster rendering */}
-        <link
-          rel="preload"
-          href="/_next/static/css/app/layout.css"
-          as="style"
-        />
-        
-        {/* Viewport and performance meta tags */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#FF6B35" />
-        <meta name="color-scheme" content="light" />
-      </head>
-      <body className={`${montserrat.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
-        <PerformanceOptimizer />
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+    <html lang={getCountryConfig(locale).locale} dir="ltr">
+      <body className="font-sans antialiased bg-background text-foreground">
+        {children}
         <Toaster />
       </body>
     </html>

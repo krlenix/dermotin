@@ -97,44 +97,6 @@ export function getProductFAQByCategory(product: Product, category: string): Pro
   return faqs.filter((item: ProductFAQ) => item.category === category);
 }
 
-export function getProductPrice(product: Product, currency: 'RSD' | 'BAM' | 'EUR' | 'BGN', variantId?: string): number {
-  const variant = variantId 
-    ? product.variants.find(v => v.id === variantId)
-    : product.variants.find(v => v.isDefault) || product.variants[0];
-    
-  if (!variant) return 0;
-  
-  // Convert price based on currency
-  let price = variant.discountPrice || variant.price;
-  
-  // Apply currency conversion
-  if (variant.currency !== currency) {
-    switch (currency) {
-      case 'BAM':
-        if (variant.currency === 'RSD') {
-          price = Math.round(price * 0.5); // RSD to BAM conversion
-        }
-        break;
-      case 'EUR':
-        if (variant.currency === 'RSD') {
-          price = Math.round(price * 0.0085); // RSD to EUR conversion
-        } else if (variant.currency === 'BAM') {
-          price = Math.round(price * 0.51); // BAM to EUR conversion
-        }
-        break;
-      case 'RSD':
-        if (variant.currency === 'BAM') {
-          price = Math.round(price * 2); // BAM to RSD conversion
-        }
-        break;
-      default:
-        // Keep original price if no conversion available
-        break;
-    }
-  }
-  
-  return price;
-}
 
 // Get product variants with country-specific pricing
 export function getProductVariantsForCountry(product: Product, countryCode: string): ProductVariant[] {

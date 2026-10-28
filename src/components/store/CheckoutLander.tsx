@@ -21,16 +21,39 @@ import {
   Truck,
 } from 'lucide-react';
 
-import { getProductVariantsForCountry, type Product } from '@/config/products';
+import { getProductVariantsForCountry, type Product, type ProductVariant } from '@/config/products';
 import { getDefaultCourier, type CountryConfig } from '@/config/countries';
 import type { LanderContent } from '@/config/lander-content';
 import { getStoreOffers, getStoreVisual, getUnitPackshot, tightPackshot } from '@/config/store-content';
+import { calculateShippingCost } from '@/utils/shipping';
 import { cn } from '@/lib/utils';
-import type { BundlePart } from './BundleContents';
 import { landerFontClass } from './fonts';
-import { Bold, CountUp, FOREST_BG, LanderFooter, Marked, Stars, TornBand, plural, richTags, useDeliveryRange, useReveal, ReviewShots } from './LanderKit';
+import {
+  Bold,
+  CountUp,
+  FOREST_BG,
+  LANDER_BG,
+  LanderFooter,
+  Marked,
+  ReviewShots,
+  Stars,
+  TestimonialCarousel,
+  TornBand,
+  plural,
+  richTags,
+  useDeliveryRange,
+  useReveal,
+} from './LanderKit';
 import { QuickOrderForm, type QuickOrderLine } from './QuickOrderForm';
 import { formatMoney, scrollToOrderForm, variantDiscountPercent, variantPrice, variantSavings } from './format';
+
+/** Jedan proizvod iz sastava seta (gratis = poklon u setu). */
+export interface BundlePart {
+  product: Product;
+  variant?: ProductVariant;
+  quantity: number;
+  gratis: boolean;
+}
 
 interface CheckoutLanderProps {
   product: Product;
@@ -47,12 +70,31 @@ interface CheckoutLanderProps {
   campaign?: string;
   /** Kratka verzija: bez sastojaka, koraka, ikonica i čestih pitanja */
   compact?: boolean;
-  /** Mala oznaka iznad naslova (npr. „Samo za Viber pratioce“) */
+  /** Nalepnica uz proizvod (npr. „Samo za Viber pratioce“) */
   kicker?: string;
   formTitle?: string;
+  /** Stranica iz kataloga: zaglavlje sajta je iznad, bez trake hitnosti */
+  storefront?: boolean;
+  /** Druga radnja ispod forme (npr. „Dodaj u korpu“) */
+  afterForm?: React.ReactNode;
 }
 
-export function CheckoutLander({ product, content, countryConfig, locale, bundleParts = [], shots = [], reviewsCount = '850+', channel, campaign, compact = false, kicker, formTitle }: CheckoutLanderProps) {
+export function CheckoutLander({
+  product,
+  content,
+  countryConfig,
+  locale,
+  bundleParts = [],
+  shots = [],
+  reviewsCount = '850+',
+  channel,
+  campaign,
+  compact = false,
+  kicker,
+  formTitle,
+  storefront = false,
+  afterForm,
+}: CheckoutLanderProps) {
   const t = useTranslations('store.lander');
   const tStore = useTranslations('store');
   const rootRef = useRef<HTMLDivElement>(null);
@@ -68,6 +110,7 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
   const percent = variantDiscountPercent(variant);
   const { packshot } = getStoreVisual(product);
   const courier = getDefaultCourier(countryConfig);
+  const shipping = calculateShippingCost(price, courier, countryConfig);
   const registration = content.registration;
   const deliveryRange = useDeliveryRange();
   const [showSticky, setShowSticky] = useState(false);
@@ -111,34 +154,34 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
   const ctaLabel = content.cta ? <span>{content.cta}</span> : t.rich('cta', richTags);
 
   return (
-    <div ref={rootRef} className={cn(landerFontClass, 'min-h-screen overflow-x-hidden bg-[#EAE9E6] text-[#151515]')}>
-      {/* ── TRAKA HITNOSTI ─────────────────────────────────────── */}
-      <button
-        type="button"
-        onClick={() => scrollToOrderForm()}
-        className="sticky top-0 z-[150] flex w-full items-center justify-center gap-3 bg-[#2E8655] px-3 py-2.5 text-white shadow-[0_4px_14px_rgba(0,0,0,0.18)] md:gap-5"
-      >
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0735A] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide md:text-[12px]">
-          <Clock className="h-3.5 w-3.5 animate-pulse" />
-          {t('urgency_pill')}
-        </span>
-        <span className="text-left leading-tight">
-          <span className="block text-[15px] font-semibold md:text-[16px]">{t('urgency_title')}</span>
-          <span className="block text-[11.5px] text-white/85 md:text-[12px]">{t('urgency_sub')}</span>
-        </span>
-        <ArrowRight className="h-5 w-5 rotate-90" />
-      </button>
+    <div ref={rootRef} className={cn(landerFontClass, 'min-h-screen overflow-x-hidden', LANDER_BG)}>
+      {/* ── TRAKA HITNOSTI (oglasni lander) — na telefonu se skroluje sa stranicom ── */}
+      {!storefront && (
+        <button
+          type="button"
+          onClick={() => scrollToOrderForm()}
+          className="z-[150] flex w-full items-center justify-center gap-3 bg-green px-3 py-2.5 text-white shadow-[0_4px_14px_rgb(0_0_0/0.18)] md:sticky md:top-0 md:gap-5"
+        >
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-coral-deep px-3 py-1.5 text-[0.75rem] font-semibold uppercase tracking-wide">
+            <Clock className="h-3.5 w-3.5" aria-hidden />
+            {t('urgency_pill')}
+          </span>
+          <span className="text-left leading-tight">
+            <span className="block text-[0.9375rem] font-semibold md:text-[1rem]">{t('urgency_title')}</span>
+            <span className="block text-[0.75rem]">{t('urgency_sub')}</span>
+          </span>
+          <ArrowRight className="h-5 w-5 rotate-90" aria-hidden />
+        </button>
+      )}
 
       <main className="mx-auto max-w-[1180px] px-3 pt-3 md:px-6 md:pt-6">
         {/* ── HERO ─────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden rounded-[28px] bg-[#7FCB95] bg-[url('/images/lander/bg2-h17.jpg')] bg-cover bg-center">
-          <div className="pointer-events-none absolute -right-16 top-1/3 h-72 w-72 rounded-full bg-white/25 blur-3xl md:right-24" aria-hidden />
+        <section className="relative overflow-hidden rounded-[1.75rem] bg-mint">
+          {/* Šara iza naslova: next/image (manja slika za telefon, učitava se odmah — LCP) */}
+          <Image src="/images/lander/bg2-h17.jpg" alt="" fill priority sizes="(max-width: 768px) 100vw, 1180px" className="object-cover object-center" />
           <div className="relative grid items-center px-3 pb-2 pt-6 md:grid-cols-2 md:px-14 md:py-12">
             <div className="text-center">
-              {kicker && (
-                <span className="mb-3 inline-flex rounded-full bg-[#7360F2] px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-wide text-white shadow">{kicker}</span>
-              )}
-              <h1 className="text-[30px] font-extrabold leading-[1.22] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.12)] md:text-[42px]">
+              <h1 className="text-balance text-[1.875rem] font-extrabold leading-[1.22] text-ink md:text-[2.625rem]">
                 {content.hero.map((line, index) => (
                   <span key={line.text} className="block">
                     {line.mark ? (
@@ -151,36 +194,39 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
                   </span>
                 ))}
               </h1>
-              <div className="mt-4 flex items-center justify-center gap-2 text-[13px] font-medium text-white">
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-[0.875rem] font-medium text-ink">
                 <Stars size={16} />
                 <span>{t.rich('hero_rating', { b: (chunks) => <strong className="font-bold">{chunks}</strong>, count: reviewsCount })}</span>
               </div>
               <button
                 type="button"
                 onClick={() => scrollToOrderForm()}
-                className="lander-shine mt-4 inline-flex h-11 items-center gap-2 rounded-full bg-white px-6 text-[13px] font-semibold uppercase tracking-wide text-[#2E8655] shadow-[0_8px_18px_-8px_rgba(0,0,0,0.35)] transition hover:scale-[1.03]"
+                className="mt-4 inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-6 text-[0.875rem] font-semibold uppercase tracking-wide text-forest shadow-float transition hover:scale-[1.03]"
               >
-                {t('learn_more')}
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#2E8655] text-white">
-                  <ArrowRight className="h-2.5 w-2.5" strokeWidth={3} />
+                {t('sticky_cta')}
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-green text-white">
+                  <ArrowRight className="h-3 w-3" strokeWidth={3} aria-hidden />
                 </span>
               </button>
             </div>
             <div className="relative mx-auto mt-1 aspect-[5/4] w-full max-w-[480px] md:mt-0 md:aspect-square">
-              <div className="lander-float absolute inset-0">
-                <Image
-                  src={packshot}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 92vw, 460px"
-                  className="object-cover object-[50%_72%] drop-shadow-[0_20px_24px_rgba(0,0,0,0.18)] md:object-contain"
-                />
-              </div>
+              <Image
+                src={packshot}
+                alt={product.name}
+                fill
+                priority
+                sizes="(max-width: 768px) 92vw, 460px"
+                className="object-cover object-[50%_72%] drop-shadow-[0_20px_24px_rgb(0_0_0/0.18)] md:object-contain"
+              />
+              {kicker && (
+                <span className="absolute left-1 top-3 max-w-[60%] rounded-full bg-viber px-3.5 py-1.5 text-[0.75rem] font-bold uppercase leading-tight tracking-wide text-white shadow-float md:left-4">
+                  {kicker}
+                </span>
+              )}
               {percent > 0 && (
-                <span className="lander-pop absolute right-1 top-2 flex h-[78px] w-[78px] rotate-[10deg] flex-col items-center justify-center rounded-full bg-[#F0735A] text-white shadow-[0_10px_24px_-8px_rgba(0,0,0,0.4)] [animation-delay:600ms] md:right-6 md:top-10 md:h-24 md:w-24">
-                  <span className="text-[10px] font-semibold uppercase leading-none">{tStore('card.save')}</span>
-                  <span className="text-[24px] font-extrabold leading-tight md:text-[30px]">−{percent}%</span>
+                <span className="lander-pop absolute right-1 top-2 flex h-[84px] w-[84px] rotate-[10deg] flex-col items-center justify-center rounded-full bg-coral-deep text-white shadow-float [animation-delay:600ms] md:right-6 md:top-10 md:h-24 md:w-24">
+                  <span className="text-[0.75rem] font-semibold uppercase leading-none">{tStore('card.save')}</span>
+                  <span className="text-[1.5rem] font-extrabold leading-tight md:text-[1.875rem]">−{percent}%</span>
                 </span>
               )}
             </div>
@@ -191,32 +237,36 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
           {/* ── LEVA KOLONA ───────────────────────────────────────── */}
           <div className="min-w-0 space-y-6 md:space-y-8">
             {/* 30.000+ i prednosti */}
-            <section className="reveal rounded-[24px] border-l-4 border-[#2E8655] bg-white p-3 shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:p-6">
-              <p className="pt-2 text-center text-[58px] font-extrabold leading-none tracking-tight md:text-[84px]">
-                <CountUp value={content.customers} /> <span className="text-[#2E8655]">+</span>
+            <section className="reveal rounded-card bg-white p-3 shadow-card md:p-6">
+              <p className="pt-2 text-center text-[3.625rem] font-extrabold leading-none tracking-tight md:text-[5.25rem]">
+                <CountUp value={content.customers} /> <span className="text-green">+</span>
               </p>
-              <p className="mt-2 text-center text-[18px] font-semibold md:text-[21px]">{t.rich('customers_line', { ...richTags, customers: content.customers })}</p>
-              <p className="mt-2 text-center text-[14.5px]">{t.rich('story_line', richTags)}</p>
+              <p className="mt-2 text-balance text-center text-[1.125rem] font-semibold md:text-[1.25rem]">
+                {t.rich('customers_line', { ...richTags, customers: content.customers })}
+              </p>
+              <p className="mt-2 text-center text-[0.9375rem]">{t.rich('story_line', richTags)}</p>
 
-              <div className={cn('relative mt-4 overflow-hidden rounded-[18px] p-3.5 md:p-6', FOREST_BG)}>
-                <div className="absolute inset-0 bg-[#0f1a14]/55" aria-hidden />
+              <div className={cn('relative mt-4 overflow-hidden rounded-[1.125rem] p-4 md:p-6', FOREST_BG)}>
+                <div className="absolute inset-0 bg-night/55" aria-hidden />
                 <div className="relative">
-                  {content.benefitsTitle && <p className="mb-2 text-[17px] font-semibold text-white">{content.benefitsTitle}</p>}
+                  {content.benefitsTitle && <p className="mb-2 text-[1.125rem] font-semibold text-white">{content.benefitsTitle}</p>}
                   <ul>
                     {content.benefits.map((benefit, index) => (
                       <li
                         key={benefit}
-                        className="reveal flex gap-3 border-b border-dashed border-white/20 py-2 text-[14.5px] leading-snug text-white last:border-0"
+                        className="reveal flex gap-3 border-b border-dashed border-white/20 py-2.5 text-[0.9375rem] leading-snug text-white last:border-0"
                         style={{ '--reveal-delay': `${index * 90}ms` } as React.CSSProperties}
                       >
-                        <span className="mt-0.5 text-[18px] font-bold leading-none text-[#F0735A]">✱</span>
+                        <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-coral text-white">
+                          <Check className="h-3 w-3" strokeWidth={3.5} aria-hidden />
+                        </span>
                         {benefit}
                       </li>
                     ))}
                   </ul>
-                  <figure className="mt-4 rounded-[14px] border-2 border-[#F0735A] bg-white/10 p-4 backdrop-blur-[2px]">
+                  <figure className="mt-4 border-t border-white/25 pt-4">
                     <Stars size={18} />
-                    <blockquote className="mt-2 text-[14.5px] leading-relaxed text-white">{content.quote}</blockquote>
+                    <blockquote className="mt-2 text-[0.9375rem] leading-relaxed text-white">{content.quote}</blockquote>
                   </figure>
                 </div>
               </div>
@@ -226,38 +276,31 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
 
             {/* Sastojci */}
             {!compact && (
-            <section className="reveal text-center">
-              <h2 className="text-[30px] font-extrabold leading-tight text-[#2E8655] md:text-[36px]">{t.rich('ingredients_title', richTags)}</h2>
-              <div className="mt-4 flex items-center justify-center gap-3 md:mt-6 md:gap-6">
-                {['Ehinacea.png', 'Rusa.png', 'Rusa-1.png'].map((src, index) => (
-                  <div
-                    key={src}
-                    className={cn(
-                      'relative overflow-hidden rounded-full border-[3px] border-[#F0735A] bg-white shadow-[0_8px_20px_-10px_rgba(0,0,0,0.35)] transition hover:scale-105',
-                      index === 1 ? 'h-24 w-24 md:h-32 md:w-32' : 'h-20 w-20 md:h-28 md:w-28'
-                    )}
-                  >
-                    <Image
-                      src={`/images/lander/${src}`}
-                      alt=""
-                      fill
-                      sizes="128px"
-                      className={cn('scale-110 object-cover motion-safe:animate-[spin_50s_linear_infinite]', index === 1 && 'motion-safe:[animation-direction:reverse]')}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className={cn('relative mt-5 overflow-hidden rounded-[18px] p-2.5 md:p-5', FOREST_BG)}>
-                <div className="relative rounded-[12px] bg-white/95 p-4 text-left md:p-6">
-                  <p className="text-[16px] leading-relaxed">
+              <section className="reveal text-center">
+                <h2 className="text-balance text-[1.875rem] font-extrabold leading-tight text-forest md:text-[2.25rem]">{t.rich('ingredients_title', richTags)}</h2>
+                <div className="mt-4 flex items-center justify-center gap-3 md:mt-6 md:gap-6">
+                  {['Ehinacea.png', 'Rusa.png', 'Rusa-1.png'].map((src, index) => (
+                    <div
+                      key={src}
+                      className={cn(
+                        'relative overflow-hidden rounded-full border-[3px] border-coral bg-white shadow-float',
+                        index === 1 ? 'h-24 w-24 md:h-32 md:w-32' : 'h-20 w-20 md:h-28 md:w-28'
+                      )}
+                    >
+                      <Image src={`/images/lander/${src}`} alt="" fill sizes="128px" className="scale-110 object-cover" />
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-5 rounded-card bg-white p-4 text-left shadow-card md:p-6">
+                  <p className="text-[1rem] leading-relaxed">
                     <Bold text={content.ingredientsIntro} />
                   </p>
-                  {content.ingredientsLead && <p className="mt-4 text-[15px] font-semibold">{content.ingredientsLead}</p>}
+                  {content.ingredientsLead && <p className="mt-4 text-[0.9375rem] font-semibold">{content.ingredientsLead}</p>}
                   <ul className="mt-3 space-y-2">
                     {content.ingredients.map(([name, text]) => (
-                      <li key={`${name}-${text}`} className="flex gap-2.5 text-[15px] leading-snug">
-                        <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2BB673] text-white">
-                          <Check className="h-3 w-3" strokeWidth={3.5} />
+                      <li key={`${name}-${text}`} className="flex gap-2.5 text-[0.9375rem] leading-snug">
+                        <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green text-white">
+                          <Check className="h-3 w-3" strokeWidth={3.5} aria-hidden />
                         </span>
                         <span>
                           {name && <strong className="font-bold">{name}</strong>}
@@ -267,62 +310,58 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
                     ))}
                   </ul>
                 </div>
-              </div>
-            </section>
-
+              </section>
             )}
 
             {/* Garancija */}
             <section className="reveal flex flex-col items-center gap-4 px-2 text-center">
               <div className="relative h-28 w-28 shrink-0">
-                <span className="absolute inset-0 rounded-full border-[3px] border-dashed border-[#2E8655]/70 motion-safe:animate-[spin_24s_linear_infinite]" aria-hidden />
-                <span className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full bg-[#F0735A] text-white shadow-[0_10px_22px_-10px_rgba(240,115,90,0.9)]">
-                  <span className="text-[26px] font-extrabold leading-none">100%</span>
-                  <span className="mt-1 text-[9.5px] font-bold uppercase tracking-[0.12em]">{t('seal_label')}</span>
+                <span className="absolute inset-0 rounded-full border-[3px] border-dashed border-green/70" aria-hidden />
+                <span className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full bg-coral-deep text-white shadow-float">
+                  <span className="text-[1.5rem] font-extrabold leading-none">100%</span>
+                  <span className="mt-1 text-[0.75rem] font-bold uppercase tracking-[0.08em]">{t('seal_label')}</span>
                 </span>
               </div>
-              <h2 className="text-[28px] font-extrabold leading-snug md:text-[34px]">{t.rich('guarantee_title', richTags)}</h2>
-              <p className="text-[15.5px] leading-relaxed">{t.rich('guarantee_text', { ...richTags, unit: content.unit })}</p>
+              <h2 className="text-balance text-[1.875rem] font-extrabold leading-snug md:text-[2.25rem]">{t.rich('guarantee_title', richTags)}</h2>
+              <p className="max-w-prose text-[1rem] leading-relaxed">{t.rich('guarantee_text', { ...richTags, unit: content.unit })}</p>
             </section>
           </div>
 
           {/* ── DESNA KOLONA: PORUDŽBINA ───────────────────────────── */}
-          <aside className="lg:sticky lg:top-20">
-            <div className="reveal rounded-[22px] bg-white p-4 shadow-[0_14px_40px_rgba(0,0,0,0.12)] md:p-6">
+          <aside className={cn('lg:sticky', storefront ? 'lg:top-28' : 'lg:top-20')}>
+            <div className="reveal rounded-card bg-white p-4 shadow-raised md:p-6">
               {registration && (
-                <div className="rounded-[16px] border-[3px] border-dashed border-[#2E8655]/50 p-4 shadow-[0_6px_16px_rgba(0,0,0,0.08)]">
-                  <div className="flex items-center gap-4">
-                    <div className="relative h-16 w-14 shrink-0">
-                      <Image
-                        src={registration.kind === 'ministry' ? '/images/regulatory/serbian-coat-of-arms.png' : '/images/lander/european-union.png'}
-                        alt=""
-                        fill
-                        sizes="56px"
-                        className="object-contain"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[13px] font-bold uppercase leading-snug text-[#2E8655]">
-                        {registration.kind === 'ministry' ? t('ministry_title') : registration.title}
-                      </p>
-                      {registration.kind === 'ministry' ? (
-                        <p className="mt-1 text-[11.5px] text-[#666]">{t('ministry_number')}</p>
-                      ) : (
-                        registration.text && <p className="mt-1 text-[11.5px] leading-snug text-[#666]">{registration.text}</p>
-                      )}
-                      <p className="mt-2 inline-flex rounded-full bg-[#2E8655] px-4 py-1.5 text-[14px] font-bold text-white">{registration.number}</p>
-                      <p className="mt-1.5 text-[11.5px] italic text-[#777]">
-                        {registration.kind === 'ministry' ? t('date_label') : t('lab_date_label')} {registration.date}
-                      </p>
-                    </div>
+                <div className="flex items-center gap-4 border-b border-line pb-4">
+                  <div className="relative h-16 w-14 shrink-0">
+                    <Image
+                      src={registration.kind === 'ministry' ? '/images/regulatory/serbian-coat-of-arms.png' : '/images/lander/european-union.png'}
+                      alt=""
+                      fill
+                      sizes="56px"
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[0.8125rem] font-bold uppercase leading-snug text-forest">
+                      {registration.kind === 'ministry' ? t('ministry_title') : registration.title}
+                    </p>
+                    {registration.kind === 'ministry' ? (
+                      <p className="mt-1 text-[0.8125rem] text-ink-muted">{t('ministry_number')}</p>
+                    ) : (
+                      registration.text && <p className="mt-1 text-[0.8125rem] leading-snug text-ink-muted">{registration.text}</p>
+                    )}
+                    <p className="mt-2 inline-flex rounded-full bg-green px-4 py-1.5 text-[0.875rem] font-bold text-white">{registration.number}</p>
+                    <p className="mt-1.5 text-[0.8125rem] text-ink-muted">
+                      {registration.kind === 'ministry' ? t('date_label') : t('lab_date_label')} {registration.date}
+                    </p>
                   </div>
                 </div>
               )}
 
               <ul className="mt-5 space-y-3">
                 {content.checks.map((item) => (
-                  <li key={item} className="flex items-center gap-3 text-[17px] leading-snug">
-                    <ShieldCheck className="h-5 w-5 shrink-0 text-[#2E8655]" strokeWidth={1.8} />
+                  <li key={item} className="flex items-center gap-3 text-[1.125rem] leading-snug">
+                    <ShieldCheck className="h-5 w-5 shrink-0 text-green" strokeWidth={1.8} aria-hidden />
                     {item}
                   </li>
                 ))}
@@ -342,130 +381,139 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
                 locale={locale}
               />
 
-              <div className="mt-5 text-center">
-                <p className="text-[32px] font-extrabold leading-none underline decoration-[#2E8655] decoration-[3px] underline-offset-[6px] md:text-[38px]">
+              <div className="mt-6 text-center">
+                <p className="text-[1.875rem] font-extrabold leading-none underline decoration-green decoration-[3px] underline-offset-[6px] md:text-[2.25rem]">
                   {t('price_label')}
                 </p>
-                <p className="mt-3 inline-block bg-[#2E8655] px-3 py-1 text-[44px] font-extrabold leading-none text-white [text-shadow:2px_2px_0_#14402a] md:text-[50px]">
+                <p className="mt-3 inline-block bg-green px-3 py-1 text-[2.625rem] font-extrabold leading-none text-white md:text-[3.125rem]">
                   {formatMoney(price, countryConfig)}
                 </p>
                 {savings > 0 && (
-                  <p className="mt-2 text-[14px] text-[#555]">
+                  <p className="mt-2 text-[0.875rem] text-ink-soft">
                     {t('regular_price')} <span className="line-through">{formatMoney(variant.price, countryConfig)}</span>
-                    <span className="ml-2 font-bold text-[#F0735A]">−{formatMoney(savings, countryConfig)}</span>
+                    <span className="ml-2 font-bold text-coral-deep">−{formatMoney(savings, countryConfig)}</span>
                   </p>
                 )}
+                {/* Cena bez iznenađenja: dostava odmah uz cenu, pre forme */}
+                <p className="mt-1 text-[0.875rem] font-semibold text-forest">
+                  {shipping > 0
+                    ? t('shipping_note', {
+                        cost: formatMoney(shipping, countryConfig),
+                        threshold: formatMoney(countryConfig.business.freeShippingThreshold, countryConfig),
+                      })
+                    : t('free_shipping_note')}
+                </p>
               </div>
 
               {/* Isporuka i plaćanje */}
-              <div className="mt-5 grid grid-cols-2 gap-2 text-[13px] leading-snug">
-                <div className="flex flex-col items-center gap-1.5 rounded-[14px] border border-[#2E8655]/20 bg-[#F4F8F5] px-2 py-3 text-center">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#2E8655] text-white">
-                    <Truck className="h-[18px] w-[18px]" />
+              <div className="mt-5 grid grid-cols-2 divide-x divide-line border-y border-line py-3 text-[0.8125rem] leading-snug">
+                <div className="flex flex-col items-center gap-1.5 px-2 text-center">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-green text-white">
+                    <Truck className="h-[18px] w-[18px]" aria-hidden />
                   </span>
                   <span>
                     {deliveryRange
-                      ? t.rich('delivery_tile', { b: (chunks) => <strong className="block font-bold text-[#111]">{chunks}</strong>, range: deliveryRange })
+                      ? t.rich('delivery_tile', { b: (chunks) => <strong className="block font-bold text-ink">{chunks}</strong>, range: deliveryRange })
                       : t('check_delivery')}
                   </span>
                 </div>
-                <div className="flex flex-col items-center gap-1.5 rounded-[14px] border border-[#2E8655]/20 bg-[#F4F8F5] px-2 py-3 text-center">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#2E8655] text-white">
-                    <Banknote className="h-[18px] w-[18px]" />
+                <div className="flex flex-col items-center gap-1.5 px-2 text-center">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-green text-white">
+                    <Banknote className="h-[18px] w-[18px]" aria-hidden />
                   </span>
                   <span>
-                    <strong className="block font-bold text-[#111]">{t('check_cod')}</strong>
+                    <strong className="block font-bold text-ink">{t('check_cod')}</strong>
                     {t('cod_sub')}
                   </span>
                 </div>
               </div>
 
-              <QuickOrderForm countryConfig={countryConfig} lines={lines} channel={channel} campaign={campaign} title={formTitle} appearance="classic" className="mt-5" />
+              <QuickOrderForm countryConfig={countryConfig} lines={lines} channel={channel} campaign={campaign} title={formTitle} className="mt-5" />
+              {afterForm}
             </div>
           </aside>
         </div>
 
         {/* ── RECENZIJE ─────────────────────────────────────────── */}
         <section id="utisci" className="reveal mt-10 scroll-mt-20 text-center md:mt-20">
-          <h2 className="text-[30px] font-extrabold leading-tight md:text-[38px]">{t.rich('reviews_title', richTags)}</h2>
-          <div className="mt-3 flex flex-col items-center gap-3">
+          <h2 className="text-balance text-[1.875rem] font-extrabold leading-tight md:text-[2.25rem]">{t.rich('reviews_title', richTags)}</h2>
+          <div className="mt-3 flex justify-center">
             <Stars size={26} />
-            <Image src="/images/lander/thumb.webp" alt="" width={128} height={44} className="h-11 w-auto" />
           </div>
 
-          <TestimonialCarousel items={content.testimonials} yearsLabel={t('years')} />
+          <TestimonialCarousel items={content.testimonials} yearsForms={t('years_forms')} label={t('carousel_label')} />
 
           <ReviewShots shots={shots} title={t('shots_title')} />
 
-          <p className="mt-8 text-[24px] font-extrabold leading-tight md:text-[30px]">{t.rich('reviews_more', { ...richTags, count: reviewsCount })}</p>
-          <p className="mx-auto mt-3 max-w-xl text-[21px] font-bold leading-snug md:text-[24px]">{t.rich('reviews_sub', richTags)}</p>
+          <p className="mt-8 text-balance text-[1.5rem] font-extrabold leading-tight md:text-[1.875rem]">{t.rich('reviews_more', { ...richTags, count: reviewsCount })}</p>
+          <p className="mx-auto mt-3 max-w-xl text-balance text-[1.25rem] font-bold leading-snug md:text-[1.5rem]">{t.rich('reviews_sub', richTags)}</p>
         </section>
 
         {!compact && (
           <>
-        {/* ── KAKO PORUČITI ─────────────────────────────────────── */}
-        <section className="reveal mt-10 text-center">
-          <h2 className="text-[26px] font-extrabold md:text-[32px]">{t.rich('how_title', richTags)}</h2>
-          <ol className="mt-5 grid grid-cols-3 gap-2 md:gap-5">
-            {[
-              { icon: MousePointerClick, title: tStore('how.step2_title') },
-              { icon: ClipboardCheck, title: tStore('form.reassure_cod') },
-              { icon: Package, title: tStore('how.step3_title', { time: courier.deliveryTime }) },
-            ].map(({ icon: Icon, title }, index) => (
-              <li
-                key={title}
-                className="reveal relative rounded-[16px] bg-white px-2 pb-4 pt-6 shadow-[0_6px_18px_rgba(0,0,0,0.06)] md:px-5"
-                style={{ '--reveal-delay': `${index * 120}ms` } as React.CSSProperties}
-              >
-                <span className="absolute -top-3 left-1/2 inline-flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full bg-[#F0735A] text-[13px] font-bold text-white">
-                  {index + 1}
-                </span>
-                <Icon className="mx-auto h-7 w-7 text-[#2E8655]" />
-                <p className="mt-2 text-[12.5px] font-semibold leading-snug md:text-[15px]">{title}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
+            {/* ── KAKO PORUČITI ─────────────────────────────────────── */}
+            <section className="reveal mt-10 text-center">
+              <h2 className="text-[1.5rem] font-extrabold md:text-[1.875rem]">{t.rich('how_title', richTags)}</h2>
+              <ol className="mx-auto mt-5 grid max-w-3xl gap-3 sm:grid-cols-3 md:gap-5">
+                {[
+                  { icon: MousePointerClick, title: tStore('how.step2_title') },
+                  { icon: ClipboardCheck, title: tStore('form.reassure_cod') },
+                  { icon: Package, title: tStore('how.step3_title', { time: courier.deliveryTime }) },
+                ].map(({ icon: Icon, title }, index) => (
+                  <li
+                    key={title}
+                    className="reveal flex items-center gap-4 rounded-panel bg-white px-4 py-4 text-left shadow-card sm:flex-col sm:gap-2 sm:pt-6 sm:text-center"
+                    style={{ '--reveal-delay': `${index * 120}ms` } as React.CSSProperties}
+                  >
+                    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-coral-deep text-[0.9375rem] font-bold text-white">
+                      {index + 1}
+                    </span>
+                    <Icon className="hidden h-7 w-7 text-green sm:block" aria-hidden />
+                    <p className="text-[0.9375rem] font-semibold leading-snug">{title}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
 
-        {/* ── ČETIRI RAZLOGA ─────────────────────────────────────── */}
-        <section className="mt-8 grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-          {[
-            { icon: Truck, title: t('card_delivery_title'), text: t('card_delivery_text') },
-            { icon: Leaf, title: t('card_natural'), text: content.cards.natural },
-            { icon: HandHeart, title: t('card_safe'), text: content.cards.safe },
-            { icon: CheckCircle2, title: t('card_tested'), text: content.cards.tested },
-          ].map(({ icon: Icon, title, text }, index) => (
-            <div
-              key={title}
-              className="reveal group rounded-[18px] border-2 border-[#F0735A] bg-white p-5 text-center transition hover:-translate-y-1 hover:shadow-[0_14px_30px_-14px_rgba(240,115,90,0.6)]"
-              style={{ '--reveal-delay': `${index * 90}ms` } as React.CSSProperties}
-            >
-              <span className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#2E8655] text-white transition group-hover:scale-110">
-                <Icon className="h-7 w-7" />
-              </span>
-              <p className="mt-4 text-[20px] font-bold">{title}</p>
-              <p className="mt-2 text-[14.5px] leading-relaxed text-[#333]">{text}</p>
-            </div>
-          ))}
-        </section>
+            {/* ── ČETIRI RAZLOGA ─────────────────────────────────────── */}
+            <section className="reveal mt-8 rounded-card bg-white p-2 shadow-card md:p-4">
+              <ul className="grid divide-y divide-line sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4">
+                {[
+                  { icon: Truck, title: t('card_delivery_title'), text: t('card_delivery_text') },
+                  { icon: Leaf, title: t('card_natural'), text: content.cards.natural },
+                  { icon: HandHeart, title: t('card_safe'), text: content.cards.safe },
+                  { icon: CheckCircle2, title: t('card_tested'), text: content.cards.tested },
+                ].map(({ icon: Icon, title, text }) => (
+                  <li key={title} className="flex gap-4 px-3 py-4 md:flex-col md:gap-3 md:px-4">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green text-white">
+                      <Icon className="h-6 w-6" aria-hidden />
+                    </span>
+                    <div>
+                      <p className="text-[1.125rem] font-bold leading-snug">{title}</p>
+                      <p className="mt-1 text-[0.9375rem] leading-relaxed text-ink-soft">{text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
-        {/* ── ČESTA PITANJA ─────────────────────────────────────── */}
-        {product.productFAQ && product.productFAQ.length > 0 && (
-          <section className="reveal mx-auto mt-10 max-w-3xl">
-            <h2 className="text-center text-[26px] font-extrabold md:text-[32px]">{t.rich('faq_title', richTags)}</h2>
-            <div className="mt-5 space-y-2">
-              {product.productFAQ.slice(0, 5).map((item) => (
-                <details key={item.question} className="group rounded-[14px] bg-white px-4 shadow-[0_4px_14px_rgba(0,0,0,0.05)] open:shadow-[0_10px_24px_rgba(0,0,0,0.08)]">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-4 text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
-                    {item.question}
-                    <ChevronDown className="h-5 w-5 shrink-0 text-[#2E8655] transition group-open:rotate-180" />
-                  </summary>
-                  <p className="pb-4 text-[14.5px] leading-relaxed text-[#444]">{item.answer}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-        )}
+            {/* ── ČESTA PITANJA ─────────────────────────────────────── */}
+            {product.productFAQ && product.productFAQ.length > 0 && (
+              <section className="reveal mx-auto mt-10 max-w-3xl">
+                <h2 className="text-center text-[1.5rem] font-extrabold md:text-[1.875rem]">{t.rich('faq_title', richTags)}</h2>
+                <div className="mt-5 space-y-2">
+                  {product.productFAQ.slice(0, 5).map((item) => (
+                    <details key={item.question} className="group rounded-panel bg-white px-4 shadow-card">
+                      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-3 text-[1rem] font-semibold [&::-webkit-details-marker]:hidden">
+                        {item.question}
+                        <ChevronDown className="h-5 w-5 shrink-0 text-green transition group-open:rotate-180" aria-hidden />
+                      </summary>
+                      <p className="pb-4 text-[0.9375rem] leading-relaxed text-ink-soft">{item.answer}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
           </>
         )}
       </main>
@@ -477,27 +525,28 @@ export function CheckoutLander({ product, content, countryConfig, locale, bundle
       {/* ── DONJA TRAKA (telefon) ─────────────────────────────── */}
       <div
         className={cn(
-          'fixed inset-x-0 bottom-0 z-[140] border-t border-black/5 bg-white/95 px-3 py-2.5 shadow-[0_-10px_30px_-12px_rgba(0,0,0,0.25)] backdrop-blur transition-transform duration-300 lg:hidden',
+          'fixed inset-x-0 bottom-0 z-[140] border-t border-black/5 bg-white/95 px-3 py-2.5 shadow-[0_-10px_30px_-12px_rgb(0_0_0/0.25)] backdrop-blur transition-transform duration-300 lg:hidden',
           showSticky ? 'translate-y-0' : 'translate-y-full'
         )}
         style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}
+        aria-hidden={!showSticky}
       >
         <div className="flex items-center gap-3">
           <div className="min-w-0">
-            {savings > 0 && <p className="text-[12px] text-[#888] line-through">{formatMoney(variant.price, countryConfig)}</p>}
-            <p className="text-[21px] font-extrabold leading-none text-[#2E8655]">{formatMoney(price, countryConfig)}</p>
+            {savings > 0 && <p className="text-[0.8125rem] text-ink-muted line-through">{formatMoney(variant.price, countryConfig)}</p>}
+            <p className="text-[1.25rem] font-extrabold leading-none text-forest">{formatMoney(price, countryConfig)}</p>
           </div>
           <button
             type="button"
             onClick={() => scrollToOrderForm()}
-            className="lander-shine ml-auto inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#2E8655] px-4 text-[16px] font-bold text-white shadow-[0_4px_0_#1d5434]"
+            tabIndex={showSticky ? 0 : -1}
+            className="ml-auto inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-green px-4 text-[1rem] font-bold text-white shadow-press"
           >
             {t('sticky_cta')}
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" aria-hidden />
           </button>
         </div>
       </div>
-
     </div>
   );
 }
@@ -532,7 +581,7 @@ function OfferBox({
   const offer = getStoreOffers(locale).find((item) => item.productId === product.id);
   const bottles = product.category === 'supplements';
   const forms = bottles ? t('bottle_forms') : t('pack_forms');
-  const b = { b: (chunks: React.ReactNode) => <strong className="font-bold text-[#111]">{chunks}</strong> };
+  const b = { b: (chunks: React.ReactNode) => <strong className="font-bold text-ink">{chunks}</strong> };
   const gratis = bundleParts.find((part) => part.gratis);
   const isSet = bundleParts.length > 1;
   const freeShipping = price >= countryConfig.business.freeShippingThreshold;
@@ -564,19 +613,19 @@ function OfferBox({
   if (freeShipping) points.push(t.rich('offer_free_shipping', b));
 
   return (
-    <div className="relative mt-6 overflow-hidden rounded-[18px] border-2 border-[#F0735A] bg-[#FFF6F3]">
-      <div className="flex items-center justify-between gap-2 bg-[#F0735A] px-4 py-2 text-white">
-        <span className="inline-flex items-center gap-1.5 text-[12.5px] font-bold uppercase tracking-wide">
-          <Gift className="h-4 w-4" />
+    <div className="relative mt-6 overflow-hidden rounded-[1.125rem] border-2 border-coral bg-coral-soft">
+      <div className="flex items-center justify-between gap-2 bg-coral-deep px-4 py-2 text-white">
+        <span className="inline-flex items-center gap-1.5 text-[0.8125rem] font-bold uppercase tracking-wide">
+          <Gift className="h-4 w-4" aria-hidden />
           {offer?.badge ?? t('offer_default_badge')}
         </span>
-        {percent > 0 && <span className="rounded-full bg-white px-2.5 py-0.5 text-[12.5px] font-extrabold text-[#F0735A]">−{percent}%</span>}
+        {percent > 0 && <span className="rounded-full bg-white px-2.5 py-0.5 text-[0.8125rem] font-extrabold text-coral-deep">−{percent}%</span>}
       </div>
       <div className="p-4">
-        <p className="text-[17px] font-bold">{t('offer_title')}</p>
+        <p className="text-[1.125rem] font-bold">{t('offer_title')}</p>
 
         {/* Vizuelno: tačno ono što kupac dobija (komponente seta po komadu ili broj komada) */}
-        <div className="mt-3 rounded-[14px] bg-white p-3">
+        <div className="mt-3">
           {isSet ? (
             <div className="flex items-start justify-center gap-1.5">
               {bundleParts.map((part, index) => {
@@ -585,8 +634,8 @@ function OfferBox({
                 return (
                   <Fragment key={part.product.id}>
                     {index > 0 && (
-                      <span className="mt-10 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2E8655] text-white">
-                        <Plus className="h-4 w-4" strokeWidth={3} />
+                      <span className="mt-10 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green text-white">
+                        <Plus className="h-4 w-4" strokeWidth={3} aria-hidden />
                       </span>
                     )}
                     <div className="flex min-w-0 flex-1 flex-col items-center text-center">
@@ -596,14 +645,14 @@ function OfferBox({
                           alt={part.product.name}
                           fill
                           sizes="150px"
-                          className="object-contain object-bottom drop-shadow-[0_8px_10px_rgba(0,0,0,0.14)]"
+                          className="object-contain object-bottom drop-shadow-[0_8px_10px_rgb(0_0_0/0.14)]"
                         />
                       </div>
-                      <p className="mt-2 text-[12px] font-extrabold uppercase leading-tight">{part.product.name}</p>
+                      <p className="mt-2 text-[0.75rem] font-extrabold uppercase leading-tight">{part.product.name}</p>
                       <p
                         className={cn(
-                          'mt-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold',
-                          part.gratis ? 'bg-[#F0735A] text-white' : 'bg-[#2E8655]/10 text-[#1d5434]'
+                          'mt-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[0.75rem] font-bold',
+                          part.gratis ? 'bg-coral-deep text-white' : 'bg-green/10 text-forest'
                         )}
                       >
                         {units} {plural(units, partForms)}
@@ -616,9 +665,9 @@ function OfferBox({
             </div>
           ) : (
             <div className="relative mx-auto h-32 w-full max-w-[260px]">
-              <Image src={tightPackshot(packshot)} alt={product.name} fill sizes="260px" className="object-contain object-bottom drop-shadow-[0_8px_10px_rgba(0,0,0,0.14)]" />
+              <Image src={tightPackshot(packshot)} alt={product.name} fill sizes="260px" className="object-contain object-bottom drop-shadow-[0_8px_10px_rgb(0_0_0/0.14)]" />
               {quantity > 1 && (
-                <span className="absolute right-0 top-0 rounded-full bg-[#2E8655] px-3 py-1 text-[16px] font-extrabold text-white">× {quantity}</span>
+                <span className="absolute right-0 top-0 rounded-full bg-green px-3 py-1 text-[1rem] font-extrabold text-white">× {quantity}</span>
               )}
             </div>
           )}
@@ -626,9 +675,9 @@ function OfferBox({
 
         <ul className="mt-3 space-y-2">
           {points.map((point, index) => (
-            <li key={index} className="flex gap-2.5 text-[14.5px] leading-snug text-[#333]">
-              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2BB673] text-white">
-                <Check className="h-3 w-3" strokeWidth={3.5} />
+            <li key={index} className="flex gap-2.5 text-[0.9375rem] leading-snug text-ink-soft">
+              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green text-white">
+                <Check className="h-3 w-3" strokeWidth={3.5} aria-hidden />
               </span>
               <span>{point}</span>
             </li>
@@ -636,73 +685,5 @@ function OfferBox({
         </ul>
       </div>
     </div>
-  );
-}
-
-/** Svedočanstva: na telefonu prevlačenje + automatsko listanje i tačkice, na desktopu dve kolone. */
-export function TestimonialCarousel({ items, yearsLabel }: { items: LanderContent['testimonials']; yearsLabel: string }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (paused || items.length < 2 || window.matchMedia('(min-width: 768px)').matches) return;
-    const id = window.setInterval(() => {
-      const track = trackRef.current;
-      if (!track) return;
-      const next = (active + 1) % items.length;
-      const child = track.children[next] as HTMLElement | undefined;
-      if (child) track.scrollTo({ left: child.offsetLeft - track.offsetLeft - 12, behavior: 'smooth' });
-    }, 5000);
-    return () => window.clearInterval(id);
-  }, [active, paused, items.length]);
-
-  return (
-    <>
-      <div
-        ref={trackRef}
-        onTouchStart={() => setPaused(true)}
-        onScroll={(event) => {
-          const track = event.currentTarget;
-          const width = (track.children[0] as HTMLElement | undefined)?.offsetWidth ?? track.clientWidth;
-          setActive(Math.min(items.length - 1, Math.round(track.scrollLeft / (width + 16))));
-        }}
-        className="-mx-3 mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-3 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden"
-      >
-        {items.map((item, index) => (
-          <figure key={`${item.name}-${index}`} className="w-[85%] shrink-0 snap-center md:w-auto">
-            <blockquote className="relative rounded-[12px] border-2 border-[#F0735A] bg-white px-5 py-5 text-[14.5px] leading-relaxed shadow-[0_6px_18px_rgba(0,0,0,0.06)] md:px-7">
-              <Stars size={15} />
-              <span className="mt-2 block">{item.text}</span>
-              <span className="absolute -bottom-[11px] left-1/2 h-5 w-5 -translate-x-1/2 rotate-45 border-b-2 border-r-2 border-[#F0735A] bg-white" aria-hidden />
-            </blockquote>
-            <figcaption className="mt-6 flex items-center justify-center gap-3">
-              {item.photo ? (
-                <span className="relative h-14 w-14 overflow-hidden rounded-full border-[3px] border-[#2E8655]">
-                  <Image src={item.photo} alt={item.name} fill sizes="56px" className="object-cover" />
-                </span>
-              ) : (
-                <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#2E8655] text-[20px] font-bold text-white">{item.name.charAt(0)}</span>
-              )}
-              <span className="text-left">
-                <span className="block text-[15px] font-bold">{item.name}</span>
-                {item.age && (
-                  <span className="block text-[13px] text-[#666]">
-                    {item.age} {yearsLabel}
-                  </span>
-                )}
-              </span>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-      {items.length > 1 && (
-        <div className="mt-3 flex justify-center gap-1.5 md:hidden">
-          {items.map((item, index) => (
-            <span key={`${item.name}-dot-${index}`} className={cn('h-2 rounded-full transition-all', index === active ? 'w-6 bg-[#2E8655]' : 'w-2 bg-[#2E8655]/25')} />
-          ))}
-        </div>
-      )}
-    </>
   );
 }

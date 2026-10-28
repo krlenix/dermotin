@@ -12,17 +12,8 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/api/',
           '/admin/',
-          '/capi-test',
-          '/test-marketing',
-          '/test-country-modal',
-          '/geolocation-test',
-          '/geolocation-demo',
-          '/new-template-example',
-          '/docs/',
           '/*/thank-you',
           '/*/checkout$',
-          '/*/v2/',
-          '/*/new-landing',
         ],
       },
       {

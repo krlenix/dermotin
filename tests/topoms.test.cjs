@@ -516,7 +516,7 @@ test('checkout endpoint durably queues BOTH destinations before accepting; dupli
   require.cache[nextPath].exports = actual;
   const body = { customerName: 'Test Kupac', customerPhone: address.phone, customerAddress: address.address1,
     customerCity: address.city, customerPostalCode: address.zip, productName: 'FUNGEL', productVariant: '1', productSku: 'FUNGEL',
-    quantity: 1, totalPrice: 2380, subtotal: 1990, shippingCost: 390, currency: 'RSD', courierName: 'Post Express',
+    quantity: 1, totalPrice: 2390, subtotal: 1990, shippingCost: 400, currency: 'RSD', courierName: 'Post Express',
     paymentMethod: 'cod', locale: 'rs', eventId: 'endpoint-test' };
   const request = () => new actual.NextRequest('https://dermotin.shop/api/orders', { method: 'POST',
     headers: { host: 'dermotin.shop', 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -551,8 +551,8 @@ test('database outage rejects checkout before either OMS or CAPI is contacted', 
   const response = await POST(new NextRequest('https://dermotin.shop/api/orders', { method: 'POST',
     headers: { host: 'dermotin.shop', 'Content-Type': 'application/json' }, body: JSON.stringify({
       customerName: 'Test Kupac', customerPhone: address.phone, customerAddress: address.address1, customerCity: address.city,
-      customerPostalCode: address.zip, productName: 'FUNGEL', productSku: 'FUNGEL', quantity: 1, totalPrice: 2380,
-      subtotal: 1990, shippingCost: 390, courierName: 'Post Express', locale: 'rs', eventId: 'db-down-test',
+      customerPostalCode: address.zip, productName: 'FUNGEL', productSku: 'FUNGEL', quantity: 1, totalPrice: 2390,
+      subtotal: 1990, shippingCost: 400, courierName: 'Post Express', locale: 'rs', eventId: 'db-down-test',
     }) }));
   assert.equal(response.status, 503);
   assert.ok(requests.every(url => url.startsWith('https://database.example/')));

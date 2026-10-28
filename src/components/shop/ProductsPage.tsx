@@ -42,7 +42,9 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
     { id: 'supplements', label: t('shop.filter_supplements') },
   ];
   const available = filters.filter((f) => f.id === 'all' || products.some((p) => p.category === f.id));
-  const visible = filter === 'all' ? products : products.filter((product) => product.category === filter);
+  // „Sve“: akcije su već iznad, mreža prikazuje ostale proizvode (filter „Setovi“ i dalje prikazuje sve setove)
+  const offerIds = new Set(offers.map((offer) => offer.productId));
+  const visible = filter === 'all' ? products.filter((product) => !offerIds.has(product.id)) : products.filter((product) => product.category === filter);
   const scrollToOffers = () => document.querySelector(offers.length > 0 ? '#akcije' : '#proizvodi')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   return (
@@ -52,11 +54,11 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
 
       <main className="mx-auto max-w-[1180px] space-y-10 px-3 pt-3 md:space-y-14 md:px-6 md:pt-6">
         <GreenHero>
-          <h1 className="text-[30px] font-extrabold leading-[1.18] text-[#151515] md:text-[46px]">
+          <h1 className="text-balance text-[1.875rem] font-extrabold leading-[1.18] text-ink md:text-[2.625rem]">
             {tl.rich('shop_title', richTags)}
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-[15px] text-[#4a4a4a] md:text-[16px]">{t('shop.text')}</p>
-          <div className="mt-4 flex items-center justify-center gap-2 pb-2 text-[13px] font-medium text-[#333]">
+          <p className="mx-auto mt-3 max-w-xl text-[0.9375rem] text-ink-soft md:text-[1rem]">{t('shop.text')}</p>
+          <div className="mt-4 flex items-center justify-center gap-2 pb-2 text-[0.8125rem] font-medium text-ink-soft">
             <Stars size={16} />
             <span>{tLander.rich('hero_rating', { b: (chunks) => <strong className="font-bold">{chunks}</strong>, count: STORE_PROOF.reviewsCount })}</span>
           </div>
@@ -74,7 +76,7 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
         )}
 
         <section id="proizvodi" className="scroll-mt-24">
-          <LanderHeading>{tl.rich('products_title', richTags)}</LanderHeading>
+          <LanderHeading>{offers.length > 0 && filter === 'all' ? tl('more_products_title') : tl('products_title')}</LanderHeading>
           {available.length > 2 && (
             <div className="-mx-3 mt-5 flex justify-start gap-2 overflow-x-auto px-3 [scrollbar-width:none] md:justify-center">
               {available.map((f) => (
@@ -82,9 +84,10 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
                   key={f.id}
                   type="button"
                   onClick={() => setFilter(f.id)}
+                  aria-pressed={filter === f.id}
                   className={cn(
-                    'shrink-0 rounded-full px-5 py-2.5 text-[14px] font-semibold transition',
-                    filter === f.id ? 'bg-[#2E8655] text-white shadow-[0_4px_0_#1d5434]' : 'bg-white text-[#222] ring-1 ring-black/10 hover:ring-[#2E8655]/50'
+                    'min-h-11 shrink-0 rounded-full px-5 py-2.5 text-[0.875rem] font-semibold transition',
+                    filter === f.id ? 'bg-green text-white shadow-press' : 'bg-white text-ink ring-1 ring-line hover:ring-green/50'
                   )}
                 >
                   {f.label}
@@ -102,7 +105,7 @@ export function ProductsPage({ products, countryConfig, locale }: ProductsPagePr
         <LanderGuarantee unit={tl('guarantee_unit_home')} />
       </main>
 
-      <TornBand label={tLander.rich('cta', richTags)} onClick={scrollToOffers} className="mt-10" />
+      <TornBand label={offers.length > 0 ? t('home.cta_offers') : t('home.cta_products')} onClick={scrollToOffers} className="mt-10" />
       <LanderFooter countryConfig={countryConfig} locale={locale} className="pb-6" />
       <CookieConsent isEU={countryConfig.isEU} />
     </div>

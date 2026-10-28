@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { isValidPhoneNumber } from 'react-phone-number-input';
-import { Banknote, Check, Lock, ShieldCheck, Tag, Truck, X } from 'lucide-react';
+import { Check, Lock, Tag, Truck, X } from 'lucide-react';
 
 import { PhoneInput } from '@/components/ui/phone-input';
 import { CheckoutDialog, CheckoutDialogType } from '@/components/features/CheckoutDialog';
@@ -40,10 +40,7 @@ interface QuickOrderFormProps {
   campaign?: string;
   id?: string;
   title?: string;
-  subtitle?: string;
   className?: string;
-  /** classic = izgled forme sa starog sajta (Podaci za isporuku, zeleno dugme) */
-  appearance?: 'default' | 'classic';
 }
 
 type Field = 'fullName' | 'phone' | 'address' | 'city' | 'postalCode';
@@ -57,12 +54,9 @@ export function QuickOrderForm({
   campaign,
   id = 'naruci',
   title,
-  subtitle,
   className,
-  appearance = 'default',
 }: QuickOrderFormProps) {
   const t = useTranslations('store');
-  const classic = appearance === 'classic';
   const tAll = useTranslations();
   const { trackEvent } = usePixelTracking(countryConfig.code);
   const tracking = channel !== 'viber';
@@ -306,73 +300,65 @@ export function QuickOrderForm({
 
   const inputClass = (field: Field) =>
     cn(
-      classic
-        ? 'h-[52px] w-full rounded-md border bg-white px-4 text-[16px] text-[#222] outline-none transition placeholder:text-[#8a8a8a] focus:border-[#2E7D4F] focus:ring-2 focus:ring-[#2E7D4F]/20'
-        : 'h-[54px] w-full rounded-[14px] border bg-white px-4 text-[16px] text-ink outline-none transition placeholder:text-ink/35 focus:border-forest focus:ring-4 focus:ring-forest/10',
-      errors[field] ? 'border-red-400 bg-red-50/40' : classic ? 'border-[#d6d6d6]' : 'border-line'
+      'h-[52px] w-full rounded-md border bg-white px-4 text-[1rem] text-ink outline-none transition placeholder:text-ink-muted focus:border-green-press focus:ring-2 focus:ring-green-press/25',
+      errors[field] ? 'border-red-600 bg-red-50/40' : 'border-line'
     );
 
+  const fieldProps = (field: Field) => ({
+    id: `${id}-${field}`,
+    name: field,
+    'aria-required': true,
+    'aria-invalid': Boolean(errors[field]),
+    'aria-describedby': errors[field] ? `${id}-${field}-error` : undefined,
+    onBlur: () => onBlur(field),
+  });
+
   const label = (field: Field, text: string) => (
-    <label htmlFor={`${id}-${field}`} className={cn('mb-1.5 block text-[13px] font-medium', classic ? 'text-[#444]' : 'text-ink/70')}>
+    <label htmlFor={`${id}-${field}`} className="mb-1.5 block text-[0.875rem] font-medium text-ink-soft">
       {text}
     </label>
   );
 
   const fieldError = (field: Field) =>
-    errors[field] ? <p className="mt-1.5 text-[12.5px] font-medium text-red-600">{errors[field]}</p> : null;
+    errors[field] ? (
+      <p id={`${id}-${field}-error`} className="mt-1.5 text-[0.8125rem] font-medium text-red-700">
+        {errors[field]}
+      </p>
+    ) : null;
+
+  const errorCount = Object.values(errors).filter(Boolean).length;
 
   return (
-    <div
-      id={id}
-      className={cn(
-        'scroll-mt-24',
-        !classic && 'rounded-[28px] border border-line bg-white p-5 shadow-[0_40px_80px_-50px_rgba(26,38,32,0.35)] sm:p-7',
-        className
-      )}
-    >
-      {classic ? (
-        <p className="mb-5 text-center text-[19px] font-semibold text-[#111]">{title || t('lander.form_title')}</p>
-      ) : (
-        <div className="mb-6">
-          <p className="font-display text-[30px] leading-[1.05] text-ink sm:text-[34px]">{title || t('form.title')}</p>
-          <p className="mt-2 flex items-center gap-2 text-[14px] text-moss">
-            <Banknote className="h-4 w-4 shrink-0" strokeWidth={1.8} />
-            {subtitle || t('form.subtitle')}
-          </p>
-        </div>
-      )}
+    <div id={id} className={cn('scroll-mt-24', className)}>
+      <p className="text-center text-[1.125rem] font-semibold text-ink">{title || t('lander.form_title')}</p>
+      <p className="mb-5 mt-1 text-center text-[0.8125rem] text-ink-muted">{t('form.all_required')}</p>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        <p className="sr-only" aria-live="polite">{errorCount > 0 ? t('form.check_fields') : ''}</p>
         <div>
           {label('fullName', t('form.full_name'))}
           <input
-            id={`${id}-fullName`}
-            name="fullName"
+            {...fieldProps('fullName')}
             autoComplete="name"
             className={inputClass('fullName')}
             placeholder={t('form.full_name_placeholder')}
             value={form.fullName}
             onChange={(e) => onChange('fullName', e.target.value)}
-            onBlur={() => onBlur('fullName')}
-            aria-invalid={Boolean(errors.fullName)}
           />
           {fieldError('fullName')}
         </div>
 
         <div>
           {label('phone', t('form.phone'))}
-          <div className={cn('overflow-hidden rounded-[14px] border bg-white transition focus-within:border-forest focus-within:ring-4 focus-within:ring-forest/10', errors.phone ? 'border-red-400' : 'border-line')}>
+          <div className={cn('overflow-hidden rounded-md border bg-white transition focus-within:border-green-press focus-within:ring-2 focus-within:ring-green-press/25', errors.phone ? 'border-red-600' : 'border-line')}>
             <PhoneInput
-              id={`${id}-phone`}
-              name="phone"
+              {...fieldProps('phone')}
               value={form.phone}
               onChange={(value) => onChange('phone', value || '')}
-              onBlur={() => onBlur('phone')}
               placeholder={t('form.phone_placeholder')}
               defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA' | 'ME'}
               countries={supportedCountries}
-              aria-invalid={Boolean(errors.phone)}
-              className="[&>[data-slot=button]]:h-[52px] [&>[data-slot=button]]:rounded-none [&>[data-slot=button]]:border-0 [&>[data-slot=button]]:border-r [&>[data-slot=button]]:border-line [&>[data-slot=button]]:bg-paper [&>[data-slot=button]]:px-3 [&_[data-slot=input]]:h-[52px] [&_[data-slot=input]]:rounded-none [&_[data-slot=input]]:border-0 [&_[data-slot=input]]:px-3 [&_[data-slot=input]]:!text-[16px] [&_[data-slot=input]]:text-ink [&_[data-slot=input]]:shadow-none [&_[data-slot=input]]:placeholder:text-ink/35 [&_[data-slot=input]]:focus-visible:ring-0"
+              className="[&>[data-slot=button]]:h-[52px] [&>[data-slot=button]]:rounded-none [&>[data-slot=button]]:border-0 [&>[data-slot=button]]:border-r [&>[data-slot=button]]:border-line [&>[data-slot=button]]:bg-paper [&>[data-slot=button]]:px-3 [&_[data-slot=input]]:h-[52px] [&_[data-slot=input]]:rounded-none [&_[data-slot=input]]:border-0 [&_[data-slot=input]]:px-3 [&_[data-slot=input]]:!text-[1rem] [&_[data-slot=input]]:text-ink [&_[data-slot=input]]:shadow-none [&_[data-slot=input]]:placeholder:text-ink-muted [&_[data-slot=input]]:focus-visible:ring-0"
             />
           </div>
           {fieldError('phone')}
@@ -381,15 +367,12 @@ export function QuickOrderForm({
         <div>
           {label('address', t('form.address'))}
           <input
-            id={`${id}-address`}
-            name="address"
+            {...fieldProps('address')}
             autoComplete="street-address"
             className={inputClass('address')}
             placeholder={t('form.address_placeholder')}
             value={form.address}
             onChange={(e) => onChange('address', e.target.value)}
-            onBlur={() => onBlur('address')}
-            aria-invalid={Boolean(errors.address)}
           />
           {fieldError('address')}
         </div>
@@ -398,111 +381,97 @@ export function QuickOrderForm({
           <div>
             {label('city', t('form.city'))}
             <input
-              id={`${id}-city`}
-              name="city"
+              {...fieldProps('city')}
               autoComplete="address-level2"
               className={inputClass('city')}
               placeholder={t('form.city_placeholder')}
               value={form.city}
               onChange={(e) => onChange('city', e.target.value)}
-              onBlur={() => onBlur('city')}
-              aria-invalid={Boolean(errors.city)}
             />
             {fieldError('city')}
           </div>
           <div>
             {label('postalCode', t('form.postal'))}
             <input
-              id={`${id}-postalCode`}
-              name="postalCode"
+              {...fieldProps('postalCode')}
               inputMode="numeric"
               autoComplete="postal-code"
               className={inputClass('postalCode')}
               placeholder="11000"
               value={form.postalCode}
               onChange={(e) => onChange('postalCode', e.target.value)}
-              onBlur={() => onBlur('postalCode')}
-              aria-invalid={Boolean(errors.postalCode)}
             />
             {fieldError('postalCode')}
           </div>
         </div>
 
-        {/* Obračun */}
-        <div className="!mt-6 space-y-2.5 rounded-[18px] bg-paper p-4 text-[14px] sm:p-5">
+        {/* Obračun: tačan iznos koji se plaća kuriru, sa dostavom */}
+        <div className="!mt-6 space-y-2.5 rounded-[1.125rem] bg-paper p-4 text-[0.875rem] sm:p-5">
           {lines.map((line) => (
             <div key={line.variantId} className="flex items-start justify-between gap-3">
               <span className="font-medium text-ink">
                 {line.productName}
-                <span className="block text-[12.5px] font-normal text-ink/50">{line.variantName}{line.quantity > 1 ? ` × ${line.quantity}` : ''}</span>
+                <span className="block text-[0.8125rem] font-normal text-ink-muted">{line.variantName}{line.quantity > 1 ? ` × ${line.quantity}` : ''}</span>
               </span>
               <span className="shrink-0 text-right font-medium text-ink">
                 {line.regularPrice > line.unitPrice && (
-                  <span className="mr-2 text-[12.5px] font-normal text-ink/35 line-through">{formatMoney(line.regularPrice * line.quantity, countryConfig)}</span>
+                  <span className="mr-2 text-[0.8125rem] font-normal text-ink-muted line-through">{formatMoney(line.regularPrice * line.quantity, countryConfig)}</span>
                 )}
                 {formatMoney(line.unitPrice * line.quantity, countryConfig)}
               </span>
             </div>
           ))}
           {couponValid && couponAmounts.totalDiscount > 0 && (
-            <div className="flex items-center justify-between gap-3 text-moss">
-              <span className="inline-flex items-center gap-1.5 font-medium">
-                <Tag className="h-3.5 w-3.5" /> {t('form.coupon', { code: coupon!.code })}
-                <button type="button" onClick={() => { clearCouponCookie(); setCoupon(null); }} className="text-ink/40 hover:text-ink/70" aria-label={t('form.remove_coupon')}>
-                  <X className="h-3.5 w-3.5" />
+            <div className="flex items-center justify-between gap-3 text-forest">
+              <span className="inline-flex items-center gap-1 font-medium">
+                <Tag className="h-3.5 w-3.5" aria-hidden /> {t('form.coupon', { code: coupon!.code })}
+                <button
+                  type="button"
+                  onClick={() => { clearCouponCookie(); setCoupon(null); }}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-muted hover:bg-white hover:text-ink"
+                  aria-label={t('form.remove_coupon')}
+                >
+                  <X className="h-4 w-4" aria-hidden />
                 </button>
               </span>
               <span className="font-medium">−{formatMoney(couponAmounts.totalDiscount, countryConfig)}</span>
             </div>
           )}
           <div className="flex items-center justify-between gap-3">
-            <span className="inline-flex items-center gap-2 text-ink/70">
-              <Truck className="h-4 w-4 text-ink/45" strokeWidth={1.6} /> {t('form.shipping')}
+            <span className="inline-flex items-center gap-2 text-ink-soft">
+              <Truck className="h-4 w-4 text-ink-muted" strokeWidth={1.6} aria-hidden /> {t('form.shipping')}
             </span>
-            <span className={cn('font-medium', shipping === 0 ? 'text-moss' : 'text-ink')}>
+            <span className={cn('font-medium', shipping === 0 ? 'text-forest' : 'text-ink')}>
               {shipping === 0 ? t('form.free') : formatMoney(shipping, countryConfig)}
             </span>
           </div>
           <div className="flex items-end justify-between gap-3 border-t border-line pt-3">
-            <span className="pb-0.5 text-[14.5px] font-semibold text-ink">{t('form.total')}</span>
-            <span className="text-[26px] font-semibold leading-none tracking-tight text-ink">{formatMoney(total, countryConfig)}</span>
+            <span className="pb-0.5 text-[0.9375rem] font-semibold text-ink">{t('form.total')}</span>
+            <span className="text-[1.5rem] font-semibold leading-none tracking-tight text-ink">{formatMoney(total, countryConfig)}</span>
           </div>
           {savings > 0 && (
-            <p className="text-right text-[12.5px] font-medium text-coral">{t('form.you_save', { amount: formatMoney(savings, countryConfig) })}</p>
+            <p className="text-right text-[0.8125rem] font-medium text-coral-deep">{t('form.you_save', { amount: formatMoney(savings, countryConfig) })}</p>
           )}
         </div>
 
         <button
           type="submit"
           disabled={dialogType === 'loading'}
-          className={cn(
-            'flex w-full items-center justify-center gap-2.5 px-5 text-white transition duration-300 active:scale-[0.99] disabled:opacity-70',
-            classic
-              ? 'h-[62px] rounded-full bg-[#2E7D4F] text-[20px] font-bold shadow-[0_6px_0_#1d5434] hover:bg-[#2a7349] active:translate-y-[3px] active:shadow-[0_3px_0_#1d5434]'
-              : 'h-[60px] rounded-full bg-coral text-[17px] font-semibold shadow-[0_18px_34px_-16px_rgba(201,83,58,0.8)] hover:bg-coral-deep'
-          )}
+          className="lander-shine flex min-h-[62px] w-full items-center justify-center gap-2.5 rounded-full bg-green-press px-5 text-[1.25rem] font-bold text-white shadow-press-lg transition duration-300 hover:bg-forest active:translate-y-[3px] active:shadow-press disabled:opacity-70"
         >
-          <Lock className={classic ? 'h-5 w-5' : 'h-4 w-4'} />
-          {classic ? t('lander.submit') : t('form.submit')}
+          <Lock className="h-5 w-5" aria-hidden />
+          {t('lander.submit')}
         </button>
 
-        {classic && (
-          <ul className="mx-auto grid w-fit gap-1.5 pt-2 text-[16px] text-[#222]">
-            {[t('lander.check_delivery'), t('lander.check_cod'), t('lander.check_guarantee')].map((item) => (
-              <li key={item} className="flex items-center gap-2">
-                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#2BB673] text-white">
-                  <Check className="h-3 w-3" strokeWidth={3.5} />
-                </span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <ul className={cn('grid gap-2 pt-1 text-[13px] text-ink/70', classic && 'hidden')}>
-          <li className="flex items-center gap-2.5"><Check className="h-4 w-4 shrink-0 text-moss" strokeWidth={2} />{t('form.reassure_cod')}</li>
-          <li className="flex items-center gap-2.5"><Check className="h-4 w-4 shrink-0 text-moss" strokeWidth={2} />{t('form.reassure_delivery', { time: courier.deliveryTime })}</li>
-          <li className="flex items-center gap-2.5"><ShieldCheck className="h-4 w-4 shrink-0 text-moss" strokeWidth={1.8} />{t('form.reassure_return', { days: countryConfig.business.returnPeriodDays })}</li>
+        <ul className="mx-auto grid w-fit gap-1.5 pt-2 text-[1rem] text-ink">
+          {[t('lander.check_delivery'), t('lander.check_cod'), t('lander.check_guarantee')].map((item) => (
+            <li key={item} className="flex items-center gap-2">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-green text-white">
+                <Check className="h-3 w-3" strokeWidth={3.5} aria-hidden />
+              </span>
+              {item}
+            </li>
+          ))}
         </ul>
       </form>
 

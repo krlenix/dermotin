@@ -3,7 +3,10 @@
 import * as React from "react";
 import { CheckIcon, ChevronsUpDown } from "lucide-react";
 import * as RPNInput from "react-phone-number-input";
-import flags from "react-phone-number-input/flags";
+// Samo zastave tržišta na kojima prodajemo — paket sa svim zastavama sveta je ~220 KB JS-a
+import { BA, ME, RS } from "country-flag-icons/react/3x2";
+
+const flags: Partial<Record<RPNInput.Country, React.ComponentType<{ title?: string }>>> = { RS, BA, ME };
 
 import { Button } from "@/components/ui/button";
 
@@ -138,7 +141,7 @@ const CountrySelect = ({
               }, 0);
             }}
             placeholder="Search country..."
-            className="w-full px-3 py-2 text-sm border border-input rounded-md focus:!border-[#608E7E] focus:!ring-1 focus:!ring-[#608E7E]/30 outline-none"
+            className="w-full px-3 py-2 text-sm border border-input rounded-md focus:!border-[var(--color-green)] focus:!ring-1 focus:!ring-[var(--color-green)]/30 outline-none"
           />
         </div>
         <ScrollArea ref={scrollAreaRef} className="h-72">

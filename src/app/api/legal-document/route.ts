@@ -3,41 +3,40 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { getWebsiteDomainFromRequest } from '@/lib/utils';
 
+// Samo poznati dokumenti — putanja se nikada ne gradi iz slobodnog unosa
+const DOCUMENTS = new Set([
+  'contact-info',
+  'cookie-policy',
+  'disclaimer',
+  'privacy-policy',
+  'returns-policy',
+  'terms-of-service',
+]);
+const LOCALES = new Set(['rs', 'ba', 'me']);
+// Šabloni postoje samo na srpskom; podaci firme za BA/ME se upisuju iz CountryConfig na klijentu
+const TEMPLATE_LOCALES = new Set(['rs']);
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const documentType = searchParams.get('type');
-  const locale = searchParams.get('locale') || 'rs';
+  const documentType = searchParams.get('type') || '';
+  const requestedLocale = searchParams.get('locale') || 'rs';
 
-  if (!documentType) {
-    return NextResponse.json({ error: 'Document type is required' }, { status: 400 });
+  if (!DOCUMENTS.has(documentType) || !LOCALES.has(requestedLocale)) {
+    return NextResponse.json({ error: 'Nepoznat dokument' }, { status: 400 });
   }
 
+  const locale = TEMPLATE_LOCALES.has(requestedLocale) ? requestedLocale : 'rs';
+
   try {
-    // Construct the file path
     const filePath = path.join(process.cwd(), 'src', 'templates', locale, `${documentType}.txt`);
-    
-    // Check if file exists and read it
     const content = await fs.readFile(filePath, 'utf-8');
-    
-    // Get the dynamic domain from the request
-    const dynamicDomain = getWebsiteDomainFromRequest(request);
-    
-    // Return both content and domain for client-side processing
-    return NextResponse.json({
-      content,
-      domain: dynamicDomain
-    }, {
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    });
-  } catch (error) {
-    console.error('Error reading legal document:', error);
-    
-    // Return a user-friendly error message
+
     return NextResponse.json(
-      { error: 'Dokument nije pronađen ili nije dostupan' }, 
-      { status: 404 }
+      { content, domain: getWebsiteDomainFromRequest(request) },
+      { headers: { 'Content-Type': 'application/json; charset=utf-8' } }
     );
+  } catch (error) {
+    console.error('Error reading legal document:', documentType, error instanceof Error ? error.message : error);
+    return NextResponse.json({ error: 'Dokument nije pronađen ili nije dostupan' }, { status: 404 });
   }
 }

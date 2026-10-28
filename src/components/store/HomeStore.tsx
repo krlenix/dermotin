@@ -18,9 +18,9 @@ import { PixelTracker } from '@/components/tracking/PixelTracker';
 import { useMarketingTracking } from '@/hooks/useMarketingTracking';
 import { cn } from '@/lib/utils';
 import { landerFontClass } from './fonts';
-import { Bold, CountUp, FOREST_BG, LANDER_BG, LanderFooter, Marked, ReviewShots, Stars, richTags, useReveal } from './LanderKit';
+import { Bold, CountUp, FOREST_BG, LANDER_BG, LanderFooter, Marked, ReviewShots, Stars, plural, richTags, useReveal } from './LanderKit';
 import { LanderProductCard } from './LanderStore';
-import { useGeneralFaq } from './StoreSections';
+import { useGeneralFaq } from './faq';
 import { formatMoney, variantDiscountPercent, variantPrice, variantSavings } from './format';
 
 interface HomeStoreProps {
@@ -44,8 +44,8 @@ function HomeHeading({ children, sub, action, className }: { children: React.Rea
   return (
     <div className={cn('flex flex-col gap-3 md:flex-row md:items-end md:justify-between', className)}>
       <div>
-        <h2 className="text-[28px] font-extrabold leading-tight md:text-[40px]">{children}</h2>
-        {sub && <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[#4a4a4a] md:text-[16px]">{sub}</p>}
+        <h2 className="text-[1.875rem] font-extrabold leading-tight md:text-[2.625rem]">{children}</h2>
+        {sub && <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-ink-soft md:text-[1rem]">{sub}</p>}
       </div>
       {action}
     </div>
@@ -65,7 +65,8 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
   const offers = getStoreOffers(locale).filter((offer) => byId.has(offer.productId));
   const needs = getNeedTiles(locale).filter((need) => byId.has(need.productId));
   const offerIds = new Set(offers.map((offer) => offer.productId));
-  const catalog = [...products.filter((p) => offerIds.has(p.id)), ...products.filter((p) => !offerIds.has(p.id))];
+  // Akcije su već prikazane iznad — mreža ispod ih ne ponavlja
+  const catalog = offers.length > 0 ? products.filter((p) => !offerIds.has(p.id)) : products;
   const anchor = offers.length > 0 ? '#akcije' : '#proizvodi';
   const courier = getDefaultCourier(countryConfig);
   const company = countryConfig.company;
@@ -87,16 +88,16 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
 
       <main>
         {/* ── HERO: svetla, topla pozadina; zelena samo kao akcenat ─────────── */}
-        <section className="relative overflow-hidden bg-[#F7F4EE]">
+        <section className="relative overflow-hidden bg-paper">
           <div className="pointer-events-none absolute -right-48 -top-48 h-[720px] w-[720px] rounded-full bg-[radial-gradient(circle,rgba(46,134,85,0.16)_0%,rgba(46,134,85,0)_68%)]" aria-hidden />
           <div className="pointer-events-none absolute -bottom-40 -left-40 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(240,115,90,0.12)_0%,rgba(240,115,90,0)_70%)]" aria-hidden />
           <div className="relative mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-8 px-4 pb-12 pt-8 md:grid-cols-[1.05fr_1fr] md:gap-12 md:px-6 md:pb-20 md:pt-16">
             <div className="min-w-0">
-              <p className="inline-flex flex-wrap items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-semibold text-[#333] shadow-[0_4px_14px_rgba(0,0,0,0.06)] ring-1 ring-black/5">
+              <p className="inline-flex flex-wrap items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[0.8125rem] font-semibold text-ink-soft shadow-[0_4px_14px_rgba(0,0,0,0.06)] ring-1 ring-black/5">
                 <Stars size={14} />
                 {tl('hero_badge', { rating: '5/5', reviews: STORE_PROOF.reviewsCount, customers: SITE_CUSTOMERS })}
               </p>
-              <h1 className="mt-5 text-[32px] font-extrabold leading-[1.3] tracking-[-0.01em] text-[#151515] md:text-[54px] md:leading-[1.25]">
+              <h1 className="mt-5 text-[1.875rem] font-extrabold leading-[1.3] tracking-[-0.01em] text-ink md:text-[3.125rem] md:leading-[1.25]">
                 {t('home.hero_title_1')}{' '}
                 {/* fraza se ne lomi u dva reda */}
                 <Marked tone="coral" animate className="whitespace-nowrap">
@@ -104,20 +105,20 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
                 </Marked>{' '}
                 {t('home.hero_title_2')}
               </h1>
-              <p className="mt-5 max-w-lg text-[16px] leading-relaxed text-[#4a4a4a] md:text-[18px]">
-                {t.rich('home.hero_text', { b: (chunks) => <strong className="font-bold text-[#151515]">{chunks}</strong> })}
+              <p className="mt-5 max-w-lg text-[1rem] leading-relaxed text-ink-soft md:text-[1.125rem]">
+                {t.rich('home.hero_text', { b: (chunks) => <strong className="font-bold text-ink">{chunks}</strong> })}
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <a
                   href={anchor}
-                  className="lander-shine inline-flex h-14 items-center justify-center gap-2 rounded-full bg-[#F0735A] px-8 text-[15px] font-bold uppercase tracking-wide text-white shadow-[0_6px_0_#c4533b] transition hover:scale-[1.02]"
+                  className="inline-flex min-h-14 items-center justify-center gap-2 rounded-full bg-green px-8 text-[1rem] font-bold text-white shadow-press-lg transition hover:bg-green-press active:translate-y-[3px] active:shadow-press"
                 >
                   {offers.length > 0 ? t('home.cta_offers') : t('home.cta_products')}
                   <ArrowRight className="h-4 w-4" />
                 </a>
                 <Link
                   href={`/${locale}/products`}
-                  className="inline-flex h-14 items-center justify-center rounded-full border-2 border-[#151515]/15 bg-white px-8 text-[15px] font-bold uppercase tracking-wide text-[#151515] transition hover:border-[#151515]/40"
+                  className="inline-flex min-h-14 items-center justify-center rounded-full border-2 border-green bg-white px-8 text-[1rem] font-bold text-forest transition hover:bg-mint-soft"
                 >
                   {t('home.cta_all')}
                 </Link>
@@ -128,38 +129,38 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
               {/* Luk je pozadina; proizvodi stoje ispred njega, veći i blago izlaze preko ivica */}
               <div className="relative mx-auto aspect-[10/9] w-full max-w-[560px]">
                 <div className="absolute inset-x-[8%] bottom-[6%] top-0 rounded-b-[32px] rounded-t-[999px] bg-[linear-gradient(180deg,#E9F1EB_0%,#D7E7DC_100%)] shadow-[0_30px_60px_-34px_rgba(31,58,46,0.45)]" aria-hidden />
-                <div className="lander-float absolute inset-x-[-2%] bottom-0 h-[70%] [mask-image:linear-gradient(to_bottom,black_82%,transparent)]">
+                <div className="absolute inset-x-[-2%] bottom-0 h-[70%] [mask-image:linear-gradient(to_bottom,black_82%,transparent)]">
                   <Image src={STORE_HERO_IMAGE} alt="DERMOTIN" fill priority sizes="(max-width: 768px) 96vw, 580px" className="object-contain object-bottom drop-shadow-[0_24px_28px_rgba(31,58,46,0.18)]" />
                 </div>
               </div>
               {maxPercent > 0 && (
                 <a
                   href={anchor}
-                  className="lander-pop absolute right-1 top-4 flex h-[84px] w-[84px] rotate-[10deg] flex-col items-center justify-center rounded-full bg-[#F0735A] text-white shadow-[0_10px_24px_-8px_rgba(0,0,0,0.35)] [animation-delay:600ms] md:right-6 md:top-8 md:h-28 md:w-28"
+                  className="lander-pop absolute right-1 top-4 flex h-[84px] w-[84px] rotate-[10deg] flex-col items-center justify-center rounded-full bg-coral-deep text-white shadow-float [animation-delay:600ms] md:right-6 md:top-8 md:h-28 md:w-28"
                 >
-                  <span className="text-[10px] font-semibold uppercase leading-none">{tl('sticker')}</span>
-                  <span className="text-[24px] font-extrabold leading-tight md:text-[32px]">−{maxPercent}%</span>
+                  <span className="text-[0.75rem] font-semibold uppercase leading-none">{tl('sticker')}</span>
+                  <span className="text-[1.5rem] font-extrabold leading-tight md:text-[1.875rem]">−{maxPercent}%</span>
                 </a>
               )}
               {featured && featuredProduct && featuredVariant && (
                 <Link
                   href={`/${locale}/products/${featuredProduct.slug}`}
-                  className="group relative z-10 mx-auto -mt-4 flex max-w-[420px] items-center gap-3 rounded-[18px] bg-white p-3 text-[#151515] shadow-[0_18px_40px_-16px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition hover:-translate-y-0.5 md:-mt-8"
+                  className="group relative z-10 mx-auto -mt-4 flex max-w-[420px] items-center gap-3 rounded-[18px] bg-white p-3 text-ink shadow-[0_18px_40px_-16px_rgba(0,0,0,0.3)] ring-1 ring-black/5 transition hover:-translate-y-0.5 md:-mt-8"
                 >
-                  <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[12px] bg-[#F3F6F2]">
+                  <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[12px] bg-mint-soft">
                     <Image src={tightPackshot(getStoreVisual(featuredProduct).packshot)} alt={featured.title} fill sizes="64px" className="object-contain p-1" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[10.5px] font-bold uppercase tracking-wide text-[#F0735A]">{tl('offer_of_day')} · {featured.badge}</span>
-                    <span className="block truncate text-[15px] font-extrabold">{featured.title}</span>
+                    <span className="block text-[0.75rem] font-bold uppercase tracking-wide text-coral-deep">{tl('offer_of_day')} · {featured.badge}</span>
+                    <span className="block truncate text-[0.9375rem] font-extrabold">{featured.title}</span>
                     <span className="flex items-baseline gap-2">
-                      <span className="text-[17px] font-extrabold text-[#2E8655]">{formatMoney(variantPrice(featuredVariant), countryConfig)}</span>
+                      <span className="text-[1.125rem] font-extrabold text-forest">{formatMoney(variantPrice(featuredVariant), countryConfig)}</span>
                       {variantSavings(featuredVariant) > 0 && (
-                        <span className="text-[12px] text-[#999] line-through">{formatMoney(featuredVariant.price, countryConfig)}</span>
+                        <span className="text-[0.75rem] text-ink-muted line-through">{formatMoney(featuredVariant.price, countryConfig)}</span>
                       )}
                     </span>
                   </span>
-                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#151515] text-white transition group-hover:translate-x-0.5">
+                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-white transition group-hover:translate-x-0.5">
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </Link>
@@ -178,12 +179,12 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
               { icon: BadgeCheck, title: tl('trust_registered_title'), text: tl('trust_registered_text') },
             ].map(({ icon: Icon, title, text }) => (
               <li key={title} className="flex items-center gap-3 rounded-[14px] p-2">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2E8655] text-white">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-green text-white">
                   <Icon className="h-5 w-5" />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-[13.5px] font-bold leading-tight md:text-[15px]">{title}</span>
-                  <span className="block text-[12px] leading-snug text-[#666] md:text-[13px]">{text}</span>
+                  <span className="block text-[0.875rem] font-bold leading-tight md:text-[0.9375rem]">{title}</span>
+                  <span className="block text-[0.75rem] leading-snug text-ink-muted md:text-[0.8125rem]">{text}</span>
                 </span>
               </li>
             ))}
@@ -196,7 +197,7 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
             <HomeHeading
               sub={t('home.offers_text')}
               action={
-                <Link href={`/${locale}/products`} className="inline-flex items-center gap-1.5 text-[15px] font-bold text-[#2E8655] hover:underline">
+                <Link href={`/${locale}/products`} className="inline-flex min-h-11 items-center gap-1.5 text-[0.9375rem] font-bold text-forest hover:underline">
                   {tl('all_offers')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -228,13 +229,13 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
                     href={`/${locale}/products/${product.slug}`}
                     className="reveal group flex w-[132px] shrink-0 snap-start flex-col items-center text-center md:w-auto"
                   >
-                    <span className="relative flex h-28 w-28 items-center justify-center rounded-full bg-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.35)] ring-4 ring-[#F0735A]/80 transition group-hover:-translate-y-1 group-hover:ring-[#2E8655] md:h-32 md:w-32">
+                    <span className="relative flex h-28 w-28 items-center justify-center rounded-full bg-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.35)] ring-4 ring-coral/80 transition group-hover:-translate-y-1 group-hover:ring-green md:h-32 md:w-32">
                       <span className="relative h-[72%] w-[72%]">
                         <Image src={tightPackshot(getStoreVisual(product).packshot)} alt={need.title} fill sizes="96px" className="object-contain" />
                       </span>
                     </span>
-                    <span className="mt-3 text-[15px] font-extrabold leading-tight">{need.title}</span>
-                    <span className="mt-1 text-[12.5px] leading-snug text-[#555]">{need.text}</span>
+                    <span className="mt-3 text-[0.9375rem] font-extrabold leading-tight">{need.title}</span>
+                    <span className="mt-1 text-[0.8125rem] leading-snug text-ink-soft">{need.text}</span>
                   </Link>
                 );
               })}
@@ -244,7 +245,7 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
 
         {/* ── SVI PROIZVODI ───────────────────────────────────── */}
         <section id="proizvodi" className="mx-auto mt-14 max-w-[1180px] scroll-mt-24 px-3 md:mt-20 md:px-6">
-          <HomeHeading sub={t('home.products_text')}>{tl.rich('products_title', richTags)}</HomeHeading>
+          <HomeHeading sub={t('home.products_text')}>{offers.length > 0 ? tl('more_products_title') : tl('products_title')}</HomeHeading>
           <div className="mt-6 grid grid-cols-2 gap-2.5 md:gap-4 lg:grid-cols-4">
             {catalog.map((product) => (
               <LanderProductCard key={product.id} product={product} locale={locale} countryConfig={countryConfig} />
@@ -254,45 +255,43 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
 
         {/* ── ZAŠTO DERMOTIN (tamna traka) ─────────────────────── */}
         <section className={cn('relative mt-16 overflow-hidden md:mt-24', FOREST_BG)}>
-          <div className="absolute inset-0 bg-[#0f1a14]/70" aria-hidden />
+          <div className="absolute inset-0 bg-night/70" aria-hidden />
           <div className="relative mx-auto grid max-w-[1180px] items-center gap-8 px-4 py-12 text-white md:grid-cols-[0.9fr_1.1fr] md:gap-14 md:px-6 md:py-20">
             <div className="relative mx-auto aspect-[4/5] w-full max-w-[420px] overflow-hidden rounded-[24px] border-4 border-white/10">
               <Image src="/images/main/third-image.jpg" alt={t('home.why_image_alt')} fill sizes="(max-width: 768px) 92vw, 420px" className="object-cover" />
-              <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-[#2E8655] px-4 py-2 text-[13px] font-bold">
+              <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-green px-4 py-2 text-[0.8125rem] font-bold">
                 <Leaf className="h-4 w-4" />
                 {t('home.why_1_title')}
               </span>
             </div>
             <div>
-              <p className="text-[12.5px] font-bold uppercase tracking-[0.16em] text-[#9FE0B6]">{t('home.why_eyebrow')}</p>
-              <h2 className="mt-3 text-[30px] font-extrabold leading-tight md:text-[42px]">{t('home.why_title')}</h2>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-white/85">{t('home.why_text')}</p>
+              <h2 className="text-balance text-[1.875rem] font-extrabold leading-tight md:text-[2.625rem]">{t('home.why_title')}</h2>
+              <p className="mt-4 text-[1rem] leading-relaxed text-white/85">{t('home.why_text')}</p>
               <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                 {[1, 2, 3, 4].map((n) => (
                   <li key={n} className="flex gap-3 rounded-[16px] bg-white/[0.07] p-3.5 ring-1 ring-white/10">
-                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#F0735A]">
+                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-coral">
                       <Check className="h-3.5 w-3.5" strokeWidth={3} />
                     </span>
                     <span>
-                      <span className="block text-[15px] font-bold">{t(`home.why_${n}_title`)}</span>
-                      <span className="block text-[13px] leading-snug text-white/75">{t(`home.why_${n}_text`)}</span>
+                      <span className="block text-[0.9375rem] font-bold">{t(`home.why_${n}_title`)}</span>
+                      <span className="block text-[0.8125rem] leading-snug text-white/75">{t(`home.why_${n}_text`)}</span>
                     </span>
                   </li>
                 ))}
               </ul>
-              <dl className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+              <dl className="mt-8 grid grid-cols-3 gap-3">
                 {[
                   { value: <CountUp value={SITE_CUSTOMERS} />, plus: true, label: tl('stat_customers') },
                   { value: STORE_PROOF.reviewsCount.replace('+', ''), plus: true, label: tl('stat_reviews') },
-                  { value: String(STORE_PROOF.years), plus: false, label: tl('stat_years') },
                   { value: String(countryConfig.business.returnPeriodDays), plus: false, label: tl('stat_returns') },
                 ].map(({ value, plus, label }) => (
-                  <div key={label} className="rounded-[16px] bg-white p-3 text-center text-[#151515]">
-                    <dt className="text-[26px] font-extrabold leading-none text-[#2E8655] md:text-[30px]">
+                  <div key={label} className="rounded-[16px] bg-white p-3 text-center text-ink">
+                    <dt className="text-[1.5rem] font-extrabold leading-none text-green md:text-[1.875rem]">
                       {value}
-                      {plus && <span className="text-[#F0735A]">+</span>}
+                      {plus && <span className="text-coral">+</span>}
                     </dt>
-                    <dd className="mt-1.5 text-[12px] font-semibold leading-tight text-[#555]">{label}</dd>
+                    <dd className="mt-1.5 text-[0.75rem] font-semibold leading-tight text-ink-soft">{label}</dd>
                   </div>
                 ))}
               </dl>
@@ -304,7 +303,7 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
         <section id="utisci" className="mx-auto mt-14 max-w-[1180px] scroll-mt-24 px-3 md:mt-20 md:px-6">
           <HomeHeading
             action={
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[14px] font-bold shadow-[0_6px_16px_rgba(0,0,0,0.06)]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[0.875rem] font-bold shadow-[0_6px_16px_rgba(0,0,0,0.06)]">
                 <Stars size={16} /> 5/5 · {STORE_PROOF.reviewsCount}
               </span>
             }
@@ -320,19 +319,19 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
               >
                 <div className="flex items-center gap-3">
                   {item.photo && (
-                    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-[3px] border-[#2E8655]">
+                    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-[3px] border-green">
                       <Image src={item.photo} alt={item.name} fill sizes="48px" className="object-cover" />
                     </span>
                   )}
                   <span>
-                    <span className="block text-[15px] font-bold">{item.name}</span>
-                    {item.age && <span className="block text-[12.5px] text-[#666]">{item.age} {tLander('years')}</span>}
+                    <span className="block text-[0.9375rem] font-bold">{item.name}</span>
+                    {item.age && <span className="block text-[0.8125rem] text-ink-muted">{item.age} {plural(Number(item.age) || 0, tLander('years_forms'))}</span>}
                   </span>
                   <span className="ml-auto">
                     <Stars size={14} />
                   </span>
                 </div>
-                <blockquote className="mt-4 text-[14.5px] leading-relaxed text-[#333]">„{item.text}“</blockquote>
+                <blockquote className="mt-4 text-[0.9375rem] leading-relaxed text-ink-soft">„{item.text}“</blockquote>
               </figure>
             ))}
           </div>
@@ -342,35 +341,35 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
         {/* ── KAKO PORUČITI + GARANCIJA ────────────────────────── */}
         <section className="mx-auto mt-14 grid max-w-[1180px] gap-4 px-3 md:mt-20 md:grid-cols-2 md:gap-6 md:px-6">
           <div className="reveal rounded-[22px] bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.06)] md:p-8">
-            <h2 className="text-[24px] font-extrabold md:text-[30px]">{tLander.rich('how_title', richTags)}</h2>
-            <ol className="relative mt-6 space-y-5 before:absolute before:bottom-4 before:left-[21px] before:top-4 before:w-0.5 before:bg-[#2E8655]/20">
+            <h2 className="text-[1.5rem] font-extrabold md:text-[1.875rem]">{tLander.rich('how_title', richTags)}</h2>
+            <ol className="relative mt-6 space-y-5 before:absolute before:bottom-4 before:left-[21px] before:top-4 before:w-0.5 before:bg-green/20">
               {[
                 { icon: MousePointerClick, title: t('how.step1_title'), text: t('how.step1_text') },
                 { icon: ClipboardCheck, title: t('how.step2_title'), text: t('how.step2_text') },
                 { icon: Package, title: t('how.step3_title', { time: courier.deliveryTime }), text: t('how.step3_text') },
               ].map(({ icon: Icon, title, text }) => (
                 <li key={title} className="relative flex gap-4">
-                  <span className="relative z-10 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2E8655] text-white ring-4 ring-white">
+                  <span className="relative z-10 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-green text-white ring-4 ring-white">
                     <Icon className="h-5 w-5" />
                   </span>
                   <span>
-                    <span className="block text-[16px] font-bold">{title}</span>
-                    <span className="mt-0.5 block text-[14px] leading-relaxed text-[#555]">{text}</span>
+                    <span className="block text-[1rem] font-bold">{title}</span>
+                    <span className="mt-0.5 block text-[0.875rem] leading-relaxed text-ink-soft">{text}</span>
                   </span>
                 </li>
               ))}
             </ol>
           </div>
-          <div className="reveal flex flex-col items-center justify-center gap-4 rounded-[22px] border-2 border-[#F0735A] bg-[#FFF6F3] p-5 text-center md:p-8">
+          <div className="reveal flex flex-col items-center justify-center gap-4 rounded-[22px] border-2 border-coral bg-coral-soft p-5 text-center md:p-8">
             <div className="relative h-28 w-28 shrink-0">
-              <span className="absolute inset-0 rounded-full border-[3px] border-dashed border-[#2E8655]/70 motion-safe:animate-[spin_24s_linear_infinite]" aria-hidden />
-              <span className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full bg-[#F0735A] text-white">
-                <span className="text-[26px] font-extrabold leading-none">100%</span>
-                <span className="mt-1 text-[9.5px] font-bold uppercase tracking-[0.12em]">{tLander('seal_label')}</span>
+              <span className="absolute inset-0 rounded-full border-[3px] border-dashed border-green/70" aria-hidden />
+              <span className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full bg-coral-deep text-white">
+                <span className="text-[1.5rem] font-extrabold leading-none">100%</span>
+                <span className="mt-1 text-[0.75rem] font-bold uppercase tracking-[0.08em]">{tLander('seal_label')}</span>
               </span>
             </div>
-            <h2 className="text-[24px] font-extrabold leading-snug md:text-[30px]">{tLander.rich('guarantee_title', richTags)}</h2>
-            <p className="text-[15px] leading-relaxed">{tLander.rich('guarantee_text', { ...richTags, unit: tl('guarantee_unit_home') })}</p>
+            <h2 className="text-[1.5rem] font-extrabold leading-snug md:text-[1.875rem]">{tLander.rich('guarantee_title', richTags)}</h2>
+            <p className="text-[0.9375rem] leading-relaxed">{tLander.rich('guarantee_text', { ...richTags, unit: tl('guarantee_unit_home') })}</p>
           </div>
         </section>
 
@@ -378,17 +377,17 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
         {faq.length > 0 && (
           <section className="mx-auto mt-14 grid max-w-[1180px] gap-6 px-3 md:mt-20 md:grid-cols-[0.8fr_1.2fr] md:gap-12 md:px-6">
             <div>
-              <h2 className="text-[28px] font-extrabold leading-tight md:text-[40px]">{tLander.rich('faq_title', richTags)}</h2>
-              <p className="mt-2 text-[15px] text-[#4a4a4a]">{tl('faq_sub')}</p>
+              <h2 className="text-[1.875rem] font-extrabold leading-tight md:text-[2.625rem]">{tLander.rich('faq_title', richTags)}</h2>
+              <p className="mt-2 text-[0.9375rem] text-ink-soft">{tl('faq_sub')}</p>
               <div className="mt-5 space-y-2">
                 {company.phone && (
                   <a href={`tel:${company.phone}`} className="flex items-center gap-3 rounded-[14px] bg-white p-3.5 font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.05)]">
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#2E8655] text-white"><Phone className="h-4 w-4" /></span>
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-green text-white"><Phone className="h-4 w-4" /></span>
                     {company.phone}
                   </a>
                 )}
                 <a href={`mailto:${company.email}`} className="flex items-center gap-3 rounded-[14px] bg-white p-3.5 font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.05)]">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#2E8655] text-white"><Mail className="h-4 w-4" /></span>
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-green text-white"><Mail className="h-4 w-4" /></span>
                   <span className="break-all">{company.email}</span>
                 </a>
               </div>
@@ -396,11 +395,11 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
             <div className="space-y-2">
               {faq.map((item) => (
                 <details key={item.question} className="group rounded-[14px] bg-white px-4 shadow-[0_4px_14px_rgba(0,0,0,0.05)] open:shadow-[0_10px_24px_rgba(0,0,0,0.08)]">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-4 text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-4 text-[0.9375rem] font-semibold [&::-webkit-details-marker]:hidden">
                     {item.question}
-                    <ChevronDown className="h-5 w-5 shrink-0 text-[#2E8655] transition group-open:rotate-180" />
+                    <ChevronDown className="h-5 w-5 shrink-0 text-green transition group-open:rotate-180" />
                   </summary>
-                  <p className="pb-4 text-[14.5px] leading-relaxed text-[#444]">{item.answer}</p>
+                  <p className="pb-4 text-[0.9375rem] leading-relaxed text-ink-soft">{item.answer}</p>
                 </details>
               ))}
             </div>
@@ -409,13 +408,13 @@ export function HomeStore({ products, countryConfig, locale }: HomeStoreProps) {
 
         {/* ── ZAVRŠNI POZIV ────────────────────────────────────── */}
         <section className="mx-auto mt-14 max-w-[1180px] px-3 md:mt-20 md:px-6">
-          <div className="relative overflow-hidden rounded-[28px] bg-[#F7F4EE] px-5 py-10 text-center ring-1 ring-black/5 md:px-12 md:py-14">
+          <div className="relative overflow-hidden rounded-[28px] bg-paper px-5 py-10 text-center ring-1 ring-black/5 md:px-12 md:py-14">
             <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(46,134,85,0.16)_0%,rgba(46,134,85,0)_70%)]" aria-hidden />
-            <h2 className="relative text-[28px] font-extrabold leading-tight text-[#151515] md:text-[42px]">{tl.rich('final_title', richTags)}</h2>
-            <p className="relative mx-auto mt-3 max-w-xl text-[15.5px] text-[#4a4a4a]">{tl('final_text')}</p>
+            <h2 className="relative text-[1.875rem] font-extrabold leading-tight text-ink md:text-[2.625rem]">{tl.rich('final_title', richTags)}</h2>
+            <p className="relative mx-auto mt-3 max-w-xl text-[1rem] text-ink-soft">{tl('final_text')}</p>
             <a
               href={anchor}
-              className="lander-shine relative mt-6 inline-flex h-14 items-center gap-2 rounded-full bg-[#F0735A] px-8 text-[15px] font-bold uppercase tracking-wide text-white shadow-[0_6px_0_#c4533b] transition hover:scale-[1.03]"
+              className="relative mt-6 inline-flex min-h-14 items-center gap-2 rounded-full bg-green px-8 text-[1rem] font-bold text-white shadow-press-lg transition hover:bg-green-press active:translate-y-[3px] active:shadow-press"
             >
               {offers.length > 0 ? t('home.cta_offers') : t('home.cta_products')}
               <ArrowRight className="h-4 w-4" />
@@ -445,7 +444,7 @@ function FeaturedOfferCard({ offer, product, locale, countryConfig }: { offer: S
   return (
     <Link
       href={`/${locale}/products/${product.slug}`}
-      className="reveal group flex flex-col overflow-hidden rounded-[24px] bg-white shadow-[0_14px_36px_-18px_rgba(0,0,0,0.4)] ring-2 ring-[#F0735A]"
+      className="reveal group flex flex-col overflow-hidden rounded-[24px] bg-white shadow-[0_14px_36px_-18px_rgba(0,0,0,0.4)] ring-2 ring-coral"
     >
       <div className={cn('relative aspect-[16/10] overflow-hidden', SOFT_STAGE)}>
         <Image
@@ -455,26 +454,26 @@ function FeaturedOfferCard({ offer, product, locale, countryConfig }: { offer: S
           sizes="(max-width: 1024px) 100vw, 640px"
           className="object-contain p-6 drop-shadow-[0_18px_22px_rgba(0,0,0,0.2)] transition duration-700 group-hover:scale-[1.04]"
         />
-        <span className="absolute left-4 top-4 rounded-full bg-[#F0735A] px-3 py-1.5 text-[12px] font-bold uppercase tracking-wide text-white">{offer.badge}</span>
+        <span className="absolute left-4 top-4 rounded-full bg-coral-deep px-3 py-1.5 text-[0.75rem] font-bold uppercase tracking-wide text-white">{offer.badge}</span>
         {percent > 0 && (
-          <span className="absolute right-4 top-4 flex h-16 w-16 rotate-[8deg] flex-col items-center justify-center rounded-full bg-white text-[#F0735A] shadow">
-            <span className="text-[9px] font-bold uppercase leading-none">{t('card.save')}</span>
-            <span className="text-[20px] font-extrabold leading-tight">{percent}%</span>
+          <span className="absolute right-4 top-4 flex h-16 w-16 rotate-[8deg] flex-col items-center justify-center rounded-full bg-white text-coral-deep shadow">
+            <span className="text-[0.75rem] font-bold uppercase leading-none">{t('card.save')}</span>
+            <span className="text-[1.25rem] font-extrabold leading-tight">{percent}%</span>
           </span>
         )}
         {quantity > 1 && (
-          <span className="absolute bottom-4 right-4 rounded-full bg-[#2E8655] px-3 py-1 text-[17px] font-extrabold text-white shadow">× {quantity}</span>
+          <span className="absolute bottom-4 right-4 rounded-full bg-green px-3 py-1 text-[1.125rem] font-extrabold text-white shadow">× {quantity}</span>
         )}
       </div>
       <div className="flex flex-1 flex-col p-5 md:p-6">
-        <p className="text-[24px] font-extrabold leading-tight md:text-[28px]">{offer.title}</p>
-        <p className="mt-2 text-[15px] leading-relaxed text-[#444]">
+        <p className="text-[1.5rem] font-extrabold leading-tight md:text-[1.875rem]">{offer.title}</p>
+        <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">
           <Bold text={offer.pitch} />
         </p>
         {facts.length > 0 && (
           <ul className="mt-3 flex flex-wrap gap-1.5">
             {facts.map((fact) => (
-              <li key={fact.label} className="rounded-full bg-[#2E8655]/10 px-2.5 py-1 text-[12.5px] font-medium text-[#1d5434]">
+              <li key={fact.label} className="rounded-full bg-green/10 px-2.5 py-1 text-[0.8125rem] font-medium text-forest">
                 <strong className="font-extrabold">{fact.value}</strong> {fact.label}
               </li>
             ))}
@@ -482,13 +481,13 @@ function FeaturedOfferCard({ offer, product, locale, countryConfig }: { offer: S
         )}
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-5">
           <div>
-            {savings > 0 && <p className="text-[13px] text-[#888] line-through">{formatMoney(variant.price, countryConfig)}</p>}
-            <p className="inline-block bg-[#2E8655] px-2 py-0.5 text-[32px] font-extrabold leading-none text-white [text-shadow:2px_2px_0_#14402a]">
+            {savings > 0 && <p className="text-[0.8125rem] text-ink-muted line-through">{formatMoney(variant.price, countryConfig)}</p>}
+            <p className="inline-block bg-green px-2 py-0.5 text-[1.875rem] font-extrabold leading-none text-white">
               {formatMoney(variantPrice(variant), countryConfig)}
             </p>
-            {offer.priceNote && <p className="mt-1.5 text-[12.5px] text-[#666]">{offer.priceNote}</p>}
+            {offer.priceNote && <p className="mt-1.5 text-[0.8125rem] text-ink-muted">{offer.priceNote}</p>}
           </div>
-          <span className="lander-shine inline-flex h-12 items-center gap-2 rounded-full bg-[#2E8655] px-6 text-[15px] font-bold text-white shadow-[0_4px_0_#1d5434]">
+          <span className="inline-flex min-h-12 items-center gap-2 rounded-full bg-green px-6 text-[0.9375rem] font-bold text-white shadow-press">
             {t('lander.submit')}
             <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
           </span>
@@ -509,7 +508,7 @@ function CompactOfferCard({ offer, product, locale, countryConfig }: { offer: St
   return (
     <Link
       href={`/${locale}/products/${product.slug}`}
-      className="reveal group flex items-stretch overflow-hidden rounded-[20px] bg-white shadow-[0_8px_24px_-14px_rgba(0,0,0,0.35)] ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:ring-[#2E8655]/40"
+      className="reveal group flex items-stretch overflow-hidden rounded-[20px] bg-white shadow-[0_8px_24px_-14px_rgba(0,0,0,0.35)] ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:ring-green/40"
     >
       <div className={cn('relative w-[38%] shrink-0 overflow-hidden', SOFT_STAGE)}>
         <Image
@@ -519,19 +518,19 @@ function CompactOfferCard({ offer, product, locale, countryConfig }: { offer: St
           sizes="200px"
           className="object-contain p-3 drop-shadow-[0_10px_14px_rgba(0,0,0,0.2)] transition duration-500 group-hover:scale-[1.06]"
         />
-        {percent > 0 && <span className="absolute left-2 top-2 rounded-full bg-[#F0735A] px-2 py-0.5 text-[11.5px] font-extrabold text-white">−{percent}%</span>}
+        {percent > 0 && <span className="absolute left-2 top-2 rounded-full bg-coral-deep px-2 py-0.5 text-[0.75rem] font-extrabold text-white">−{percent}%</span>}
       </div>
       <div className="flex min-w-0 flex-1 flex-col p-3.5 md:p-4">
-        <span className="text-[10.5px] font-bold uppercase tracking-wide text-[#F0735A]">{offer.badge}</span>
-        <p className="mt-0.5 text-[16px] font-extrabold leading-tight md:text-[18px]">{offer.title}</p>
-        {offer.priceNote && <p className="mt-1 text-[12.5px] text-[#666]">{offer.priceNote}</p>}
+        <span className="text-[0.75rem] font-bold uppercase tracking-wide text-coral-deep">{offer.badge}</span>
+        <p className="mt-0.5 text-[1rem] font-extrabold leading-tight md:text-[1.125rem]">{offer.title}</p>
+        {offer.priceNote && <p className="mt-1 text-[0.8125rem] text-ink-muted">{offer.priceNote}</p>}
         <div className="mt-auto flex items-end justify-between gap-2 pt-2">
           <div>
-            {savings > 0 && <p className="text-[11.5px] text-[#999] line-through">{formatMoney(variant.price, countryConfig)}</p>}
-            <p className="text-[20px] font-extrabold leading-none text-[#2E8655]">{formatMoney(variantPrice(variant), countryConfig)}</p>
-            {savings > 0 && <p className="mt-0.5 text-[11.5px] font-bold text-[#F0735A]">{t('card.you_save', { amount: formatMoney(savings, countryConfig) })}</p>}
+            {savings > 0 && <p className="text-[0.75rem] text-ink-muted line-through">{formatMoney(variant.price, countryConfig)}</p>}
+            <p className="text-[1.25rem] font-extrabold leading-none text-green">{formatMoney(variantPrice(variant), countryConfig)}</p>
+            {savings > 0 && <p className="mt-0.5 text-[0.75rem] font-bold text-coral-deep">{t('card.you_save', { amount: formatMoney(savings, countryConfig) })}</p>}
           </div>
-          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2E8655] text-white transition group-hover:translate-x-0.5">
+          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green text-white transition group-hover:translate-x-0.5">
             <ArrowRight className="h-4 w-4" />
           </span>
         </div>

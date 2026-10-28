@@ -11,6 +11,8 @@ import {
   type ReactNode,
 } from 'react';
 import { buildBogoGroupLines } from '@/utils/bogo-pair';
+import { getProductsForLocale, getProductVariantsForCountry } from '@/config/locales';
+import { isBOGOActive } from '@/utils/bogo-cookies';
 
 export interface CartLineItem {
   /** Stable unique key per cart row (needed when 1+1 duplicates the same SKU) */
@@ -106,6 +108,40 @@ function normalizeStoredItems(parsed: unknown): CartLineItem[] {
   return items.filter((item) => !item.bogoPairId || !invalidGroupIds.has(item.bogoPairId));
 }
 
+/**
+ * Cene iz trenutnog kataloga za sačuvanu korpu. Proizvodi kojih više nema se uklanjaju;
+ * kada 1+1 akcija ne važi, plaćena linija dobija punu cenu, a gratis linija otpada.
+ */
+async function repriceItems(items: CartLineItem[], locale: string): Promise<CartLineItem[]> {
+  const products = await getProductsForLocale(locale);
+  const bogoActive = isBOGOActive();
+  const next: CartLineItem[] = [];
+  for (const item of items) {
+    const product = products[item.productId];
+    const variant = product?.availableCountries.includes(locale)
+      ? getProductVariantsForCountry(product, locale).find((v) => v.id === item.variantId)
+      : undefined;
+    if (!variant) continue;
+    if (item.bogoPairId) {
+      if (bogoActive) {
+        next.push(item);
+        continue;
+      }
+      if (item.bogoRole === 'free') continue;
+    }
+    next.push({
+      ...item,
+      bogoPairId: undefined,
+      bogoRole: undefined,
+      bogoOriginalUnitPrice: undefined,
+      sku: variant.sku,
+      unitPrice: variant.discountPrice ?? variant.price,
+      regularPrice: variant.price,
+    });
+  }
+  return next;
+}
+
 interface CartProviderProps {
   locale: string;
   children: ReactNode;
@@ -118,16 +154,28 @@ export function CartProvider({ locale, children }: CartProviderProps) {
   const skipNextPersist = useRef(true);
 
   useEffect(() => {
+    let cancelled = false;
     try {
       const stored = window.localStorage.getItem(getStorageKey(locale));
       if (stored) {
-        setItems(normalizeStoredItems(JSON.parse(stored)));
+        const restored = normalizeStoredItems(JSON.parse(stored));
+        setItems(restored);
+        // Sačuvana korpa nosi cene iz trenutka dodavanja; server prihvata samo cene iz
+        // kataloga, pa se cene osvežavaju (osim ako je kupac u međuvremenu menjao korpu).
+        repriceItems(restored, locale)
+          .then((next) => {
+            if (!cancelled) setItems((current) => (current === restored ? next : current));
+          })
+          .catch(() => undefined);
       }
     } catch (error) {
       console.error('Failed to load cart from storage:', error);
     }
     skipNextPersist.current = true;
     setIsHydrated(true);
+    return () => {
+      cancelled = true;
+    };
   }, [locale]);
 
   useEffect(() => {

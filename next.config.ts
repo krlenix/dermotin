@@ -22,9 +22,11 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
       },
+      // Jedini spoljni izvor slika (zastave u CountryMismatchBanner / CountrySwitcher).
+      // Ne vraćati '**': otvoren optimizer bi bilo ko mogao da koristi o našem trošku.
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'flagcdn.com',
       },
     ],
     formats: ['image/webp', 'image/avif'],
@@ -39,7 +41,7 @@ const nextConfig: NextConfig = {
   
   // Performance optimizations
   experimental: {
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog'],
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-dialog'],
     webVitalsAttribution: ['CLS', 'LCP'],
   },
   
@@ -113,12 +115,6 @@ const nextConfig: NextConfig = {
       ...[
         '/api/:path*',
         '/admin/:path*',
-        '/capi-test',
-        '/test-marketing',
-        '/test-country-modal',
-        '/geolocation-test',
-        '/geolocation-demo',
-        '/new-template-example',
       ].map((source) => ({
         source,
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],

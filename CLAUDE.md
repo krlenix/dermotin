@@ -16,10 +16,10 @@ npm run dev          # Start dev server (Next.js) on http://localhost:3000
 npm run build        # Production build
 npm run start        # Serve production build
 npm run lint         # ESLint (eslint-config-next)
-npm run analyze      # Build with bundle analyzer (ANALYZE=true)
+npm test             # node:test suites: TopOMS mapping/outbox + server order guard (no live services)
 ```
 
-There is no test runner configured. `ts-node` is available and is used for standalone scripts.
+Tests are plain `node --test` files in `tests/` loaded through `scripts/register-ts.cjs` (ts-node). Run `npm test` after touching `src/app/api/orders`, `src/lib/order-guard.ts`, `src/lib/topoms/*`, coupons, shipping or product prices. For a safe local preview use `POKRENI-PREGLED.bat` (orders, OMS, Supabase, Meta and pixels disabled).
 
 Local URLs always require a locale prefix: `/rs`, `/ba`, or `/me` (e.g. `http://localhost:3000/rs/checkouts/fungel`). The bare `/` redirects via geolocation.
 
@@ -39,25 +39,27 @@ When adding a locale you must update **both** `src/i18n.ts` and the `locales` ar
 `src/config/products.ts` is a thin re-export barrel. The real data lives per-locale in `src/config/locales/{rs,ba,me,hr}/products.ts`, each exporting a `PRODUCTS: Record<string, Product>`. Access is always through the async helpers in `src/config/locales/index.ts` (`getProductsForLocale`, `getProductBySlug`, `getProductsForCountry`, `getProductVariantsForCountry`, etc.) — these `await import()` the right locale module. **Never import a locale's `products.ts` directly**; go through these helpers so the fallback-to-`rs` behavior is preserved.
 
 - A product has one canonical `slug` plus `alternativeSlugs[]` — multiple URLs resolve to the same product (used for A/B landing pages and SEO). `getProductBySlug` matches both.
-- Prices are stored in each variant's own `currency` (usually RSD) and converted at read time via `convertCurrency` / `getProductVariantsForCountry`. Conversion rates are hardcoded in `src/config/countries.ts` and duplicated in `getProductPrice` — keep them in sync.
+- Prices are stored in each variant's own `currency` (usually RSD; BA/ME catalogs are native BAM/EUR) and converted at read time via `convertCurrency` / `getProductVariantsForCountry`. Rates live only in `CURRENCY_RATES` in `src/config/countries.ts`.
 
 ### Routing surface (`src/app`)
 
-- `[locale]/checkouts/[slug]` — funnel-style landing + checkout (the primary conversion flow, `LandingPage.tsx` + `CheckoutFormV2.tsx`).
-- `[locale]/products` and `[locale]/products/[slug]` — classic catalog/product pages with the shopping cart (`CartDrawer`).
-- `[locale]/checkout` — cart checkout. `[locale]/thank-you`, `[locale]/contact`.
-- `app/checkouts/[slug]` (no locale) also exists — legacy/non-localized entry.
-- Various `*-test` / `*-demo` routes (`geolocation-test`, `test-marketing`, `capi-test`, …) are internal QA pages, not production surface.
+- `[locale]/checkouts/[slug]` — ad landing (the primary conversion flow): `ProductLanding` → `CheckoutLander` (port of the old dermotin.rs lander) + `QuickOrderForm`. No site header, one action. Old `/checkouts/X` ad URLs are rewritten by `src/middleware.ts` + `src/config/legacy-urls.ts`.
+- `[locale]/products/[slug]` — same lander with `storefront`: site header (`ShopHeader`) and an „Dodaj u korpu“ button under the form.
+- `[locale]/products` — catalog (`ProductsPage`); `[locale]` — home (`HomeStore`); `[locale]/v/[offer]` — Viber campaign (`ViberLanding`, no pixels/CAPI).
+- `[locale]/checkout` — cart checkout (`CartCheckoutPage`, cart in `CartDrawer` + `CartContext`). `[locale]/thank-you`, `[locale]/contact`.
+- `/admin` — local content editor (writes source files; cannot save on Vercel).
 
 ### Order & tracking pipeline
 
-`POST /api/orders` (`src/app/api/orders/route.ts`) is the core order intake: validates, computes totals (coupons/BOGO in `src/config/coupons.ts` + `src/utils/bogo-cookies.ts`), persists via `OrderService` (`src/lib/supabase.ts`), and fires the Meta CAPI Purchase event (`src/lib/capi.ts`). It has an **in-memory idempotency cache** keyed on browser-generated `eventId` to dedupe double-submits — this is per-instance and would need Redis for multi-instance deploys. Marketing attribution (fbc/fbp, UTMs) flows from cookies via `src/utils/marketing-cookies.ts`.
+`POST /api/orders` (`src/app/api/orders/route.ts`) is the core order intake. Before anything is persisted it rate-limits per IP and runs `src/lib/order-guard.ts`: zod field validation, then `verifyOrderPricing` re-prices every line from the catalog, re-validates the coupon on the server (`src/lib/coupons-server.ts`) and checks shipping and total — a cheaper-than-catalog order is rejected with 422. Then it persists via `OrderService` (`src/lib/supabase.ts`, service-role key), queues TopOMS + legacy delivery (`src/lib/topoms/*`, durable outbox) and fires the Meta CAPI Purchase (`src/lib/capi.ts`). Responses and logs never contain customer data or internal errors. The in-memory idempotency cache keyed on `eventId` is per-instance; the TopOMS path is deduped in the database.
+
+Coupons: the browser calls `POST /api/coupons/validate`; static coupons (admin panel) and OMS affiliate codes are resolved only on the server. The OMS key is server-only (`AFFILIATE_API_KEY`) — never `NEXT_PUBLIC_*`, never a fallback in source. `/api/capi` accepts browser events except `purchase` (Purchase comes only from `/api/orders`). Pixels: `src/components/tracking/PixelTracker.tsx` + `src/config/pixels.ts` — do not change while doing UI work.
 
 `GET /api/products-sync?locale=rs` (`src/lib/products-sync.ts`) exposes the catalog in an external OMS/feed format — used for downstream integration. Webhook targets per country live in `CountryConfig.webhooks`.
 
 ### Config-driven content
 
-Most page content is data, not JSX: `src/config/` holds `faq.ts`, `ingredients.ts`, `testimonials.ts`, `coupons.ts`, `images.ts`, `constants.ts` (+ `app-config.ts` re-exported through it), and the `wheel/` gamification config. UI strings are in `src/messages/{rs,ba,me}.json`. When changing copy, check whether it belongs in a `messages/*.json` file or a `config/*.ts` module before editing components.
+Most page content is data, not JSX: `src/config/` holds `lander-content.ts` (lander copy per product), `store-content.ts` (offers, packshots), `store-proof.ts` + `review-shots.ts` (owner-approved proof: customer count, testimonials, review screenshots), `viber-offers.ts`, `faq.ts`, `ingredients.ts`, `coupons.ts`, `constants.ts` (+ `app-config.ts`). Claims must come from `docs/products/*.md`. UI strings are in `src/messages/{rs,ba,me}.json` (rs ekavica, ba/me ijekavica, formal „Vi“). When changing copy, check whether it belongs in a `messages/*.json` file or a `config/*.ts` module before editing components.
 
 ### Environment / integrations
 
@@ -66,5 +68,6 @@ Env vars (see `.env.example`): `NEXT_PUBLIC_DOMAIN`, `NEXT_PUBLIC_APP_URL`, and 
 ## Conventions
 
 - The `README.md` is partly outdated (references an `eu` locale and next-intl v4 that no longer match the code) — trust the source files over the README for locale/version details.
-- Brand colors: `brand-orange` `#FF6B35`, `brand-green` `#608E7E` (Tailwind utilities).
+- Design system: `DESIGN.md` (tokens, contrast rules, components) and `PRODUCT.md` (users, positioning, text rules). Colors come only from the `@theme` tokens in `src/app/globals.css` (`green #2E8655`, `coral #EA684E`, `coral-deep`, `forest`, `mint`, `ink`…) — never hex in components. Font: Poppins (`landerFontClass`), sizes in rem, nothing below 0.75rem.
+- After adding new Tailwind classes, clear `.next` before checking locally (stale CSS cache; `npm run build` already clears the webpack cache).
 - Serbian (Latin) is the primary content language; preserve diacritics (č, ć, š, ž, đ) in all copy and JSON.

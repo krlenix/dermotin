@@ -1,16 +1,12 @@
 @import "tailwindcss";
-/* Enter/exit animacije (animate-in/out, fade-*, zoom-*, slide-in-from-*) koje koriste
-   svi shadcn overlay-i (dialog, dropdown, popover, select, navigation-menu).
-   Tailwind v4 zamena za stari "tailwindcss-animate" plugin — bez ovoga te klase
-   uopšte ne postoje u generisanom CSS-u. */
+/* Enter/exit animacije (animate-in/out, fade-*, zoom-*, slide-in-from-*) za shadcn overlay-e
+   (dialog, dropdown, popover, select) — Tailwind v4 zamena za "tailwindcss-animate". */
 @import "tw-animate-css";
 @import "react-phone-number-input/style.css" layer(components);
-@import "../styles/wheel-animations.css" layer(components);
 
+/* shadcn/ui semantički tokeni (src/components/ui, admin panel).
+   VAŽNO: KOMPLETNE boje (hsl(...)), ne HSL fragmenti — fragment daje nevalidan CSS. */
 @theme inline {
-  /* VAŽNO: Tailwind v4 tokeni moraju biti KOMPLETNE boje (hsl(...)), ne HSL
-     fragmenti — fragment proizvodi nevalidan CSS pa bg-background/bg-popover
-     ispadnu providni (npr. modali i dropdown-i bez pozadine). */
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(240 10% 3.9%);
   --color-card: hsl(0 0% 100%);
@@ -22,68 +18,66 @@
   --color-secondary: hsl(240 4.8% 95.9%);
   --color-secondary-foreground: hsl(240 5.9% 10%);
   --color-muted: hsl(240 4.8% 95.9%);
-  --color-muted-foreground: hsl(240 3.8% 46.1%);
+  --color-muted-foreground: hsl(240 3.8% 40%);
   --color-accent: hsl(240 4.8% 95.9%);
   --color-accent-foreground: hsl(240 5.9% 10%);
-  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive: hsl(0 72% 45%);
   --color-destructive-foreground: hsl(0 0% 98%);
   --color-border: hsl(240 5.9% 90%);
   --color-input: hsl(240 5.9% 90%);
-  --color-ring: hsl(240 10% 3.9%);
-  --color-brand-orange: #F3765D;
-  --color-brand-green: #358055;
+  --color-ring: hsl(146 49% 35%);
   --radius: 0.5rem;
+}
 
-  /* Izlog (početna, proizvodi, Viber): topla „apotekarska“ paleta iz ambalaže */
-  --color-paper: #F7F3ED;
+/*
+ * DERMOTIN — jedna paleta za ceo sajt (vidi DESIGN.md).
+ * Običan @theme (ne inline): svaki token postaje i CSS promenljiva (var(--color-green)),
+ * potrebna za senke i proizvoljne vrednosti.
+ *
+ * Kontrast (WCAG AA):
+ *  - beli tekst: green (4,5:1), green-press, forest, coral-deep, viber; na `coral` SAMO krupan
+ *    tekst (≥ 24px, ili ≥ 19px bold) — 3,2:1
+ *  - sitan zeleni tekst = forest; sitan koralni tekst = coral-deep, samo na beloj/paper podlozi
+ *  - na mint pozadini nikad beli tekst — ink (9,5:1)
+ */
+@theme {
+  --color-green: #2E8655;
+  --color-green-press: #26774A;
+  --color-forest: #1D5434;
+  --color-forest-ink: #14402A;
+  --color-night: #0F1A14;
+  --color-mint: #7FCB95;
+  --color-mint-soft: #EEF6F0;
+  --color-coral: #EA684E;
+  --color-coral-deep: #BC472E;
+  --color-coral-soft: #FFF4F0;
+  --color-ink: #151515;
+  --color-ink-soft: #444444;
+  --color-ink-muted: #666666;
+  --color-mist: #EAE9E6;
+  --color-paper: #F7F4EE;
   --color-sand: #EEE7DD;
-  --color-clay: #E3D8CA;
   --color-line: #E2D8CB;
-  --color-ink: #1A2620;
-  --color-forest: #1F3A30;
-  --color-moss: #4E7A64;
-  --color-coral: #DE6247;
-  --color-coral-deep: #C9533A;
-  --font-display: var(--font-store-serif), "Iowan Old Style", Georgia, serif;
-  --font-store: var(--font-store-sans), ui-sans-serif, system-ui, sans-serif;
+  --color-star: #F5A623;
+  --color-viber: #6650E6;
 
-  /* Marquee trake (MarqueeText komponenta) — pomeraj od tačno jedne kopije teksta
-     (komponenta renderuje 5 identičnih kopija → -20% daje besprekidnu petlju).
-     U v4 --animate-* token automatski generiše animate-* utility. */
-  --animate-marquee-slow: marquee 45s linear infinite;
-  --animate-marquee-medium: marquee 30s linear infinite;
-  --animate-marquee-fast: marquee 15s linear infinite;
-  --animate-marquee-reverse: marquee-reverse 30s linear infinite;
+  /* Stara imena (admin, dijalozi) — iste vrednosti kao gore */
+  --color-brand-green: #2E8655;
+  --color-brand-orange: #BC472E;
 
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-20%);
-    }
-  }
+  --radius-pill: 9999px;
+  --radius-card: 1.375rem;
+  --radius-panel: 0.875rem;
 
-  @keyframes marquee-reverse {
-    from {
-      transform: translateX(-20%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
+  /* Senke: meke, sa pomakom; „press“ je potpis dugmeta sa starog sajta (pritisnuto dugme) */
+  --shadow-card: 0 8px 24px rgb(0 0 0 / 0.06);
+  --shadow-raised: 0 14px 40px rgb(0 0 0 / 0.12);
+  --shadow-float: 0 10px 24px -8px rgb(0 0 0 / 0.35);
+  --shadow-press: 0 4px 0 var(--color-forest);
+  --shadow-press-lg: 0 6px 0 var(--color-forest);
 }
 
-/* Utility klase iz starog v3 config-a koje v4 ne poznaje */
-@utility animation-paused {
-  animation-play-state: paused;
-}
-
-@utility origin-top-center {
-  transform-origin: top center;
-}
-
-/* Define CSS variables for compatibility */
+/* Promenljive za shadcn komponente */
 :root {
   --background: var(--color-background);
   --foreground: var(--color-foreground);
@@ -110,883 +104,88 @@
   * {
     border-color: var(--border);
   }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    accent-color: var(--color-green);
+  }
   body {
     font-family: ui-sans-serif, system-ui, sans-serif;
     background-color: var(--background);
     color: var(--foreground);
-    scroll-behavior: smooth;
+    caret-color: var(--color-green);
   }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  b,
-  strong {
-    font-family: ui-sans-serif, system-ui, sans-serif;
+  ::selection {
+    background: color-mix(in srgb, var(--color-mint) 55%, transparent);
+    color: var(--color-ink);
   }
-  
-  html {
-    scroll-behavior: smooth;
+  /* Jedan vidljiv fokus za tastaturu na celom sajtu */
+  :focus-visible {
+    outline: 3px solid var(--color-green);
+    outline-offset: 2px;
+  }
+  a {
+    text-underline-offset: 0.2em;
+  }
+  /* Tailwind v4 dugmadima vraća podrazumevani kursor — sve što se klikće ima „ruku“ */
+  button:not(:disabled),
+  [role="button"],
+  summary,
+  select,
+  label[for] {
+    cursor: pointer;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
-/* Custom brand colors */
-:root {
-  --brand-orange: #F3765D;
-  --brand-green: #358055;
-}
-
-.text-brand-orange {
-  color: var(--brand-orange);
-}
-
-.bg-brand-orange {
-  background-color: var(--brand-orange);
-}
-
-.border-brand-orange {
-  border-color: var(--brand-orange);
-}
-
-.hover\:bg-brand-orange\/90:hover {
-  background-color: rgb(243 118 93 / 0.9);
-}
-
-.focus\:ring-brand-orange:focus {
-  --tw-ring-color: var(--brand-orange);
-}
-
-.focus\:border-brand-orange:focus {
-  border-color: var(--brand-orange);
-}
-
-/* Scrollbar styles */
+/* Traka za skrolovanje u bojama palete */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+  height: 10px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--muted);
+  background: var(--color-mist);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
+  background: var(--color-line);
+  border: 2px solid var(--color-mist);
+  border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-foreground);
+  background: var(--color-ink-muted);
 }
 
-/* Critical Animation classes - optimized for performance */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 28px, 0) scale(0.985);
-    filter: blur(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
-  }
-}
-
-@keyframes slideInScale {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 34px, 0) scale(0.96);
-    filter: blur(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
-  }
-}
-
-@keyframes ambientFloat {
-  0%, 100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -10px, 0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.animate-fadeInUp {
-  opacity: 0;
-  animation: fadeInUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: transform, opacity, filter;
-}
-
-.animate-slideInScale {
-  opacity: 0;
-  animation: slideInScale 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: transform, opacity, filter;
-}
-
-.animate-float {
-  animation: ambientFloat 6s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* Optimized scroll animations */
-.animate-on-scroll,
-.animate-on-scroll-left,
-.animate-on-scroll-right {
-  opacity: 0;
-  filter: blur(10px);
-  transition:
-    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform, opacity, filter;
-}
-
-.animate-on-scroll {
-  transform: translate3d(0, 36px, 0) scale(0.985);
-}
-
-.animate-on-scroll-left {
-  transform: translate3d(-42px, 0, 0) scale(0.985);
-}
-
-.animate-on-scroll-right {
-  transform: translate3d(42px, 0, 0) scale(0.985);
-}
-
-.animate-on-scroll.animate,
-.animate-on-scroll-left.animate,
-.animate-on-scroll-right.animate {
-  opacity: 1;
-  filter: blur(0);
-  transform: translate3d(0, 0, 0) scale(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-fadeIn,
-  .animate-fadeInUp,
-  .animate-slideInScale,
-  .animate-float,
-  .animate-on-scroll,
-  .animate-on-scroll-left,
-  .animate-on-scroll-right {
-    animation: none !important;
-    transition: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
-}
-
-/* Responsive text sizes */
-.text-responsive-lg {
-  @apply text-lg md:text-xl lg:text-2xl;
-}
-
-.text-responsive-xl {
-  @apply text-xl md:text-2xl lg:text-3xl;
-}
-
-.text-responsive-2xl {
-  @apply text-2xl md:text-3xl lg:text-4xl;
-}
-
-/* Utility classes for enhanced components */
-.glass-effect {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.shadow-glow {
-  box-shadow: 0 0 20px rgba(243, 118, 93, 0.3);
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, var(--brand-orange), var(--brand-green));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Enhanced focus styles */
-.focus-visible\:ring-brand-orange:focus-visible {
-  --tw-ring-color: var(--brand-orange);
-}
-
-/* 3D Testimonials specific styles */
 .scrollbar-hide {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
 }
 
-.testimonials-3d-container {
-  perspective: 1000px;
-  perspective-origin: center center;
-}
-
-.testimonial-card-3d {
-  transform-style: preserve-3d;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, opacity;
-}
-
-.testimonial-card-3d:hover {
-  transform-origin: center center;
-}
-
-/* Smooth scroll behavior for testimonials container */
-.testimonials-scroll-container {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; /* iOS momentum scrolling */
-}
-
-/* Minimal essential animations for performance */
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(243, 118, 93, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(243, 118, 93, 0.3);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 2s ease-in-out infinite;
-}
-
-.organic-grid-pattern {
-  background-image:
-    radial-gradient(circle at top left, rgba(53, 128, 85, 0.18), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(243, 118, 93, 0.14), transparent 26%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(244, 248, 245, 0.9));
-}
-
-.organic-hero-surface {
-  background-image:
-    linear-gradient(135deg, rgba(236, 246, 240, 0.98), rgba(247, 250, 248, 0.92)),
-    radial-gradient(circle at top right, rgba(53, 128, 85, 0.22), transparent 28%),
-    radial-gradient(circle at bottom left, rgba(243, 118, 93, 0.12), transparent 24%);
-}
-
-.section-card {
-  border: 1px solid rgba(53, 128, 85, 0.18);
-  border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 18px 45px rgba(26, 54, 42, 0.08);
-}
-
+/* Kartica forme u checkout-u korpe */
+.section-card,
 .section-card-strong {
-  border: 1px solid rgba(53, 128, 85, 0.24);
+  border: 1px solid color-mix(in srgb, var(--color-green) 18%, transparent);
   border-radius: 1.75rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 249, 247, 0.98));
-  box-shadow: 0 22px 60px rgba(26, 54, 42, 0.12);
+  background: #fff;
+  box-shadow: var(--shadow-card);
 }
 
-.liquid-glass {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.34));
-  backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow:
-    0 14px 40px rgba(26, 54, 42, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
-}
-
-.liquid-glass-soft {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.42));
-  backdrop-filter: blur(16px) saturate(165%);
-  -webkit-backdrop-filter: blur(16px) saturate(165%);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  box-shadow:
-    0 10px 28px rgba(26, 54, 42, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.62);
-}
-
-.section-card-dark {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 1.5rem;
-  background:
-    linear-gradient(180deg, rgba(19, 48, 37, 0.96), rgba(25, 63, 48, 0.94));
-  box-shadow: 0 20px 50px rgba(16, 24, 20, 0.28);
-}
-
-.cta-divider {
-  background:
-    linear-gradient(90deg, rgba(243, 118, 93, 0.95), rgba(224, 101, 77, 0.92));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 28px rgba(243, 118, 93, 0.2);
-}
-
-.highlight-chip {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 9999px;
-  padding: 0.35rem 0.8rem;
-  background: #358055;
-  color: #ffffff;
-  font-weight: 700;
-}
-
-.highlight-chip-orange {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 9999px;
-  padding: 0.35rem 0.8rem;
-  background: #F3765D;
-  color: #ffffff;
-  font-weight: 700;
-}
-
-.highlight-block {
-  display: inline;
-  border-radius: 0.5rem;
-  padding: 0.12rem 0.6rem 0.2rem;
-  margin-inline: 0.08em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  background: #358055;
-  color: #ffffff;
-}
-
-.highlight-block-orange {
-  display: inline;
-  border-radius: 0.5rem;
-  padding: 0.12rem 0.6rem 0.2rem;
-  margin-inline: 0.08em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  background: #F3765D;
-  color: #ffffff;
-}
-
-.highlight-reveal {
-  display: inline;
-  margin: 0;
-  margin-inline: 0.04em;
-  padding: 0.05em 0.24em 0.1em;
-  vertical-align: baseline;
-  line-height: 1.25;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  background-repeat: no-repeat;
-  background-size: 0% 74%, 0% 34%;
-  background-position: 0 60%, 0 68%;
-  color: inherit;
-  border-radius: 0.45rem;
-  transition:
-    background-size 820ms cubic-bezier(0.22, 1, 0.36, 1),
-    text-shadow 220ms ease-out 260ms;
-}
-
-.highlight-reveal--green {
-  background-image:
-    linear-gradient(
-      104deg,
-      rgba(53, 128, 85, 0) 0.9%,
-      rgba(53, 128, 85, 0.96) 2.2%,
-      rgba(83, 165, 111, 0.58) 6%,
-      rgba(83, 165, 111, 0.18) 92%,
-      rgba(53, 128, 85, 0.62) 96%,
-      rgba(53, 128, 85, 0) 98%
-    ),
-    linear-gradient(
-      182deg,
-      rgba(53, 128, 85, 0) 0%,
-      rgba(53, 128, 85, 0.24) 8%,
-      rgba(53, 128, 85, 0) 16%
-    );
-  text-shadow:
-    -10px 10px 8px rgba(53, 128, 85, 0.18),
-    16px -12px 10px rgba(255, 255, 255, 0.92),
-    -12px -18px 18px rgba(255, 255, 255, 0.88);
-}
-
-.highlight-reveal--orange {
-  background-image:
-    linear-gradient(
-      104deg,
-      rgba(243, 118, 93, 0) 0.9%,
-      rgba(243, 118, 93, 0.96) 2.2%,
-      rgba(255, 144, 118, 0.58) 6%,
-      rgba(255, 144, 118, 0.18) 92%,
-      rgba(243, 118, 93, 0.62) 96%,
-      rgba(243, 118, 93, 0) 98%
-    ),
-    linear-gradient(
-      182deg,
-      rgba(243, 118, 93, 0) 0%,
-      rgba(243, 118, 93, 0.24) 8%,
-      rgba(243, 118, 93, 0) 16%
-    );
-  text-shadow:
-    -10px 10px 8px rgba(243, 118, 93, 0.18),
-    16px -12px 10px rgba(255, 255, 255, 0.92),
-    -12px -18px 18px rgba(255, 255, 255, 0.88);
-}
-
-.highlight-reveal.is-visible {
-  background-size: 100% 74%, 100% 34%;
-}
-
-.leaf-divider {
-  position: relative;
-}
-
-.leaf-divider::before,
-.leaf-divider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 56px;
-  height: 2px;
-  border-radius: 9999px;
-  background: rgba(53, 128, 85, 0.28);
-}
-
-.leaf-divider::before {
-  right: calc(100% + 12px);
-}
-
-.leaf-divider::after {
-  left: calc(100% + 12px);
-}
-
-/* Green glow animation for GDPR accept button */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(53, 128, 85, 0.4), 0 0 40px rgba(53, 128, 85, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(53, 128, 85, 0.6), 0 0 60px rgba(53, 128, 85, 0.3);
-  }
-}
-
-/* Simplified hover effects for better performance */
-.hover-lift {
-  transition: transform 0.2s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Parallax effect */
-.parallax {
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-/* Simplified button effects */
-.btn-enhanced {
-  transition: opacity 0.2s ease;
-}
-
-.btn-enhanced:hover {
-  opacity: 0.9;
-}
-
-/* Loading skeleton animations */
-@keyframes skeleton-loading {
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200px 100%;
-  animation: skeleton-loading 1.5s infinite;
-}
-
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-}
-
-/* Essential button effects only */
-.animate-button-glow {
-  box-shadow: 0 0 15px rgba(255, 165, 0, 0.3);
-}
-
-/* Global cursor styles for clickable elements */
-button,
-[role="button"],
-a,
-input[type="submit"],
-input[type="button"],
-input[type="reset"],
-select,
-summary,
-[tabindex]:not([tabindex="-1"]),
-[onclick],
-[data-clickable="true"] {
-  cursor: pointer;
-}
-
-/* Essential shake animation only */
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25%, 75% {
-    transform: translateX(-2px);
-  }
-  50% {
-    transform: translateX(2px);
-  }
-}
-
-.animate-shake {
-  animation: shake 0.4s ease-in-out;
-}
-
-/* Periodic shake for urgency icon */
-@keyframes periodicShake {
-  0%, 85%, 100% {
-    transform: translateX(0) rotate(0deg);
-  }
-  87% {
-    transform: translateX(-3px) rotate(-5deg);
-  }
-  89% {
-    transform: translateX(3px) rotate(5deg);
-  }
-  91% {
-    transform: translateX(-2px) rotate(-3deg);
-  }
-  93% {
-    transform: translateX(2px) rotate(3deg);
-  }
-  95% {
-    transform: translateX(0) rotate(0deg);
-  }
-}
-
-.animate-periodic-shake {
-  animation: periodicShake 4s ease-in-out infinite;
-}
-
-/* Elegant urgency countdown effect - asymptotic slowdown (never reaches end) */
-@keyframes countdownProgress {
-  0% {
-    width: 100%;
-  }
-  30% {
-    width: 50%;
-  }
-  60% {
-    width: 25%;
-  }
-  80% {
-    width: 10%;
-  }
-  90% {
-    width: 5%;
-  }
-  95% {
-    width: 2%;
-  }
-  100% {
-    width: 0.5%;
-  }
-}
-
-.countdown-bar {
-  animation: countdownProgress 300s cubic-bezier(0.25, 0.1, 0.9, 1.0) forwards;
-}
-
-/* Floating button slide-up animation */
-@keyframes slideUpFade {
-  0% {
-    opacity: 0;
-    transform: translateY(100%);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-up-fade {
-  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Floating button slide-down animation (exit) */
-@keyframes slideDownFade {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(100%);
-  }
-}
-
-.animate-slide-down-fade {
-  animation: slideDownFade 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-/* Hand-drawn underline animation */
-@keyframes drawLine {
-  0% {
-    stroke-dashoffset: 200;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-.hand-drawn-underline {
-  position: relative;
-  display: inline-block;
-}
-
-.hand-drawn-underline svg {
-  position: absolute;
-  bottom: -6px;
-  left: 0;
-  width: 100%;
-  height: 12px;
-  overflow: visible;
-}
-
-.hand-drawn-underline svg path {
-  stroke: #FF6B35;
-  stroke-width: 4;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 200;
-  stroke-dashoffset: 200;
-  filter: drop-shadow(0 1px 2px rgba(243, 118, 93, 0.3));
-}
-
-.hand-drawn-underline.animate svg path {
-  animation: drawLine 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  animation-delay: 0.1s;
-}
-
-/* Marching ants animated border */
-@keyframes marchingAnts {
-  to { background-position: 20px 0, calc(100% - 0px) 20px, calc(100% - 20px) calc(100% - 0px), 0 calc(100% - 20px); }
-}
-
-.marching-ants-green {
-  position: relative;
-  border: none;
-  background-image:
-    linear-gradient(90deg, #059669 50%, transparent 50%),
-    linear-gradient(180deg, #059669 50%, transparent 50%),
-    linear-gradient(270deg, #059669 50%, transparent 50%),
-    linear-gradient(0deg, #059669 50%, transparent 50%);
-  background-size: 10px 2px, 2px 10px, 10px 2px, 2px 10px;
-  background-position: 0 0, calc(100% - 0px) 0, calc(100% - 0px) calc(100% - 0px), 0 calc(100% - 0px);
-  background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
-  animation: marchingAnts 0.4s linear infinite;
-}
-
-.marching-ants-blue {
-  position: relative;
-  border: none;
-  background-image:
-    linear-gradient(90deg, #3b82f6 50%, transparent 50%),
-    linear-gradient(180deg, #3b82f6 50%, transparent 50%),
-    linear-gradient(270deg, #3b82f6 50%, transparent 50%),
-    linear-gradient(0deg, #3b82f6 50%, transparent 50%);
-  background-size: 10px 2px, 2px 10px, 10px 2px, 2px 10px;
-  background-position: 0 0, calc(100% - 0px) 0, calc(100% - 0px) calc(100% - 0px), 0 calc(100% - 0px);
-  background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
-  animation: marchingAnts 0.4s linear infinite;
-}
-
-/* Infinite trust marquee ribbon */
-@keyframes trustMarquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.animate-trust-marquee {
-  animation: trustMarquee 32s linear infinite;
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-trust-marquee {
-    animation: none !important;
-  }
-}
-
-/* Prevent grid overflow on mobile */
-@media (max-width: 1024px) {
-  #order {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-  
-  #order > * {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-}
-
-/* Mobile-specific overflow prevention */
-@media (max-width: 768px) {
-  #order {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-  
-  #bundle-selector {
-    overflow-x: hidden;
-    max-width: 100%;
-  }
-}
-/* Kupon animacije (banner + obračun cene na product stranici) */
+/* Kupon: pojavljivanje  */
 @keyframes coupon-slide-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
-
-@keyframes coupon-price-pop {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  60% {
-    transform: scale(1.08);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes coupon-shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
 .coupon-banner-animate {
-  animation: coupon-slide-in 0.45s ease-out both;
+  animation: coupon-slide-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-.coupon-price-animate {
-  animation: coupon-price-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.coupon-shimmer {
-  background-image: linear-gradient(
-    110deg,
-    rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0.35) 50%,
-    rgba(255, 255, 255, 0) 65%
-  );
-  background-size: 200% 100%;
-  animation: coupon-shimmer 2.4s ease-in-out infinite;
-}
-
-/* ── Storefront (redizajn 2026-10) ─────────────────────────────────────── */
-/* Izlog ima sopstvenu tipografiju (Instrument Serif + Instrument Sans) i paletu.
-   :where() drži specifičnost na nuli da utility klase uvek pobeđuju. */
-/* Napomena: @theme inline ne emituje --font-* / --color-* kao CSS promenljive, pa se
-   ovde koriste direktno promenljive koje postavlja next/font i konkretne boje. */
-.store-font,
-.store-font :where(h1, h2, h3, h4, h5, h6, b, strong, button, input, select, textarea) {
-  font-family: var(--font-store-sans), ui-sans-serif, system-ui, sans-serif;
-}
-.store-font {
-  color: #1A2620;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-.store-font .font-display {
-  font-family: var(--font-store-serif), "Iowan Old Style", Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.012em;
-  font-feature-settings: "kern", "liga";
-}
-.store-font ::selection {
-  background: rgba(222, 98, 71, 0.18);
-}
-/* Pozadina za packshot-ove: meko svetlo odozgo, „pod“ pri dnu */
-.store-stage {
-  background:
-    radial-gradient(110% 65% at 50% 22%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 62%),
-    linear-gradient(180deg, #EDE5D9 0%, #E7DED1 74%, #DFD4C5 100%);
-}
-.store-stage-dark {
-  background:
-    radial-gradient(90% 60% at 50% 30%, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0) 65%),
-    linear-gradient(180deg, #24443A 0%, #1F3A30 100%);
-}
-@keyframes store-fade-up {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-/* 4 reda (poslednji = prvi), pomeraj u četvrtinama visine kolone */
-@keyframes store-ticker {
-  0%, 28% { transform: translateY(0); }
-  33%, 61% { transform: translateY(-25%); }
-  66%, 94% { transform: translateY(-50%); }
-  100% { transform: translateY(-75%); }
-}
-.store-fade-up {
-  animation: store-fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-.store-ticker {
-  animation: store-ticker 10s cubic-bezier(0.7, 0, 0.3, 1) infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .store-fade-up,
-  .store-ticker {
-    animation: none !important;
-  }
-}
-
-/* Prodajna stranica proizvoda (preslikana sa starog sajta dermotin.rs) */
+/* Stil prodajne stranice (preslikan sa starog dermotin.rs) — Poppins iz fonts.ts */
 .lander-font,
 .lander-font :where(h1, h2, h3, h4, h5, h6, b, strong, button, input, select, textarea) {
   font-family: var(--font-lander), ui-sans-serif, system-ui, sans-serif;
@@ -994,32 +193,35 @@ summary,
 .lander-font {
   -webkit-font-smoothing: antialiased;
 }
-/* Efekti prodajne stranice: lebdenje, odsjaj, isticanje i pojavljivanje pri skrolovanju */
-@keyframes lander-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-@keyframes lander-shine {
-  0%, 60% { transform: translateX(-120%) skewX(-20deg); }
-  100% { transform: translateX(220%) skewX(-20deg); }
-}
-@keyframes lander-mark {
-  from { background-size: 0% 84%; }
-  to { background-size: 100% 84%; }
-}
+
 /* Istaknut tekst: podloga samo preko sredine reda (vidi Marked u LanderKit.tsx) */
 .lander-mark {
   background-repeat: no-repeat;
   background-position: 0 50%;
   background-size: 100% 84%;
 }
+@keyframes lander-mark {
+  from { background-size: 0% 84%; }
+  to { background-size: 100% 84%; }
+}
+/* Jedini „autorski“ pokret: isticanje u naslovu se iscrta jednom */
+.lander-mark-anim {
+  background-repeat: no-repeat;
+  background-size: 0% 84%;
+  animation: lander-mark 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
 @keyframes lander-pop {
   0% { transform: scale(0.6); opacity: 0; }
-  70% { transform: scale(1.12); opacity: 1; }
+  70% { transform: scale(1.08); opacity: 1; }
   100% { transform: scale(1); }
 }
-.lander-float {
-  animation: lander-float 4.5s ease-in-out infinite;
+.lander-pop {
+  animation: lander-pop 0.35s ease-out both;
+}
+/* Odsjaj samo na dugmetu za slanje porudžbine — skreće pažnju na mesto odluke */
+@keyframes lander-shine {
+  0%, 60% { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(220%) skewX(-20deg); }
 }
 .lander-shine {
   position: relative;
@@ -1030,33 +232,27 @@ summary,
   position: absolute;
   inset: 0;
   width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-  animation: lander-shine 3.6s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+  animation: lander-shine 4.8s ease-in-out infinite;
   pointer-events: none;
 }
-.lander-mark-anim {
-  background-repeat: no-repeat;
-  background-size: 0% 84%;
-  animation: lander-mark 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-}
-.lander-pop {
-  animation: lander-pop 0.35s ease-out both;
-}
+/* Pojavljivanje sekcija pri skrolovanju — samo kada JS radi (vidi useReveal) */
 .lander-js .reveal {
   opacity: 0;
-  transform: translateY(26px);
-  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
 .lander-js .reveal.is-visible {
   opacity: 1;
   transform: none;
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .lander-float,
   .lander-shine::after,
   .lander-mark-anim,
-  .lander-pop {
+  .lander-pop,
+  .coupon-banner-animate {
     animation: none !important;
   }
   .lander-mark-anim {
@@ -1066,5 +262,11 @@ summary,
     opacity: 1;
     transform: none;
     transition: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
   }
 }

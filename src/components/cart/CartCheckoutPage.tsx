@@ -2,15 +2,16 @@
 
 import { checkoutEventId, completeCheckoutAttempt } from '@/utils/checkout-event';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import {
   ArrowRight,
-  ChevronDown,
+  Banknote,
   Gift,
+  Lock,
   Minus,
   Plus,
   ShieldCheck,
@@ -19,9 +20,6 @@ import {
   Truck,
 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { cn } from '@/lib/utils';
 import { COUNTRIES, CountryConfig, getDefaultCourier } from '@/config/countries';
@@ -47,6 +45,8 @@ import {
 import { calculateCouponDiscount, validateCouponWithAPI, type Coupon } from '@/config/coupons';
 import { BOGO_CONFIG } from '@/utils/bogo-cookies';
 import { groupCartItemsForDisplay } from '@/utils/bogo-pair';
+import { getStoreVisual, tightPackshot } from '@/config/store-content';
+import type { CartLineItem } from '@/contexts/CartContext';
 import type { OrderDisplayItem } from '@/components/ThankYouPage';
 
 interface CartCheckoutPageProps {
@@ -54,10 +54,12 @@ interface CartCheckoutPageProps {
   locale: string;
 }
 
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="text-xs font-medium text-red-600">{message}</p>;
-}
+/** Redosled polja na ekranu — fokus ide na prvo neispravno polje posle slanja */
+const FIELD_ORDER = ['phone', 'firstName', 'lastName', 'address', 'city', 'postalCode', 'email'] as const;
+
+/** Novi providni packshot (isti kao na karticama proizvoda); proizvod bez packshot-a zadržava sliku iz korpe */
+const linePackshot = (line: CartLineItem) =>
+  tightPackshot(getStoreVisual({ id: line.productId, images: { main: line.image, gallery: [] } }).packshot);
 
 export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProps) {
   const t = useTranslations();
@@ -257,8 +259,6 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
     }
   };
 
-  const isFieldActive = (field: keyof typeof formData) => formData[field].length > 0;
-
   const validateForm = () => {
     const errors: Record<string, string> = {};
     const fieldsToValidate = ['firstName', 'lastName', 'phone', 'address', 'city', 'postalCode', 'email'];
@@ -271,6 +271,9 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
     });
 
     setFormErrors(errors);
+    // Tastatura i čitači ekrana: fokus na prvo neispravno polje (redosled kao na ekranu)
+    const firstInvalid = FIELD_ORDER.find((field) => errors[field]);
+    if (firstInvalid) document.getElementById(firstInvalid)?.focus();
     return Object.keys(errors).length === 0;
   };
 
@@ -449,7 +452,8 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
       }, 3000);
     } catch (error) {
       console.error('Cart checkout error:', error);
-      setDialogError(error instanceof Error ? error.message : t('validation.order_submission_failed'));
+      // Greška mreže/pregledača je na engleskom ("Failed to fetch") — kupcu ide srpska poruka
+      setDialogError(t('validation.order_submission_failed'));
       setDialogType('error');
       setIsSubmitting(false);
       submitInFlightRef.current = false;
@@ -470,537 +474,481 @@ export function CartCheckoutPage({ countryConfig, locale }: CartCheckoutPageProp
     }
   };
 
-  const floatingLabelClass = (field: keyof typeof formData) =>
+  type Field = keyof typeof formData;
+
+  // Obrazac pristupačne forme iz QuickOrderForm: labela iznad polja, greška ispod (aria-describedby)
+  const fieldProps = (field: Field, required = true) => ({
+    id: field,
+    name: field,
+    'aria-required': required || undefined,
+    'aria-invalid': Boolean(formErrors[field]),
+    'aria-describedby': formErrors[field] ? `${field}-error` : undefined,
+    onBlur: () => handleBlur(field),
+  });
+
+  const inputClass = (field: Field) =>
     cn(
-      'pointer-events-none absolute left-3 right-3 z-10 origin-left truncate font-medium text-[#7d7d7d] transition-all duration-150',
-      isFieldActive(field)
-        ? 'top-[3px] text-[10px] uppercase tracking-[0.02em]'
-        : 'top-1/2 -translate-y-1/2 text-[17px]',
+      'h-[52px] w-full rounded-md border bg-white px-4 text-[1rem] text-ink outline-none transition placeholder:text-ink-muted focus:border-green-press focus:ring-2 focus:ring-green-press/25',
+      formErrors[field] ? 'border-red-600 bg-red-50/40' : 'border-line'
     );
 
-  const inputClass =
-    'h-[52px] rounded-[6px] border-[#d9d0c5] px-3 pb-0 pt-[3px] !text-[17px] font-medium leading-[52px] text-slate-900 shadow-none placeholder:text-transparent';
+  const label = (field: Field, text: ReactNode) => (
+    <label htmlFor={field} className="mb-1.5 block text-[0.875rem] font-medium text-ink-soft">
+      {text}
+    </label>
+  );
+
+  const fieldError = (field: Field) =>
+    formErrors[field] ? (
+      <p id={`${field}-error`} className="mt-1.5 text-[0.8125rem] font-medium text-red-700">
+        {formErrors[field]}
+      </p>
+    ) : null;
+
+  const errorCount = Object.values(formErrors).filter(Boolean).length;
+  // Ušteda na proizvodima + popust kupona (isti iznos kao u korpi)
+  const savingsShown = roundPrice(totalSavings + couponAmounts.productDiscount);
+
+  const linePrice = (regular: number, charged: number) => (
+    <div className="text-right">
+      {regular > charged && (
+        <p className="text-[0.8125rem] text-ink-muted">
+          <span className="sr-only">{t('bogo.regular_price')}: </span>
+          <span className="line-through">{formatPrice(regular)}</span>
+        </p>
+      )}
+      <p className="text-[0.9375rem] font-extrabold text-ink">{formatPrice(charged)}</p>
+    </div>
+  );
+
+  const lineHeader = (line: CartLineItem) => (
+    <div className="flex items-start justify-between gap-1">
+      <div className="min-w-0 pt-0.5">
+        <p className="truncate text-[0.9375rem] font-bold uppercase leading-snug text-ink">{line.productName}</p>
+        <p className="mt-0.5 truncate text-[0.8125rem] text-ink-muted">{line.variantName}</p>
+      </div>
+      <button
+        type="button"
+        onClick={() => removeItem(line.lineId)}
+        aria-label={t('cart.remove_item', { product: line.productName })}
+        className="-mr-2 -mt-1.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-coral-soft hover:text-coral-deep"
+      >
+        <Trash2 className="h-4 w-4" aria-hidden />
+      </button>
+    </div>
+  );
+
+  const lineThumbnail = (line: CartLineItem) => (
+    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-panel bg-paper">
+      <Image src={linePackshot(line)} alt="" fill className="object-contain p-1.5" sizes="64px" />
+    </div>
+  );
 
   return (
     <div className={cn(landerFontClass, 'relative min-h-screen overflow-x-hidden', LANDER_BG)} style={{ maxWidth: '100vw' }}>
       <PixelTracker countryCode={countryConfig.code} />
 
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-28 right-0 h-96 w-96 rounded-full bg-[#2E8655]/8 blur-3xl" />
-        <div className="absolute top-[26rem] -left-16 h-80 w-80 rounded-full bg-[#F0735A]/8 blur-3xl" />
-      </div>
-
       <ShopHeader />
 
       <main className="relative pb-16">
-        <div className="container mx-auto px-4 pt-6 md:pt-8">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-[-0.01em] text-slate-950 md:text-4xl">
+        <div className="mx-auto max-w-[1180px] px-3 pt-6 md:px-6 md:pt-8">
+          <h1 className="text-balance text-[1.875rem] font-extrabold leading-tight tracking-[-0.01em] text-ink md:text-[2.25rem]">
             {t('checkout.title')}
           </h1>
 
           {isHydrated && items.length === 0 ? (
             <div className="section-card-strong mx-auto mt-8 flex max-w-xl flex-col items-center gap-4 px-6 py-12 text-center">
-              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#2E8655]/8">
-                <ShoppingBag className="h-9 w-9 text-[#2E8655]/60" />
-              </div>
+              <span className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-mint-soft">
+                <ShoppingBag className="h-9 w-9 text-green" aria-hidden />
+              </span>
               <div>
-                <p className="text-xl font-extrabold text-slate-900">{t('cart.empty_title')}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-500">{t('cart.empty_subtitle')}</p>
+                <p className="text-balance text-[1.25rem] font-extrabold text-ink">{t('cart.empty_title')}</p>
+                <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">{t('cart.empty_subtitle')}</p>
               </div>
               <Link
                 href={`/${locale}/products`}
-                className="mt-2 inline-flex items-center justify-center rounded-full bg-[#F0735A] px-7 py-3.5 text-base font-extrabold text-white shadow-[0_16px_32px_rgba(240,115,90,0.28)] transition-colors hover:bg-[#d9604a]"
+                className="mt-2 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-green px-7 text-[1rem] font-bold text-white transition-colors hover:bg-green-press"
               >
                 {t('cart.browse_products')}
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="h-5 w-5" aria-hidden />
               </Link>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+            <form onSubmit={handleSubmit} noValidate className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
               {/* Delivery form */}
-              <div className="section-card-strong px-5 py-6 md:px-7 md:py-7">
-                <h2 className="text-xl font-extrabold text-slate-900">{t('checkout_v2.simpleTitle')}</h2>
+              <section aria-labelledby="cart-delivery-title" className="section-card-strong px-5 py-6 md:px-7 md:py-7">
+                <h2 id="cart-delivery-title" className="text-balance text-[1.125rem] font-bold text-ink">
+                  {t('checkout_v2.simpleTitle')}
+                </h2>
+                <p className="mt-1 text-[0.8125rem] text-ink-muted">{t('checkout.required_note')}</p>
+                <p className="sr-only" aria-live="polite">{errorCount > 0 ? t('store.form.check_fields') : ''}</p>
 
-                <div className="mt-5 space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="relative rounded-[6px] border border-[#d9d0c5] bg-white">
-                      <Label
-                        htmlFor="phone"
-                        className={cn(
-                          'pointer-events-none absolute left-[68px] z-10 origin-left truncate font-medium text-[#7d7d7d] transition-all duration-150',
-                          isFieldActive('phone')
-                            ? 'left-[66px] top-[3px] text-[10px] uppercase tracking-[0.02em]'
-                            : 'top-1/2 -translate-y-1/2 text-[17px]',
-                        )}
-                      >
-                        {t('forms.phone')} <span className="text-[#F0735A]">*</span>
-                      </Label>
+                <div className="mt-5 space-y-4">
+                  <div>
+                    {label('phone', t('forms.phone'))}
+                    <div
+                      className={cn(
+                        'overflow-hidden rounded-md border bg-white transition focus-within:border-green-press focus-within:ring-2 focus-within:ring-green-press/25',
+                        formErrors.phone ? 'border-red-600' : 'border-line'
+                      )}
+                    >
                       <PhoneInput
+                        {...fieldProps('phone')}
                         value={formData.phone}
                         onChange={(value) => handleInputChange('phone', value || '')}
-                        onBlur={() => handleBlur('phone')}
-                        placeholder=""
+                        placeholder={t('store.form.phone_placeholder')}
                         defaultCountry={countryConfig.code.toUpperCase() as 'RS' | 'BA' | 'ME'}
                         countries={supportedCountries}
-                        aria-invalid={Boolean(formErrors.phone)}
-                        className="[&>[data-slot=button]]:h-[52px] [&>[data-slot=button]]:rounded-none [&>[data-slot=button]]:rounded-l-[6px] [&>[data-slot=button]]:border-0 [&>[data-slot=button]]:border-r [&>[data-slot=button]]:border-[#d9d0c5] [&>[data-slot=button]]:bg-white [&>[data-slot=button]]:px-3 [&_[data-slot=input]]:h-[52px] [&_[data-slot=input]]:rounded-none [&_[data-slot=input]]:rounded-r-[6px] [&_[data-slot=input]]:border-0 [&_[data-slot=input]]:px-3 [&_[data-slot=input]]:pb-0 [&_[data-slot=input]]:pt-[3px] [&_[data-slot=input]]:!text-[17px] [&_[data-slot=input]]:font-medium [&_[data-slot=input]]:leading-[52px] [&_[data-slot=input]]:shadow-none"
+                        className="[&>[data-slot=button]]:h-[52px] [&>[data-slot=button]]:rounded-none [&>[data-slot=button]]:border-0 [&>[data-slot=button]]:border-r [&>[data-slot=button]]:border-line [&>[data-slot=button]]:bg-paper [&>[data-slot=button]]:px-3 [&_[data-slot=input]]:h-[52px] [&_[data-slot=input]]:rounded-none [&_[data-slot=input]]:border-0 [&_[data-slot=input]]:px-3 [&_[data-slot=input]]:!text-[1rem] [&_[data-slot=input]]:text-ink [&_[data-slot=input]]:shadow-none [&_[data-slot=input]]:placeholder:text-ink-muted [&_[data-slot=input]]:focus-visible:ring-0"
                       />
                     </div>
-                    <FieldError message={formErrors.phone} />
+                    {fieldError('phone')}
                   </div>
 
-                  <div className="grid gap-3 md:grid-cols-2">
-                    <div className="space-y-1.5">
-                      <div className="relative">
-                        <Label htmlFor="firstName" className={floatingLabelClass('firstName')}>
-                          {t('forms.name')} <span className="text-[#F0735A]">*</span>
-                        </Label>
-                        <Input
-                          id="firstName"
-                          autoComplete="given-name"
-                          value={formData.firstName}
-                          onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          onBlur={() => handleBlur('firstName')}
-                          aria-invalid={Boolean(formErrors.firstName)}
-                          placeholder=""
-                          className={inputClass}
-                        />
-                      </div>
-                      <FieldError message={formErrors.firstName} />
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      {label('firstName', t('forms.name'))}
+                      <input
+                        {...fieldProps('firstName')}
+                        autoComplete="given-name"
+                        value={formData.firstName}
+                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        className={inputClass('firstName')}
+                      />
+                      {fieldError('firstName')}
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="relative">
-                        <Label htmlFor="lastName" className={floatingLabelClass('lastName')}>
-                          {t('forms.surname')} <span className="text-[#F0735A]">*</span>
-                        </Label>
-                        <Input
-                          id="lastName"
-                          autoComplete="family-name"
-                          value={formData.lastName}
-                          onChange={(e) => handleInputChange('lastName', e.target.value)}
-                          onBlur={() => handleBlur('lastName')}
-                          aria-invalid={Boolean(formErrors.lastName)}
-                          placeholder=""
-                          className={inputClass}
-                        />
-                      </div>
-                      <FieldError message={formErrors.lastName} />
+                    <div>
+                      {label('lastName', t('forms.surname'))}
+                      <input
+                        {...fieldProps('lastName')}
+                        autoComplete="family-name"
+                        value={formData.lastName}
+                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        className={inputClass('lastName')}
+                      />
+                      {fieldError('lastName')}
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="relative">
-                        <Label htmlFor="address" className={floatingLabelClass('address')}>
-                          {t('checkout_v2.simpleAddressLabel')} <span className="text-[#F0735A]">*</span>
-                        </Label>
-                        <Input
-                          id="address"
-                          autoComplete="street-address"
-                          value={formData.address}
-                          onChange={(e) => handleInputChange('address', e.target.value)}
-                          onBlur={() => handleBlur('address')}
-                          aria-invalid={Boolean(formErrors.address)}
-                          placeholder=""
-                          className={inputClass}
-                        />
-                      </div>
-                      <FieldError message={formErrors.address} />
+                    <div>
+                      {label('address', t('checkout_v2.simpleAddressLabel'))}
+                      <input
+                        {...fieldProps('address')}
+                        autoComplete="street-address"
+                        value={formData.address}
+                        onChange={(e) => handleInputChange('address', e.target.value)}
+                        placeholder={t('store.form.address_placeholder')}
+                        className={inputClass('address')}
+                      />
+                      {fieldError('address')}
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="relative">
-                        <Label htmlFor="city" className={floatingLabelClass('city')}>
-                          {t('forms.city')} <span className="text-[#F0735A]">*</span>
-                        </Label>
-                        <Input
-                          id="city"
-                          autoComplete="address-level2"
-                          value={formData.city}
-                          onChange={(e) => handleInputChange('city', e.target.value)}
-                          onBlur={() => handleBlur('city')}
-                          aria-invalid={Boolean(formErrors.city)}
-                          placeholder=""
-                          className={inputClass}
-                        />
-                      </div>
-                      <FieldError message={formErrors.city} />
+                    <div>
+                      {label('city', t('forms.city'))}
+                      <input
+                        {...fieldProps('city')}
+                        autoComplete="address-level2"
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        placeholder={t('store.form.city_placeholder')}
+                        className={inputClass('city')}
+                      />
+                      {fieldError('city')}
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="relative">
-                        <Label htmlFor="postalCode" className={floatingLabelClass('postalCode')}>
-                          {t('forms.postal_code')} <span className="text-[#F0735A]">*</span>
-                        </Label>
-                        <Input
-                          id="postalCode"
-                          autoComplete="postal-code"
-                          inputMode="numeric"
-                          maxLength={5}
-                          value={formData.postalCode}
-                          onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                          onBlur={() => handleBlur('postalCode')}
-                          aria-invalid={Boolean(formErrors.postalCode)}
-                          placeholder=""
-                          className={inputClass}
-                        />
-                      </div>
-                      <FieldError message={formErrors.postalCode} />
+                    <div>
+                      {label('postalCode', t('forms.postal_code'))}
+                      <input
+                        {...fieldProps('postalCode')}
+                        autoComplete="postal-code"
+                        inputMode="numeric"
+                        maxLength={5}
+                        value={formData.postalCode}
+                        onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                        className={inputClass('postalCode')}
+                      />
+                      {fieldError('postalCode')}
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="relative flex h-[52px] items-center rounded-[6px] border border-[#d9d0c5] bg-white px-3">
-                        <span className="text-[17px] font-medium leading-[52px] text-slate-900">{countryConfig.name}</span>
-                        <ChevronDown className="ml-auto h-4 w-4 text-slate-500" />
-                      </div>
+                    {/* Zemlja dostave je određena sajtom (nije polje za unos) */}
+                    <div>
+                      <p className="mb-1.5 text-[0.875rem] font-medium text-ink-soft">{t('forms.country')}</p>
+                      <p className="flex h-[52px] items-center rounded-md border border-line bg-paper px-4 text-[1rem] text-ink">
+                        {countryConfig.name}
+                      </p>
                     </div>
 
-                    <div className="space-y-1.5 md:col-span-2">
-                      <div className="relative">
-                        <Label htmlFor="email" className={floatingLabelClass('email')}>
-                          {t('forms.email')} ({t('forms.optional')})
-                        </Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          autoComplete="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          onBlur={() => handleBlur('email')}
-                          aria-invalid={Boolean(formErrors.email)}
-                          placeholder=""
-                          className={inputClass}
-                        />
-                      </div>
-                      <FieldError message={formErrors.email} />
+                    <div className="md:col-span-2">
+                      {label(
+                        'email',
+                        <>
+                          {t('forms.email')} <span className="font-normal text-ink-muted">({t('forms.optional')})</span>
+                        </>
+                      )}
+                      <input
+                        {...fieldProps('email', false)}
+                        type="email"
+                        autoComplete="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        className={inputClass('email')}
+                      />
+                      {fieldError('email')}
                     </div>
                   </div>
                 </div>
 
                 {/* Courier info */}
-                <div className="mt-5 rounded-[1rem] border border-[#2E8655]/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.99),rgba(247,251,248,0.98))] p-4 shadow-[0_10px_24px_rgba(46,134,85,0.08)]">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.85rem] border border-[#2E8655]/12 bg-white shadow-[0_6px_16px_rgba(15,23,42,0.06)]">
+                <div className="mt-6 rounded-panel bg-paper p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.75rem] bg-white">
                       <Image
                         src={courier.logo}
-                        alt={courier.name}
+                        alt=""
                         width={32}
                         height={32}
                         className="h-8 w-8 object-contain"
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[17px] font-extrabold leading-none text-slate-950">{courier.name}</p>
-                      <p className="mt-2 text-sm font-medium leading-6 text-slate-700">
+                      <p className="text-[1rem] font-bold leading-tight text-ink">{courier.name}</p>
+                      <p className="mt-1 text-[0.875rem] text-ink-soft">
                         {t('shop.delivery_time', { time: courier.deliveryTime })}
                       </p>
                     </div>
                   </div>
-                  <p className="mt-3 rounded-[0.8rem] bg-[#2E8655]/8 px-3 py-2 text-sm font-semibold text-[#2E8655]">
-                    {t('faq_ui.cash_on_delivery')}
+                  <p className="mt-3 flex items-center gap-2 text-[0.875rem] font-semibold text-forest">
+                    <Banknote className="h-4 w-4 shrink-0 text-green" aria-hidden />
+                    {t('store.form.reassure_cod')}
                   </p>
                 </div>
-              </div>
+              </section>
 
               {/* Order summary */}
-              <div className="space-y-4">
-                <div className="section-card-strong px-5 py-6 md:px-6 md:py-6">
-                  <h2 className="text-xl font-extrabold text-slate-900">{t('order_summary.title')}</h2>
+              <section aria-labelledby="cart-summary-title" className="section-card-strong px-5 py-6 md:px-6">
+                <h2 id="cart-summary-title" className="text-balance text-[1.125rem] font-bold text-ink">
+                  {t('order_summary.title')}
+                </h2>
 
-                  <div className="mt-4 space-y-3">
-                    {displayGroups.map((group) => {
-                      if (group.type === 'bogo') {
-                        const { paid, free } = group;
-                        return (
-                          <div
-                            key={paid.bogoPairId}
-                            className="overflow-hidden rounded-[1.1rem] border border-[#2E8655]/30 bg-white"
-                          >
-                            <div className="flex gap-3 p-3">
-                              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
-                                <Image
-                                  src={paid.image}
-                                  alt={paid.productName}
-                                  fill
-                                  className="object-contain p-1"
-                                  sizes="64px"
-                                />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-start justify-between gap-2">
-                                  <div className="min-w-0">
-                                    <p className="truncate text-sm font-extrabold uppercase text-slate-900">
-                                      {paid.productName}
-                                    </p>
-                                    <p className="truncate text-xs font-medium text-slate-500">
-                                      {paid.variantName}
-                                    </p>
-                                  </div>
-                                  <button
-                                    type="button"
-                                    onClick={() => removeItem(paid.lineId)}
-                                    aria-label={t('cart.remove')}
-                                    className="shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
-                                </div>
-                                <div className="mt-2 flex items-center justify-between gap-2">
-                                  <span className="text-xs font-semibold text-[#2E8655]">
-                                    {t('bogo.pair_includes_gratis', { count: free.length })}
-                                  </span>
-                                  <div className="text-right">
-                                    {paid.regularPrice >
-                                      (paid.bogoOriginalUnitPrice ?? paid.unitPrice) && (
-                                      <p className="text-xs text-slate-400 line-through">
-                                        {formatPrice(paid.regularPrice * paid.quantity)}
-                                      </p>
-                                    )}
-                                    <p className="text-sm font-extrabold text-slate-950">
-                                      {formatPrice(
-                                        (paid.bogoOriginalUnitPrice ?? paid.unitPrice) *
-                                          paid.quantity
-                                      )}
-                                    </p>
-                                  </div>
-                                </div>
+                <ul className="mt-2 divide-y divide-line">
+                  {displayGroups.map((group) => {
+                    if (group.type === 'bogo') {
+                      const { paid, free } = group;
+                      return (
+                        <li key={paid.bogoPairId} className="py-3.5">
+                          <div className="flex gap-3">
+                            {lineThumbnail(paid)}
+                            <div className="min-w-0 flex-1">
+                              {lineHeader(paid)}
+                              <div className="mt-1.5 flex items-center justify-between gap-2">
+                                <span className="text-[0.8125rem] font-semibold text-forest">
+                                  {t('bogo.pair_includes_gratis', { count: free.length })}
+                                </span>
+                                {linePrice(
+                                  paid.regularPrice * paid.quantity,
+                                  (paid.bogoOriginalUnitPrice ?? paid.unitPrice) * paid.quantity
+                                )}
                               </div>
                             </div>
-                            {free.length > 0 && (
-                              <div className="border-t border-[#2E8655]/10 bg-[#f3faf6] px-3 py-2">
-                                <ul className="space-y-1.5">
-                                  {free.map((line) => (
-                                    <li key={line.lineId} className="flex items-center gap-2 pl-1.5">
-                                      <span
-                                        className="h-7 w-0.5 shrink-0 rounded-full bg-[#2E8655]/35"
-                                        aria-hidden
-                                      />
-                                      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-white">
-                                        <Image
-                                          src={line.image}
-                                          alt={line.productName}
-                                          fill
-                                          className="object-contain p-0.5"
-                                          sizes="36px"
-                                        />
-                                      </div>
-                                      <div className="min-w-0 flex-1">
-                                        <p className="truncate text-xs font-bold text-slate-800">
-                                          {line.productName}
-                                        </p>
-                                        <p className="truncate text-[11px] text-slate-500">
-                                          {line.variantName}
-                                        </p>
-                                      </div>
-                                      <span className="shrink-0 text-[11px] font-extrabold uppercase text-[#2E8655]">
-                                        {t('bogo.pair_gratis')}
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
                           </div>
-                        );
-                      }
+                          {free.length > 0 && (
+                            <ul className="mt-3 space-y-2 rounded-panel bg-mint-soft p-2.5">
+                              {free.map((line) => (
+                                <li key={line.lineId} className="flex items-center gap-2.5">
+                                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[0.625rem] bg-white">
+                                    <Image src={linePackshot(line)} alt="" fill className="object-contain p-1" sizes="40px" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="truncate text-[0.8125rem] font-bold text-ink">{line.productName}</p>
+                                    <p className="truncate text-[0.75rem] text-ink-muted">{line.variantName}</p>
+                                  </div>
+                                  <span className="shrink-0 text-[0.8125rem] font-extrabold uppercase text-forest">
+                                    {t('bogo.pair_gratis')}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      );
+                    }
 
-                      const line = group.line;
-                      return (
-                        <div
-                          key={line.lineId}
-                          className="flex gap-3 rounded-[1.1rem] border border-[#2E8655]/10 bg-white p-3"
-                        >
-                          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[0.8rem] bg-[linear-gradient(180deg,#fafafa,#efefef)]">
-                            <Image
-                              src={line.image}
-                              alt={line.productName}
-                              fill
-                              className="object-contain p-1"
-                              sizes="64px"
-                            />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0">
-                                <p className="truncate text-sm font-extrabold uppercase text-slate-900">
-                                  {line.productName}
-                                </p>
-                                <p className="truncate text-xs font-medium text-slate-500">
-                                  {line.variantName}
-                                </p>
-                              </div>
+                    const line = group.line;
+                    return (
+                      <li key={line.lineId} className="flex gap-3 py-3.5">
+                        {lineThumbnail(line)}
+                        <div className="min-w-0 flex-1">
+                          {lineHeader(line)}
+                          <div className="mt-1.5 flex items-center justify-between gap-2">
+                            <div
+                              role="group"
+                              aria-label={`${t('cart.quantity')}: ${line.productName}`}
+                              className="inline-flex items-center rounded-full border border-line bg-white"
+                            >
                               <button
                                 type="button"
-                                onClick={() => removeItem(line.lineId)}
-                                aria-label={t('cart.remove')}
-                                className="shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                                onClick={() => updateQuantity(line.lineId, line.quantity - 1)}
+                                aria-label={t('cart.decrease_qty', { product: line.productName })}
+                                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-mint-soft hover:text-forest"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Minus className="h-4 w-4" aria-hidden />
+                              </button>
+                              <span className="min-w-8 text-center text-[0.9375rem] font-bold tabular-nums text-ink" aria-live="polite">
+                                {line.quantity}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
+                                aria-label={t('cart.increase_qty', { product: line.productName })}
+                                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-mint-soft hover:text-forest"
+                              >
+                                <Plus className="h-4 w-4" aria-hidden />
                               </button>
                             </div>
-                            <div className="mt-2 flex items-center justify-between gap-2">
-                              <div className="inline-flex items-center rounded-full border border-[#2E8655]/15 bg-white">
-                                <button
-                                  type="button"
-                                  onClick={() => updateQuantity(line.lineId, line.quantity - 1)}
-                                  aria-label="-"
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-l-full text-slate-600 transition-colors hover:bg-[#2E8655]/8 hover:text-[#2E8655]"
-                                >
-                                  <Minus className="h-3 w-3" />
-                                </button>
-                                <span className="min-w-6 text-center text-sm font-bold text-slate-900">
-                                  {line.quantity}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => updateQuantity(line.lineId, line.quantity + 1)}
-                                  aria-label="+"
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-r-full text-slate-600 transition-colors hover:bg-[#2E8655]/8 hover:text-[#2E8655]"
-                                >
-                                  <Plus className="h-3 w-3" />
-                                </button>
-                              </div>
-                              <div className="text-right">
-                                {line.regularPrice > line.unitPrice && (
-                                  <p className="text-xs text-slate-400 line-through">
-                                    {formatPrice(line.regularPrice * line.quantity)}
-                                  </p>
-                                )}
-                                <p className="text-sm font-extrabold text-slate-950">
-                                  {formatPrice(line.unitPrice * line.quantity)}
-                                </p>
-                              </div>
-                            </div>
+                            {linePrice(line.regularPrice * line.quantity, line.unitPrice * line.quantity)}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
+                      </li>
+                    );
+                  })}
+                </ul>
 
-                  {!hasFreeShipping && amountForFreeShipping > 0 && (
-                    <div className="mt-4 flex items-center gap-2 rounded-[0.9rem] bg-[#F0735A]/8 px-3 py-2.5 text-sm font-semibold text-[#ba5a47]">
-                      <Truck className="h-4 w-4 shrink-0" />
-                      {t('cart.free_shipping_progress', { amount: formatPrice(amountForFreeShipping) })}
+                {!hasFreeShipping && amountForFreeShipping > 0 && (
+                  <p className="mt-3 flex items-center gap-2 rounded-panel bg-coral-soft px-3 py-2.5 text-[0.875rem] font-semibold text-coral-deep">
+                    <Truck className="h-4 w-4 shrink-0" aria-hidden />
+                    {t('cart.free_shipping_progress', { amount: formatPrice(amountForFreeShipping) })}
+                  </p>
+                )}
+
+                {/* 1+1 kupon — automatski primenjen kada je par u korpi */}
+                {hasBogoPair && (
+                  <div className="coupon-banner-animate mt-4 flex items-center gap-3 rounded-panel bg-green p-3 text-white">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15">
+                      <Gift className="h-5 w-5" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[0.9375rem] font-extrabold uppercase tracking-wide">
+                        {t('bogo.coupon_applied', { code: BOGO_CONFIG.couponCode })}
+                      </p>
+                      <p className="text-[0.8125rem] font-medium text-white">
+                        {t('bogo.coupon_applied_note', { amount: formatPrice(bogoGratisValue) })}
+                      </p>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* 1+1 kupon — automatski primenjen kada je par u korpi */}
+                {/* Kupon — sakriven kada je 1+1 aktivan (akcije se ne kombinuju) */}
+                {!hasBogoPair &&
+                  (appliedCoupon ? (
+                    <div className="mt-4 space-y-2">
+                      <CouponBanner coupon={appliedCoupon} formatPrice={formatPrice} onRemove={removeCoupon} />
+                      {couponMinNotMet && appliedCoupon.minOrderValue && (
+                        <p className="rounded-panel bg-coral-soft px-3 py-2 text-[0.8125rem] font-semibold text-coral-deep">
+                          {t('coupons.min_order_not_met', { amount: formatPrice(appliedCoupon.minOrderValue) })}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="mt-4 border-t border-line pt-4">
+                      <label htmlFor="coupon-code" className="mb-1.5 block text-[0.875rem] font-medium text-ink-soft">
+                        {t('coupons.have_coupon')}
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          id="coupon-code"
+                          name="coupon"
+                          autoComplete="off"
+                          value={couponInput}
+                          onChange={(e) => {
+                            setCouponInput(e.target.value.toUpperCase());
+                            if (couponError) setCouponError('');
+                          }}
+                          onKeyDown={(e) => {
+                            // Enter u polju za kupon primenjuje kupon — ne šalje porudžbinu
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              if (couponInput.trim()) applyCoupon(couponInput, 'manual');
+                            }
+                          }}
+                          placeholder={t('coupons.placeholder')}
+                          aria-invalid={Boolean(couponError)}
+                          aria-describedby={couponError ? 'coupon-code-error' : undefined}
+                          className={cn(
+                            'h-12 min-w-0 flex-1 rounded-md border bg-white px-4 text-[1rem] uppercase text-ink outline-none transition placeholder:text-ink-muted focus:border-green-press focus:ring-2 focus:ring-green-press/25',
+                            couponError ? 'border-red-600 bg-red-50/40' : 'border-line'
+                          )}
+                        />
+                        <button
+                          type="button"
+                          disabled={couponApplying || !couponInput.trim()}
+                          onClick={() => applyCoupon(couponInput, 'manual')}
+                          className="h-12 shrink-0 rounded-md border-2 border-green bg-white px-4 text-[0.9375rem] font-bold text-forest transition-colors hover:bg-mint-soft disabled:cursor-not-allowed disabled:border-line disabled:text-ink-muted disabled:hover:bg-white"
+                        >
+                          {couponApplying ? t('coupons.validating') : t('coupons.apply')}
+                        </button>
+                      </div>
+                      {couponError && (
+                        <p id="coupon-code-error" className="mt-1.5 text-[0.8125rem] font-medium text-red-700">
+                          {couponError}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+
+                {/* Obračun: tačan iznos koji se plaća kuriru, sa dostavom */}
+                <dl className="mt-4 space-y-2.5 rounded-[1.125rem] bg-paper p-4 text-[0.875rem] sm:p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-ink-soft">{t('cart.subtotal')}</dt>
+                    <dd className="font-medium text-ink">{formatPrice(subtotal)}</dd>
+                  </div>
                   {hasBogoPair && (
-                    <div
-                      className="coupon-banner-animate mt-4 flex items-center gap-3 rounded-[1.1rem] p-3 text-white shadow-[0_14px_30px_rgba(46,134,85,0.28)]"
-                      style={{ background: 'linear-gradient(120deg, #2E8655 0%, #2a6844 100%)' }}
-                    >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/15">
-                        <Gift className="h-5 w-5" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-extrabold uppercase tracking-wide">
-                          {t('bogo.coupon_applied', { code: BOGO_CONFIG.couponCode })}
-                        </p>
-                        <p className="text-xs font-semibold text-white/85">
-                          {t('bogo.coupon_applied_note', { amount: formatPrice(bogoGratisValue) })}
-                        </p>
-                      </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <dt className="text-ink-soft">{t('bogo.coupon_row_label', { code: BOGO_CONFIG.couponCode })}</dt>
+                      <dd className="font-extrabold uppercase text-forest">{t('bogo.pair_gratis')}</dd>
                     </div>
                   )}
-
-                  {/* Kupon — sakriven kada je 1+1 aktivan (akcije se ne kombinuju) */}
-                  {!hasBogoPair &&
-                    (appliedCoupon ? (
-                      <div className="mt-4 space-y-2">
-                        <CouponBanner coupon={appliedCoupon} formatPrice={formatPrice} onRemove={removeCoupon} />
-                        {couponMinNotMet && appliedCoupon.minOrderValue && (
-                          <p className="rounded-[0.8rem] bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700">
-                            {t('coupons.min_order_not_met', { amount: formatPrice(appliedCoupon.minOrderValue) })}
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="mt-4 rounded-[1.1rem] border border-[#2E8655]/10 bg-white p-3">
-                        <p className="text-sm font-bold text-slate-700">{t('coupons.have_coupon')}</p>
-                        <div className="mt-2 flex gap-2">
-                          <Input
-                            value={couponInput}
-                            onChange={(e) => {
-                              setCouponInput(e.target.value.toUpperCase());
-                              if (couponError) setCouponError('');
-                            }}
-                            placeholder={t('coupons.placeholder')}
-                            className="h-10 uppercase"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            disabled={couponApplying || !couponInput.trim()}
-                            onClick={() => applyCoupon(couponInput, 'manual')}
-                            className="h-10 shrink-0 border-[#2E8655]/30 font-bold text-[#2E8655] hover:bg-[#2E8655]/5"
-                          >
-                            {couponApplying ? t('coupons.validating') : t('coupons.apply')}
-                          </Button>
-                        </div>
-                        {couponError && <p className="mt-1.5 text-xs font-medium text-red-600">{couponError}</p>}
-                      </div>
-                    ))}
-
-                  <div className="mt-4 divide-y divide-[#2E8655]/8 rounded-[1.2rem] border border-[#2E8655]/10 bg-white">
-                    {totalSavings > 0 && (
-                      <div className="flex items-center justify-between px-4 py-3">
-                        <span className="text-sm text-slate-500">{t('cart.you_save')}</span>
-                        <span className="text-sm font-bold text-[#2E8655]">-{formatPrice(totalSavings)}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between px-4 py-3">
-                      <span className="text-sm text-slate-500">{t('cart.subtotal')}</span>
-                      <span className="text-sm font-semibold text-slate-900">{formatPrice(subtotal)}</span>
+                  {couponAmounts.productDiscount > 0 && appliedCoupon && (
+                    <div className="coupon-banner-animate flex items-center justify-between gap-3">
+                      <dt className="text-ink-soft">
+                        {t('checkout_v2.discountLabel')} ({appliedCoupon.code})
+                      </dt>
+                      <dd className="font-semibold text-forest">−{formatPrice(couponAmounts.productDiscount)}</dd>
                     </div>
-                    {hasBogoPair && (
-                      <div className="flex items-center justify-between px-4 py-3">
-                        <span className="text-sm text-slate-500">
-                          {t('bogo.coupon_row_label', { code: BOGO_CONFIG.couponCode })}
-                        </span>
-                        <span className="text-sm font-extrabold uppercase text-[#2E8655]">
-                          {t('bogo.pair_gratis')}
-                        </span>
-                      </div>
-                    )}
-                    {couponAmounts.productDiscount > 0 && appliedCoupon && (
-                      <div className="coupon-banner-animate flex items-center justify-between px-4 py-3">
-                        <span className="text-sm text-slate-500">
-                          {t('checkout_v2.discountLabel')} ({appliedCoupon.code})
-                        </span>
-                        <span className="text-sm font-bold text-[#2E8655]">
-                          -{formatPrice(couponAmounts.productDiscount)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between px-4 py-3">
-                      <span className="text-sm text-slate-500">{t('order_summary.delivery')}</span>
-                      <span className={`text-sm font-semibold ${shippingCost > 0 ? 'text-slate-900' : 'text-[#2E8655]'}`}>
-                        {shippingCost > 0 ? formatPrice(shippingCost) : t('order_summary.free')}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between px-4 py-4">
-                      <span className="text-base font-semibold text-slate-700">{t('order_summary.total')}</span>
-                      <span className="text-xl font-extrabold text-[#F0735A]">{formatPrice(total)}</span>
-                    </div>
+                  )}
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="inline-flex items-center gap-2 text-ink-soft">
+                      <Truck className="h-4 w-4 text-ink-muted" strokeWidth={1.6} aria-hidden />
+                      {t('store.form.shipping')}
+                    </dt>
+                    <dd className={cn('font-medium', shippingCost > 0 ? 'text-ink' : 'text-forest')}>
+                      {shippingCost > 0 ? formatPrice(shippingCost) : t('store.form.free')}
+                    </dd>
                   </div>
-
-                  <div className="mt-4 space-y-3">
-                    <Button
-                      type="submit"
-                      size="lg"
-                      disabled={isSubmitting || items.length === 0}
-                      className="lander-shine h-[60px] w-full rounded-full bg-[#2E8655] py-4 text-[18px] font-bold text-white shadow-[0_6px_0_#1d5434] hover:bg-[#2a7349]"
-                    >
-                      {isSubmitting ? t('order_summary.processing_order') : t('order_summary.place_order')}
-                    </Button>
-
-                    <div className="flex items-center justify-center gap-2 rounded-[8px] border border-[#e6ddd1] bg-[#fbf8f4] px-4 py-3 text-center">
-                      <ShieldCheck className="h-4 w-4 text-[#2E8655]" />
-                      <span className="text-sm font-medium text-slate-700">{t('order_summary.secure_purchase_guarantee')}</span>
-                    </div>
+                  <div className="flex items-end justify-between gap-3 border-t border-line pt-3">
+                    <dt className="pb-0.5 text-[0.9375rem] font-semibold text-ink">{t('store.form.total')}</dt>
+                    <dd className="text-[1.5rem] font-extrabold leading-none tracking-tight text-ink">{formatPrice(total)}</dd>
                   </div>
-                </div>
-              </div>
+                </dl>
+                {savingsShown > 0 && (
+                  <p className="mt-1.5 text-right text-[0.8125rem] font-medium text-coral-deep">
+                    {t('store.form.you_save', { amount: formatPrice(savingsShown) })}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || items.length === 0}
+                  className="lander-shine mt-5 flex min-h-[62px] w-full items-center justify-center gap-2.5 rounded-full bg-green-press px-5 text-[1.25rem] font-bold text-white shadow-press-lg transition duration-300 hover:bg-forest active:translate-y-[3px] active:shadow-press disabled:opacity-70"
+                >
+                  <Lock className="h-5 w-5" aria-hidden />
+                  {isSubmitting ? t('checkout.processing') : t('order_summary.place_order')}
+                </button>
+
+                <p className="mt-4 flex items-center justify-center gap-2 text-center text-[0.875rem] font-medium text-ink-soft">
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-green" aria-hidden />
+                  {t('order_summary.secure_purchase_guarantee')}
+                </p>
+              </section>
             </form>
           )}
         </div>

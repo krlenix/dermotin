@@ -8,7 +8,7 @@ import type { ViberOffer } from '@/config/viber-offers';
 import { getLanderContent, type LanderContent } from '@/config/lander-content';
 import { getProductProof } from '@/config/store-proof';
 import { CheckoutLander } from './CheckoutLander';
-import type { BundlePart } from './BundleContents';
+import type { BundlePart } from './CheckoutLander';
 
 interface ViberLandingProps {
   offer: ViberOffer;

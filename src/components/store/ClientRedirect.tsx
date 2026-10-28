@@ -12,8 +12,8 @@ export function ClientRedirect({ to }: { to: string }) {
     window.location.replace(`${to}${window.location.search}${window.location.hash}`);
   }, [to]);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#fbf8f5]">
-      <a href={to} className="text-sm font-semibold text-[#358055] underline">
+    <div className="flex min-h-screen items-center justify-center bg-paper">
+      <a href={to} className="text-sm font-semibold text-green underline">
         {to}
       </a>
       <noscript>

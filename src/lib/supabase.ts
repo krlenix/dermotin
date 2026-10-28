@@ -11,15 +11,18 @@ function getSupabase(): SupabaseClient {
   if (_supabase) return _supabase;
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  // Porudžbine čita i piše samo server: service-role ključ, da politika nad tabelom
+  // `orders` može da zatvori anon pristup (supabase/migrations/20261028_orders_service_role_only.sql).
+  // Anon ključ ostaje samo kao prelazni fallback dok se service-role ne postavi na Vercelu.
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
     throw new Error(
-      'Missing Supabase environment variables. Set SUPABASE_URL and SUPABASE_ANON_KEY in your hosting env.'
+      'Missing Supabase environment variables. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in your hosting env.'
     );
   }
 
-  _supabase = createClient(supabaseUrl, supabaseKey);
+  _supabase = createClient(supabaseUrl, supabaseKey, { auth: { persistSession: false, autoRefreshToken: false } });
   return _supabase;
 }
 

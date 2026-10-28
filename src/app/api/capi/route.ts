@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sendCapiEvent, CAPI_EVENTS } from '@/lib/capi';
 import { getFacebookTrackingData, getFbcFromUrl } from '@/utils/facebook-cookies';
 
+const COUNTRIES = new Set(['rs', 'ba', 'me']);
+// Kupovina (Purchase) ide ISKLJUČIVO iz /api/orders, posle prihvaćene porudžbine.
+// Ovaj javni endpoint je nikada ne prima, inače bi bilo ko mogao da šalje lažne kupovine u Meta.
+const MAX_EVENT_VALUE = 1_000_000;
+
 /**
  * Universal CAPI endpoint that handles all event types
  * This is called automatically by the client-side tracking hook
@@ -17,7 +22,14 @@ export async function POST(request: NextRequest) {
       pageUrl,
     } = body;
 
-  
+    if (typeof countryCode !== 'string' || !COUNTRIES.has(countryCode.toLowerCase())) {
+      return NextResponse.json({ success: false, error: 'Invalid country' }, { status: 400 });
+    }
+    const eventValue = Number(eventData.value);
+    if (eventData.value !== undefined && (!Number.isFinite(eventValue) || eventValue < 0 || eventValue > MAX_EVENT_VALUE)) {
+      return NextResponse.json({ success: false, error: 'Invalid value' }, { status: 400 });
+    }
+
 
     // Get client information
     const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 
@@ -54,9 +66,6 @@ export async function POST(request: NextRequest) {
         break;
       case 'initiate_checkout':
         capiEventName = CAPI_EVENTS.INITIATE_CHECKOUT;
-        break;
-      case 'purchase':
-        capiEventName = CAPI_EVENTS.PURCHASE;
         break;
       case 'add_to_cart':
         capiEventName = CAPI_EVENTS.ADD_TO_CART;
@@ -112,14 +121,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('❌ CAPI API error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    console.error('❌ CAPI API error:', error instanceof Error ? error.message : error);
+    return NextResponse.json({ success: false, error: 'CAPI error' }, { status: 500 });
   }
 }
 

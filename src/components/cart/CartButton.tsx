@@ -11,22 +11,30 @@ interface CartButtonProps {
 
 export function CartButton({ className }: CartButtonProps) {
   const t = useTranslations();
-  const { totalItems, openDrawer, isHydrated } = useCart();
+  const { totalItems, openDrawer, isDrawerOpen, isHydrated } = useCart();
+  const count = isHydrated ? totalItems : 0;
 
   return (
     <button
       type="button"
       onClick={openDrawer}
-      aria-label={t('cart.open_cart')}
+      // CartDrawer vraća fokus na ovo dugme kada se korpa zatvori (i kada pregledač ne fokusira dugme na klik)
+      data-cart-button=""
+      aria-haspopup="dialog"
+      aria-expanded={isDrawerOpen}
+      aria-label={count > 0 ? `${t('cart.open_cart')} (${count})` : t('cart.open_cart')}
       className={cn(
-        'relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#358055]/15 bg-white/92 text-slate-700 shadow-[0_8px_18px_rgba(15,23,42,0.06)] backdrop-blur-md transition-colors hover:border-[#F3765D]/35 hover:text-[#F3765D]',
+        'relative inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-line bg-white text-ink transition-colors hover:border-green hover:text-forest',
         className
       )}
     >
-      <ShoppingBag className="h-5 w-5" />
-      {isHydrated && totalItems > 0 && (
-        <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#F3765D] px-1 text-[11px] font-black text-white shadow-[0_6px_14px_rgba(243,118,93,0.4)]">
-          {totalItems > 99 ? '99+' : totalItems}
+      <ShoppingBag className="h-5 w-5" aria-hidden />
+      {count > 0 && (
+        <span
+          className="absolute -right-1.5 -top-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-coral-deep px-1 text-[0.75rem] font-bold leading-none text-white"
+          aria-hidden
+        >
+          {count > 99 ? '99+' : count}
         </span>
       )}
     </button>

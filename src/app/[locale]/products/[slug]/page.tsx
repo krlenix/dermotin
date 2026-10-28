@@ -235,7 +235,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <JsonLd data={buildBreadcrumbJsonLd(product, locale)} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <CountryMismatchBanner />
-      <ProductLanding product={product} countryConfig={countryConfig} locale={locale} />
+      <ProductLanding product={product} countryConfig={countryConfig} locale={locale} storefront />
     </>
   );
 }

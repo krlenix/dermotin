@@ -183,8 +183,8 @@
     "order_submission_failed": "Slanje narudžbe neuspješno"
   },
   "checkout_dialog": {
-    "processing_order": "Obrađujemo vašu narudžbu",
-    "processing_message": "Molimo pričekajte dok obrađujemo vašu narudžbu",
+    "processing_order": "Obrađujemo Vašu narudžbu",
+    "processing_message": "Molimo pričekajte dok obrađujemo Vašu narudžbu",
     "please_wait": "Ovo može potrajati nekoliko sekundi...",
     "order_confirmed": "Narudžba je potvrđena!",
     "success_message": "Vaša narudžba je uspješno poslana. Uskoro ćete biti preusmjereni na stranicu za potvrdu.",
@@ -193,7 +193,7 @@
     "continue": "Nastavi",
     "order_failed": "Narudžba neuspješna",
     "error_occurred": "Dogodila se greška prilikom slanja narudžbe",
-    "need_help": "Potrebna vam je pomoć?",
+    "need_help": "Potrebna Vam je pomoć?",
     "contact_email": "Email",
     "contact_phone": "Telefon",
     "try_again": "Pokušaj ponovo",
@@ -210,7 +210,9 @@
     "processing": "Obrađuje se...",
     "cod": "Plaćanje pouzećem",
     "card": "Kreditna kartica",
-    "bank_transfer": "Bankovni prijenos"
+    "bank_transfer": "Bankovni prijenos",
+    "page_title": "Narudžba",
+    "required_note": "Sva polja su obavezna, osim email adrese."
   },
   "coupons": {
     "activated_title": "Kupon {code} je aktiviran!",
@@ -226,7 +228,7 @@
     "free_shipping_applied": "Besplatna dostava",
     "you_save": "Ušteda:",
     "invalid_code": "Neispravan kod kupona",
-    "not_valid_country": "Ovaj kupon nije važeći za vašu zemlju",
+    "not_valid_country": "Ovaj kupon nije važeći za Vašu zemlju",
     "min_order_not_met": "Minimalna vrijednost narudžbe za ovaj kupon je {amount}",
     "coupon_applied": "Kupon je uspješno primenjen",
     "remove_coupon": "Ukloni kupon",
@@ -328,7 +330,10 @@
     "continue_shopping": "Nastavi kupovinu",
     "remove": "Ukloni",
     "quantity": "Količina",
-    "you_may_also_like": "Možda ti se svidi"
+    "you_may_also_like": "Možda će Vam se svidjeti",
+    "decrease_qty": "Smanji količinu proizvoda {product}",
+    "increase_qty": "Povećaj količinu proizvoda {product}",
+    "remove_item": "Ukloni {product} iz korpe"
   },
   "shop": {
     "products_title": "Naši proizvodi",
@@ -544,7 +549,7 @@
     "limited_offer": "🔥 OGRANIČENA PONUDA"
   },
   "guarantee": {
-    "title": "Garanciramo Rezultate ili Vraćamo Novac",
+    "title": "Garantujemo rezultate ili vraćamo novac",
     "description": "Da, dobro ste čuli! Ako nakon potrošene kutije nema poboljšanja, kontaktirajte nas i vratit ćemo Vam novac. Na taj način osigurali smo Vam kupnju bez ikakvog rizika."
   },
   "delivery_schedule": {
@@ -648,7 +653,9 @@
     "save_money": "Štedite",
     "alt_logo": "DERMOTIN",
     "alt_package": "FUNGEL Pakiranje",
-    "close": "Zatvori"
+    "close": "Zatvori",
+    "previous": "Prethodni",
+    "next": "Sljedeći"
   },
   "purchase_notifications": {
     "just_bought": "Upravo je kupio",
@@ -680,17 +687,17 @@
     "payment_method": "Način plaćanja",
     "cod": "Plaćanje pouzećem",
     "delivery_info": "Informacije o dostavi",
-    "courier_delivery": "će dostaviti vašu narudžbu",
+    "courier_delivery": "će dostaviti Vašu narudžbu",
     "expected_delivery": "Očekivano vrijeme dostave",
     "what_happens_next": "Što se događa dalje?",
-    "step_1": "Primit će poziv u roku od 24h za potvrdu",
-    "step_2": "Pakiranje se priprema za slanje",
+    "step_1": "Primit ćete poziv u roku od 24h radi potvrde",
+    "step_2": "Pakiramo narudžbu i predajemo je kuriru",
     "step_3": "Proizvod se predaje kuriru",
-    "step_4": "Dostava na vašu adresu",
+    "step_4": "Dostava na Vašu adresu",
     "need_help": "Trebate li pomoć?",
     "contact_support": "Naš tim za podršku dostupan je 24/7 za sve vaše potrebe",
-    "order_completed": "Narudžba završena",
-    "success_title_highlight": "Hvala vam",
+    "order_completed": "Narudžba primljena",
+    "success_title_highlight": "Hvala Vam",
     "success_title_rest": "na narudžbi!",
     "next_steps_title_prefix": "Potvrda, pakiranje i",
     "next_steps_title_highlight": "brza dostava",
@@ -698,7 +705,12 @@
     "step_of": "Korak {current} / {total}",
     "ordered_items": "Naručeni proizvodi",
     "product_price": "Cijena proizvoda",
-    "shipping_cost": "Troškovi dostave"
+    "shipping_cost": "Troškovi dostave",
+    "step_received": "Narudžba je primljena",
+    "status_done": "Završeno",
+    "status_next": "Sljedeći korak",
+    "keep_phone_title": "Držite telefon uključen",
+    "keep_phone_text": "Pozvat ćemo Vas radi potvrde narudžbe. Pri preuzimanju paketa kuriru plaćate <b>{total}</b>, u gotovini."
   },
   "wheel": {
     "title": "Točak Sreće",
@@ -745,17 +757,17 @@
   },
   "contact": {
     "page_title": "Kontaktirajte nas",
-    "page_subtitle": "Imate pitanje ili trebate pomoć? Naš tim je tu za vas.",
+    "page_subtitle": "Imate pitanje ili trebate pomoć? Naš tim je tu za Vas.",
     "get_in_touch": "Stupite u kontakt",
     "contact_description": "Bilo da imate pitanja o našim proizvodima, trebate pomoć s narudžbom ili jednostavno želite podijeliti svoje iskustvo, ovdje smo da vam pomognemo. Kontaktirajte nas putem bilo kojeg od sljedećih načina.",
     "contact_form_title": "Pošaljite nam poruku",
-    "contact_form_subtitle": "Ispunite obrazac ispod i odgovorit ćemo vam u najkraćem roku",
+    "contact_form_subtitle": "Ispunite obrazac ispod i odgovorit ćemo Vam u najkraćem roku",
     "form_name": "Ime i prezime",
     "form_email": "Email adresa",
     "form_phone": "Broj telefona",
     "form_subject": "Tema",
     "form_message": "Vaša poruka",
-    "form_submit": "Pošaljite poruku",
+    "form_submit": "Otvori e-poštu s porukom",
     "form_sending": "Šalje se...",
     "form_success": "Vaša poruka je uspješno poslana!",
     "form_error": "Došlo je do greške. Molimo pokušajte ponovo.",
@@ -790,7 +802,8 @@
     "contact_success_title": "Hvala vam na poruci!",
     "contact_success_message": "Primili smo vašu poruku i odgovorit ćemo vam u najkraćem roku. Provjerite svoj email za potvrdu.",
     "back_to_home": "Povratak na početnu",
-    "mailto_note": "Klikom na dugme otvara se vaša mejl aplikacija sa već popunjenom porukom — samo je pošaljite."
+    "mailto_note": "Dugme otvara Vašu aplikaciju za e-poštu s već upisanom porukom. Ako se ništa ne otvori, pišite nam direktno na {email}.",
+    "error_message": "Napišite poruku"
   },
   "legal": {
     "back_to_home": "Povratak na početnu",
@@ -859,7 +872,10 @@
       "offers": "Akcije",
       "all_products": "Svi proizvodi",
       "shop": "Proizvodi",
-      "home": "Početna"
+      "home": "Početna",
+      "call": "Pozovite nas: {phone}",
+      "open_menu": "Otvori meni",
+      "close_menu": "Zatvori meni"
     },
     "form": {
       "title": "Naručite odmah — za 30 sekundi",
@@ -887,7 +903,9 @@
       "submit": "Potvrdi narudžbu",
       "reassure_cod": "Bez kartice, bez avansa — plaćanje pouzećem",
       "reassure_delivery": "Kurir isporučuje za {time}",
-      "reassure_return": "Pravo na povraćaj u roku od {days} dana"
+      "reassure_return": "Pravo na povraćaj u roku od {days} dana",
+      "all_required": "Sva polja su obavezna.",
+      "check_fields": "Provjerite označena polja."
     },
     "card": {
       "set": "Set",
@@ -1004,7 +1022,7 @@
       "final_title": "Vaša nova rutina je udaljena jedan klik",
       "final_text": "Izaberite set ili paket, upišite adresu i platite kuriru pri preuzimanju. Jednostavnije ne može.",
       "offers_link": "Sve ponude",
-      "needs_text": "Izaberite oblast njege — uputit ćemo vas na pravi proizvod.",
+      "needs_text": "Izaberite oblast njege — uputit ćemo Vas na pravi proizvod.",
       "stat_1_value": "6–8",
       "stat_1_label": "biljnih ekstrakata u svakoj kremi",
       "stat_2_value": "0",
@@ -1073,8 +1091,8 @@
       "customers_line": "2 godine i <g>{customers}</g> zadovoljnih kupaca",
       "story_line": "Neka i <b>Vaša</b> priča bude jedna od <b>mnogih uspješnih</b>",
       "cta": "Naruči po <b>sniženoj cijeni</b>",
-      "ingredients_title": "Provjereni <g>Sastojci</g> i Formula",
-      "guarantee_title": "Garantujemo Rezultate ili <c>Vraćamo Novac</c>",
+      "ingredients_title": "Provjereni <g>sastojci</g> i formula",
+      "guarantee_title": "Garantujemo rezultate ili <c>vraćamo novac</c>",
       "guarantee_text": "Da, <b>dobro ste čuli</b>! Ukoliko nakon potrošene {unit} nema poboljšanja, kontaktirajte nas i <b>vratit ćemo Vam novac</b>. Na taj način obezbijedili smo Vam kupovinu <b>bez ikakvog rizika</b>.",
       "ministry_title": "Registrovano kod Ministarstva zdravlja Republike Srbije",
       "ministry_number": "Broj i datum upisa u bazu podataka:",
@@ -1083,7 +1101,7 @@
       "price_label": "Akcijska cijena",
       "reviews_title": "Šta naši <g>cijenjeni</g> kupci kažu?",
       "reviews_more": "Ovo su samo neke od <c>{count}</c> recenzija",
-      "reviews_sub": "Uvjerite se i sami u efikasnost <g>naših prirodnih</g> proizvoda",
+      "reviews_sub": "Uvjerite se i sami u efikasnost <b>naših prirodnih</b> proizvoda",
       "shots_title": "Pravi komentari naših kupaca",
       "card_delivery_title": "Brza i sigurna isporuka",
       "card_delivery_text": "Sve pakete šaljemo u roku od 48h od trenutka naručivanja. Plaćate pouzećem tek nakon preuzimanja paketa.",
@@ -1099,8 +1117,8 @@
       "delivery": "Naručite danas — očekivana isporuka: <b>{range}</b>",
       "courier": "Dostavu vrši {courier}",
       "cod_short": "Plaćanje pouzećem, bez avansa",
-      "how_title": "Kako da <g>naručite</g>?",
-      "faq_title": "Česta <g>pitanja</g>",
+      "how_title": "Kako da naručite?",
+      "faq_title": "Česta pitanja",
       "sticky_cta": "Naruči odmah",
       "guarantee_seal": "100% garancija · Bez rizika · ",
       "offer_title": "Šta dobijate u akciji",
@@ -1121,7 +1139,13 @@
       "delivery_tile": "Očekivana isporuka <b>{range}</b>",
       "cod_sub": "bez avansa i kartice",
       "seal_label": "garancija",
-      "card_safe_text": "Blaga i sigurna formula, bez vještačkih dodataka, parabena i GMO — pogodna i za dugotrajnu upotrebu"
+      "card_safe_text": "Blaga i sigurna formula, bez vještačkih dodataka, parabena i GMO — pogodna i za dugotrajnu upotrebu",
+      "years_forms": "godina|godine|godina",
+      "shipping_note": "+ {cost} dostava · besplatna za narudžbe od {threshold}",
+      "free_shipping_note": "Dostava je besplatna",
+      "zoom_hint": "Dodirnite za cijeli komentar",
+      "shot_alt": "Komentar kupca {n} od {total}",
+      "carousel_label": "Utisci kupaca"
     },
     "landerHome": {
       "hero_l1": "Prirodna podrška",
@@ -1129,8 +1153,8 @@
       "hero_l3": "imunitet i varenje",
       "hero_l4": "Platite tek kada paket stigne",
       "offers_title": "Akcije <c>dok traju zalihe</c>",
-      "needs_title": "Šta vam je <g>potrebno</g>?",
-      "products_title": "Svi <g>DERMOTIN</g> proizvodi",
+      "needs_title": "Šta Vam je potrebno?",
+      "products_title": "Svi DERMOTIN proizvodi",
       "view_offer": "Pogledaj ponudu",
       "order": "Naruči",
       "card_natural_home": "Formule zasnovane na pažljivo odabranim biljnim ekstraktima i eteričnim uljima.",
@@ -1147,12 +1171,13 @@
       "stat_years": "godine s vama",
       "stat_returns": "dana za povraćaj",
       "all_offers": "Sve akcije",
-      "final_title": "Akcije traju <c>dok traju zalihe</c>",
+      "final_title": "Akcijske cijene važe <c>dok traju zalihe</c>",
       "final_text": "Izaberite set ili paket, upišite adresu i platite kuriru tek kada preuzmete paket.",
       "faq_sub": "Sve o narudžbi, dostavi i plaćanju na jednom mjestu.",
       "hero_badge": "{rating} · {reviews} recenzija · {customers} kupaca",
       "offer_of_day": "Ponuda dana",
-      "view": "Pogledaj"
+      "view": "Pogledaj",
+      "more_products_title": "Ostali DERMOTIN proizvodi"
     }
   }
 }

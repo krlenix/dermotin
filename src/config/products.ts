@@ -11,7 +11,6 @@ export {
   getProductsForCountry,
   getProductFAQ,
   getProductFAQByCategory,
-  getProductPrice,
   getProductVariantsForCountry,
   getProductVariantForCountry,
   isStorefrontProduct,

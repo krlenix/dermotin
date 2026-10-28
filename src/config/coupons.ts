@@ -227,69 +227,29 @@ export function getAllActiveCoupons(): Coupon[] {
   return Object.values(COUPONS).filter(coupon => coupon.enabled);
 }
 
-// Razrešavanje kupona: statička lista (admin panel) ima prednost, pa OMS API.
-// Razlog: API sve afilijacijske kodove mapira na generičkih 10%, a kuponi poput
-// POPUST20 imaju tačno definisanu vrednost u statičkoj listi.
-export async function getCouponWithAPI(
-  code: string,
-  countryCode: string
-): Promise<Coupon | null> {
-  // 1) Statički kuponi (uključeni kroz /admin/kuponi)
-  const staticCoupon = getCouponByCode(code);
-  if (staticCoupon && staticCoupon.type !== 'bogo') {
-    console.log(`✅ Using static coupon "${code}" (admin panel)`);
-    return staticCoupon;
-  }
-
-  // 2) OMS API afilijacijski kodovi
-  try {
-    const { validateCouponFromAPI } = await import('@/utils/affiliate-codes');
-
-    const apiCoupon = await validateCouponFromAPI(code, countryCode);
-    if (apiCoupon) {
-      console.log(`✅ Using coupon "${code}" from API`);
-      return apiCoupon;
-    }
-
-    console.log(`❌ Coupon "${code}" not found in API`);
-    return null;
-  } catch (error) {
-    console.error('Error fetching coupon from API:', error);
-    return null;
-  }
-}
-
-// Validate coupon with API integration
+// Provera kupona iz browsera. Statički kuponi, OMS afilijacijski kodovi i ključ
+// za OMS žive na serveru (src/lib/coupons-server.ts) — ista provera važi i u /api/orders.
 export async function validateCouponWithAPI(
-  couponCode: string, 
-  subtotal: number, 
+  couponCode: string,
+  subtotal: number,
   countryCode: string
 ): Promise<{ valid: boolean; coupon?: Coupon; error?: string }> {
-  // First check if it's a BOGO coupon (handled locally)
+  // BOGO kupon zahteva poseban UI tok i proverava se lokalno
   const bogoCoupon = getBOGOCoupon(couponCode);
   if (bogoCoupon) {
-    // BOGO coupons don't have country restrictions (available everywhere)
-    // No minimum order value check for BOGO
     return { valid: true, coupon: bogoCoupon };
   }
-  
-  // For other coupons, use API validation
-  const coupon = await getCouponWithAPI(couponCode, countryCode);
-  
-  if (!coupon) {
+
+  try {
+    const response = await fetch('/api/coupons/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: couponCode, subtotal, locale: countryCode }),
+    });
+    if (!response.ok) return { valid: false, error: 'invalid_code' };
+    return await response.json();
+  } catch {
     return { valid: false, error: 'invalid_code' };
   }
-  
-  // Check country restriction
-  if (coupon.countries && !coupon.countries.includes(countryCode.toLowerCase())) {
-    return { valid: false, error: 'not_valid_country' };
-  }
-  
-  // Check minimum order value
-  if (coupon.minOrderValue && subtotal < coupon.minOrderValue) {
-    return { valid: false, error: 'min_order_not_met', coupon };
-  }
-  
-  return { valid: true, coupon };
 }
 
